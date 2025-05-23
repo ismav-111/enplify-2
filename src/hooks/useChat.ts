@@ -6,6 +6,9 @@ interface Message {
   content: string;
   isUser: boolean;
   timestamp: Date;
+  type?: string;
+  format?: 'text' | 'table' | 'graph';
+  fileName?: string;
 }
 
 interface Conversation {
@@ -56,7 +59,8 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
 
 **Customer service chatbots** can handle frequently asked questions, provide basic support, and help customers navigate products or services. This can reduce the workload on human customer service representatives and provide 24/7 support.`,
           isUser: false,
-          timestamp: new Date(Date.now() - 5000)
+          timestamp: new Date(Date.now() - 5000),
+          format: 'text'
         }
       ]
     },
@@ -94,12 +98,14 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
     setActiveConversation(newConversation.id);
   }, []);
 
-  const sendMessage = useCallback(async (content: string) => {
+  const sendMessage = useCallback(async (content: string, type: string = 'encore', file?: File) => {
     const userMessage: Message = {
       id: Date.now().toString(),
       content,
       isUser: true,
-      timestamp: new Date()
+      timestamp: new Date(),
+      type,
+      fileName: file?.name
     };
 
     // Add user message
@@ -116,13 +122,39 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
 
     setIsLoading(true);
 
-    // Simulate AI response
+    // Simulate AI response based on type
     setTimeout(() => {
+      let aiResponseContent = '';
+      let format: 'text' | 'table' | 'graph' = 'text';
+      
+      if (type === 'endocs') {
+        // For endocs, return a tabular response
+        aiResponseContent = `Here's a summary of your query about "${content}":
+        
+| Category | Description | Relevance |
+|----------|-------------|-----------|
+| Main Topic | ${content.split(' ').slice(0, 3).join(' ')} | High |
+| Related Area | Documentation analysis | Medium |
+| Key Points | Structure, clarity, completeness | High |
+| Next Steps | Review documentation guidelines | Medium |
+`;
+        format = 'table';
+      } else if (type === 'ensights') {
+        // For ensights, indicate this would show graph data
+        aiResponseContent = `I've analyzed your query about "${content}" and prepared graphical insights. The data visualization would show trends and patterns related to your question. In a real implementation, this would display actual charts and graphs based on data analysis.`;
+        format = 'graph';
+      } else {
+        // Default response for encore
+        aiResponseContent = `I understand you're asking about: "${content}". This is a response from the Encore AI assistant. In a real implementation, this would connect to an actual AI service to generate meaningful responses.`;
+      }
+
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: `I understand you're asking about: "${content}". This is a simulated response from the AI assistant. In a real implementation, this would connect to an actual AI service like OpenAI's GPT API to generate meaningful responses.`,
+        content: aiResponseContent,
         isUser: false,
-        timestamp: new Date()
+        timestamp: new Date(),
+        type,
+        format
       };
 
       setConversations(prev => prev.map(conv => 
