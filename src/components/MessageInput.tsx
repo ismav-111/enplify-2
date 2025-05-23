@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ArrowUp, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,7 +12,8 @@ interface MessageInputProps {
 
 const MessageInput = ({ onSendMessage, disabled = false, centered = false }: MessageInputProps) => {
   const [message, setMessage] = useState('');
-
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim() && !disabled) {
@@ -27,12 +28,19 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
       handleSubmit(e);
     }
   };
+  
+  // Select the entire field when clicked
+  const handleClick = () => {
+    if (textareaRef.current) {
+      textareaRef.current.select();
+    }
+  };
 
   return (
-    <div className={`${centered ? '' : 'border-t border-gray-200'} bg-white p-4`}>
+    <div className={`${centered ? '' : ''} p-4`}>
       <div className="max-w-3xl mx-auto">
         <form onSubmit={handleSubmit} className="relative">
-          <div className="flex items-center w-full bg-white rounded-full border border-gray-200 shadow-sm">
+          <div className="flex items-center w-full rounded-full border border-gray-200 shadow-sm">
             <Button
               type="button"
               variant="ghost"
@@ -43,12 +51,14 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
             </Button>
             
             <Textarea
+              ref={textareaRef}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
+              onClick={handleClick}
               placeholder="What do you want to know?"
               disabled={disabled}
-              className="min-h-[56px] max-h-32 resize-none border-none focus:border-none focus:ring-0 rounded-full py-3 flex-1"
+              className="min-h-[64px] max-h-40 resize-none border-none focus:border-none focus:ring-0 rounded-full py-4 flex-1"
               rows={1}
             />
 
