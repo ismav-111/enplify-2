@@ -52,10 +52,10 @@ const Index = () => {
         <div className="absolute top-4 right-4 z-30">
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
-                <Avatar className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
+                <Avatar className="h-10 w-10">
                   <AvatarFallback className="bg-gray-200">
-                    <User size={16} className="text-gray-700" />
+                    <User size={18} className="text-gray-700" />
                   </AvatarFallback>
                 </Avatar>
               </Button>
@@ -63,9 +63,9 @@ const Index = () => {
             <PopoverContent className="w-56 p-3" align="end">
               <div className="space-y-3">
                 <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
-                  <Avatar className="h-9 w-9">
+                  <Avatar className="h-10 w-10">
                     <AvatarFallback className="bg-gray-200">
-                      <User size={16} className="text-gray-700" />
+                      <User size={18} className="text-gray-700" />
                     </AvatarFallback>
                   </Avatar>
                   <div>
