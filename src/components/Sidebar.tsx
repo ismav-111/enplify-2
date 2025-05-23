@@ -86,7 +86,7 @@ const Sidebar = ({
                 <button
                   key={conv.id}
                   onClick={() => onSelectConversation(conv.id)}
-                  className={`w-full text-left p-2 rounded-lg transition-all duration-200 hover:bg-gray-50 group ${
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 hover:bg-gray-50 group ${
                     activeConversation === conv.id ? 'bg-gray-100 border-l-4 border-gray-700' : ''
                   }`}
                 >
@@ -102,6 +102,9 @@ const Sidebar = ({
             </div>
           </div>
         </div>
+
+        {/* Bottom padding to extend background color */}
+        <div className="p-4"></div>
       </div>
     </>
   );

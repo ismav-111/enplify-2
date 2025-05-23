@@ -103,28 +103,40 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     };
     
     return (
-      <div className="mt-4 bg-[#f8f8fc] p-4 rounded-lg border border-[#d5d5ec]">
+      <div className="mt-4 bg-white p-4 rounded-lg border border-gray-200">
         <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <h4 className="text-md font-medium text-[#4E50A8]">Data Visualization</h4>
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-md font-medium text-gray-800">Data Visualization</h4>
             <div className="flex gap-2">
               <Button 
                 variant={chartType === 'line' ? 'default' : 'outline'}
-                size="sm"
-                className={chartType === 'line' ? "bg-[#4E50A8] hover:bg-[#4042a0]" : "text-[#4E50A8] border-[#d5d5ec]"}
+                size="icon"
+                className={chartType === 'line' ? "bg-[#4E50A8] hover:bg-[#4042a0] h-8 w-8" : "text-[#4E50A8] border-gray-200 h-8 w-8"}
                 onClick={() => setChartType('line')}
               >
-                <LineChart size={18} className="mr-1" />
-                Line
+                <LineChart size={16} />
               </Button>
               <Button 
                 variant={chartType === 'bar' ? 'default' : 'outline'}
-                size="sm"
-                className={chartType === 'bar' ? "bg-[#4E50A8] hover:bg-[#4042a0]" : "text-[#4E50A8] border-[#d5d5ec]"}
+                size="icon"
+                className={chartType === 'bar' ? "bg-[#4E50A8] hover:bg-[#4042a0] h-8 w-8" : "text-[#4E50A8] border-gray-200 h-8 w-8"}
                 onClick={() => setChartType('bar')}
               >
-                <BarChart size={18} className="mr-1" />
-                Bar
+                <BarChart size={16} />
+              </Button>
+              <Button 
+                variant="outline"
+                size="icon"
+                className="text-gray-500 border-gray-200 h-8 w-8"
+              >
+                <PieChart size={16} />
+              </Button>
+              <Button 
+                variant="outline"
+                size="icon"
+                className="text-gray-500 border-gray-200 h-8 w-8"
+              >
+                <Grid size={16} />
               </Button>
             </div>
           </div>
@@ -140,7 +152,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     data={message.chartData}
                     margin={{ top: 20, right: 30, left: 60, bottom: 40 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#d5d5ec" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                     <XAxis 
                       dataKey="name" 
                       stroke="#888" 
@@ -155,7 +167,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                       content={({ active, payload }) => {
                         if (active && payload && payload.length) {
                           return (
-                            <div className="bg-white p-2 border border-[#d5d5ec] rounded shadow-sm">
+                            <div className="bg-white p-2 border border-gray-200 rounded shadow-sm">
                               <p className="text-sm">{`${payload[0].payload.name}: $${payload[0].value}`}</p>
                             </div>
                           );
@@ -178,7 +190,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     data={message.chartData}
                     margin={{ top: 20, right: 30, left: 60, bottom: 40 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#d5d5ec" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                     <XAxis 
                       dataKey="name" 
                       stroke="#888" 
@@ -193,7 +205,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                       content={({ active, payload }) => {
                         if (active && payload && payload.length) {
                           return (
-                            <div className="bg-white p-2 border border-[#d5d5ec] rounded shadow-sm">
+                            <div className="bg-white p-2 border border-gray-200 rounded shadow-sm">
                               <p className="text-sm">{`${payload[0].payload.name}: $${payload[0].value}`}</p>
                             </div>
                           );

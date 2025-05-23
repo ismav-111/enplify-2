@@ -91,23 +91,8 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
             
             {/* Bottom toolbar with mode selector and attachment */}
             <div className="flex items-center px-4 py-2 border-t border-gray-100">
-              <div className="flex items-center flex-1">
-                {/* Attachment button */}
-                <button
-                  type="button"
-                  onClick={handleFileClick}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors mr-1"
-                >
-                  <Paperclip size={14} className="text-gray-500" />
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                </button>
-                
-                {/* Mode selector - styled as a button with dropdown */}
+              <div className="flex items-center flex-1 gap-2">
+                {/* Mode selector styled as a button with dropdown */}
                 <div className="relative inline-flex items-center">
                   <Select
                     value={responseMode}
@@ -118,8 +103,8 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
                       }
                     }}
                   >
-                    <SelectTrigger className="border border-gray-200 rounded-full px-4 py-1 h-auto text-sm bg-white">
-                      <div className="flex items-center gap-2">
+                    <SelectTrigger className="border border-gray-200 rounded-full px-4 py-1 h-auto text-sm bg-white w-auto min-w-[110px]">
+                      <div className="flex items-center">
                         {responseMode === 'endocs' && <span className="text-sm">Endocs</span>}
                         {responseMode === 'ensights' && <span className="text-sm">Ensights</span>}
                         {responseMode === 'encore' && <span className="text-sm">Encore</span>}
@@ -132,6 +117,23 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
                     </SelectContent>
                   </Select>
                 </div>
+                
+                {/* Attachment button - only show for endocs and ensights */}
+                {showAttachment && (
+                  <button
+                    type="button"
+                    onClick={handleFileClick}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  >
+                    <Paperclip size={14} className="text-gray-500" />
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                  </button>
+                )}
               </div>
               
               {/* Show selected file name if any */}
