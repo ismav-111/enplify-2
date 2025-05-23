@@ -1,6 +1,6 @@
 
-import { useState, useRef } from 'react';
-import { ArrowUp, Paperclip, ChevronDown } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { ArrowUp, Mic, Paperclip, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -21,9 +21,10 @@ interface MessageInputProps {
 
 const MessageInput = ({ onSendMessage, disabled = false, centered = false }: MessageInputProps) => {
   const [message, setMessage] = useState('');
-  const [responseMode, setResponseMode] = useState<ResponseMode>('endocs');
+  const [responseMode, setResponseMode] = useState<ResponseMode>('encore');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const handleSubmit = (e: React.FormEvent) => {
@@ -45,6 +46,7 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
   const handleFormClick = () => {
     if (textareaRef.current) {
       textareaRef.current.focus();
+      textareaRef.current.select();
     }
   };
 
@@ -58,36 +60,40 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
     fileInputRef.current?.click();
   };
 
+  const handleMicClick = () => {
+    // Future functionality for voice input
+    console.log('Microphone clicked');
+  };
+
   return (
-    <div className={`${centered ? 'flex items-center justify-center' : ''} p-4`}>
-      <div className="max-w-2xl w-full mx-auto">
-        <form onSubmit={handleSubmit} className="relative" onClick={handleFormClick}>
-          <div className="flex items-center w-full rounded-lg border border-gray-200 bg-white shadow-sm">
-            {/* Left side - Paperclip and Mode selector */}
-            <div className="flex items-center gap-2 pl-4">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={handleFileClick}
-                className="p-2 hover:bg-gray-100 rounded-full"
-              >
-                <Paperclip size={20} className="text-gray-500" />
-              </Button>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                className="hidden"
-              />
-              
+    <div className={`${centered ? '' : ''} p-4`}>
+      <div className="max-w-3xl mx-auto">
+        <form ref={formRef} onSubmit={handleSubmit} className="relative" onClick={handleFormClick}>
+          <div className="flex items-center w-full rounded-full border border-gray-200 shadow-sm bg-white">
+            <div className="flex-shrink-0 ml-2 p-3 cursor-pointer" onClick={handleMicClick}>
+              <Mic size={24} className="text-gray-400 hover:text-[#4E50A8] transition-colors" />
+            </div>
+            
+            <Textarea
+              ref={textareaRef}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="What do you want to know?"
+              disabled={disabled}
+              className="min-h-[64px] max-h-40 resize-none border-none focus:border-none focus:ring-0 rounded-full py-4 flex-1"
+              rows={1}
+            />
+
+            <div className="flex items-center gap-2 pr-2">
               <Select
                 value={responseMode}
                 onValueChange={(value) => setResponseMode(value as ResponseMode)}
               >
-                <SelectTrigger className="border-none shadow-none focus:ring-0 h-auto p-2 min-w-[100px]">
+                <SelectTrigger className="w-[120px] border border-gray-200 rounded-full px-4 py-2 h-auto bg-white">
                   <div className="flex items-center">
-                    <span className="text-sm text-gray-700 capitalize">{responseMode}</span>
-                    <ChevronDown size={14} className="ml-1 text-gray-500" />
+                    <span className="text-sm text-gray-600 mr-1 capitalize">{responseMode}</span>
+                    <ChevronDown size={14} className="text-gray-500" />
                   </div>
                 </SelectTrigger>
                 <SelectContent>
@@ -96,32 +102,36 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
                   <SelectItem value="ensights">Ensights</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-            
-            {/* Center - Textarea */}
-            <Textarea
-              ref={textareaRef}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="What do you want to know?"
-              disabled={disabled}
-              className="min-h-[50px] max-h-32 resize-none border-none focus:outline-none focus:ring-0 py-3 flex-1 bg-transparent"
-              rows={1}
-            />
 
-            {/* Right side - Send button */}
-            <div className="pr-3">
+              {/* File input for Endocs and Ensights */}
+              {(responseMode === 'endocs' || responseMode === 'ensights') && (
+                <>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={handleFileClick}
+                    className="p-2 rounded-full hover:bg-gray-100"
+                  >
+                    <Paperclip size={20} className="text-gray-500" />
+                  </Button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                </>
+              )}
+              
               <Button
                 type="submit"
                 disabled={!message.trim() || disabled}
-                className="rounded-full bg-[#4E50A8] hover:bg-[#3a3c8a] text-white p-2.5 h-auto"
+                className="rounded-full bg-[#4E50A8] hover:bg-[#4042a0] p-3 h-auto"
               >
-                <ArrowUp size={18} />
+                <ArrowUp size={24} className="text-white" />
               </Button>
             </div>
           </div>
-          
           {selectedFile && (
             <div className="mt-2 pl-4">
               <span className="text-xs text-gray-500 flex items-center">
