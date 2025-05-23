@@ -21,6 +21,7 @@ interface Conversation {
   title: string;
   preview: string;
   messages: Message[];
+  mode: 'encore' | 'endocs' | 'ensights';
 }
 
 export type ResponseMode = 'encore' | 'endocs' | 'ensights';
@@ -31,6 +32,7 @@ export const useChat = () => {
       id: '1',
       title: 'Create Chatbot GPT...',
       preview: 'Sure, I can help you get started with creating a chatbot using GPT in Python...',
+      mode: 'encore',
       messages: [
         {
           id: '1',
@@ -52,7 +54,8 @@ export const useChat = () => {
 
 These are just the basic steps to get started with a GPT chatbot in Python. Depending on your requirements, you may need to add more features or complexity to the chatbot. Good luck!`,
           isUser: false,
-          timestamp: new Date(Date.now() - 25000)
+          timestamp: new Date(Date.now() - 25000),
+          mode: 'encore'
         },
         {
           id: '3',
@@ -66,7 +69,8 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
 
 **Customer service chatbots** can handle frequently asked questions, provide basic support, and help customers navigate products or services. This can reduce the workload on human customer service representatives and provide 24/7 support.`,
           isUser: false,
-          timestamp: new Date(Date.now() - 5000)
+          timestamp: new Date(Date.now() - 5000),
+          mode: 'encore'
         }
       ]
     },
@@ -74,34 +78,43 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
       id: '2',
       title: 'Html Game Environment...',
       preview: 'I can help you create an HTML game environment...',
+      mode: 'encore',
       messages: []
     },
     {
       id: '3',
       title: 'Apply To Leave For Emergency',
       preview: 'I can help you draft a leave application...',
+      mode: 'encore',
       messages: []
     },
     {
       id: '4',
       title: 'What Is UI UX Design?',
       preview: 'UI/UX design refers to User Interface and User Experience design...',
+      mode: 'encore',
       messages: []
     }
   ]);
 
   const [activeConversation, setActiveConversation] = useState<string>('1');
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Track the current mode to detect changes
+  const [currentMode, setCurrentMode] = useState<ResponseMode>('encore');
 
-  const createNewChat = useCallback(() => {
+  const createNewChat = useCallback((mode: ResponseMode = 'encore') => {
     const newConversation: Conversation = {
       id: Date.now().toString(),
-      title: 'New Conversation',
+      title: `New ${mode.charAt(0).toUpperCase() + mode.slice(1)} Conversation`,
       preview: 'Start a new conversation...',
+      mode: mode,
       messages: []
     };
     setConversations(prev => [newConversation, ...prev]);
     setActiveConversation(newConversation.id);
+    setCurrentMode(mode);
+    return newConversation.id;
   }, []);
 
   const generateTableData = () => {
@@ -139,6 +152,15 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
   };
 
   const sendMessage = useCallback(async (content: string, mode: ResponseMode = 'encore', file?: File) => {
+    // Check if we need to create a new conversation due to mode change
+    const currentConversation = conversations.find(conv => conv.id === activeConversation);
+    let activeConvId = activeConversation;
+    
+    // Create a new conversation if the mode has changed or if there's no active conversation
+    if (!currentConversation || currentConversation.mode !== mode) {
+      activeConvId = createNewChat(mode);
+    }
+
     const userMessage: Message = {
       id: Date.now().toString(),
       content,
@@ -154,7 +176,7 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
 
     // Add user message
     setConversations(prev => prev.map(conv => 
-      conv.id === activeConversation 
+      conv.id === activeConvId 
         ? { 
             ...conv, 
             messages: [...conv.messages, userMessage],
@@ -165,6 +187,7 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
     ));
 
     setIsLoading(true);
+    setCurrentMode(mode);
 
     // Simulate AI response based on mode
     setTimeout(() => {
@@ -204,13 +227,13 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
       }
 
       setConversations(prev => prev.map(conv => 
-        conv.id === activeConversation 
+        conv.id === activeConvId 
           ? { ...conv, messages: [...conv.messages, aiMessage] }
           : conv
       ));
       setIsLoading(false);
     }, 1500);
-  }, [activeConversation]);
+  }, [activeConversation, conversations, createNewChat]);
 
   const clearAllConversations = useCallback(() => {
     setConversations([]);

@@ -1,5 +1,5 @@
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ArrowUp, Paperclip } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useToast } from '@/components/ui/use-toast';
 
 export type ResponseMode = 'encore' | 'endocs' | 'ensights';
 
@@ -26,6 +27,23 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+  
+  const prevModRef = useRef<ResponseMode>(responseMode);
+  
+  // Store valid file extensions per mode
+  const validFileExtensions = {
+    endocs: ['.pdf', '.jpg', '.jpeg', '.png', '.gif', '.svg'],
+    ensights: ['.xlsx', '.xls', '.csv']
+  };
+  
+  useEffect(() => {
+    // Clear selected file when changing modes
+    if (prevModRef.current !== responseMode) {
+      setSelectedFile(null);
+      prevModRef.current = responseMode;
+    }
+  }, [responseMode]);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,9 +68,40 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
     }
   };
 
+  const validateFileType = (file: File, mode: ResponseMode): boolean => {
+    if (mode === 'encore') return false;
+    
+    const fileExt = '.' + file.name.split('.').pop()?.toLowerCase();
+    
+    if (mode === 'endocs' && !validFileExtensions.endocs.includes(fileExt)) {
+      toast({
+        title: "Invalid file type",
+        description: "Endocs only supports PDF and image files.",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    if (mode === 'ensights' && !validFileExtensions.ensights.includes(fileExt)) {
+      toast({
+        title: "Invalid file type",
+        description: "Ensights only supports Excel and CSV files.",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    return true;
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
+      const file = e.target.files[0];
+      if (validateFileType(file, responseMode)) {
+        setSelectedFile(file);
+      } else {
+        e.target.value = '';
+      }
     }
   };
 
@@ -93,6 +142,9 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
                     ref={fileInputRef}
                     onChange={handleFileChange}
                     className="hidden"
+                    accept={responseMode === 'endocs' 
+                      ? '.pdf,.jpg,.jpeg,.png,.gif,.svg' 
+                      : '.xlsx,.xls,.csv'}
                   />
                 </button>
               )}
