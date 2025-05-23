@@ -14,6 +14,7 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const inputContainerRef = useRef<HTMLDivElement>(null);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,8 +31,8 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
     }
   };
   
-  // Select the entire field when clicked anywhere in the form
-  const handleFormClick = () => {
+  // Handle click anywhere in the container to focus and select text
+  const handleContainerClick = () => {
     if (textareaRef.current) {
       textareaRef.current.focus();
       textareaRef.current.select();
@@ -39,23 +40,21 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
   };
 
   return (
-    <div className={`${centered ? '' : ''} p-4`}>
+    <div className={`p-4`}>
       <div className="max-w-3xl mx-auto">
         <form 
           ref={formRef}
           onSubmit={handleSubmit} 
           className="relative"
-          onClick={handleFormClick}
         >
-          <div className="flex items-center w-full rounded-full border border-gray-200 shadow-sm cursor-text">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="rounded-full p-4 h-auto ml-2 pointer-events-none"
-            >
+          <div 
+            ref={inputContainerRef}
+            className="flex items-center w-full rounded-full border border-gray-200 shadow-sm cursor-text"
+            onClick={handleContainerClick}
+          >
+            <div className="ml-2 p-4">
               <Mic size={24} className="text-gray-400" />
-            </Button>
+            </div>
             
             <Textarea
               ref={textareaRef}
@@ -68,8 +67,11 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
               rows={1}
             />
 
-            <div className="flex items-center gap-2 pr-2 pointer-events-none">
-              <div className="flex items-center border border-gray-200 rounded-full px-4 py-2">
+            <div className="flex items-center gap-2 pr-2">
+              <div 
+                className="flex items-center border border-gray-200 rounded-full px-4 py-2"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <span className="text-sm text-gray-600 mr-1">Endocs</span>
                 <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M5 7.5L10 12.5L15 7.5" stroke="#718096" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -79,7 +81,7 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
               <Button
                 type="submit"
                 disabled={!message.trim() || disabled}
-                className="rounded-full bg-gray-100 hover:bg-gray-200 p-3 h-auto pointer-events-auto"
+                className="rounded-full bg-gray-100 hover:bg-gray-200 p-3 h-auto"
                 onClick={(e) => e.stopPropagation()}
               >
                 <ArrowUp size={24} className="text-gray-500" />
