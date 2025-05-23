@@ -279,7 +279,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       <div className={`flex flex-col ${message.isUser ? 'items-end ml-auto' : 'ml-4'} max-w-[80%]`}>
         {message.isUser ? (
           <>
-            <div className="rounded-xl py-3 px-4 bg-[#E2E2F3] text-gray-800">
+            <div className="rounded-xl py-3 px-4 bg-[#f6f8ff] text-gray-800">
               <p className="text-base">{message.content}</p>
               {renderFileInfo()}
             </div>
