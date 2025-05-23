@@ -114,14 +114,28 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
   };
 
   const generateChartData = () => {
-    // Generate sample chart data
-    return [
-      { name: 'Jan', value: 400 },
-      { name: 'Feb', value: 300 },
-      { name: 'Mar', value: 600 },
-      { name: 'Apr', value: 800 },
-      { name: 'May', value: 500 },
-    ];
+    // Generate sales data that resembles the reference image
+    const today = new Date();
+    const data = [];
+    
+    for (let i = 0; i < 30; i++) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - (29 - i));
+      
+      // Generate values between $300 and $800 with some randomness
+      // but following a pattern similar to the reference image
+      const baseValue = 400;
+      const amplitude = 300;
+      const randomFactor = Math.sin(i * 0.4) * amplitude + Math.random() * 100;
+      const value = Math.round(baseValue + randomFactor);
+      
+      data.push({
+        name: date.toISOString().split('T')[0],
+        value
+      });
+    }
+    
+    return data;
   };
 
   const sendMessage = useCallback(async (content: string, mode: ResponseMode = 'encore', file?: File) => {
