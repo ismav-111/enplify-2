@@ -57,33 +57,33 @@ const Index = () => {
         <div className="absolute top-4 right-4 z-30">
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
+              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow">
                 <Avatar className="h-10 w-10">
-                  <AvatarFallback className="bg-gray-200">
-                    <User size={18} className="text-gray-700" />
+                  <AvatarFallback className="bg-white text-gray-700">
+                    <User size={18} />
                   </AvatarFallback>
                 </Avatar>
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-56 p-3" align="end">
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
-                  <Avatar className="h-10 w-10">
-                    <AvatarFallback className="bg-gray-200">
-                      <User size={18} className="text-gray-700" />
+            <PopoverContent className="w-60 p-4 shadow-lg" align="end">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
+                  <Avatar className="h-12 w-12">
+                    <AvatarFallback className="bg-[#F1F1F9] text-[#4E50A8]">
+                      <User size={20} />
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-sm font-medium">Andrew Neilson</p>
+                    <p className="text-sm font-medium text-gray-800">Andrew Neilson</p>
                     <p className="text-xs text-gray-500">andrew@example.com</p>
                   </div>
                 </div>
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  className="w-full justify-start text-gray-700"
+                  className="w-full justify-start text-gray-700 hover:bg-gray-100"
                 >
-                  <Settings size={15} className="mr-2" />
+                  <Settings size={16} className="mr-2" />
                   Settings
                 </Button>
               </div>
@@ -94,19 +94,19 @@ const Index = () => {
         {/* Chat Messages */}
         <div className={`flex-1 overflow-y-auto ${!hasMessages ? 'flex items-center justify-center' : ''}`}>
           {hasMessages ? (
-            <div className="max-w-3xl mx-auto px-4 py-6 w-full">
-              <div className="group">
+            <div className="max-w-3xl mx-auto px-4 py-8 w-full">
+              <div className="space-y-6">
                 {currentConversation.messages.map((message) => (
                   <ChatMessage key={message.id} message={message} />
                 ))}
                 {isLoading && (
-                  <div className="flex gap-4 p-6 max-w-[80%]">
-                    <div className="w-8 h-8 rounded-full bg-[#d5d5ec] flex items-center justify-center">
+                  <div className="flex gap-4">
+                    <div className="w-9 h-9 rounded-full bg-[#d5d5ec] flex items-center justify-center flex-shrink-0">
                       <span className="text-sm font-bold text-[#4E50A8]">e</span>
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-sm font-semibold text-gray-900">CHAT A.I+</span>
+                        <span className="text-sm font-semibold text-gray-800">CHAT A.I+</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
@@ -127,8 +127,10 @@ const Index = () => {
 
         {/* Message Input - Only show at bottom when there are messages */}
         {hasMessages && (
-          <div className="w-full">
-            <MessageInput onSendMessage={handleSendMessage} disabled={isLoading} centered={false} />
+          <div className="w-full border-t border-gray-100 bg-white py-4">
+            <div className="max-w-3xl mx-auto px-4">
+              <MessageInput onSendMessage={handleSendMessage} disabled={isLoading} centered={false} />
+            </div>
           </div>
         )}
       </div>

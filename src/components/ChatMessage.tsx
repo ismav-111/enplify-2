@@ -68,7 +68,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     if (!message.tableData || message.tableData.length === 0) return null;
     
     return (
-      <div className="mt-4 bg-[#f8f8fc] p-4 rounded-lg border border-[#d5d5ec]">
+      <div className="mt-4 bg-[#F1F1F9] p-4 rounded-lg border border-[#d5d5ec]">
         <Table>
           <TableHeader>
             <TableRow>
@@ -114,13 +114,13 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     };
     
     return (
-      <div className="mt-4 bg-white p-4 rounded-lg border border-gray-200">
+      <div className="mt-4 bg-[#F1F1F9] p-4 rounded-lg border border-[#d5d5ec]">
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <h4 className="text-md font-medium text-gray-800">Data Visualization</h4>
               {tooltipVisible && (
-                <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
+                <span className="text-xs bg-white px-2 py-1 rounded-full shadow-sm">
                   {getChartTypeLabel()}
                 </span>
               )}
@@ -270,31 +270,31 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   };
 
   return (
-    <div className="flex mb-6">
+    <div className="flex mb-8">
       {!message.isUser && (
-        <div className="w-8 h-8 rounded-full bg-[#d5d5ec] flex items-center justify-center flex-shrink-0 mt-1">
+        <div className="w-9 h-9 rounded-full bg-[#d5d5ec] flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
           <span className="text-sm font-bold text-[#4E50A8]">e</span>
         </div>
       )}
       
-      <div className={`flex flex-col ${message.isUser ? 'items-end ml-auto' : 'ml-3'} max-w-[80%]`}>
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-sm font-semibold text-gray-700">
+      <div className={`flex flex-col ${message.isUser ? 'items-end ml-auto' : 'ml-4'} max-w-[80%]`}>
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-sm font-semibold text-gray-800">
             {message.isUser ? 'You' : 'CHAT A.I+'}
           </span>
           <span className="text-xs text-gray-500">
-            {message.timestamp.toLocaleTimeString()}
+            {message.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
           </span>
         </div>
         
         {message.isUser ? (
-          <div className="prose prose-sm max-w-none rounded-xl py-2 px-4 bg-[#F1F1F9] text-gray-800">
-            {message.content}
+          <div className="rounded-xl py-3 px-4 bg-[#F1F1F9] text-gray-800">
+            <p className="text-base">{message.content}</p>
             {renderFileInfo()}
           </div>
         ) : (
-          <div className="prose prose-sm max-w-none text-gray-700">
-            <div>
+          <div className="text-gray-800">
+            <div className="text-base leading-relaxed">
               {message.content}
             </div>
             {message.mode === 'endocs' && renderTableData()}
@@ -304,37 +304,37 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
 
         {/* Action Buttons - Only for AI messages */}
         {!message.isUser && (
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex items-center gap-2 mt-3">
             <Button
               variant="ghost"
               size="sm"
               onClick={toggleLike}
-              className={`p-2 h-auto ${isLiked ? 'text-[#4E50A8]' : 'text-gray-400 hover:text-gray-600'}`}
+              className={`p-2 h-auto rounded-full ${isLiked ? 'text-[#4E50A8] bg-[#F1F1F9]' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
             >
-              <ThumbsUp size={14} />
+              <ThumbsUp size={16} />
             </Button>
             <Button
               variant="ghost"
               size="sm"
               onClick={toggleDislike}
-              className={`p-2 h-auto ${isDisliked ? 'text-red-600' : 'text-gray-400 hover:text-gray-600'}`}
+              className={`p-2 h-auto rounded-full ${isDisliked ? 'text-red-600 bg-red-50' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
             >
-              <ThumbsDown size={14} />
+              <ThumbsDown size={16} />
             </Button>
             <Button
               variant="ghost"
               size="sm"
               onClick={handleCopy}
-              className="p-2 h-auto text-gray-400 hover:text-gray-600"
+              className="p-2 h-auto text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
             >
-              <Copy size={14} />
+              <Copy size={16} />
             </Button>
             <Button
               variant="ghost"
               size="sm"
-              className="p-2 h-auto text-gray-400 hover:text-gray-600"
+              className="p-2 h-auto text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
             >
-              <RotateCcw size={14} />
+              <RotateCcw size={16} />
             </Button>
           </div>
         )}
