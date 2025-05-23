@@ -1,37 +1,25 @@
 
 import { useState, useRef, useEffect } from 'react';
-import { ArrowUp, Mic, Eye, Paperclip } from 'lucide-react';
+import { ArrowUp, Mic, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 interface MessageInputProps {
-  onSendMessage: (message: string, type: string, file?: File) => void;
+  onSendMessage: (message: string) => void;
   disabled?: boolean;
   centered?: boolean;
 }
 
 const MessageInput = ({ onSendMessage, disabled = false, centered = false }: MessageInputProps) => {
   const [message, setMessage] = useState('');
-  const [selectedOption, setSelectedOption] = useState('encore');
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim() && !disabled) {
-      onSendMessage(message.trim(), selectedOption, selectedFile || undefined);
+      onSendMessage(message.trim());
       setMessage('');
-      setSelectedFile(null);
     }
   };
 
@@ -47,16 +35,6 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
     if (textareaRef.current) {
       textareaRef.current.focus();
       textareaRef.current.select();
-    }
-  };
-
-  const handleFileSelect = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
     }
   };
 
@@ -81,67 +59,17 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
             />
 
             <div className="flex items-center gap-2 pr-2">
-              {/* File upload button */}
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={handleFileSelect}
-                className="p-2 h-auto rounded-full hover:bg-gray-100"
-              >
-                <Paperclip size={20} className="text-gray-500" />
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  className="hidden" 
-                  onChange={handleFileChange} 
-                />
-              </Button>
-              
-              {/* Selected file indicator */}
-              {selectedFile && (
-                <span className="text-xs text-gray-600 px-2 py-1 bg-gray-100 rounded-full">
-                  {selectedFile.name.length > 15 
-                    ? selectedFile.name.substring(0, 12) + '...' 
-                    : selectedFile.name}
-                </span>
-              )}
-
-              {/* Data source selector */}
-              <Select
-                value={selectedOption}
-                onValueChange={(value) => setSelectedOption(value)}
-              >
-                <SelectTrigger className="border border-gray-200 rounded-full px-4 py-2 h-auto w-auto min-w-[110px] bg-[#d5d5ec] text-[#4E50A8]">
-                  <SelectValue placeholder="Encore" />
-                </SelectTrigger>
-                <SelectContent className="bg-white border border-gray-200 shadow-md rounded-lg">
-                  <SelectItem value="encore" className="cursor-pointer">
-                    <div className="flex items-center">
-                      <span>Encore</span>
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="endocs" className="cursor-pointer">
-                    <div className="flex items-center">
-                      <span>Endocs</span>
-                      <Eye size={14} className="ml-2 text-gray-500" />
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="ensights" className="cursor-pointer">
-                    <div className="flex items-center">
-                      <span>Ensights</span>
-                      <Eye size={14} className="ml-2 text-gray-500" />
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex items-center border border-gray-200 rounded-full px-4 py-2 pointer-events-none">
+                <span className="text-sm text-gray-600 mr-1">Endocs</span>
+                <Eye size={14} className="text-gray-500" />
+              </div>
               
               <Button
                 type="submit"
                 disabled={!message.trim() || disabled}
-                className="rounded-full bg-[#4E50A8] hover:bg-[#3c3e85] p-3 h-auto"
+                className="rounded-full bg-gray-100 hover:bg-gray-200 p-3 h-auto"
               >
-                <ArrowUp size={24} className="text-white" />
+                <ArrowUp size={24} className="text-gray-500" />
               </Button>
             </div>
           </div>
