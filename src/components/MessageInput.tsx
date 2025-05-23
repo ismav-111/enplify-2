@@ -1,8 +1,9 @@
 
 import { useState } from 'react';
-import { Send, Paperclip, Mic, ChevronDown, ArrowUp } from 'lucide-react';
+import { ArrowUp, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface MessageInputProps {
   onSendMessage: (message: string) => void;
@@ -31,45 +32,42 @@ const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) =>
     <div className="border-t border-gray-200 bg-white p-4">
       <div className="max-w-3xl mx-auto">
         <form onSubmit={handleSubmit} className="relative">
-          <Textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="What do you want to know?"
-            disabled={disabled}
-            className="min-h-[56px] max-h-32 resize-none border-gray-200 focus:border-gray-300 focus:ring-gray-300 rounded-full px-12 py-3 shadow-sm"
-            rows={1}
-          />
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 flex gap-1">
+          <div className="flex items-center w-full bg-white rounded-full border border-gray-200 shadow-sm">
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              className="rounded-full p-1.5 h-auto"
+              className="rounded-full p-4 h-auto ml-2"
             >
-              <Mic size={18} className="text-gray-500" />
+              <Mic size={24} className="text-gray-400" />
             </Button>
-          </div>
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-            <div className="flex items-center mr-1 border border-gray-200 rounded-full px-2 py-1">
-              <span className="text-sm text-gray-600 mr-1">Endocs</span>
-              <ChevronDown size={14} className="text-gray-500" />
+            
+            <Textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="What do you want to know?"
+              disabled={disabled}
+              className="min-h-[56px] max-h-32 resize-none border-none focus:border-none focus:ring-0 rounded-full py-3 flex-1"
+              rows={1}
+            />
+
+            <div className="flex items-center gap-2 pr-2">
+              <div className="flex items-center border border-gray-200 rounded-full px-4 py-2">
+                <span className="text-sm text-gray-600 mr-1">Endocs</span>
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5 7.5L10 12.5L15 7.5" stroke="#718096" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              
+              <Button
+                type="submit"
+                disabled={!message.trim() || disabled}
+                className="rounded-full bg-gray-100 hover:bg-gray-200 p-3 h-auto"
+              >
+                <ArrowUp size={24} className="text-gray-500" />
+              </Button>
             </div>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="rounded-full p-1.5 h-auto"
-            >
-              <Paperclip size={18} className="text-gray-500" />
-            </Button>
-            <Button
-              type="submit"
-              disabled={!message.trim() || disabled}
-              className="rounded-full bg-gray-700 hover:bg-gray-800 p-1.5 h-auto disabled:opacity-50"
-            >
-              <ArrowUp size={18} className="text-white" />
-            </Button>
           </div>
         </form>
       </div>
