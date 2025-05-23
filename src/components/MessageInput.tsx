@@ -63,7 +63,7 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
   const showAttachment = responseMode === 'endocs' || responseMode === 'ensights';
 
   return (
-    <div className={`${centered ? '' : ''} p-4`}>
+    <div className={`${centered ? 'w-full' : ''}`}>
       <div className="max-w-3xl mx-auto">
         <form ref={formRef} onSubmit={handleSubmit} className="relative" onClick={handleFormClick}>
           <div className="flex flex-col w-full rounded-xl border border-gray-200 shadow-sm bg-white">

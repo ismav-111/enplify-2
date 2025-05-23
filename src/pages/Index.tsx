@@ -102,11 +102,11 @@ const Index = () => {
                 {isLoading && (
                   <div className="flex gap-4">
                     <div className="w-9 h-9 rounded-full bg-[#d5d5ec] flex items-center justify-center flex-shrink-0">
-                      <img src="/lovable-uploads/enplify-logo.png" alt="enplify.ai" className="w-5 h-5" />
+                      <span className="text-[#4E50A8] font-semibold">e</span>
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-sm font-semibold text-gray-800">enplify.ai</span>
+                        {/* Removed enplify.ai text */}
                       </div>
                       <div className="flex items-center gap-1">
                         <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Grid } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -273,7 +272,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     <div className="flex mb-8">
       {!message.isUser && (
         <div className="w-9 h-9 rounded-full bg-[#d5d5ec] flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
-          <img src="/lovable-uploads/enplify-logo.png" alt="enplify.ai" className="w-5 h-5" />
+          <span className="text-[#4E50A8] font-semibold">e</span>
         </div>
       )}
       
@@ -290,9 +289,6 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           </>
         ) : (
           <>
-            <div className="mb-2">
-              <span className="text-sm font-semibold text-gray-800">enplify.ai</span>
-            </div>
             <div className="text-gray-800">
               <div className="text-base leading-relaxed">
                 {message.content}
@@ -300,11 +296,8 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
               {message.mode === 'endocs' && renderTableData()}
               {message.mode === 'ensights' && renderChartData()}
             </div>
-            <span className="text-xs text-gray-500 mt-1">
-              {message.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-            </span>
 
-            {/* Action Buttons */}
+            {/* Action Buttons with timestamp */}
             <div className="flex items-center gap-2 mt-3">
               <Button
                 variant="ghost"
@@ -337,6 +330,9 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
               >
                 <RotateCcw size={16} />
               </Button>
+              <span className="text-xs text-gray-500">
+                {message.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+              </span>
             </div>
           </>
         )}
