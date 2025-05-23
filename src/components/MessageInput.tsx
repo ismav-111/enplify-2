@@ -3,14 +3,14 @@ import { useState } from 'react';
 import { ArrowUp, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface MessageInputProps {
   onSendMessage: (message: string) => void;
   disabled?: boolean;
+  centered?: boolean;
 }
 
-const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) => {
+const MessageInput = ({ onSendMessage, disabled = false, centered = false }: MessageInputProps) => {
   const [message, setMessage] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -29,7 +29,7 @@ const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) =>
   };
 
   return (
-    <div className="border-t border-gray-200 bg-white p-4">
+    <div className={`${centered ? '' : 'border-t border-gray-200'} bg-white p-4`}>
       <div className="max-w-3xl mx-auto">
         <form onSubmit={handleSubmit} className="relative">
           <div className="flex items-center w-full bg-white rounded-full border border-gray-200 shadow-sm">
