@@ -37,14 +37,14 @@ const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) =>
             onKeyDown={handleKeyDown}
             placeholder="What's in your mind?..."
             disabled={disabled}
-            className="min-h-[60px] max-h-32 resize-none border-gray-200 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
+            className="min-h-[60px] max-h-32 resize-none border-gray-200 focus:border-gray-500 focus:ring-gray-500 rounded-lg"
             rows={3}
           />
         </div>
         <Button
           type="submit"
           disabled={!message.trim() || disabled}
-          className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg p-3 h-auto disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+          className="bg-gray-700 hover:bg-gray-800 text-white rounded-lg p-3 h-auto disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
         >
           <Send size={18} />
         </Button>

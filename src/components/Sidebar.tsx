@@ -21,7 +21,7 @@ const Sidebar = ({
     <div className="w-80 bg-white border-r border-gray-200 flex flex-col h-full">
       {/* Header */}
       <div className="p-6 border-b border-gray-100">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+        <h1 className="text-2xl font-bold text-gray-800">
           CHAT A.I+
         </h1>
       </div>
@@ -30,7 +30,7 @@ const Sidebar = ({
       <div className="p-4">
         <Button 
           onClick={onNewChat}
-          className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg py-3 flex items-center justify-center gap-2 transition-all duration-200"
+          className="w-full bg-gray-700 hover:bg-gray-800 text-white rounded-lg py-3 flex items-center justify-center gap-2 transition-all duration-200"
         >
           <Plus size={18} />
           New chat
@@ -58,7 +58,7 @@ const Sidebar = ({
                 key={conv.id}
                 onClick={() => onSelectConversation(conv.id)}
                 className={`w-full text-left p-3 rounded-lg transition-all duration-200 hover:bg-gray-50 group ${
-                  activeConversation === conv.id ? 'bg-purple-50 border-l-4 border-purple-600' : ''
+                  activeConversation === conv.id ? 'bg-gray-100 border-l-4 border-gray-700' : ''
                 }`}
               >
                 <div className="flex items-start gap-3">
@@ -77,8 +77,8 @@ const Sidebar = ({
       {/* User Section */}
       <div className="p-4 border-t border-gray-100">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
-            <User size={18} className="text-white" />
+          <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+            <User size={18} className="text-gray-700" />
           </div>
           <div className="flex-1">
             <p className="text-sm font-medium text-gray-900">Andrew Neilson</p>
