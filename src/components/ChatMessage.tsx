@@ -1,5 +1,6 @@
+
 import { useState } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Grid } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Grid, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -24,6 +25,10 @@ import {
   BarChart as RechartsBarChart,
   Bar,
   ResponsiveContainer,
+  PieChart as RechartsPieChart,
+  Pie,
+  Cell,
+  Legend,
 } from "recharts";
 
 interface ChatMessageProps {
@@ -63,11 +68,41 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     if (isLiked) setIsLiked(false);
   };
 
+  const handleDownload = () => {
+    if (!message.chartData || message.chartData.length === 0) return;
+    
+    // Create CSV content
+    let csvContent = "data:text/csv;charset=utf-8,";
+    
+    // Add headers
+    const headers = Object.keys(message.chartData[0]);
+    csvContent += headers.join(",") + "\n";
+    
+    // Add data rows
+    message.chartData.forEach(row => {
+      const rowData = headers.map(header => row[header]);
+      csvContent += rowData.join(",") + "\n";
+    });
+    
+    // Create download link
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "chart-data.csv");
+    document.body.appendChild(link);
+    
+    // Trigger download
+    link.click();
+    
+    // Cleanup
+    document.body.removeChild(link);
+  };
+
   const renderTableData = () => {
     if (!message.tableData || message.tableData.length === 0) return null;
     
     return (
-      <div className="mt-4 bg-[#F1F1F9] p-4 rounded-lg border border-[#d5d5ec]">
+      <div className="mt-4 bg-white p-4 rounded-lg border border-[#d5d5ec]">
         <Table>
           <TableHeader>
             <TableRow>
@@ -112,8 +147,11 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       }
     };
     
+    // Colors for pie chart
+    const COLORS = ['#4E50A8', '#8486E8', '#A9AAED', '#C4C5F3', '#DFDFF9'];
+    
     return (
-      <div className="mt-4 bg-[#F1F1F9] p-4 rounded-lg border border-[#d5d5ec]">
+      <div className="mt-4 bg-white p-4 rounded-lg border border-[#d5d5ec]">
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -148,7 +186,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
               <Button 
                 variant={chartType === 'pie' ? 'default' : 'outline'}
                 size="icon"
-                className={chartType === 'pie' ? "bg-[#4E50A8] hover:bg-[#4042a0] h-8 w-8" : "text-gray-500 border-gray-200 h-8 w-8"}
+                className={chartType === 'pie' ? "bg-[#4E50A8] hover:bg-[#4042a0] h-8 w-8" : "text-[#4E50A8] border-gray-200 h-8 w-8"}
                 onClick={() => setChartType('pie')}
                 onMouseEnter={() => setTooltipVisible(true)}
                 onMouseLeave={() => setTooltipVisible(false)}
@@ -165,6 +203,16 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
               >
                 <Grid size={16} />
               </Button>
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="text-[#4E50A8] border-gray-200 h-8 w-8"
+                onClick={handleDownload}
+                onMouseEnter={() => setTooltipVisible(true)}
+                onMouseLeave={() => setTooltipVisible(false)}
+              >
+                <Download size={16} />
+              </Button>
             </div>
           </div>
           
@@ -174,7 +222,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
               className="h-full w-full"
             >
               <ResponsiveContainer width="100%" height="100%">
-                {chartType === 'line' ? (
+                {chartType === 'line' && (
                   <RechartsLineChart 
                     data={message.chartData}
                     margin={{ top: 20, right: 30, left: 60, bottom: 40 }}
@@ -212,7 +260,9 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                       name="sales"
                     />
                   </RechartsLineChart>
-                ) : (
+                )}
+                
+                {chartType === 'bar' && (
                   <RechartsBarChart
                     data={message.chartData}
                     margin={{ top: 20, right: 30, left: 60, bottom: 40 }}
@@ -246,6 +296,61 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                       name="sales"
                     />
                   </RechartsBarChart>
+                )}
+                
+                {chartType === 'pie' && (
+                  <RechartsPieChart
+                    margin={{ top: 20, right: 30, left: 30, bottom: 40 }}
+                  >
+                    <Pie
+                      data={message.chartData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      fill="#4E50A8"
+                      label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {message.chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className="bg-white p-2 border border-gray-200 rounded shadow-sm">
+                              <p className="text-sm">{`${payload[0].name}: $${payload[0].value}`}</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Legend />
+                  </RechartsPieChart>
+                )}
+                
+                {chartType === 'grid' && (
+                  <div className="overflow-auto h-full">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="text-[#4E50A8]">Date</TableHead>
+                          <TableHead className="text-[#4E50A8]">Value</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {message.chartData.map((row, i) => (
+                          <TableRow key={i}>
+                            <TableCell>{row.name}</TableCell>
+                            <TableCell>${row.value}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
                 )}
               </ResponsiveContainer>
             </ChartContainer>
