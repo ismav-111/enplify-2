@@ -60,18 +60,13 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
     fileInputRef.current?.click();
   };
 
-  const handleMicClick = () => {
-    // Future functionality for voice input
-    console.log('Microphone clicked');
-  };
-
   return (
     <div className={`${centered ? '' : ''} p-4`}>
       <div className="max-w-3xl mx-auto">
         <form ref={formRef} onSubmit={handleSubmit} className="relative" onClick={handleFormClick}>
-          <div className="flex items-center w-full rounded-full border border-gray-200 shadow-sm bg-white">
-            <div className="flex-shrink-0 ml-2 p-3 cursor-pointer" onClick={handleMicClick}>
-              <Mic size={24} className="text-gray-400 hover:text-[#4E50A8] transition-colors" />
+          <div className="flex items-center w-full rounded-full border border-gray-200 shadow-sm">
+            <div className="flex-shrink-0 ml-2 p-3 cursor-pointer" onClick={() => {}}>
+              <Mic size={24} className="text-gray-400 hover:text-gray-700 transition-colors" />
             </div>
             
             <Textarea
@@ -126,9 +121,9 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
               <Button
                 type="submit"
                 disabled={!message.trim() || disabled}
-                className="rounded-full bg-[#4E50A8] hover:bg-[#4042a0] p-3 h-auto"
+                className="rounded-full bg-gray-100 hover:bg-gray-200 p-3 h-auto"
               >
-                <ArrowUp size={24} className="text-white" />
+                <ArrowUp size={24} className="text-gray-500 hover:text-gray-700" />
               </Button>
             </div>
           </div>
