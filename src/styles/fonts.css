@@ -1,0 +1,8 @@
+
+/* Import Comfortaa font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap');
+
+/* Define font classes */
+.font-comfortaa {
+  font-family: 'Comfortaa', sans-serif;
+}

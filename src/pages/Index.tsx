@@ -108,9 +108,6 @@ const Index = () => {
                       <span className="text-[#4E50A8] font-semibold">e</span>
                     </div>
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        {/* Removed enplify.ai text */}
-                      </div>
                       <div className="flex items-center gap-1">
                         <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                         <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
@@ -126,9 +123,9 @@ const Index = () => {
               {/* Welcome message */}
               <div className="text-center mb-10">
                 <div className="w-16 h-16 rounded-full bg-[#d5d5ec] flex items-center justify-center mx-auto mb-4">
-                  <span className="text-[#4E50A8] font-bold text-xl">e</span>
+                  <span className="text-[#4E50A8] font-bold text-xl font-comfortaa">e</span>
                 </div>
-                <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome to Encore</h1>
+                <h1 className="text-3xl font-bold text-gray-800 mb-2 font-comfortaa">Welcome to enplify.ai</h1>
                 <p className="text-gray-600 max-w-md mx-auto mb-6">
                   Your intelligent AI assistant. Ask me anything and I'll provide 
                   helpful insights, answers, and information.

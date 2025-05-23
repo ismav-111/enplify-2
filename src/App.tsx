@@ -8,6 +8,9 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
 
+// Add Comfortaa font
+import "./styles/fonts.css";
+
 const queryClient = new QueryClient();
 
 const App = () => (

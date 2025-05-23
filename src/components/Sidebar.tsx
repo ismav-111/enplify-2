@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Plus, MessageSquare, Menu, PanelLeft, Trash, Edit } from 'lucide-react';
+import { Plus, MessageSquare, Menu, PanelLeft, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface SidebarProps {
@@ -42,8 +42,8 @@ const Sidebar = ({
       >
         {/* Header with close button */}
         <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-[#4E50A8]">
-            CHAT A.I+
+          <h1 className="text-2xl font-bold text-[#4E50A8] font-comfortaa">
+            enplify.ai
           </h1>
           <Button 
             onClick={() => setIsOpen(false)}
@@ -71,14 +71,17 @@ const Sidebar = ({
           <div className="px-2 mb-2">
             <div className="flex items-center justify-between my-4">
               <h3 className="text-sm font-medium text-gray-500">Your conversations</h3>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={onClearAll}
-                className="text-xs text-gray-400 hover:text-gray-600"
-              >
-                Clear All
-              </Button>
+              {conversations.length > 0 && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={onClearAll}
+                  className="text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-50 px-2 py-1"
+                >
+                  <Trash size={14} className="mr-1" />
+                  Clear
+                </Button>
+              )}
             </div>
             
             <div className="space-y-1">
@@ -90,19 +93,9 @@ const Sidebar = ({
                     activeConversation === conv.id ? 'bg-[#F1F1F9] border-l-4 border-[#4E50A8]' : ''
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <MessageSquare size={16} className="text-gray-400" />
-                      <p className="text-sm font-medium text-gray-800 truncate">{conv.title}</p>
-                    </div>
-                    <div className="flex gap-1">
-                      <button className="p-1 rounded-md hover:bg-gray-100">
-                        <Edit size={14} className="text-gray-400 hover:text-gray-600" />
-                      </button>
-                      <button className="p-1 rounded-md hover:bg-gray-100">
-                        <Trash size={14} className="text-gray-400 hover:text-gray-600" />
-                      </button>
-                    </div>
+                  <div className="flex items-center">
+                    <MessageSquare size={16} className="text-gray-400 mr-2" />
+                    <p className="text-sm font-medium text-gray-800 truncate">{conv.title}</p>
                   </div>
                 </button>
               ))}
@@ -113,7 +106,7 @@ const Sidebar = ({
         {/* Bottom padding */}
         <div className="p-4 border-t border-gray-100">
           <div className="text-xs text-gray-500 text-center">
-            CHAT A.I+ v1.0
+            enplify.ai v1.0
           </div>
         </div>
       </div>
