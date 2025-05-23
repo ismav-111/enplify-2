@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Grid, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -217,12 +216,12 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           </div>
           
           <div className="h-[300px] w-full">
-            <ChartContainer 
-              config={chartConfig}
-              className="h-full w-full"
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                {chartType === 'line' && (
+            {chartType === 'line' && (
+              <ChartContainer 
+                config={chartConfig}
+                className="h-full w-full"
+              >
+                <ResponsiveContainer width="100%" height="100%">
                   <RechartsLineChart 
                     data={message.chartData}
                     margin={{ top: 20, right: 30, left: 60, bottom: 40 }}
@@ -260,9 +259,16 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                       name="sales"
                     />
                   </RechartsLineChart>
-                )}
-                
-                {chartType === 'bar' && (
+                </ResponsiveContainer>
+              </ChartContainer>
+            )}
+            
+            {chartType === 'bar' && (
+              <ChartContainer 
+                config={chartConfig}
+                className="h-full w-full"
+              >
+                <ResponsiveContainer width="100%" height="100%">
                   <RechartsBarChart
                     data={message.chartData}
                     margin={{ top: 20, right: 30, left: 60, bottom: 40 }}
@@ -296,9 +302,16 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                       name="sales"
                     />
                   </RechartsBarChart>
-                )}
-                
-                {chartType === 'pie' && (
+                </ResponsiveContainer>
+              </ChartContainer>
+            )}
+            
+            {chartType === 'pie' && (
+              <ChartContainer 
+                config={chartConfig}
+                className="h-full w-full"
+              >
+                <ResponsiveContainer width="100%" height="100%">
                   <RechartsPieChart
                     margin={{ top: 20, right: 30, left: 30, bottom: 40 }}
                   >
@@ -330,30 +343,30 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     />
                     <Legend />
                   </RechartsPieChart>
-                )}
-                
-                {chartType === 'grid' && (
-                  <div className="overflow-auto h-full">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="text-[#4E50A8]">Date</TableHead>
-                          <TableHead className="text-[#4E50A8]">Value</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {message.chartData.map((row, i) => (
-                          <TableRow key={i}>
-                            <TableCell>{row.name}</TableCell>
-                            <TableCell>${row.value}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                )}
-              </ResponsiveContainer>
-            </ChartContainer>
+                </ResponsiveContainer>
+              </ChartContainer>
+            )}
+            
+            {chartType === 'grid' && (
+              <div className="overflow-auto h-full">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-[#4E50A8]">Date</TableHead>
+                      <TableHead className="text-[#4E50A8]">Value</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {message.chartData.map((row, i) => (
+                      <TableRow key={i}>
+                        <TableCell>{row.name}</TableCell>
+                        <TableCell>${row.value}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
           </div>
           <div className="text-center text-sm text-[#4E50A8] font-medium">
             Sales Trend
