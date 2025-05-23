@@ -1,6 +1,6 @@
 
 import { useState, useRef } from 'react';
-import { ArrowUp, Paperclip, ChevronDown } from 'lucide-react';
+import { ArrowUp, Paperclip } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -60,22 +60,13 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
     fileInputRef.current?.click();
   };
 
+  const showAttachment = responseMode === 'endocs' || responseMode === 'ensights';
+
   return (
     <div className={`${centered ? '' : ''} p-4`}>
       <div className="max-w-3xl mx-auto">
         <form ref={formRef} onSubmit={handleSubmit} className="relative" onClick={handleFormClick}>
           <div className="flex items-center w-full rounded-full border border-gray-200 shadow-sm bg-white">
-            {/* File attachment icon */}
-            <div className="flex-shrink-0 ml-2 p-3 cursor-pointer" onClick={handleFileClick}>
-              <Paperclip size={24} className="text-gray-400 hover:text-[#4E50A8] transition-colors" />
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                className="hidden"
-              />
-            </div>
-            
             <Textarea
               ref={textareaRef}
               value={message}
@@ -87,7 +78,24 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
               rows={1}
             />
 
-            <div className="flex items-center pr-2">
+            <div className="flex items-center gap-2 pr-2">
+              {/* Show attachment icon only for endocs/ensights */}
+              {showAttachment && (
+                <button
+                  type="button"
+                  onClick={handleFileClick}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <Paperclip size={18} className="text-gray-500" />
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                </button>
+              )}
+              
               <Button
                 type="submit"
                 disabled={!message.trim() || disabled}
@@ -98,15 +106,19 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
             </div>
           </div>
           
-          {/* Mode selector moved below the input */}
+          {/* Mode selector and file info below the input */}
           <div className="mt-2 pl-4 flex items-center">
             <Select
               value={responseMode}
-              onValueChange={(value) => setResponseMode(value as ResponseMode)}
+              onValueChange={(value) => {
+                setResponseMode(value as ResponseMode);
+                if (value === 'encore') {
+                  setSelectedFile(null); // Clear selected file when switching to encore
+                }
+              }}
             >
               <SelectTrigger className="w-[120px] border border-gray-200 rounded-full px-4 py-2 h-auto bg-white">
-                <SelectValue placeholder="Encore" />
-                <ChevronDown size={14} className="text-gray-500 ml-1" />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="encore">Encore</SelectItem>
