@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Plus, MessageSquare, Settings, User, Menu, X } from 'lucide-react';
+import { Plus, MessageSquare, Settings, User, Menu, PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface SidebarProps {
@@ -51,7 +51,7 @@ const Sidebar = ({
             size="icon"
             className="h-8 w-8"
           >
-            <X size={18} />
+            <PanelLeft size={18} />
           </Button>
         </div>
 
