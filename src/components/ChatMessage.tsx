@@ -273,7 +273,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     <div className="flex mb-8">
       {!message.isUser && (
         <div className="w-9 h-9 rounded-full bg-[#d5d5ec] flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
-          <span className="text-sm font-bold text-[#4E50A8]">e</span>
+          <img src="/lovable-uploads/enplify-logo.png" alt="enplify.ai" className="w-5 h-5" />
         </div>
       )}
       

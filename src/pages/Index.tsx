@@ -52,7 +52,7 @@ const Index = () => {
       />
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col relative">
+      <div className="flex-1 flex flex-col relative bg-[#F1F1F9]">
         {/* User avatar in top-right corner */}
         <div className="absolute top-4 right-4 z-30">
           <Popover>
@@ -92,7 +92,7 @@ const Index = () => {
         </div>
 
         {/* Chat Messages */}
-        <div className={`flex-1 overflow-y-auto ${!hasMessages ? 'flex items-center justify-center' : ''}`}>
+        <div className={`flex-1 overflow-y-auto bg-[#F1F1F9] ${!hasMessages ? 'flex items-center justify-center' : ''}`}>
           {hasMessages ? (
             <div className="max-w-3xl mx-auto px-4 py-8 w-full">
               <div className="space-y-6">
@@ -102,7 +102,7 @@ const Index = () => {
                 {isLoading && (
                   <div className="flex gap-4">
                     <div className="w-9 h-9 rounded-full bg-[#d5d5ec] flex items-center justify-center flex-shrink-0">
-                      <span className="text-sm font-bold text-[#4E50A8]">e</span>
+                      <img src="/lovable-uploads/enplify-logo.png" alt="enplify.ai" className="w-5 h-5" />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
@@ -127,7 +127,7 @@ const Index = () => {
 
         {/* Message Input - Only show at bottom when there are messages */}
         {hasMessages && (
-          <div className="w-full border-t border-gray-100 bg-white py-4">
+          <div className="w-full border-t border-gray-100 bg-[#F1F1F9] py-4">
             <div className="max-w-3xl mx-auto px-4">
               <MessageInput onSendMessage={handleSendMessage} disabled={isLoading} centered={false} />
             </div>
