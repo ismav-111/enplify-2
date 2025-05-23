@@ -288,7 +288,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         </div>
         
         {message.isUser ? (
-          <div className="rounded-xl py-3 px-4 bg-[#F1F1F9] text-gray-800">
+          <div className="rounded-xl py-3 px-4 bg-[#E2E2F3] text-gray-800">
             <p className="text-base">{message.content}</p>
             {renderFileInfo()}
           </div>
