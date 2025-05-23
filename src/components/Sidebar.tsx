@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Plus, MessageSquare, Menu, PanelLeft, Trash, Edit, X } from 'lucide-react';
+import { Plus, Menu, PanelLeft, Trash, Edit, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface SidebarProps {
@@ -75,7 +75,7 @@ const Sidebar = ({
               {conversations.length > 0 && (
                 <Button 
                   variant="ghost" 
-                  size="sm" 
+                  size="icon" 
                   onClick={onClearAll}
                   className="text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-50 p-1"
                   title="Clear all conversations"
@@ -97,7 +97,6 @@ const Sidebar = ({
                   }`}
                 >
                   <div className="flex items-center">
-                    <MessageSquare size={16} className="text-gray-400 mr-2" />
                     <p className="text-sm font-medium text-gray-800 truncate">{conv.title}</p>
                   </div>
                   
