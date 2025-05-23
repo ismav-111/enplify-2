@@ -41,7 +41,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F1F1F9] flex">
+    <div className="min-h-screen bg-white flex">
       {/* Sidebar */}
       <Sidebar
         conversations={conversations}
@@ -52,7 +52,7 @@ const Index = () => {
       />
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col relative bg-[#F1F1F9]">
+      <div className="flex-1 flex flex-col relative bg-white">
         {/* User avatar in top-right corner */}
         <div className="absolute top-4 right-4 z-30">
           <Popover>
@@ -69,7 +69,7 @@ const Index = () => {
               <div className="space-y-4">
                 <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
                   <Avatar className="h-12 w-12">
-                    <AvatarFallback className="bg-[#F1F1F9] text-[#4E50A8]">
+                    <AvatarFallback className="bg-white text-[#4E50A8]">
                       <User size={20} />
                     </AvatarFallback>
                   </Avatar>
@@ -92,7 +92,7 @@ const Index = () => {
         </div>
 
         {/* Chat Messages */}
-        <div className={`flex-1 overflow-y-auto bg-[#F1F1F9] ${!hasMessages ? 'flex items-center justify-center' : ''}`}>
+        <div className={`flex-1 overflow-y-auto bg-white ${!hasMessages ? 'flex items-center justify-center' : ''}`}>
           {hasMessages ? (
             <div className="max-w-3xl mx-auto px-4 py-8 w-full">
               <div className="space-y-6">
@@ -127,7 +127,7 @@ const Index = () => {
 
         {/* Message Input - Only show at bottom when there are messages */}
         {hasMessages && (
-          <div className="w-full border-t border-gray-100 bg-[#F1F1F9] py-4">
+          <div className="w-full border-t border-gray-100 bg-white py-4">
             <div className="max-w-3xl mx-auto px-4">
               <MessageInput onSendMessage={handleSendMessage} disabled={isLoading} centered={false} />
             </div>
