@@ -100,9 +100,9 @@ const Index = () => {
                   <ChatMessage key={message.id} message={message} />
                 ))}
                 {isLoading && (
-                  <div className="flex gap-4 p-6 bg-gray-50/50 max-w-[80%]">
+                  <div className="flex gap-4 p-6 max-w-[80%]">
                     <div className="w-8 h-8 rounded-full bg-[#d5d5ec] flex items-center justify-center">
-                      <span className="text-sm font-bold text-[#4E50A8]">AI</span>
+                      <span className="text-sm font-bold text-[#4E50A8]">e</span>
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">

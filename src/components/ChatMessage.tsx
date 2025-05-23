@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Bot, ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Grid } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Grid } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -47,7 +47,8 @@ interface ChatMessageProps {
 const ChatMessage = ({ message }: ChatMessageProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
-  const [chartType, setChartType] = useState<'line' | 'bar'>('line');
+  const [chartType, setChartType] = useState<'line' | 'bar' | 'pie' | 'grid'>('line');
+  const [tooltipVisible, setTooltipVisible] = useState(false);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(message.content);
@@ -92,6 +93,16 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     );
   };
 
+  const getChartTypeLabel = () => {
+    switch(chartType) {
+      case 'line': return 'Line Chart';
+      case 'bar': return 'Bar Chart';
+      case 'pie': return 'Pie Chart';
+      case 'grid': return 'Grid View';
+      default: return '';
+    }
+  };
+
   const renderChartData = () => {
     if (!message.chartData || message.chartData.length === 0) return null;
     
@@ -106,13 +117,22 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       <div className="mt-4 bg-white p-4 rounded-lg border border-gray-200">
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-md font-medium text-gray-800">Data Visualization</h4>
+            <div className="flex items-center gap-2">
+              <h4 className="text-md font-medium text-gray-800">Data Visualization</h4>
+              {tooltipVisible && (
+                <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
+                  {getChartTypeLabel()}
+                </span>
+              )}
+            </div>
             <div className="flex gap-2">
               <Button 
                 variant={chartType === 'line' ? 'default' : 'outline'}
                 size="icon"
                 className={chartType === 'line' ? "bg-[#4E50A8] hover:bg-[#4042a0] h-8 w-8" : "text-[#4E50A8] border-gray-200 h-8 w-8"}
                 onClick={() => setChartType('line')}
+                onMouseEnter={() => setTooltipVisible(true)}
+                onMouseLeave={() => setTooltipVisible(false)}
               >
                 <LineChart size={16} />
               </Button>
@@ -121,20 +141,28 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                 size="icon"
                 className={chartType === 'bar' ? "bg-[#4E50A8] hover:bg-[#4042a0] h-8 w-8" : "text-[#4E50A8] border-gray-200 h-8 w-8"}
                 onClick={() => setChartType('bar')}
+                onMouseEnter={() => setTooltipVisible(true)}
+                onMouseLeave={() => setTooltipVisible(false)}
               >
                 <BarChart size={16} />
               </Button>
               <Button 
-                variant="outline"
+                variant={chartType === 'pie' ? 'default' : 'outline'}
                 size="icon"
-                className="text-gray-500 border-gray-200 h-8 w-8"
+                className={chartType === 'pie' ? "bg-[#4E50A8] hover:bg-[#4042a0] h-8 w-8" : "text-gray-500 border-gray-200 h-8 w-8"}
+                onClick={() => setChartType('pie')}
+                onMouseEnter={() => setTooltipVisible(true)}
+                onMouseLeave={() => setTooltipVisible(false)}
               >
                 <PieChart size={16} />
               </Button>
               <Button 
-                variant="outline"
+                variant={chartType === 'grid' ? 'default' : 'outline'}
                 size="icon"
-                className="text-gray-500 border-gray-200 h-8 w-8"
+                className={chartType === 'grid' ? "bg-[#4E50A8] hover:bg-[#4042a0] h-8 w-8" : "text-gray-500 border-gray-200 h-8 w-8"}
+                onClick={() => setChartType('grid')}
+                onMouseEnter={() => setTooltipVisible(true)}
+                onMouseLeave={() => setTooltipVisible(false)}
               >
                 <Grid size={16} />
               </Button>
@@ -245,14 +273,14 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     <div className="flex mb-6">
       {!message.isUser && (
         <div className="w-8 h-8 rounded-full bg-[#d5d5ec] flex items-center justify-center flex-shrink-0 mt-1">
-          <Bot size={16} className="text-[#4E50A8]" />
+          <span className="text-sm font-bold text-[#4E50A8]">e</span>
         </div>
       )}
       
       <div className={`flex flex-col ${message.isUser ? 'items-end ml-auto' : 'ml-3'} max-w-[80%]`}>
         <div className="flex items-center gap-2 mb-1">
           <span className="text-sm font-semibold text-gray-700">
-            {message.isUser ? 'You' : message.mode ? message.mode.charAt(0).toUpperCase() + message.mode.slice(1) : 'CHAT A.I+'}
+            {message.isUser ? 'You' : 'CHAT A.I+'}
           </span>
           <span className="text-xs text-gray-500">
             {message.timestamp.toLocaleTimeString()}
@@ -266,7 +294,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           </div>
         ) : (
           <div className="prose prose-sm max-w-none text-gray-700">
-            <div className="rounded-xl py-2 px-4 bg-white border border-[#d5d5ec]">
+            <div>
               {message.content}
             </div>
             {message.mode === 'endocs' && renderTableData()}
