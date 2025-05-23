@@ -35,11 +35,6 @@ const Index = () => {
   const currentConversation = getCurrentConversation();
   const hasMessages = currentConversation && currentConversation.messages.length > 0;
 
-  // Handle message with type and file
-  const handleSendMessage = (message: string, type: string, file?: File) => {
-    sendMessage(message, type, file);
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
@@ -101,17 +96,17 @@ const Index = () => {
                 ))}
                 {isLoading && (
                   <div className="flex gap-4 p-6 bg-gray-50/50 max-w-[80%]">
-                    <div className="w-8 h-8 rounded-full bg-[#d5d5ec] flex items-center justify-center">
-                      <span className="text-sm font-bold text-[#4E50A8]">AI</span>
+                    <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+                      <span className="text-sm font-bold text-gray-700">AI</span>
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-sm font-semibold text-gray-900">CHAT A.I+</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-[#4E50A8] rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-[#4E50A8] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-2 h-2 bg-[#4E50A8] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                       </div>
                     </div>
                   </div>
@@ -120,7 +115,7 @@ const Index = () => {
             </div>
           ) : (
             <div className="max-w-xl w-full px-4">
-              <MessageInput onSendMessage={handleSendMessage} disabled={isLoading} centered={true} />
+              <MessageInput onSendMessage={sendMessage} disabled={isLoading} centered={true} />
             </div>
           )}
         </div>
@@ -128,7 +123,7 @@ const Index = () => {
         {/* Message Input - Only show at bottom when there are messages */}
         {hasMessages && (
           <div className="w-full">
-            <MessageInput onSendMessage={handleSendMessage} disabled={isLoading} centered={false} />
+            <MessageInput onSendMessage={sendMessage} disabled={isLoading} centered={false} />
           </div>
         )}
       </div>
