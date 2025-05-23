@@ -1,6 +1,6 @@
 
 import { useState, useRef, useEffect } from 'react';
-import { ArrowUp, Mic } from 'lucide-react';
+import { ArrowUp, Mic, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -31,11 +31,10 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
     }
   };
   
-  // Handle click anywhere in the container to focus and select text
+  // Focus the textarea when clicking anywhere in the container
   const handleContainerClick = () => {
     if (textareaRef.current) {
       textareaRef.current.focus();
-      textareaRef.current.select();
     }
   };
 
@@ -49,13 +48,17 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
         >
           <div 
             ref={inputContainerRef}
-            className="flex items-center w-full rounded-full border border-gray-200 shadow-sm cursor-text"
+            className="flex items-center w-full rounded-full border border-gray-200 bg-white shadow-sm cursor-text"
             onClick={handleContainerClick}
           >
-            <div className="ml-2 p-4">
-              <Mic size={24} className="text-gray-400" />
+            {/* Mic icon button */}
+            <div className="flex-shrink-0 p-3">
+              <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
+                <Mic size={20} className="text-gray-500" />
+              </div>
             </div>
             
+            {/* Input field */}
             <Textarea
               ref={textareaRef}
               value={message}
@@ -63,29 +66,37 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
               onKeyDown={handleKeyDown}
               placeholder="What do you want to know?"
               disabled={disabled}
-              className="min-h-[64px] max-h-40 resize-none border-none focus:border-none focus:ring-0 rounded-full py-4 flex-1"
+              className="min-h-[64px] max-h-40 resize-none border-none focus:border-none focus:ring-0 focus:outline-none py-4 flex-1 bg-transparent"
               rows={1}
             />
 
-            <div className="flex items-center gap-2 pr-2">
+            <div className="flex items-center gap-2 pr-4">
+              {/* Endocs dropdown */}
               <div 
-                className="flex items-center border border-gray-200 rounded-full px-4 py-2"
+                className="flex items-center gap-2 rounded-full bg-gray-50 px-4 py-2 cursor-pointer"
                 onClick={(e) => e.stopPropagation()}
               >
-                <span className="text-sm text-gray-600 mr-1">Endocs</span>
+                <Eye size={18} className="text-gray-600" />
+                <span className="text-sm text-gray-600">Endocs</span>
                 <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M5 7.5L10 12.5L15 7.5" stroke="#718096" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
               
-              <Button
-                type="submit"
-                disabled={!message.trim() || disabled}
-                className="rounded-full bg-gray-100 hover:bg-gray-200 p-3 h-auto"
-                onClick={(e) => e.stopPropagation()}
+              {/* Send button */}
+              <div 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (message.trim() && !disabled) {
+                    formRef.current?.dispatchEvent(
+                      new Event('submit', { cancelable: true, bubbles: true })
+                    );
+                  }
+                }}
+                className={`w-10 h-10 rounded-full flex items-center justify-center ${message.trim() && !disabled ? 'bg-gray-50 cursor-pointer' : 'bg-gray-50 opacity-50 cursor-not-allowed'}`}
               >
-                <ArrowUp size={24} className="text-gray-500" />
-              </Button>
+                <ArrowUp size={20} className="text-gray-500" />
+              </div>
             </div>
           </div>
         </form>
