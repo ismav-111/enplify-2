@@ -2,6 +2,12 @@
 import { useState } from 'react';
 import { Plus, MessageSquare, Settings, User, Menu, PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { 
+  Popover, 
+  PopoverContent, 
+  PopoverTrigger 
+} from '@/components/ui/popover';
 
 interface SidebarProps {
   conversations: Array<{ id: string; title: string; preview: string }>;
@@ -40,19 +46,55 @@ const Sidebar = ({
       <div 
         className={`${isOpen ? 'w-80' : 'w-0 overflow-hidden'} bg-white border-r border-gray-200 flex flex-col h-full transition-all duration-300 ease-in-out`}
       >
-        {/* Header with close button */}
+        {/* Header with close button and user avatar */}
         <div className="p-6 border-b border-gray-100 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-800">
             CHAT A.I+
           </h1>
-          <Button 
-            onClick={() => setIsOpen(false)}
-            variant="ghost" 
-            size="icon"
-            className="h-8 w-8"
-          >
-            <PanelLeft size={18} />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-gray-200">
+                      <User size={16} className="text-gray-700" />
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-3" align="end">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
+                    <Avatar className="h-9 w-9">
+                      <AvatarFallback className="bg-gray-200">
+                        <User size={16} className="text-gray-700" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-sm font-medium">Andrew Neilson</p>
+                      <p className="text-xs text-gray-500">andrew@example.com</p>
+                    </div>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    className="w-full justify-start text-gray-700"
+                  >
+                    <Settings size={15} className="mr-2" />
+                    Settings
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+            <Button 
+              onClick={() => setIsOpen(false)}
+              variant="ghost" 
+              size="icon"
+              className="h-8 w-8"
+            >
+              <PanelLeft size={18} />
+            </Button>
+          </div>
         </div>
 
         {/* New Chat Button */}
@@ -100,21 +142,6 @@ const Sidebar = ({
                 </button>
               ))}
             </div>
-          </div>
-        </div>
-
-        {/* User Section */}
-        <div className="p-4 border-t border-gray-100">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-              <User size={18} className="text-gray-700" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">Andrew Neilson</p>
-            </div>
-            <Button variant="ghost" size="sm">
-              <Settings size={16} />
-            </Button>
           </div>
         </div>
       </div>
