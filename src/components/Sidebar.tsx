@@ -9,6 +9,8 @@ interface SidebarProps {
   onNewChat: () => void;
   onSelectConversation: (id: string) => void;
   onClearAll: () => void;
+  onRenameConversation?: (id: string, newTitle: string) => void;
+  onDeleteConversation?: (id: string) => void;
 }
 
 const Sidebar = ({ 
@@ -16,10 +18,33 @@ const Sidebar = ({
   activeConversation, 
   onNewChat, 
   onSelectConversation, 
-  onClearAll 
+  onClearAll,
+  onRenameConversation,
+  onDeleteConversation
 }: SidebarProps) => {
   const [isOpen, setIsOpen] = useState(true);
   const [hoveredConversation, setHoveredConversation] = useState<string | null>(null);
+
+  // Handle the edit/delete button clicks
+  const handleRenameClick = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    // If rename callback is provided, call it with a prompt for new title
+    if (onRenameConversation) {
+      const conversation = conversations.find(conv => conv.id === id);
+      const newTitle = window.prompt('Enter new title:', conversation?.title);
+      if (newTitle && newTitle.trim()) {
+        onRenameConversation(id, newTitle.trim());
+      }
+    }
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    // If delete callback is provided, call it with confirmation
+    if (onDeleteConversation && window.confirm('Are you sure you want to delete this conversation?')) {
+      onDeleteConversation(id);
+    }
+  };
 
   return (
     <>
@@ -106,10 +131,7 @@ const Sidebar = ({
                         variant="ghost" 
                         size="icon" 
                         className="h-6 w-6 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // Rename functionality would be added here
-                        }}
+                        onClick={(e) => handleRenameClick(e, conv.id)}
                         title="Rename conversation"
                       >
                         <Edit size={14} />
@@ -118,10 +140,7 @@ const Sidebar = ({
                         variant="ghost" 
                         size="icon" 
                         className="h-6 w-6 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // Delete functionality would be added here
-                        }}
+                        onClick={(e) => handleDeleteClick(e, conv.id)}
                         title="Remove conversation"
                       >
                         <X size={14} />

@@ -104,16 +104,26 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
   const [currentMode, setCurrentMode] = useState<ResponseMode>('encore');
 
   const createNewChat = useCallback((mode: ResponseMode = 'encore') => {
+    // Ensure mode is a string and has the proper type
+    const safeMode: ResponseMode = typeof mode === 'string' ? 
+      (mode as ResponseMode) : 'encore';
+      
+    // Create mode-specific title with proper capitalization
+    let modeName = '';
+    if (safeMode === 'encore') modeName = 'Encore';
+    else if (safeMode === 'endocs') modeName = 'Endocs';
+    else if (safeMode === 'ensights') modeName = 'Ensights';
+    
     const newConversation: Conversation = {
       id: Date.now().toString(),
-      title: `New ${mode.charAt(0).toUpperCase() + mode.slice(1)} Conversation`,
+      title: `New ${modeName} Conversation`,
       preview: 'Start a new conversation...',
-      mode: mode,
+      mode: safeMode,
       messages: []
     };
     setConversations(prev => [newConversation, ...prev]);
     setActiveConversation(newConversation.id);
-    setCurrentMode(mode);
+    setCurrentMode(safeMode);
     return newConversation.id;
   }, []);
 
@@ -152,13 +162,17 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
   };
 
   const sendMessage = useCallback(async (content: string, mode: ResponseMode = 'encore', file?: File) => {
+    // Ensure mode is a valid enum value
+    const safeMode: ResponseMode = 
+      mode === 'encore' || mode === 'endocs' || mode === 'ensights' ? mode : 'encore';
+    
     // Check if we need to create a new conversation due to mode change
     const currentConversation = conversations.find(conv => conv.id === activeConversation);
     let activeConvId = activeConversation;
     
     // Create a new conversation if the mode has changed or if there's no active conversation
-    if (!currentConversation || currentConversation.mode !== mode) {
-      activeConvId = createNewChat(mode);
+    if (!currentConversation || currentConversation.mode !== safeMode) {
+      activeConvId = createNewChat(safeMode);
     }
 
     const userMessage: Message = {
@@ -166,7 +180,7 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
       content,
       isUser: true,
       timestamp: new Date(),
-      mode,
+      mode: safeMode,
       file: file ? {
         name: file.name,
         type: file.type,
@@ -187,13 +201,13 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
     ));
 
     setIsLoading(true);
-    setCurrentMode(mode);
+    setCurrentMode(safeMode);
 
     // Simulate AI response based on mode
     setTimeout(() => {
       let aiMessage: Message;
       
-      switch(mode) {
+      switch(safeMode) {
         case 'endocs':
           aiMessage = {
             id: (Date.now() + 1).toString(),
