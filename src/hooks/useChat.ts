@@ -6,6 +6,14 @@ interface Message {
   content: string;
   isUser: boolean;
   timestamp: Date;
+  mode?: 'encore' | 'endocs' | 'ensights';
+  tableData?: any[];
+  chartData?: any[];
+  file?: {
+    name: string;
+    type: string;
+    size: number;
+  };
 }
 
 interface Conversation {
@@ -14,6 +22,8 @@ interface Conversation {
   preview: string;
   messages: Message[];
 }
+
+export type ResponseMode = 'encore' | 'endocs' | 'ensights';
 
 export const useChat = () => {
   const [conversations, setConversations] = useState<Conversation[]>([
@@ -94,12 +104,38 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
     setActiveConversation(newConversation.id);
   }, []);
 
-  const sendMessage = useCallback(async (content: string) => {
+  const generateTableData = () => {
+    // Generate sample table data
+    return [
+      { id: 1, title: 'Document A', content: 'Information about document A', relevance: '95%' },
+      { id: 2, title: 'Document B', content: 'Information about document B', relevance: '85%' },
+      { id: 3, title: 'Document C', content: 'Information about document C', relevance: '75%' },
+    ];
+  };
+
+  const generateChartData = () => {
+    // Generate sample chart data
+    return [
+      { name: 'Jan', value: 400 },
+      { name: 'Feb', value: 300 },
+      { name: 'Mar', value: 600 },
+      { name: 'Apr', value: 800 },
+      { name: 'May', value: 500 },
+    ];
+  };
+
+  const sendMessage = useCallback(async (content: string, mode: ResponseMode = 'encore', file?: File) => {
     const userMessage: Message = {
       id: Date.now().toString(),
       content,
       isUser: true,
-      timestamp: new Date()
+      timestamp: new Date(),
+      mode,
+      file: file ? {
+        name: file.name,
+        type: file.type,
+        size: file.size
+      } : undefined
     };
 
     // Add user message
@@ -116,14 +152,42 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
 
     setIsLoading(true);
 
-    // Simulate AI response
+    // Simulate AI response based on mode
     setTimeout(() => {
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: `I understand you're asking about: "${content}". This is a simulated response from the AI assistant. In a real implementation, this would connect to an actual AI service like OpenAI's GPT API to generate meaningful responses.`,
-        isUser: false,
-        timestamp: new Date()
-      };
+      let aiMessage: Message;
+      
+      switch(mode) {
+        case 'endocs':
+          aiMessage = {
+            id: (Date.now() + 1).toString(),
+            content: `Here's the information you requested from Endocs about "${content}":`,
+            isUser: false,
+            timestamp: new Date(),
+            mode: 'endocs',
+            tableData: generateTableData()
+          };
+          break;
+          
+        case 'ensights':
+          aiMessage = {
+            id: (Date.now() + 1).toString(),
+            content: `Here are the insights you requested about "${content}":`,
+            isUser: false,
+            timestamp: new Date(),
+            mode: 'ensights',
+            chartData: generateChartData()
+          };
+          break;
+          
+        default: // encore
+          aiMessage = {
+            id: (Date.now() + 1).toString(),
+            content: `I understand you're asking about: "${content}". This is a response from Encore. In a real implementation, this would connect to an actual AI service to generate meaningful responses.`,
+            isUser: false,
+            timestamp: new Date(),
+            mode: 'encore'
+          };
+      }
 
       setConversations(prev => prev.map(conv => 
         conv.id === activeConversation 
