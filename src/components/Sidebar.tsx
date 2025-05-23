@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Plus, MessageSquare, Menu, PanelLeft, Trash } from 'lucide-react';
+import { Plus, MessageSquare, Menu, PanelLeft, Trash, Edit, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface SidebarProps {
@@ -19,6 +19,7 @@ const Sidebar = ({
   onClearAll 
 }: SidebarProps) => {
   const [isOpen, setIsOpen] = useState(true);
+  const [hoveredConversation, setHoveredConversation] = useState<string | null>(null);
 
   return (
     <>
@@ -76,10 +77,10 @@ const Sidebar = ({
                   variant="ghost" 
                   size="sm" 
                   onClick={onClearAll}
-                  className="text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-50 px-2 py-1"
+                  className="text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-50 p-1"
+                  title="Clear all conversations"
                 >
-                  <Trash size={14} className="mr-1" />
-                  Clear
+                  <Trash size={16} />
                 </Button>
               )}
             </div>
@@ -89,7 +90,9 @@ const Sidebar = ({
                 <button
                   key={conv.id}
                   onClick={() => onSelectConversation(conv.id)}
-                  className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 hover:bg-gray-50 ${
+                  onMouseEnter={() => setHoveredConversation(conv.id)}
+                  onMouseLeave={() => setHoveredConversation(null)}
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 hover:bg-gray-50 relative ${
                     activeConversation === conv.id ? 'bg-[#F1F1F9] border-l-4 border-[#4E50A8]' : ''
                   }`}
                 >
@@ -97,6 +100,35 @@ const Sidebar = ({
                     <MessageSquare size={16} className="text-gray-400 mr-2" />
                     <p className="text-sm font-medium text-gray-800 truncate">{conv.title}</p>
                   </div>
+                  
+                  {hoveredConversation === conv.id && (
+                    <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-1">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-6 w-6 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Rename functionality would be added here
+                        }}
+                        title="Rename conversation"
+                      >
+                        <Edit size={14} />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-6 w-6 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Delete functionality would be added here
+                        }}
+                        title="Remove conversation"
+                      >
+                        <X size={14} />
+                      </Button>
+                    </div>
+                  )}
                 </button>
               ))}
             </div>

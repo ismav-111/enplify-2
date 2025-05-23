@@ -1,4 +1,3 @@
-
 import { useChat } from '@/hooks/useChat';
 import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
@@ -338,11 +337,8 @@ const Index = () => {
             </div>
           ) : (
             <div className="max-w-xl w-full px-4 flex flex-col items-center">
-              {/* Welcome message */}
+              {/* Welcome message without e icon */}
               <div className="text-center mb-10">
-                <div className="w-16 h-16 rounded-full bg-[#d5d5ec] flex items-center justify-center mx-auto mb-4">
-                  <span className="text-[#4E50A8] font-bold text-xl font-comfortaa">e</span>
-                </div>
                 <h1 className="text-3xl font-bold text-gray-800 mb-2 font-comfortaa">Welcome to enplify.ai</h1>
                 <p className="text-gray-600 max-w-md mx-auto mb-6">
                   Your intelligent AI assistant. Ask me anything and I'll provide 
