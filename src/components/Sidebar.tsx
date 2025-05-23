@@ -93,7 +93,7 @@ const Sidebar = ({
                   onMouseEnter={() => setHoveredConversation(conv.id)}
                   onMouseLeave={() => setHoveredConversation(null)}
                   className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 hover:bg-gray-50 relative ${
-                    activeConversation === conv.id ? 'bg-[#F1F1F9] border-l-4 border-[#4E50A8]' : ''
+                    activeConversation === conv.id ? 'bg-[#F1F1F9]' : ''
                   }`}
                 >
                   <div className="flex items-center">
