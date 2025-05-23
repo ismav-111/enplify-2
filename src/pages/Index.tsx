@@ -3,8 +3,8 @@ import { useChat } from '@/hooks/useChat';
 import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
 import MessageInput from '@/components/MessageInput';
-import { useEffect } from 'react';
-import { Settings, User } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Files, Settings, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
@@ -13,7 +13,23 @@ import {
   PopoverTrigger 
 } from '@/components/ui/popover';
 import { Link } from 'react-router-dom';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog';
 import type { ResponseMode } from '@/components/MessageInput';
+
+interface FileItem {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  date: Date;
+}
 
 const Index = () => {
   const {
@@ -26,6 +42,22 @@ const Index = () => {
     getCurrentConversation,
     isLoading
   } = useChat();
+
+  // Sample uploaded files data (in a real app, this would come from a backend)
+  const [uploadedFiles, setUploadedFiles] = useState<FileItem[]>([
+    { id: '1', name: 'report.pdf', type: 'application/pdf', size: 2500000, date: new Date(2023, 4, 15) },
+    { id: '2', name: 'data.xlsx', type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size: 1800000, date: new Date(2023, 4, 10) },
+    { id: '3', name: 'image.jpg', type: 'image/jpeg', size: 850000, date: new Date(2023, 4, 5) },
+    { id: '4', name: 'presentation.pptx', type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', size: 3200000, date: new Date(2023, 4, 1) },
+    { id: '5', name: 'notes.txt', type: 'text/plain', size: 25000, date: new Date(2023, 3, 28) },
+    { id: '6', name: 'contract.pdf', type: 'application/pdf', size: 1200000, date: new Date(2023, 3, 25) },
+    { id: '7', name: 'screenshot.png', type: 'image/png', size: 950000, date: new Date(2023, 3, 20) },
+    { id: '8', name: 'requirements.docx', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', size: 780000, date: new Date(2023, 3, 15) },
+    { id: '9', name: 'budget.xlsx', type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size: 920000, date: new Date(2023, 3, 10) },
+    { id: '10', name: 'logo.svg', type: 'image/svg+xml', size: 150000, date: new Date(2023, 3, 5) },
+    { id: '11', name: 'video.mp4', type: 'video/mp4', size: 8500000, date: new Date(2023, 3, 1) },
+    { id: '12', name: 'audio.mp3', type: 'audio/mpeg', size: 4200000, date: new Date(2023, 2, 25) }
+  ]);
 
   // Create a new chat automatically when there are no conversations
   useEffect(() => {
@@ -41,6 +73,14 @@ const Index = () => {
     sendMessage(message, mode, file);
   };
 
+  // Format file size
+  const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return bytes + ' B';
+    else if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    else if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    else return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
+  };
+
   return (
     <div className="min-h-screen bg-white flex">
       {/* Sidebar */}
@@ -54,8 +94,75 @@ const Index = () => {
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col relative bg-white">
-        {/* User avatar in top-right corner */}
-        <div className="absolute top-4 right-4 z-30">
+        {/* Top Bar with Files and User Icons */}
+        <div className="absolute top-4 right-4 z-30 flex gap-2">
+          {/* Files Icon with Popover */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow">
+                <Files size={18} />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-0" align="end">
+              <div className="p-4 border-b border-gray-100">
+                <h3 className="text-sm font-medium">Your Uploaded Files</h3>
+                <p className="text-xs text-gray-500 mt-1">Recent files you've shared in conversations</p>
+              </div>
+              
+              <ScrollArea className="h-64">
+                <div className="p-2">
+                  {uploadedFiles.slice(0, 10).map((file) => (
+                    <div key={file.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-md">
+                      <div className="w-8 h-8 bg-[#F1F1F9] rounded-md flex items-center justify-center flex-shrink-0">
+                        <span className="text-[#4E50A8] text-xs">{file.type.split('/')[1]?.toUpperCase().slice(0, 3) || 'FILE'}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-800 truncate">{file.name}</p>
+                        <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+              
+              {uploadedFiles.length > 10 && (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <div className="p-3 border-t border-gray-100">
+                      <Button variant="ghost" size="sm" className="w-full justify-center text-[#4E50A8]">
+                        View All Files
+                      </Button>
+                    </div>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[700px] max-h-[80vh] flex flex-col">
+                    <DialogHeader>
+                      <DialogTitle>All Uploaded Files</DialogTitle>
+                    </DialogHeader>
+                    <ScrollArea className="flex-1 pr-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-1">
+                        {uploadedFiles.map((file) => (
+                          <div key={file.id} className="flex items-center gap-3 p-3 border border-gray-100 rounded-md hover:bg-gray-50">
+                            <div className="w-10 h-10 bg-[#F1F1F9] rounded-md flex items-center justify-center flex-shrink-0">
+                              <span className="text-[#4E50A8] text-xs">{file.type.split('/')[1]?.toUpperCase().slice(0, 3) || 'FILE'}</span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-gray-800 truncate">{file.name}</p>
+                              <div className="flex justify-between items-center">
+                                <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
+                                <p className="text-xs text-gray-400">{file.date.toLocaleDateString()}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  </DialogContent>
+                </Dialog>
+              )}
+            </PopoverContent>
+          </Popover>
+          
+          {/* User avatar */}
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow">
