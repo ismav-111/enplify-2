@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Grid, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,6 @@ import {
 } from "@/components/ui/table";
 import {
   ChartContainer,
-  ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import {
@@ -265,45 +263,43 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                 config={chartConfig}
                 className="h-full w-full"
               >
-                <ResponsiveContainer width="100%" height="100%">
-                  <RechartsLineChart 
-                    data={message.chartData}
-                    margin={{ top: 20, right: 30, left: 60, bottom: 40 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis 
-                      dataKey="name" 
-                      stroke="#888" 
-                      tickMargin={10}
-                    />
-                    <YAxis
-                      stroke="#888"
-                      tickFormatter={(value) => `$${value}`}
-                      tickMargin={10}
-                    />
-                    <Tooltip 
-                      content={({ active, payload }) => {
-                        if (active && payload && payload.length) {
-                          return (
-                            <div className="bg-white p-2 border border-gray-200 rounded shadow-sm">
-                              <p className="text-sm">{`${payload[0].payload.name}: $${payload[0].value}`}</p>
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
-                    <Line 
-                      type="monotone"
-                      dataKey="value" 
-                      stroke="#4E50A8" 
-                      strokeWidth={2}
-                      dot={{ fill: "#4E50A8", r: 4 }}
-                      activeDot={{ r: 6, fill: "#4E50A8" }}
-                      name="sales"
-                    />
-                  </RechartsLineChart>
-                </ResponsiveContainer>
+                <RechartsLineChart 
+                  data={message.chartData}
+                  margin={{ top: 20, right: 30, left: 60, bottom: 40 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis 
+                    dataKey="name" 
+                    stroke="#888" 
+                    tickMargin={10}
+                  />
+                  <YAxis
+                    stroke="#888"
+                    tickFormatter={(value) => `$${value}`}
+                    tickMargin={10}
+                  />
+                  <Tooltip 
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="bg-white p-2 border border-gray-200 rounded shadow-sm">
+                            <p className="text-sm">{`${payload[0].payload.name}: $${payload[0].value}`}</p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Line 
+                    type="monotone"
+                    dataKey="value" 
+                    stroke="#4E50A8" 
+                    strokeWidth={2}
+                    dot={{ fill: "#4E50A8", r: 4 }}
+                    activeDot={{ r: 6, fill: "#4E50A8" }}
+                    name="sales"
+                  />
+                </RechartsLineChart>
               </ChartContainer>
             )}
             
@@ -312,98 +308,98 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                 config={chartConfig}
                 className="h-full w-full"
               >
-                <ResponsiveContainer width="100%" height="100%">
-                  <RechartsBarChart
-                    data={message.chartData}
-                    margin={{ top: 20, right: 30, left: 60, bottom: 40 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis 
-                      dataKey="name" 
-                      stroke="#888" 
-                      tickMargin={10}
-                    />
-                    <YAxis
-                      stroke="#888"
-                      tickFormatter={(value) => `$${value}`}
-                      tickMargin={10}
-                    />
-                    <Tooltip 
-                      content={({ active, payload }) => {
-                        if (active && payload && payload.length) {
-                          return (
-                            <div className="bg-white p-2 border border-gray-200 rounded shadow-sm">
-                              <p className="text-sm">{`${payload[0].payload.name}: $${payload[0].value}`}</p>
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
-                    <Bar 
-                      dataKey="value" 
-                      fill="#4E50A8"
-                      name="sales"
-                    />
-                  </RechartsBarChart>
-                </ResponsiveContainer>
+                <RechartsBarChart
+                  data={message.chartData}
+                  margin={{ top: 20, right: 30, left: 60, bottom: 40 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis 
+                    dataKey="name" 
+                    stroke="#888" 
+                    tickMargin={10}
+                  />
+                  <YAxis
+                    stroke="#888"
+                    tickFormatter={(value) => `$${value}`}
+                    tickMargin={10}
+                  />
+                  <Tooltip 
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="bg-white p-2 border border-gray-200 rounded shadow-sm">
+                            <p className="text-sm">{`${payload[0].payload.name}: $${payload[0].value}`}</p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Bar 
+                    dataKey="value" 
+                    fill="#4E50A8"
+                    name="sales"
+                  />
+                </RechartsBarChart>
               </ChartContainer>
             )}
             
             {chartType === 'pie' && (
-              <ChartContainer 
-                config={chartConfig}
-                className="h-full w-full"
-              >
-                <ResponsiveContainer width="100%" height="100%">
-                  <RechartsPieChart
-                    margin={{ top: 20, right: 30, left: 30, bottom: 40 }}
+              <div className="h-full w-full flex items-center justify-center">
+                <RechartsPieChart
+                  width={300}
+                  height={250}
+                  margin={{ top: 20, right: 30, left: 30, bottom: 20 }}
+                >
+                  <Pie
+                    data={message.chartData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={90}
+                    label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    labelLine={false}
                   >
-                    <Pie
-                      data={message.chartData}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={100}
-                      fill="#4E50A8"
-                      label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                    >
-                      {message.chartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip 
-                      content={({ active, payload }) => {
-                        if (active && payload && payload.length) {
-                          return (
-                            <div className="bg-white p-2 border border-gray-200 rounded shadow-sm">
-                              <p className="text-sm">{`${payload[0].name}: $${payload[0].value}`}</p>
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
-                    <Legend />
-                  </RechartsPieChart>
-                </ResponsiveContainer>
-              </ChartContainer>
+                    {message.chartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="bg-white p-2 border border-gray-200 rounded shadow-sm">
+                            <p className="text-sm">{`${payload[0].name}: $${payload[0].value}`}</p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Legend 
+                    layout="horizontal" 
+                    verticalAlign="bottom" 
+                    align="center"
+                    wrapperStyle={{ paddingTop: '10px' }}
+                  />
+                </RechartsPieChart>
+              </div>
             )}
             
             {chartType === 'grid' && (
-              <div className="overflow-auto h-full">
+              <div className="overflow-auto h-full bg-white rounded-lg border border-gray-200 p-2">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="text-[#4E50A8]">Date</TableHead>
-                      <TableHead className="text-[#4E50A8]">Value</TableHead>
+                      <TableHead className="text-[#4E50A8] bg-gray-50 sticky top-0">Date</TableHead>
+                      <TableHead className="text-[#4E50A8] bg-gray-50 sticky top-0">Value</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {message.chartData.map((row, i) => (
-                      <TableRow key={i}>
-                        <TableCell>{row.name}</TableCell>
+                      <TableRow key={i} className="hover:bg-gray-50">
+                        <TableCell className="font-medium">{row.name}</TableCell>
                         <TableCell>${row.value}</TableCell>
                       </TableRow>
                     ))}
