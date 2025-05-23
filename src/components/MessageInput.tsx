@@ -91,13 +91,14 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
             
             {/* Bottom toolbar with mode selector and attachment */}
             <div className="flex items-center px-4 py-2 border-t border-gray-100">
-              {showAttachment && (
+              <div className="flex items-center flex-1">
+                {/* Attachment button */}
                 <button
                   type="button"
                   onClick={handleFileClick}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors mr-2"
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors mr-1"
                 >
-                  <Paperclip size={16} className="text-gray-500" />
+                  <Paperclip size={14} className="text-gray-500" />
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -105,29 +106,33 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
                     className="hidden"
                   />
                 </button>
-              )}
-              
-              <Select
-                value={responseMode}
-                onValueChange={(value) => {
-                  setResponseMode(value as ResponseMode);
-                  if (value === 'encore') {
-                    setSelectedFile(null);
-                  }
-                }}
-              >
-                <SelectTrigger className="border-none shadow-none bg-transparent focus:ring-0 p-2 h-auto">
-                  <div className="flex items-center gap-2">
-                    {responseMode === 'endocs' && <Paperclip size={16} className="text-gray-500" />}
-                    <SelectValue />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="encore">Encore</SelectItem>
-                  <SelectItem value="endocs">Endocs</SelectItem>
-                  <SelectItem value="ensights">Ensights</SelectItem>
-                </SelectContent>
-              </Select>
+                
+                {/* Mode selector - styled as a button with dropdown */}
+                <div className="relative inline-flex items-center">
+                  <Select
+                    value={responseMode}
+                    onValueChange={(value) => {
+                      setResponseMode(value as ResponseMode);
+                      if (value === 'encore') {
+                        setSelectedFile(null);
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="border border-gray-200 rounded-full px-4 py-1 h-auto text-sm bg-white">
+                      <div className="flex items-center gap-2">
+                        {responseMode === 'endocs' && <span className="text-sm">Endocs</span>}
+                        {responseMode === 'ensights' && <span className="text-sm">Ensights</span>}
+                        {responseMode === 'encore' && <span className="text-sm">Encore</span>}
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent align="start">
+                      <SelectItem value="encore">Encore</SelectItem>
+                      <SelectItem value="endocs">Endocs</SelectItem>
+                      <SelectItem value="ensights">Ensights</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
               
               {/* Show selected file name if any */}
               {selectedFile && (
