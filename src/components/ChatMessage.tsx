@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { User, Bot, ThumbsUp, ThumbsDown, Copy, RotateCcw } from 'lucide-react';
+import { Bot, ThumbsUp, ThumbsDown, Copy, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ChatMessageProps {
@@ -33,18 +33,12 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   return (
     <div className={`flex ${message.isUser ? 'justify-end' : 'justify-start'} mb-4`}>
       <div className={`flex max-w-[80%] ${message.isUser ? 'flex-row-reverse' : 'flex-row'} gap-3`}>
-        {/* Avatar */}
-        <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-          message.isUser 
-            ? 'bg-gray-200' 
-            : 'bg-gray-300'
-        }`}>
-          {message.isUser ? (
-            <User size={16} className="text-gray-700" />
-          ) : (
+        {/* Avatar - only for AI */}
+        {!message.isUser && (
+          <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center flex-shrink-0">
             <Bot size={16} className="text-gray-700" />
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Message Content */}
         <div className="flex flex-col">
@@ -57,15 +51,15 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             </span>
           </div>
           
-          <div 
-            className={`prose prose-sm max-w-none rounded-2xl p-4 ${
-              message.isUser 
-                ? 'bg-[#F1F1F9] text-gray-800' 
-                : 'bg-gray-100 text-gray-700'
-            }`}
-          >
-            {message.content}
-          </div>
+          {message.isUser ? (
+            <div className="prose prose-sm max-w-none rounded-2xl p-4 bg-[#F1F1F9] text-gray-800 ml-auto">
+              {message.content}
+            </div>
+          ) : (
+            <div className="prose prose-sm max-w-none text-gray-700">
+              {message.content}
+            </div>
+          )}
 
           {/* Action Buttons - Only for AI messages */}
           {!message.isUser && (
