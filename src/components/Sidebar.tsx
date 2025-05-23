@@ -86,7 +86,7 @@ const Sidebar = ({
                 <button
                   key={conv.id}
                   onClick={() => onSelectConversation(conv.id)}
-                  className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 hover:bg-gray-50 group ${
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 hover:bg-gray-50 ${
                     activeConversation === conv.id ? 'bg-[#F1F1F9] border-l-4 border-[#4E50A8]' : ''
                   }`}
                 >
@@ -95,9 +95,13 @@ const Sidebar = ({
                       <MessageSquare size={16} className="text-gray-400" />
                       <p className="text-sm font-medium text-gray-800 truncate">{conv.title}</p>
                     </div>
-                    <div className="opacity-0 group-hover:opacity-100 flex gap-1">
-                      <Edit size={14} className="text-gray-400 hover:text-gray-600 cursor-pointer" />
-                      <Trash size={14} className="text-gray-400 hover:text-gray-600 cursor-pointer" />
+                    <div className="flex gap-1">
+                      <button className="p-1 rounded-md hover:bg-gray-100">
+                        <Edit size={14} className="text-gray-400 hover:text-gray-600" />
+                      </button>
+                      <button className="p-1 rounded-md hover:bg-gray-100">
+                        <Trash size={14} className="text-gray-400 hover:text-gray-600" />
+                      </button>
                     </div>
                   </div>
                 </button>

@@ -12,6 +12,7 @@ import {
   PopoverContent, 
   PopoverTrigger 
 } from '@/components/ui/popover';
+import { Link } from 'react-router-dom';
 import type { ResponseMode } from '@/components/MessageInput';
 
 const Index = () => {
@@ -78,14 +79,16 @@ const Index = () => {
                     <p className="text-xs text-gray-500">andrew@example.com</p>
                   </div>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  className="w-full justify-start text-gray-700 hover:bg-gray-100"
-                >
-                  <Settings size={16} className="mr-2" />
-                  Settings
-                </Button>
+                <Link to="/settings" className="block w-full">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    className="w-full justify-start text-gray-700 hover:bg-gray-100"
+                  >
+                    <Settings size={16} className="mr-2" />
+                    Settings
+                  </Button>
+                </Link>
               </div>
             </PopoverContent>
           </Popover>
