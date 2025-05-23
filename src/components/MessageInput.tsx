@@ -1,6 +1,6 @@
 
-import { useState, useRef, useEffect } from 'react';
-import { ArrowUp, Mic, Paperclip, ChevronDown } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { ArrowUp, Paperclip, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -60,18 +60,20 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
     fileInputRef.current?.click();
   };
 
-  const handleMicClick = () => {
-    // Future functionality for voice input
-    console.log('Microphone clicked');
-  };
-
   return (
     <div className={`${centered ? '' : ''} p-4`}>
       <div className="max-w-3xl mx-auto">
         <form ref={formRef} onSubmit={handleSubmit} className="relative" onClick={handleFormClick}>
           <div className="flex items-center w-full rounded-full border border-gray-200 shadow-sm bg-white">
-            <div className="flex-shrink-0 ml-2 p-3 cursor-pointer" onClick={handleMicClick}>
-              <Mic size={24} className="text-gray-400 hover:text-[#4E50A8] transition-colors" />
+            {/* File attachment icon */}
+            <div className="flex-shrink-0 ml-2 p-3 cursor-pointer" onClick={handleFileClick}>
+              <Paperclip size={24} className="text-gray-400 hover:text-[#4E50A8] transition-colors" />
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                className="hidden"
+              />
             </div>
             
             <Textarea
@@ -85,44 +87,7 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
               rows={1}
             />
 
-            <div className="flex items-center gap-2 pr-2">
-              <Select
-                value={responseMode}
-                onValueChange={(value) => setResponseMode(value as ResponseMode)}
-              >
-                <SelectTrigger className="w-[120px] border border-gray-200 rounded-full px-4 py-2 h-auto bg-white">
-                  <div className="flex items-center">
-                    <span className="text-sm text-gray-600 mr-1 capitalize">{responseMode}</span>
-                    <ChevronDown size={14} className="text-gray-500" />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="encore">Encore</SelectItem>
-                  <SelectItem value="endocs">Endocs</SelectItem>
-                  <SelectItem value="ensights">Ensights</SelectItem>
-                </SelectContent>
-              </Select>
-
-              {/* File input for Endocs and Ensights */}
-              {(responseMode === 'endocs' || responseMode === 'ensights') && (
-                <>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={handleFileClick}
-                    className="p-2 rounded-full hover:bg-gray-100"
-                  >
-                    <Paperclip size={20} className="text-gray-500" />
-                  </Button>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                </>
-              )}
-              
+            <div className="flex items-center pr-2">
               <Button
                 type="submit"
                 disabled={!message.trim() || disabled}
@@ -132,14 +97,32 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
               </Button>
             </div>
           </div>
-          {selectedFile && (
-            <div className="mt-2 pl-4">
-              <span className="text-xs text-gray-500 flex items-center">
+          
+          {/* Mode selector moved below the input */}
+          <div className="mt-2 pl-4 flex items-center">
+            <Select
+              value={responseMode}
+              onValueChange={(value) => setResponseMode(value as ResponseMode)}
+            >
+              <SelectTrigger className="w-[120px] border border-gray-200 rounded-full px-4 py-2 h-auto bg-white">
+                <SelectValue placeholder="Encore" />
+                <ChevronDown size={14} className="text-gray-500 ml-1" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="encore">Encore</SelectItem>
+                <SelectItem value="endocs">Endocs</SelectItem>
+                <SelectItem value="ensights">Ensights</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            {/* Show selected file name if any */}
+            {selectedFile && (
+              <span className="text-xs text-gray-500 ml-2 flex items-center">
                 <Paperclip size={12} className="mr-1" />
                 {selectedFile.name}
               </span>
-            </div>
-          )}
+            )}
+          </div>
         </form>
       </div>
     </div>
