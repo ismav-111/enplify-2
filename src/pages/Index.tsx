@@ -106,7 +106,7 @@ const Index = () => {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-sm font-semibold text-gray-800">CHAT A.I+</span>
+                        <span className="text-sm font-semibold text-gray-800">enplify.ai</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>

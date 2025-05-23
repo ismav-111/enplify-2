@@ -278,65 +278,67 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       )}
       
       <div className={`flex flex-col ${message.isUser ? 'items-end ml-auto' : 'ml-4'} max-w-[80%]`}>
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-sm font-semibold text-gray-800">
-            {message.isUser ? 'You' : 'CHAT A.I+'}
-          </span>
-          <span className="text-xs text-gray-500">
-            {message.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-          </span>
-        </div>
-        
         {message.isUser ? (
-          <div className="rounded-xl py-3 px-4 bg-[#E2E2F3] text-gray-800">
-            <p className="text-base">{message.content}</p>
-            {renderFileInfo()}
-          </div>
-        ) : (
-          <div className="text-gray-800">
-            <div className="text-base leading-relaxed">
-              {message.content}
+          <>
+            <div className="rounded-xl py-3 px-4 bg-[#E2E2F3] text-gray-800">
+              <p className="text-base">{message.content}</p>
+              {renderFileInfo()}
             </div>
-            {message.mode === 'endocs' && renderTableData()}
-            {message.mode === 'ensights' && renderChartData()}
-          </div>
-        )}
+            <span className="text-xs text-gray-500 mt-1">
+              {message.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+            </span>
+          </>
+        ) : (
+          <>
+            <div className="mb-2">
+              <span className="text-sm font-semibold text-gray-800">enplify.ai</span>
+            </div>
+            <div className="text-gray-800">
+              <div className="text-base leading-relaxed">
+                {message.content}
+              </div>
+              {message.mode === 'endocs' && renderTableData()}
+              {message.mode === 'ensights' && renderChartData()}
+            </div>
+            <span className="text-xs text-gray-500 mt-1">
+              {message.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+            </span>
 
-        {/* Action Buttons - Only for AI messages */}
-        {!message.isUser && (
-          <div className="flex items-center gap-2 mt-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleLike}
-              className={`p-2 h-auto rounded-full ${isLiked ? 'text-[#4E50A8] bg-[#F1F1F9]' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
-            >
-              <ThumbsUp size={16} />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleDislike}
-              className={`p-2 h-auto rounded-full ${isDisliked ? 'text-red-600 bg-red-50' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
-            >
-              <ThumbsDown size={16} />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleCopy}
-              className="p-2 h-auto text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
-            >
-              <Copy size={16} />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="p-2 h-auto text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
-            >
-              <RotateCcw size={16} />
-            </Button>
-          </div>
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2 mt-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleLike}
+                className={`p-2 h-auto rounded-full ${isLiked ? 'text-[#4E50A8] bg-[#F1F1F9]' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
+              >
+                <ThumbsUp size={16} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleDislike}
+                className={`p-2 h-auto rounded-full ${isDisliked ? 'text-red-600 bg-red-50' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
+              >
+                <ThumbsDown size={16} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCopy}
+                className="p-2 h-auto text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
+              >
+                <Copy size={16} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="p-2 h-auto text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
+              >
+                <RotateCcw size={16} />
+              </Button>
+            </div>
+          </>
         )}
       </div>
     </div>
