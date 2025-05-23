@@ -4,6 +4,14 @@ import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
 import MessageInput from '@/components/MessageInput';
 import { useEffect } from 'react';
+import { Settings, User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { 
+  Popover, 
+  PopoverContent, 
+  PopoverTrigger 
+} from '@/components/ui/popover';
 
 const Index = () => {
   const {
@@ -39,7 +47,45 @@ const Index = () => {
       />
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col relative">
+        {/* User avatar in top-right corner */}
+        <div className="absolute top-4 right-4 z-30">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback className="bg-gray-200">
+                    <User size={16} className="text-gray-700" />
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-3" align="end">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
+                  <Avatar className="h-9 w-9">
+                    <AvatarFallback className="bg-gray-200">
+                      <User size={16} className="text-gray-700" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="text-sm font-medium">Andrew Neilson</p>
+                    <p className="text-xs text-gray-500">andrew@example.com</p>
+                  </div>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="w-full justify-start text-gray-700"
+                >
+                  <Settings size={15} className="mr-2" />
+                  Settings
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+
         {/* Chat Messages */}
         <div className={`flex-1 overflow-y-auto ${!hasMessages ? 'flex items-center justify-center' : ''}`}>
           {hasMessages ? (
