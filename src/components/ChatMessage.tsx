@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Grid, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -67,7 +68,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     if (isLiked) setIsLiked(false);
   };
 
-  const handleDownload = () => {
+  const handleDownloadChart = () => {
     if (!message.chartData || message.chartData.length === 0) return;
     
     // Create CSV content
@@ -97,11 +98,53 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     document.body.removeChild(link);
   };
 
+  const handleDownloadTable = () => {
+    if (!message.tableData || message.tableData.length === 0) return;
+    
+    // Create CSV content
+    let csvContent = "data:text/csv;charset=utf-8,";
+    
+    // Add headers
+    const headers = Object.keys(message.tableData[0]);
+    csvContent += headers.join(",") + "\n";
+    
+    // Add data rows
+    message.tableData.forEach(row => {
+      const rowData = headers.map(header => row[header]);
+      csvContent += rowData.join(",") + "\n";
+    });
+    
+    // Create download link
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "table-data.csv");
+    document.body.appendChild(link);
+    
+    // Trigger download
+    link.click();
+    
+    // Cleanup
+    document.body.removeChild(link);
+  };
+
   const renderTableData = () => {
     if (!message.tableData || message.tableData.length === 0) return null;
     
     return (
       <div className="mt-4 bg-white p-4 rounded-lg border border-[#d5d5ec]">
+        <div className="flex items-center justify-between mb-2">
+          <h4 className="text-md font-medium text-gray-800">Document References</h4>
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="text-[#4E50A8] border-gray-200 h-8 w-8"
+            onClick={handleDownloadTable}
+            title="Download table data as CSV"
+          >
+            <Download size={16} />
+          </Button>
+        </div>
         <Table>
           <TableHeader>
             <TableRow>
@@ -206,9 +249,10 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                 variant="outline" 
                 size="icon" 
                 className="text-[#4E50A8] border-gray-200 h-8 w-8"
-                onClick={handleDownload}
+                onClick={handleDownloadChart}
                 onMouseEnter={() => setTooltipVisible(true)}
                 onMouseLeave={() => setTooltipVisible(false)}
+                title="Download chart data as CSV"
               >
                 <Download size={16} />
               </Button>
