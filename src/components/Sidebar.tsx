@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Plus, MessageSquare, Menu, PanelLeft } from 'lucide-react';
+import { Plus, MessageSquare, Menu, PanelLeft, Trash, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface SidebarProps {
@@ -38,7 +38,7 @@ const Sidebar = ({
 
       {/* Sidebar */}
       <div 
-        className={`${isOpen ? 'w-80' : 'w-0 overflow-hidden'} bg-white border-r border-gray-200 flex flex-col h-full transition-all duration-300 ease-in-out`}
+        className={`${isOpen ? 'w-80' : 'w-0 overflow-hidden'} bg-white border-r border-gray-200 flex flex-col min-h-screen transition-all duration-300 ease-in-out`}
       >
         {/* Header with close button */}
         <div className="p-6 border-b border-gray-100 flex justify-between items-center">
@@ -93,8 +93,13 @@ const Sidebar = ({
                   <div className="flex items-start gap-3">
                     <MessageSquare size={16} className="text-gray-400 mt-1 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">{conv.title}</p>
-                      <p className="text-xs text-gray-500 truncate mt-1">{conv.preview}</p>
+                      <div className="flex justify-between items-center">
+                        <p className="text-sm font-medium text-gray-900 truncate">{conv.title}</p>
+                        <div className="opacity-0 group-hover:opacity-100 flex gap-1">
+                          <Edit size={14} className="text-gray-400 hover:text-gray-600 cursor-pointer" />
+                          <Trash size={14} className="text-gray-400 hover:text-gray-600 cursor-pointer" />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </button>

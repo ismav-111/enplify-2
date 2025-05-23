@@ -66,27 +66,38 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
     <div className={`${centered ? '' : ''} p-4`}>
       <div className="max-w-3xl mx-auto">
         <form ref={formRef} onSubmit={handleSubmit} className="relative" onClick={handleFormClick}>
-          <div className="flex items-center w-full rounded-full border border-gray-200 shadow-sm bg-white">
-            <Textarea
-              ref={textareaRef}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="What do you want to know?"
-              disabled={disabled}
-              className="min-h-[64px] max-h-40 resize-none border-none focus:border-none focus:ring-0 rounded-full py-4 flex-1"
-              rows={1}
-            />
-
-            <div className="flex items-center gap-2 pr-2">
-              {/* Show attachment icon only for endocs/ensights */}
+          <div className="flex flex-col w-full rounded-xl border border-gray-200 shadow-sm bg-white">
+            {/* Input area */}
+            <div className="flex items-center w-full px-4">
+              <Textarea
+                ref={textareaRef}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="What do you want to know?"
+                disabled={disabled}
+                className="min-h-[64px] max-h-40 resize-none border-none focus:border-none focus:ring-0 py-4 flex-1"
+                rows={1}
+              />
+              
+              <Button
+                type="submit"
+                disabled={!message.trim() || disabled}
+                className="rounded-full bg-[#4E50A8] hover:bg-[#4042a0] p-3 h-auto flex-shrink-0"
+              >
+                <ArrowUp size={20} className="text-white" />
+              </Button>
+            </div>
+            
+            {/* Bottom toolbar with mode selector and attachment */}
+            <div className="flex items-center px-4 py-2 border-t border-gray-100">
               {showAttachment && (
                 <button
                   type="button"
                   onClick={handleFileClick}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors mr-2"
                 >
-                  <Paperclip size={18} className="text-gray-500" />
+                  <Paperclip size={16} className="text-gray-500" />
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -96,44 +107,36 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
                 </button>
               )}
               
-              <Button
-                type="submit"
-                disabled={!message.trim() || disabled}
-                className="rounded-full bg-[#4E50A8] hover:bg-[#4042a0] p-3 h-auto"
+              <Select
+                value={responseMode}
+                onValueChange={(value) => {
+                  setResponseMode(value as ResponseMode);
+                  if (value === 'encore') {
+                    setSelectedFile(null);
+                  }
+                }}
               >
-                <ArrowUp size={24} className="text-white" />
-              </Button>
+                <SelectTrigger className="border-none shadow-none bg-transparent focus:ring-0 p-2 h-auto">
+                  <div className="flex items-center gap-2">
+                    {responseMode === 'endocs' && <Paperclip size={16} className="text-gray-500" />}
+                    <SelectValue />
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="encore">Encore</SelectItem>
+                  <SelectItem value="endocs">Endocs</SelectItem>
+                  <SelectItem value="ensights">Ensights</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              {/* Show selected file name if any */}
+              {selectedFile && (
+                <span className="text-xs text-gray-500 ml-2 flex items-center">
+                  <Paperclip size={12} className="mr-1" />
+                  {selectedFile.name}
+                </span>
+              )}
             </div>
-          </div>
-          
-          {/* Mode selector and file info below the input */}
-          <div className="mt-2 pl-4 flex items-center">
-            <Select
-              value={responseMode}
-              onValueChange={(value) => {
-                setResponseMode(value as ResponseMode);
-                if (value === 'encore') {
-                  setSelectedFile(null); // Clear selected file when switching to encore
-                }
-              }}
-            >
-              <SelectTrigger className="w-[120px] border border-gray-200 rounded-full px-4 py-2 h-auto bg-white">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="encore">Encore</SelectItem>
-                <SelectItem value="endocs">Endocs</SelectItem>
-                <SelectItem value="ensights">Ensights</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            {/* Show selected file name if any */}
-            {selectedFile && (
-              <span className="text-xs text-gray-500 ml-2 flex items-center">
-                <Paperclip size={12} className="mr-1" />
-                {selectedFile.name}
-              </span>
-            )}
           </div>
         </form>
       </div>
