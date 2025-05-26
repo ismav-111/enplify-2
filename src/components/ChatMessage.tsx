@@ -507,7 +507,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       <div className={`flex flex-col ${message.isUser ? 'items-end ml-auto' : 'ml-3'} max-w-[80%]`}>
         {message.isUser ? (
           <>
-            <div className="rounded-lg py-3 px-4 bg-blue-600 text-white">
+            <div className="rounded-lg py-3 px-4 text-gray-800" style={{ backgroundColor: '#E2E2F3' }}>
               <p className="text-sm">{message.content}</p>
               {renderFileInfo()}
             </div>
