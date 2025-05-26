@@ -1,4 +1,5 @@
 
+
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -79,7 +80,7 @@ export default function Auth() {
         <div className="max-w-2xl">
           <div className="mb-12">
             <h1 className="text-7xl font-bold text-white mb-8 font-comfortaa leading-tight">
-              enplify<span className="text-blue-200">.ai</span>
+              enplify<span className="text-white">.ai</span>
             </h1>
             <div className="w-24 h-1 bg-blue-200 rounded-full mb-12"></div>
             
@@ -159,19 +160,9 @@ export default function Auth() {
               </div>
 
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-sm font-semibold text-gray-700">
-                    Password
-                  </Label>
-                  {isSignIn && (
-                    <button
-                      type="button"
-                      className="text-xs text-indigo-600 hover:text-indigo-500 font-semibold transition-colors underline-offset-2 hover:underline"
-                    >
-                      Forgot password?
-                    </button>
-                  )}
-                </div>
+                <Label htmlFor="password" className="text-sm font-semibold text-gray-700">
+                  Password
+                </Label>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <Input
@@ -191,6 +182,16 @@ export default function Auth() {
                 </div>
                 {form.formState.errors.password && (
                   <p className="text-xs text-red-500 mt-1">{form.formState.errors.password.message}</p>
+                )}
+                {isSignIn && (
+                  <div className="flex justify-end mt-2">
+                    <button
+                      type="button"
+                      className="text-xs text-indigo-600 hover:text-indigo-500 font-semibold transition-colors underline-offset-2 hover:underline"
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
                 )}
               </div>
 
