@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Grid, Download, FileText, Calendar, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -333,15 +334,19 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     />
                     <YAxis
                       stroke="#888"
-                      tickFormatter={(value) => `$${(value/1000).toFixed(0)}k`}
+                      tickFormatter={(value) => {
+                        const numValue = Number(value);
+                        return isNaN(numValue) ? '0' : `$${(numValue/1000).toFixed(0)}k`;
+                      }}
                       tickMargin={10}
                     />
                     <Tooltip 
                       content={({ active, payload }) => {
                         if (active && payload && payload.length) {
+                          const value = Number(payload[0].value) || 0;
                           return (
                             <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-                              <p className="text-sm font-medium">{`${payload[0].payload.name}: $${(payload[0].value/1000).toFixed(0)}k`}</p>
+                              <p className="text-sm font-medium">{`${payload[0].payload.name}: $${(value/1000).toFixed(0)}k`}</p>
                             </div>
                           );
                         }
@@ -380,15 +385,19 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     />
                     <YAxis
                       stroke="#888"
-                      tickFormatter={(value) => `$${(value/1000).toFixed(0)}k`}
+                      tickFormatter={(value) => {
+                        const numValue = Number(value);
+                        return isNaN(numValue) ? '0' : `$${(numValue/1000).toFixed(0)}k`;
+                      }}
                       tickMargin={10}
                     />
                     <Tooltip 
                       content={({ active, payload }) => {
                         if (active && payload && payload.length) {
+                          const value = Number(payload[0].value) || 0;
                           return (
                             <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-                              <p className="text-sm font-medium">{`${payload[0].payload.name}: $${(payload[0].value/1000).toFixed(0)}k`}</p>
+                              <p className="text-sm font-medium">{`${payload[0].payload.name}: $${(value/1000).toFixed(0)}k`}</p>
                             </div>
                           );
                         }
@@ -429,9 +438,10 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     <Tooltip 
                       content={({ active, payload }) => {
                         if (active && payload && payload.length) {
+                          const value = Number(payload[0].value) || 0;
                           return (
                             <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-                              <p className="text-sm font-medium">{`${payload[0].name}: $${(payload[0].value/1000).toFixed(0)}k`}</p>
+                              <p className="text-sm font-medium">{`${payload[0].name}: $${(value/1000).toFixed(0)}k`}</p>
                             </div>
                           );
                         }
@@ -464,12 +474,13 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                   </TableHeader>
                   <TableBody>
                     {message.chartData.map((row, i) => {
-                      const prevValue = i > 0 ? message.chartData[i-1].value : row.value;
-                      const growth = i > 0 ? ((row.value - prevValue) / prevValue * 100).toFixed(1) : '0.0';
+                      const currentValue = Number(row.value) || 0;
+                      const prevValue = i > 0 ? Number(message.chartData[i-1].value) || 0 : currentValue;
+                      const growth = i > 0 && prevValue !== 0 ? ((currentValue - prevValue) / prevValue * 100).toFixed(1) : '0.0';
                       return (
                         <TableRow key={i} className="hover:bg-gray-50/50 transition-colors">
                           <TableCell className="font-medium py-3 px-4">{row.name}</TableCell>
-                          <TableCell className="py-3 px-4 text-right font-mono">${(row.value/1000).toFixed(0)}k</TableCell>
+                          <TableCell className="py-3 px-4 text-right font-mono">${(currentValue/1000).toFixed(0)}k</TableCell>
                           <TableCell className={`py-3 px-4 text-right font-medium ${
                             parseFloat(growth) >= 0 ? 'text-green-600' : 'text-red-600'
                           }`}>
