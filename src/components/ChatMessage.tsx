@@ -101,7 +101,8 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       const svgElement = chartRef.current.querySelector('svg');
       if (!svgElement) return;
       
-      const svgData = new XMLSerializer().serializeToString(svgElement);
+      const serializer = new XMLSerializer();
+      const svgData = serializer.serializeToString(svgElement);
       const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
       const url = URL.createObjectURL(svgBlob);
       
@@ -114,7 +115,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       return;
     }
 
-    // For PNG and JPG, we'll use html2canvas-like functionality
+    // For PNG and JPG, we'll use canvas-based approach
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -122,8 +123,9 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     const svgElement = chartRef.current.querySelector('svg');
     if (!svgElement) return;
 
-    const svgData = new XMLSerializer().serializeToString(svgElement);
-    const img = new Image();
+    const serializer = new XMLSerializer();
+    const svgData = serializer.serializeToString(svgElement);
+    const img = document.createElement('img') as HTMLImageElement;
     
     img.onload = () => {
       canvas.width = img.width || 800;
@@ -228,9 +230,9 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                   <TableCell className="py-6 px-6 text-center">
                     <div className="flex justify-center">
                       <span className={`px-4 py-2 rounded-full text-sm font-bold shadow-sm ${
-                        parseInt(row.relevance) >= 90 
+                        Number(row.relevance) >= 90 
                           ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border border-green-200' 
-                          : parseInt(row.relevance) >= 80 
+                          : Number(row.relevance) >= 80 
                           ? 'bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-800 border border-yellow-200'
                           : 'bg-gradient-to-r from-gray-100 to-slate-100 text-gray-800 border border-gray-200'
                       }`}>
