@@ -146,28 +146,9 @@ const MessageInput = ({
             
             {/* Action buttons area */}
             <div className="flex items-center justify-between px-4 pb-3 pt-1">
-              {/* Left side: Mode selector and attachment button */}
+              {/* Left side: Attachment button first, then mode selector */}
               <div className="flex items-center gap-2">
-                <Select
-                  value={responseMode}
-                  onValueChange={(value) => {
-                    setResponseMode(value as ResponseMode);
-                    if (value === 'encore') {
-                      setSelectedFile(null);
-                    }
-                  }}
-                >
-                  <SelectTrigger className="border-0 rounded-lg px-3 py-1.5 h-auto text-xs bg-gray-50 shadow-none w-auto min-w-[80px] text-gray-700">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent align="start" className="w-[120px]">
-                    <SelectItem value="encore">Encore</SelectItem>
-                    <SelectItem value="endocs">Endocs</SelectItem>
-                    <SelectItem value="ensights">Ensights</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                {/* Attachment button - next to mode selector */}
+                {/* Attachment button - first */}
                 {showAttachment && (
                   <button
                     type="button"
@@ -186,6 +167,26 @@ const MessageInput = ({
                     />
                   </button>
                 )}
+
+                {/* Mode selector - second */}
+                <Select
+                  value={responseMode}
+                  onValueChange={(value) => {
+                    setResponseMode(value as ResponseMode);
+                    if (value === 'encore') {
+                      setSelectedFile(null);
+                    }
+                  }}
+                >
+                  <SelectTrigger className="border-0 rounded-lg px-3 py-1.5 h-auto text-xs bg-gray-50 shadow-none w-auto min-w-[80px] text-gray-700">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent align="start" className="w-[120px]">
+                    <SelectItem value="encore">Encore</SelectItem>
+                    <SelectItem value="endocs">Endocs</SelectItem>
+                    <SelectItem value="ensights">Ensights</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               
               {/* Right side: File info and Send/Stop button */}
