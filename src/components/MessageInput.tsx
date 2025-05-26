@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { ArrowUp, Paperclip, Square } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -133,39 +132,16 @@ const MessageInput = ({
           <div className="flex flex-col w-full rounded-2xl border border-gray-200 shadow-sm bg-white overflow-hidden">
             {/* Textarea area */}
             <div className="flex items-start w-full px-4 pt-4 pb-2">
-              <div className="flex items-start gap-3 flex-1">
-                {/* Mode selector */}
-                <Select
-                  value={responseMode}
-                  onValueChange={(value) => {
-                    setResponseMode(value as ResponseMode);
-                    if (value === 'encore') {
-                      setSelectedFile(null);
-                    }
-                  }}
-                >
-                  <SelectTrigger className="border-0 rounded-lg px-3 py-1.5 h-auto text-xs bg-gray-50 shadow-none w-auto min-w-[80px] text-gray-700 mt-1">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent align="start" className="w-[120px]">
-                    <SelectItem value="encore">Encore</SelectItem>
-                    <SelectItem value="endocs">Endocs</SelectItem>
-                    <SelectItem value="ensights">Ensights</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                {/* Textarea */}
-                <Textarea
-                  ref={textareaRef}
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="What do you want to know?"
-                  disabled={disabled}
-                  className="min-h-[20px] max-h-40 resize-none border-none focus:border-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 flex-1 bg-transparent text-base"
-                  rows={1}
-                />
-              </div>
+              <Textarea
+                ref={textareaRef}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="What do you want to know?"
+                disabled={disabled}
+                className="min-h-[20px] max-h-40 resize-none border-none focus:border-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 flex-1 bg-transparent text-base"
+                rows={1}
+              />
             </div>
             
             {/* Action buttons area */}
@@ -200,8 +176,29 @@ const MessageInput = ({
                 )}
               </div>
               
-              {/* Send or Stop button */}
-              <div className="flex">
+              {/* Mode selector and Send/Stop button */}
+              <div className="flex items-center gap-3">
+                {/* Mode selector */}
+                <Select
+                  value={responseMode}
+                  onValueChange={(value) => {
+                    setResponseMode(value as ResponseMode);
+                    if (value === 'encore') {
+                      setSelectedFile(null);
+                    }
+                  }}
+                >
+                  <SelectTrigger className="border-0 rounded-lg px-3 py-1.5 h-auto text-xs bg-gray-50 shadow-none w-auto min-w-[80px] text-gray-700">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent align="end" className="w-[120px]">
+                    <SelectItem value="encore">Encore</SelectItem>
+                    <SelectItem value="endocs">Endocs</SelectItem>
+                    <SelectItem value="ensights">Ensights</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {/* Send or Stop button */}
                 {isLoading ? (
                   <Button
                     type="button"
