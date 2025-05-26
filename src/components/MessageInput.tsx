@@ -1,14 +1,14 @@
+
 import { useState, useRef, useEffect } from 'react';
-import { ArrowUp, Paperclip, Square } from 'lucide-react';
+import { ArrowUp, Paperclip, Square, MessageSquare, FileText, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useToast } from '@/components/ui/use-toast';
 
 export type ResponseMode = 'encore' | 'endocs' | 'ensights';
@@ -42,6 +42,12 @@ const MessageInput = ({
   const validFileExtensions = {
     endocs: ['.pdf', '.jpg', '.jpeg', '.png', '.gif', '.svg'],
     ensights: ['.xlsx', '.xls', '.csv']
+  };
+
+  const modeConfig = {
+    encore: { icon: MessageSquare, label: 'Encore - General AI assistance' },
+    endocs: { icon: FileText, label: 'Endocs - Document analysis' },
+    ensights: { icon: BarChart3, label: 'Ensights - Data insights' }
   };
   
   useEffect(() => {
@@ -126,105 +132,128 @@ const MessageInput = ({
   const showAttachment = responseMode === 'endocs' || responseMode === 'ensights';
 
   return (
-    <div className={`${centered ? 'w-full' : ''}`}>
-      <div className="max-w-3xl mx-auto">
-        <form ref={formRef} onSubmit={handleSubmit} className="relative" onClick={handleFormClick}>
-          <div className="flex flex-col w-full rounded-2xl border border-gray-200 shadow-sm bg-white overflow-hidden">
-            {/* Textarea area */}
-            <div className="flex items-start w-full px-4 pt-4 pb-2">
-              <Textarea
-                ref={textareaRef}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="What do you want to know?"
-                disabled={disabled}
-                className="min-h-[20px] max-h-40 resize-none border-none focus:border-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 flex-1 bg-transparent text-base"
-                rows={1}
-              />
-            </div>
-            
-            {/* Action buttons area */}
-            <div className="flex items-center justify-between px-4 pb-3 pt-1">
-              {/* Left side: Attachment button first, then mode selector */}
-              <div className="flex items-center gap-2">
-                {/* Attachment button - first */}
-                {showAttachment && (
-                  <button
-                    type="button"
-                    onClick={handleFileClick}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-500 hover:text-gray-700"
-                  >
-                    <Paperclip size={18} />
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleFileChange}
-                      className="hidden"
-                      accept={responseMode === 'endocs' 
-                        ? '.pdf,.jpg,.jpeg,.png,.gif,.svg' 
-                        : '.xlsx,.xls,.csv'}
-                    />
-                  </button>
-                )}
-
-                {/* Mode selector - second */}
-                <Select
-                  value={responseMode}
-                  onValueChange={(value) => {
-                    setResponseMode(value as ResponseMode);
-                    if (value === 'encore') {
-                      setSelectedFile(null);
-                    }
-                  }}
-                >
-                  <SelectTrigger className="border-0 rounded-lg px-3 py-1.5 h-auto text-xs bg-gray-50 shadow-none w-auto min-w-[80px] text-gray-700">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent align="start" className="w-[120px]">
-                    <SelectItem value="encore">Encore</SelectItem>
-                    <SelectItem value="endocs">Endocs</SelectItem>
-                    <SelectItem value="ensights">Ensights</SelectItem>
-                  </SelectContent>
-                </Select>
+    <TooltipProvider>
+      <div className={`${centered ? 'w-full' : ''}`}>
+        <div className="max-w-3xl mx-auto">
+          <form ref={formRef} onSubmit={handleSubmit} className="relative" onClick={handleFormClick}>
+            <div className="flex flex-col w-full rounded-2xl border border-gray-200 shadow-sm bg-white overflow-hidden">
+              {/* Textarea area */}
+              <div className="flex items-start w-full px-4 pt-4 pb-2">
+                <Textarea
+                  ref={textareaRef}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Need something? Just ask"
+                  disabled={disabled}
+                  className="min-h-[20px] max-h-40 resize-none border-none focus:border-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 flex-1 bg-transparent text-base"
+                  rows={1}
+                />
               </div>
               
-              {/* Right side: File info and Send/Stop button */}
-              <div className="flex items-center gap-3">
-                {/* Show selected file name if any */}
-                {selectedFile && (
-                  <div className="flex items-center text-xs text-gray-500">
-                    <Paperclip size={12} className="mr-1" />
-                    <span className="truncate max-w-[150px]">{selectedFile.name}</span>
-                  </div>
-                )}
+              {/* Action buttons area */}
+              <div className="flex items-center justify-between px-4 pb-3 pt-1">
+                {/* Left side: Attachment button first, then mode selector */}
+                <div className="flex items-center gap-2">
+                  {/* Attachment button - first */}
+                  {showAttachment && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          onClick={handleFileClick}
+                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-500 hover:text-gray-700"
+                        >
+                          <Paperclip size={18} />
+                          <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            className="hidden"
+                            accept={responseMode === 'endocs' 
+                              ? '.pdf,.jpg,.jpeg,.png,.gif,.svg' 
+                              : '.xlsx,.xls,.csv'}
+                          />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Attach file</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
 
-                {/* Send or Stop button */}
-                {isLoading ? (
-                  <Button
-                    type="button"
-                    onClick={handleStopClick}
-                    size="icon"
-                    className="rounded-full bg-gray-800 hover:bg-gray-900 h-8 w-8 flex-shrink-0 transition-colors"
-                  >
-                    <Square size={16} className="text-white" fill="currentColor" />
-                  </Button>
-                ) : (
-                  <Button
-                    type="submit"
-                    disabled={!message.trim() || disabled}
-                    size="icon"
-                    className="rounded-full bg-gray-800 hover:bg-gray-900 disabled:bg-gray-300 h-8 w-8 flex-shrink-0 transition-colors"
-                  >
-                    <ArrowUp size={16} className="text-white" />
-                  </Button>
-                )}
+                  {/* Mode selector tabs - second */}
+                  <div className="flex items-center bg-gray-50 rounded-lg p-1">
+                    {Object.entries(modeConfig).map(([mode, config]) => {
+                      const IconComponent = config.icon;
+                      const isActive = responseMode === mode;
+                      
+                      return (
+                        <Tooltip key={mode}>
+                          <TooltipTrigger asChild>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setResponseMode(mode as ResponseMode);
+                                if (mode === 'encore') {
+                                  setSelectedFile(null);
+                                }
+                              }}
+                              className={`p-2 rounded-md transition-colors ${
+                                isActive 
+                                  ? 'bg-white text-[#4E50A8] shadow-sm' 
+                                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                              }`}
+                            >
+                              <IconComponent size={16} />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{config.label}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      );
+                    })}
+                  </div>
+                </div>
+                
+                {/* Right side: File info and Send/Stop button */}
+                <div className="flex items-center gap-3">
+                  {/* Show selected file name if any */}
+                  {selectedFile && (
+                    <div className="flex items-center text-xs text-gray-500">
+                      <Paperclip size={12} className="mr-1" />
+                      <span className="truncate max-w-[150px]">{selectedFile.name}</span>
+                    </div>
+                  )}
+
+                  {/* Send or Stop button */}
+                  {isLoading ? (
+                    <Button
+                      type="button"
+                      onClick={handleStopClick}
+                      size="icon"
+                      className="rounded-full bg-gray-800 hover:bg-gray-900 h-8 w-8 flex-shrink-0 transition-colors"
+                    >
+                      <Square size={16} className="text-white" fill="currentColor" />
+                    </Button>
+                  ) : (
+                    <Button
+                      type="submit"
+                      disabled={!message.trim() || disabled}
+                      size="icon"
+                      className="rounded-full bg-gray-800 hover:bg-gray-900 disabled:bg-gray-300 h-8 w-8 flex-shrink-0 transition-colors"
+                    >
+                      <ArrowUp size={16} className="text-white" />
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 };
 
