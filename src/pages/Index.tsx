@@ -320,8 +320,8 @@ const Index = () => {
           </Popover>
         </div>
 
-        {/* Chat Messages */}
-        <div className={`flex-1 overflow-y-auto bg-white ${!hasMessages ? 'flex items-center justify-center' : ''}`}>
+        {/* Chat Messages - Made scrollable */}
+        <ScrollArea className={`flex-1 bg-white ${!hasMessages ? 'flex items-center justify-center' : ''}`}>
           {hasMessages ? (
             <div className="max-w-3xl mx-auto px-4 py-8 w-full">
               <div className="space-y-6">
@@ -345,10 +345,9 @@ const Index = () => {
               </div>
             </div>
           ) : (
-            <div className="max-w-xl w-full px-4 flex flex-col items-center">
-              {/* Welcome message without e icon */}
+            <div className="max-w-xl w-full px-4 flex flex-col items-center justify-center min-h-full">
               <div className="text-center mb-10">
-                <h1 className="text-3xl font-bold text-gray-800 mb-2 font-comfortaa">Welcome to enplify.ai</h1>
+                <h1 className="text-3xl font-bold text-gray-800 mb-2 font-comfortaa">Welcome to enplify 2.o</h1>
                 <p className="text-gray-600 max-w-md mx-auto mb-6">
                   Your intelligent AI assistant. Ask me anything and I'll provide 
                   helpful insights, answers, and information.
@@ -363,11 +362,11 @@ const Index = () => {
               />
             </div>
           )}
-        </div>
+        </ScrollArea>
 
-        {/* Message Input - Only show at bottom when there are messages */}
+        {/* Message Input - Removed border-t separator */}
         {hasMessages && (
-          <div className="w-full border-t border-gray-100 bg-white py-4">
+          <div className="w-full bg-white py-4">
             <div className="max-w-3xl mx-auto px-4">
               <MessageInput 
                 onSendMessage={handleSendMessage} 
