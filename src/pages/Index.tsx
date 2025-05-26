@@ -78,6 +78,11 @@ const Index = () => {
     sendMessage(message, mode, file);
   };
 
+  const handleStopGeneration = () => {
+    // TODO: Implement stop generation logic in useChat hook
+    console.log('Stop generation requested');
+  };
+
   // Format file size
   const formatFileSize = (bytes: number): string => {
     if (bytes < 1024) return bytes + ' B';
@@ -349,7 +354,13 @@ const Index = () => {
                   helpful insights, answers, and information.
                 </p>
               </div>
-              <MessageInput onSendMessage={handleSendMessage} disabled={isLoading} centered={true} />
+              <MessageInput 
+                onSendMessage={handleSendMessage} 
+                disabled={isLoading} 
+                centered={true}
+                isLoading={isLoading}
+                onStopGeneration={handleStopGeneration}
+              />
             </div>
           )}
         </div>
@@ -358,7 +369,13 @@ const Index = () => {
         {hasMessages && (
           <div className="w-full border-t border-gray-100 bg-white py-4">
             <div className="max-w-3xl mx-auto px-4">
-              <MessageInput onSendMessage={handleSendMessage} disabled={isLoading} centered={false} />
+              <MessageInput 
+                onSendMessage={handleSendMessage} 
+                disabled={isLoading} 
+                centered={false}
+                isLoading={isLoading}
+                onStopGeneration={handleStopGeneration}
+              />
             </div>
           </div>
         )}
