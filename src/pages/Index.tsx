@@ -40,7 +40,9 @@ const Index = () => {
     sendMessage,
     clearAllConversations,
     getCurrentConversation,
-    isLoading
+    isLoading,
+    deleteConversation,
+    renameConversation
   } = useChat();
 
   // Sample uploaded files data (in a real app, this would come from a backend)
@@ -128,6 +130,8 @@ const Index = () => {
         onNewChat={createNewChat}
         onSelectConversation={setActiveConversation}
         onClearAll={clearAllConversations}
+        onDeleteConversation={deleteConversation}
+        onRenameConversation={renameConversation}
       />
 
       {/* Main Chat Area */}

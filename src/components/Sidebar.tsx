@@ -139,11 +139,11 @@ const Sidebar = ({
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="h-6 w-6 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1"
+                        className="h-6 w-6 text-gray-400 hover:text-red-600 hover:bg-red-50 p-1"
                         onClick={(e) => handleDeleteClick(e, conv.id)}
-                        title="Remove conversation"
+                        title="Delete conversation"
                       >
-                        <X size={14} />
+                        <Trash size={14} />
                       </Button>
                     </div>
                   )}

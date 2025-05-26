@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 
 interface Message {
@@ -121,6 +120,33 @@ export const useChat = () => {
     setActiveConversation(newConversation.id);
     setCurrentMode(safeMode);
     return newConversation.id;
+  }, []);
+
+  const deleteConversation = useCallback((conversationId: string) => {
+    setConversations(prev => {
+      const filtered = prev.filter(conv => conv.id !== conversationId);
+      
+      // If we deleted the active conversation, switch to the first available one
+      if (conversationId === activeConversation) {
+        if (filtered.length > 0) {
+          setActiveConversation(filtered[0].id);
+        } else {
+          // No conversations left, create a new one
+          const newId = createNewChat();
+          return conversations; // Return original conversations as createNewChat will handle the update
+        }
+      }
+      
+      return filtered;
+    });
+  }, [activeConversation, createNewChat, conversations]);
+
+  const renameConversation = useCallback((conversationId: string, newTitle: string) => {
+    setConversations(prev => prev.map(conv => 
+      conv.id === conversationId 
+        ? { ...conv, title: newTitle }
+        : conv
+    ));
   }, []);
 
   const generateTableData = () => {
@@ -419,6 +445,8 @@ Would you like me to provide more specific guidance on any aspect of this topic?
     sendMessage,
     clearAllConversations,
     getCurrentConversation,
-    isLoading
+    isLoading,
+    deleteConversation,
+    renameConversation
   };
 };
