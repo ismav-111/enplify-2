@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { ArrowUp, Paperclip, Square } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -146,7 +147,30 @@ const MessageInput = ({
             
             {/* Action buttons area */}
             <div className="flex items-center justify-between px-4 pb-3 pt-1">
+              {/* Left side: Mode selector */}
               <div className="flex items-center gap-2">
+                <Select
+                  value={responseMode}
+                  onValueChange={(value) => {
+                    setResponseMode(value as ResponseMode);
+                    if (value === 'encore') {
+                      setSelectedFile(null);
+                    }
+                  }}
+                >
+                  <SelectTrigger className="border-0 rounded-lg px-3 py-1.5 h-auto text-xs bg-gray-50 shadow-none w-auto min-w-[80px] text-gray-700">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent align="start" className="w-[120px]">
+                    <SelectItem value="encore">Encore</SelectItem>
+                    <SelectItem value="endocs">Endocs</SelectItem>
+                    <SelectItem value="ensights">Ensights</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {/* Right side: File info, attachment button, and Send/Stop button */}
+              <div className="flex items-center gap-3">
                 {/* Show selected file name if any */}
                 {selectedFile && (
                   <div className="flex items-center text-xs text-gray-500">
@@ -174,29 +198,6 @@ const MessageInput = ({
                     />
                   </button>
                 )}
-              </div>
-              
-              {/* Mode selector and Send/Stop button */}
-              <div className="flex items-center gap-3">
-                {/* Mode selector */}
-                <Select
-                  value={responseMode}
-                  onValueChange={(value) => {
-                    setResponseMode(value as ResponseMode);
-                    if (value === 'encore') {
-                      setSelectedFile(null);
-                    }
-                  }}
-                >
-                  <SelectTrigger className="border-0 rounded-lg px-3 py-1.5 h-auto text-xs bg-gray-50 shadow-none w-auto min-w-[80px] text-gray-700">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent align="end" className="w-[120px]">
-                    <SelectItem value="encore">Encore</SelectItem>
-                    <SelectItem value="endocs">Endocs</SelectItem>
-                    <SelectItem value="ensights">Ensights</SelectItem>
-                  </SelectContent>
-                </Select>
 
                 {/* Send or Stop button */}
                 {isLoading ? (
