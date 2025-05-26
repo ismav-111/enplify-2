@@ -1,5 +1,3 @@
-
-
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -10,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
 import { Eye, EyeOff, Lock, Mail, MessageCircle, FileText, Zap, Headphones, Settings, Shield } from "lucide-react"
+import ForgotPasswordDialog from "@/components/ForgotPasswordDialog"
 
 const formSchema = z.object({
   email: z.string().email({
@@ -26,6 +25,7 @@ export default function Auth() {
   const [isSignIn, setIsSignIn] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
   const navigate = useNavigate()
   
   const form = useForm<FormData>({
@@ -187,6 +187,7 @@ export default function Auth() {
                   <div className="flex justify-end mt-2">
                     <button
                       type="button"
+                      onClick={() => setShowForgotPassword(true)}
                       className="text-xs text-indigo-600 hover:text-indigo-500 font-semibold transition-colors underline-offset-2 hover:underline"
                     >
                       Forgot password?
@@ -245,6 +246,11 @@ export default function Auth() {
           </CardContent>
         </Card>
       </div>
+
+      <ForgotPasswordDialog 
+        open={showForgotPassword} 
+        onOpenChange={setShowForgotPassword} 
+      />
     </div>
   )
 }
