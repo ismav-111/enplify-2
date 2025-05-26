@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Grid, Download } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Grid, Download, FileText, Calendar, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -130,39 +130,90 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     if (!message.tableData || message.tableData.length === 0) return null;
     
     return (
-      <div className="mt-4 bg-white p-4 rounded-lg border border-[#d5d5ec]">
-        <div className="flex items-center justify-between mb-2">
-          <h4 className="text-md font-medium text-gray-800">Document References</h4>
+      <div className="mt-6 bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <FileText size={20} className="text-[#4E50A8]" />
+            <h4 className="text-lg font-semibold text-gray-800">Document References</h4>
+          </div>
           <Button 
             variant="outline" 
-            size="icon" 
-            className="text-[#4E50A8] border-gray-200 h-8 w-8"
+            size="sm" 
+            className="text-[#4E50A8] border-[#4E50A8] hover:bg-[#4E50A8] hover:text-white transition-colors"
             onClick={handleDownloadTable}
             title="Download table data as CSV"
           >
-            <Download size={16} />
+            <Download size={16} className="mr-2" />
+            Export CSV
           </Button>
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {Object.keys(message.tableData[0]).map((key) => (
-                <TableHead key={key} className="text-[#4E50A8]">
-                  {key.charAt(0).toUpperCase() + key.slice(1)}
+        
+        <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-[#4E50A8]/5 hover:bg-[#4E50A8]/5">
+                <TableHead className="text-[#4E50A8] font-semibold py-4 px-6">
+                  <div className="flex items-center gap-2">
+                    <FileText size={16} />
+                    Document Title
+                  </div>
                 </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {message.tableData.map((row, i) => (
-              <TableRow key={i}>
-                {Object.values(row).map((value: any, j) => (
-                  <TableCell key={j}>{value}</TableCell>
-                ))}
+                <TableHead className="text-[#4E50A8] font-semibold py-4 px-6">Content Preview</TableHead>
+                <TableHead className="text-[#4E50A8] font-semibold py-4 px-6 text-center">
+                  Relevance
+                </TableHead>
+                <TableHead className="text-[#4E50A8] font-semibold py-4 px-6">
+                  <div className="flex items-center gap-2">
+                    <Calendar size={16} />
+                    Last Updated
+                  </div>
+                </TableHead>
+                <TableHead className="text-[#4E50A8] font-semibold py-4 px-6">
+                  <div className="flex items-center gap-2">
+                    <Building size={16} />
+                    Department
+                  </div>
+                </TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {message.tableData.map((row, i) => (
+                <TableRow key={i} className="hover:bg-gray-50/50 transition-colors">
+                  <TableCell className="py-4 px-6">
+                    <div className="font-medium text-gray-900">{row.title}</div>
+                  </TableCell>
+                  <TableCell className="py-4 px-6 max-w-md">
+                    <div className="text-gray-600 text-sm line-clamp-2">{row.content}</div>
+                  </TableCell>
+                  <TableCell className="py-4 px-6 text-center">
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                      parseInt(row.relevance) >= 90 
+                        ? 'bg-green-100 text-green-800' 
+                        : parseInt(row.relevance) >= 80 
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-gray-100 text-gray-800'
+                    }`}>
+                      {row.relevance}
+                    </span>
+                  </TableCell>
+                  <TableCell className="py-4 px-6 text-gray-600 text-sm">
+                    {row.lastUpdated}
+                  </TableCell>
+                  <TableCell className="py-4 px-6">
+                    <span className="px-2 py-1 bg-[#4E50A8]/10 text-[#4E50A8] rounded-md text-sm font-medium">
+                      {row.department}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+        
+        <div className="mt-4 text-xs text-gray-500 flex items-center gap-4">
+          <span>• Showing {message.tableData.length} of {message.tableData.length} documents</span>
+          <span>• Last indexed: 2 minutes ago</span>
+        </div>
       </div>
     );
   };
@@ -188,16 +239,17 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     };
     
     // Colors for pie chart
-    const COLORS = ['#4E50A8', '#8486E8', '#A9AAED', '#C4C5F3', '#DFDFF9'];
+    const COLORS = ['#4E50A8', '#6366F1', '#8B5CF6', '#A855F7', '#C084FC', '#D8B4FE'];
     
     return (
-      <div className="mt-4 bg-white p-4 rounded-lg border border-[#d5d5ec]">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between mb-2">
+      <div className="mt-6 bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <h4 className="text-md font-medium text-gray-800">Data Visualization</h4>
+              <BarChart size={20} className="text-[#4E50A8]" />
+              <h4 className="text-lg font-semibold text-gray-800">Business Intelligence Dashboard</h4>
               {tooltipVisible && (
-                <span className="text-xs bg-white px-2 py-1 rounded-full shadow-sm">
+                <span className="text-xs bg-white px-3 py-1 rounded-full shadow-sm border border-gray-200 text-gray-600">
                   {getChartTypeLabel()}
                 </span>
               )}
@@ -205,211 +257,240 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             <div className="flex gap-2">
               <Button 
                 variant={chartType === 'line' ? 'default' : 'outline'}
-                size="icon"
-                className={chartType === 'line' ? "bg-[#4E50A8] hover:bg-[#4042a0] h-8 w-8" : "text-[#4E50A8] border-gray-200 h-8 w-8"}
+                size="sm"
+                className={chartType === 'line' ? "bg-[#4E50A8] hover:bg-[#4042a0]" : "text-[#4E50A8] border-gray-200 hover:bg-[#4E50A8]/10"}
                 onClick={() => setChartType('line')}
                 onMouseEnter={() => setTooltipVisible(true)}
                 onMouseLeave={() => setTooltipVisible(false)}
               >
-                <LineChart size={16} />
+                <LineChart size={16} className="mr-2" />
+                Line
               </Button>
               <Button 
                 variant={chartType === 'bar' ? 'default' : 'outline'}
-                size="icon"
-                className={chartType === 'bar' ? "bg-[#4E50A8] hover:bg-[#4042a0] h-8 w-8" : "text-[#4E50A8] border-gray-200 h-8 w-8"}
+                size="sm"
+                className={chartType === 'bar' ? "bg-[#4E50A8] hover:bg-[#4042a0]" : "text-[#4E50A8] border-gray-200 hover:bg-[#4E50A8]/10"}
                 onClick={() => setChartType('bar')}
                 onMouseEnter={() => setTooltipVisible(true)}
                 onMouseLeave={() => setTooltipVisible(false)}
               >
-                <BarChart size={16} />
+                <BarChart size={16} className="mr-2" />
+                Bar
               </Button>
               <Button 
                 variant={chartType === 'pie' ? 'default' : 'outline'}
-                size="icon"
-                className={chartType === 'pie' ? "bg-[#4E50A8] hover:bg-[#4042a0] h-8 w-8" : "text-[#4E50A8] border-gray-200 h-8 w-8"}
+                size="sm"
+                className={chartType === 'pie' ? "bg-[#4E50A8] hover:bg-[#4042a0]" : "text-[#4E50A8] border-gray-200 hover:bg-[#4E50A8]/10"}
                 onClick={() => setChartType('pie')}
                 onMouseEnter={() => setTooltipVisible(true)}
                 onMouseLeave={() => setTooltipVisible(false)}
               >
-                <PieChart size={16} />
+                <PieChart size={16} className="mr-2" />
+                Pie
               </Button>
               <Button 
                 variant={chartType === 'grid' ? 'default' : 'outline'}
-                size="icon"
-                className={chartType === 'grid' ? "bg-[#4E50A8] hover:bg-[#4042a0] h-8 w-8" : "text-gray-500 border-gray-200 h-8 w-8"}
+                size="sm"
+                className={chartType === 'grid' ? "bg-[#4E50A8] hover:bg-[#4042a0]" : "text-gray-500 border-gray-200 hover:bg-gray-100"}
                 onClick={() => setChartType('grid')}
                 onMouseEnter={() => setTooltipVisible(true)}
                 onMouseLeave={() => setTooltipVisible(false)}
               >
-                <Grid size={16} />
+                <Grid size={16} className="mr-2" />
+                Table
               </Button>
               <Button 
                 variant="outline" 
-                size="icon" 
-                className="text-[#4E50A8] border-gray-200 h-8 w-8"
+                size="sm" 
+                className="text-[#4E50A8] border-[#4E50A8] hover:bg-[#4E50A8] hover:text-white transition-colors"
                 onClick={handleDownloadChart}
                 onMouseEnter={() => setTooltipVisible(true)}
                 onMouseLeave={() => setTooltipVisible(false)}
                 title="Download chart data as CSV"
               >
-                <Download size={16} />
+                <Download size={16} className="mr-2" />
+                Export
               </Button>
             </div>
           </div>
           
-          <div className="h-[300px] w-full">
+          <div className="bg-white rounded-lg border border-gray-200 p-4">
             {chartType === 'line' && (
-              <ChartContainer 
-                config={chartConfig}
-                className="h-full w-full"
-              >
-                <RechartsLineChart 
-                  data={message.chartData}
-                  margin={{ top: 20, right: 30, left: 60, bottom: 40 }}
+              <div className="h-[350px] w-full">
+                <ChartContainer 
+                  config={chartConfig}
+                  className="h-full w-full"
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis 
-                    dataKey="name" 
-                    stroke="#888" 
-                    tickMargin={10}
-                  />
-                  <YAxis
-                    stroke="#888"
-                    tickFormatter={(value) => `$${value}`}
-                    tickMargin={10}
-                  />
-                  <Tooltip 
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="bg-white p-2 border border-gray-200 rounded shadow-sm">
-                            <p className="text-sm">{`${payload[0].payload.name}: $${payload[0].value}`}</p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Line 
-                    type="monotone"
-                    dataKey="value" 
-                    stroke="#4E50A8" 
-                    strokeWidth={2}
-                    dot={{ fill: "#4E50A8", r: 4 }}
-                    activeDot={{ r: 6, fill: "#4E50A8" }}
-                    name="sales"
-                  />
-                </RechartsLineChart>
-              </ChartContainer>
+                  <RechartsLineChart 
+                    data={message.chartData}
+                    margin={{ top: 20, right: 30, left: 60, bottom: 40 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis 
+                      dataKey="name" 
+                      stroke="#888" 
+                      tickMargin={10}
+                    />
+                    <YAxis
+                      stroke="#888"
+                      tickFormatter={(value) => `$${(value/1000).toFixed(0)}k`}
+                      tickMargin={10}
+                    />
+                    <Tooltip 
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+                              <p className="text-sm font-medium">{`${payload[0].payload.name}: $${(payload[0].value/1000).toFixed(0)}k`}</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Line 
+                      type="monotone"
+                      dataKey="value" 
+                      stroke="#4E50A8" 
+                      strokeWidth={3}
+                      dot={{ fill: "#4E50A8", r: 5 }}
+                      activeDot={{ r: 7, fill: "#4E50A8" }}
+                      name="sales"
+                    />
+                  </RechartsLineChart>
+                </ChartContainer>
+              </div>
             )}
             
             {chartType === 'bar' && (
-              <ChartContainer 
-                config={chartConfig}
-                className="h-full w-full"
-              >
-                <RechartsBarChart
-                  data={message.chartData}
-                  margin={{ top: 20, right: 30, left: 60, bottom: 40 }}
+              <div className="h-[350px] w-full">
+                <ChartContainer 
+                  config={chartConfig}
+                  className="h-full w-full"
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis 
-                    dataKey="name" 
-                    stroke="#888" 
-                    tickMargin={10}
-                  />
-                  <YAxis
-                    stroke="#888"
-                    tickFormatter={(value) => `$${value}`}
-                    tickMargin={10}
-                  />
-                  <Tooltip 
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="bg-white p-2 border border-gray-200 rounded shadow-sm">
-                            <p className="text-sm">{`${payload[0].payload.name}: $${payload[0].value}`}</p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Bar 
-                    dataKey="value" 
-                    fill="#4E50A8"
-                    name="sales"
-                  />
-                </RechartsBarChart>
-              </ChartContainer>
+                  <RechartsBarChart
+                    data={message.chartData}
+                    margin={{ top: 20, right: 30, left: 60, bottom: 40 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis 
+                      dataKey="name" 
+                      stroke="#888" 
+                      tickMargin={10}
+                    />
+                    <YAxis
+                      stroke="#888"
+                      tickFormatter={(value) => `$${(value/1000).toFixed(0)}k`}
+                      tickMargin={10}
+                    />
+                    <Tooltip 
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+                              <p className="text-sm font-medium">{`${payload[0].payload.name}: $${(payload[0].value/1000).toFixed(0)}k`}</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Bar 
+                      dataKey="value" 
+                      fill="#4E50A8"
+                      name="sales"
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </RechartsBarChart>
+                </ChartContainer>
+              </div>
             )}
             
             {chartType === 'pie' && (
-              <div className="h-full w-full flex items-center justify-center">
-                <RechartsPieChart
-                  width={300}
-                  height={250}
-                  margin={{ top: 20, right: 30, left: 30, bottom: 20 }}
-                >
-                  <Pie
-                    data={message.chartData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={90}
-                    label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                    labelLine={false}
-                  >
-                    {message.chartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="bg-white p-2 border border-gray-200 rounded shadow-sm">
-                            <p className="text-sm">{`${payload[0].name}: $${payload[0].value}`}</p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Legend 
-                    layout="horizontal" 
-                    verticalAlign="bottom" 
-                    align="center"
-                    wrapperStyle={{ paddingTop: '10px' }}
-                  />
-                </RechartsPieChart>
+              <div className="h-[400px] w-full flex items-center justify-center">
+                <div className="w-full h-full max-w-[500px]">
+                  <RechartsPieChart width={500} height={400}>
+                    <Pie
+                      data={message.chartData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="45%"
+                      outerRadius={120}
+                      innerRadius={40}
+                      paddingAngle={2}
+                      label={({name, percent}) => `${(percent * 100).toFixed(0)}%`}
+                      labelLine={false}
+                    >
+                      {message.chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+                              <p className="text-sm font-medium">{`${payload[0].name}: $${(payload[0].value/1000).toFixed(0)}k`}</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Legend 
+                      verticalAlign="bottom" 
+                      height={60}
+                      iconType="circle"
+                      wrapperStyle={{ 
+                        paddingTop: '20px',
+                        fontSize: '14px'
+                      }}
+                    />
+                  </RechartsPieChart>
+                </div>
               </div>
             )}
             
             {chartType === 'grid' && (
-              <div className="overflow-auto h-full bg-white rounded-lg border border-gray-200 p-2">
+              <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-[#4E50A8] bg-gray-50 sticky top-0">Date</TableHead>
-                      <TableHead className="text-[#4E50A8] bg-gray-50 sticky top-0">Value</TableHead>
+                    <TableRow className="bg-[#4E50A8]/5 hover:bg-[#4E50A8]/5">
+                      <TableHead className="text-[#4E50A8] font-semibold py-3 px-4">Period</TableHead>
+                      <TableHead className="text-[#4E50A8] font-semibold py-3 px-4 text-right">Revenue</TableHead>
+                      <TableHead className="text-[#4E50A8] font-semibold py-3 px-4 text-right">Growth</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {message.chartData.map((row, i) => (
-                      <TableRow key={i} className="hover:bg-gray-50">
-                        <TableCell className="font-medium">{row.name}</TableCell>
-                        <TableCell>${row.value}</TableCell>
-                      </TableRow>
-                    ))}
+                    {message.chartData.map((row, i) => {
+                      const prevValue = i > 0 ? message.chartData[i-1].value : row.value;
+                      const growth = i > 0 ? ((row.value - prevValue) / prevValue * 100).toFixed(1) : '0.0';
+                      return (
+                        <TableRow key={i} className="hover:bg-gray-50/50 transition-colors">
+                          <TableCell className="font-medium py-3 px-4">{row.name}</TableCell>
+                          <TableCell className="py-3 px-4 text-right font-mono">${(row.value/1000).toFixed(0)}k</TableCell>
+                          <TableCell className={`py-3 px-4 text-right font-medium ${
+                            parseFloat(growth) >= 0 ? 'text-green-600' : 'text-red-600'
+                          }`}>
+                            {parseFloat(growth) >= 0 ? '+' : ''}{growth}%
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </div>
             )}
           </div>
-          <div className="text-center text-sm text-[#4E50A8] font-medium">
-            Sales Trend
+          
+          <div className="text-center">
+            <div className="text-sm font-medium text-[#4E50A8] mb-1">
+              Monthly Revenue Analysis
+            </div>
+            <div className="text-xs text-gray-500">
+              Data updated in real-time • Last sync: {new Date().toLocaleTimeString()}
+            </div>
           </div>
         </div>
       </div>
