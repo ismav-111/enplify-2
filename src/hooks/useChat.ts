@@ -30,69 +30,65 @@ export const useChat = () => {
   const [conversations, setConversations] = useState<Conversation[]>([
     {
       id: '1',
-      title: 'Create Chatbot GPT...',
-      preview: 'Sure, I can help you get started with creating a chatbot using GPT in Python...',
+      title: 'Q4 Sales Performance Analysis',
+      preview: 'Our Q4 sales performance shows strong growth across all regions...',
       mode: 'encore',
       messages: [
         {
           id: '1',
-          content: 'Create a chatbot gpt using python language what will be step for that',
+          content: 'Can you analyze our Q4 sales performance and identify key trends?',
           isUser: true,
           timestamp: new Date(Date.now() - 30000)
         },
         {
           id: '2',
-          content: `Sure, I can help you get started with creating a chatbot using GPT in Python. Here are the basic steps you'll need to follow:
+          content: `Based on your Q4 sales data, here's a comprehensive analysis:
 
-1. **Install the required libraries:** You'll need to install the transformers library from Hugging Face to use GPT. You can install it using pip.
+**Key Performance Highlights:**
+- Total revenue increased by 18% compared to Q3
+- North American region led with 35% growth
+- Enterprise clients contributed 65% of total revenue
+- Customer acquisition cost decreased by 12%
 
-2. **Load the pre-trained model:** GPT comes in several sizes and versions, so you'll need to choose the one that fits your needs. You can load a pre-trained GPT model. This loads the 1.3B parameter version of GPT-Neo, which is a powerful and relatively recent model.
+**Regional Performance:**
+- North America: $2.3M (+35%)
+- Europe: $1.8M (+22%) 
+- Asia-Pacific: $1.4M (+15%)
 
-3. **Create a chatbot loop:** You'll need to create a loop that takes user input, generates a response using the GPT model, and outputs it to the user. Here's an example loop that uses the input() function to get user input and the gpt() function to generate a response. This loop will keep running until the user exits the program or the loop is interrupted.
+**Product Line Analysis:**
+- Premium subscriptions grew 28%
+- Professional services revenue up 31%
+- Integration solutions showed 19% growth
 
-4. **Add some personality to the chatbot:** While GPT can generate text, it doesn't have any inherent personality or traits. You can make your chatbot more interesting by adding custom prompts or responses that reflect your desired personality. You can then modify the chatbot loop to use these prompts and responses when appropriate. This will make the chatbot seem more human-like and engaging.
-
-These are just the basic steps to get started with a GPT chatbot in Python. Depending on your requirements, you may need to add more features or complexity to the chatbot. Good luck!`,
+**Recommendations:**
+1. Increase investment in North American market expansion
+2. Focus on enterprise client retention strategies
+3. Expand professional services team to meet growing demand`,
           isUser: false,
           timestamp: new Date(Date.now() - 25000),
-          mode: 'encore'
-        },
-        {
-          id: '3',
-          content: 'What is use of that chatbot ?',
-          isUser: true,
-          timestamp: new Date(Date.now() - 10000)
-        },
-        {
-          id: '4',
-          content: `Chatbots can be used for a wide range of purposes, including:
-
-**Customer service chatbots** can handle frequently asked questions, provide basic support, and help customers navigate products or services. This can reduce the workload on human customer service representatives and provide 24/7 support.`,
-          isUser: false,
-          timestamp: new Date(Date.now() - 5000),
           mode: 'encore'
         }
       ]
     },
     {
       id: '2',
-      title: 'Html Game Environment...',
-      preview: 'I can help you create an HTML game environment...',
-      mode: 'encore',
+      title: 'Employee Handbook Updates',
+      preview: 'I found the latest employee handbook and HR policy documents...',
+      mode: 'endocs',
       messages: []
     },
     {
       id: '3',
-      title: 'Apply To Leave For Emergency',
-      preview: 'I can help you draft a leave application...',
-      mode: 'encore',
+      title: 'Customer Retention Metrics',
+      preview: 'The customer retention analysis shows interesting patterns...',
+      mode: 'ensights',
       messages: []
     },
     {
       id: '4',
-      title: 'What Is UI UX Design?',
-      preview: 'UI/UX design refers to User Interface and User Experience design...',
-      mode: 'encore',
+      title: 'Compliance Documentation Review',
+      preview: 'I can help you review the latest compliance documents...',
+      mode: 'endocs',
       messages: []
     }
   ]);
@@ -128,37 +124,194 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
   }, []);
 
   const generateTableData = () => {
-    // Generate sample table data
+    // Generate realistic enterprise document data
     return [
-      { id: 1, title: 'Document A', content: 'Information about document A', relevance: '95%' },
-      { id: 2, title: 'Document B', content: 'Information about document B', relevance: '85%' },
-      { id: 3, title: 'Document C', content: 'Information about document C', relevance: '75%' },
+      { 
+        id: 1, 
+        title: 'Employee Handbook 2024', 
+        content: 'Updated policies for remote work, benefits, and code of conduct', 
+        relevance: '95%',
+        lastUpdated: '2024-01-15',
+        department: 'HR'
+      },
+      { 
+        id: 2, 
+        title: 'ISO 27001 Compliance Guide', 
+        content: 'Information security management system requirements and procedures', 
+        relevance: '88%',
+        lastUpdated: '2024-01-10',
+        department: 'IT Security'
+      },
+      { 
+        id: 3, 
+        title: 'Financial Reporting Standards', 
+        content: 'Updated GAAP compliance requirements for quarterly reporting', 
+        relevance: '82%',
+        lastUpdated: '2024-01-08',
+        department: 'Finance'
+      },
     ];
   };
 
   const generateChartData = () => {
-    // Generate sales data that resembles the reference image
-    const today = new Date();
+    // Generate realistic business metrics data
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const data = [];
     
-    for (let i = 0; i < 30; i++) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - (29 - i));
+    // Simulate monthly revenue growth with realistic business patterns
+    const baseRevenue = 850000; // $850k base
+    
+    months.forEach((month, index) => {
+      // Simulate seasonal patterns and growth
+      let revenue = baseRevenue;
       
-      // Generate values between $300 and $800 with some randomness
-      // but following a pattern similar to the reference image
-      const baseValue = 400;
-      const amplitude = 300;
-      const randomFactor = Math.sin(i * 0.4) * amplitude + Math.random() * 100;
-      const value = Math.round(baseValue + randomFactor);
+      // Add growth trend (2-3% monthly)
+      revenue += (index * 25000);
+      
+      // Add seasonal variations
+      if (month === 'Dec') revenue *= 1.25; // Holiday boost
+      if (month === 'Jan') revenue *= 0.85; // Post-holiday dip
+      if (month === 'Nov') revenue *= 1.15; // Black Friday effect
+      if (month === 'Jul' || month === 'Aug') revenue *= 0.92; // Summer slowdown
+      
+      // Add some randomness
+      revenue += (Math.random() - 0.5) * 50000;
       
       data.push({
-        name: date.toISOString().split('T')[0],
-        value
+        name: month,
+        value: Math.round(revenue)
       });
-    }
+    });
     
     return data;
+  };
+
+  const getEnterpriseResponse = (content: string, mode: ResponseMode) => {
+    switch(mode) {
+      case 'endocs':
+        if (content.toLowerCase().includes('policy') || content.toLowerCase().includes('handbook')) {
+          return `I found relevant policy documents in your knowledge base regarding "${content}". Here are the most relevant documents from your enterprise repository:
+
+These documents contain the most up-to-date information about your inquiry. All documents are sourced from your authenticated enterprise systems and are current as of the last sync.`;
+        }
+        if (content.toLowerCase().includes('compliance') || content.toLowerCase().includes('regulation')) {
+          return `Based on your compliance documentation search for "${content}", I've located the following regulatory and compliance documents:
+
+These documents ensure your organization stays compliant with industry standards and regulatory requirements.`;
+        }
+        if (content.toLowerCase().includes('contract') || content.toLowerCase().includes('agreement')) {
+          return `I found contract and agreement documents related to "${content}" in your legal document repository:
+
+All contracts are digitally signed and stored securely in your document management system.`;
+        }
+        return `I've searched your enterprise document repository for "${content}" and found the following relevant documents:
+
+These documents are automatically indexed and kept current with your latest organizational updates.`;
+        
+      case 'ensights':
+        if (content.toLowerCase().includes('sales') || content.toLowerCase().includes('revenue')) {
+          return `Here's your sales and revenue analysis for "${content}":
+
+**Key Insights:**
+- Revenue growth trending upward with 12% quarter-over-quarter increase
+- Top performing months show strong correlation with marketing campaigns
+- Seasonal patterns indicate Q4 typically sees 20-25% revenue boost
+
+The data visualization below shows your 12-month revenue trend with detailed breakdowns by month.`;
+        }
+        if (content.toLowerCase().includes('customer') || content.toLowerCase().includes('retention')) {
+          return `Customer analytics and retention insights for "${content}":
+
+**Performance Metrics:**
+- Customer retention rate: 87% (above industry average of 82%)
+- Customer lifetime value increased by 15% year-over-year
+- Churn rate decreased from 8% to 5% after implementing new onboarding
+
+The chart below displays customer engagement patterns and retention trends.`;
+        }
+        if (content.toLowerCase().includes('employee') || content.toLowerCase().includes('hr')) {
+          return `HR and employee performance analytics for "${content}":
+
+**Workforce Insights:**
+- Employee satisfaction score: 8.2/10 (up from 7.8 last quarter)
+- Average time to hire reduced by 25% with new recruitment tools
+- Training completion rates improved to 94%
+
+The visualization shows key HR metrics and trends across departments.`;
+        }
+        return `Business intelligence analysis for "${content}":
+
+**Data Summary:**
+- Analysis based on real-time enterprise data
+- Trends show positive growth patterns across key metrics
+- Recommendations generated from predictive analytics
+
+The interactive chart below provides detailed insights into your business performance.`;
+        
+      default: // encore
+        if (content.toLowerCase().includes('strategy') || content.toLowerCase().includes('plan')) {
+          return `Based on your strategic inquiry about "${content}", here's my analysis:
+
+**Strategic Recommendations:**
+- Leverage current market positioning to expand into adjacent markets
+- Implement data-driven decision making across all departments
+- Focus on customer experience optimization for competitive advantage
+
+**Next Steps:**
+1. Conduct market research on identified opportunities
+2. Develop KPIs to measure strategic initiative success
+3. Create cross-functional teams to execute key initiatives
+
+Would you like me to dive deeper into any specific aspect of this strategy?`;
+        }
+        if (content.toLowerCase().includes('market') || content.toLowerCase().includes('competition')) {
+          return `Market analysis and competitive intelligence for "${content}":
+
+**Market Position:**
+- Your company holds 12% market share in the primary segment
+- Competitive advantage in technology and customer service
+- Growth opportunities in emerging markets and product categories
+
+**Competitive Landscape:**
+- Main competitors show slower innovation cycles
+- Price positioning is competitive but value proposition is stronger
+- Customer loyalty metrics exceed industry benchmarks
+
+**Recommendations:**
+- Accelerate product development to maintain technology lead
+- Invest in market expansion in high-growth regions
+- Strengthen partnerships to enhance market reach`;
+        }
+        if (content.toLowerCase().includes('budget') || content.toLowerCase().includes('financial')) {
+          return `Financial planning and budget analysis for "${content}":
+
+**Budget Overview:**
+- Current year budget performance: 97% of targets achieved
+- Cost optimization opportunities identified in operations
+- ROI on technology investments showing 23% returns
+
+**Financial Health Indicators:**
+- Cash flow remains strong with 6-month runway
+- Debt-to-equity ratio improved by 15%
+- Revenue diversification reduces market risks
+
+**Planning Recommendations:**
+- Allocate 15% of budget to innovation projects
+- Consider strategic acquisitions in Q2
+- Optimize operational costs through automation`;
+        }
+        return `I understand you're asking about: "${content}". Based on your enterprise context:
+
+**Analysis:**
+This relates to your organization's operational efficiency and strategic positioning. I can help you explore this topic by analyzing your internal data, industry benchmarks, and best practices.
+
+**Recommendations:**
+- Gather relevant stakeholders for comprehensive discussion
+- Review current processes and identify improvement opportunities  
+- Develop metrics to track progress and success
+
+Would you like me to provide more specific guidance on any aspect of this topic?`;
+    }
   };
 
   const sendMessage = useCallback(async (content: string, mode: ResponseMode = 'encore', file?: File) => {
@@ -203,7 +356,7 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
     setIsLoading(true);
     setCurrentMode(safeMode);
 
-    // Simulate AI response based on mode
+    // Simulate AI response based on mode with enterprise context
     setTimeout(() => {
       let aiMessage: Message;
       
@@ -211,7 +364,7 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
         case 'endocs':
           aiMessage = {
             id: (Date.now() + 1).toString(),
-            content: `Here's the information you requested from Endocs about "${content}":`,
+            content: getEnterpriseResponse(content, 'endocs'),
             isUser: false,
             timestamp: new Date(),
             mode: 'endocs',
@@ -222,7 +375,7 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
         case 'ensights':
           aiMessage = {
             id: (Date.now() + 1).toString(),
-            content: `Here are the insights you requested about "${content}":`,
+            content: getEnterpriseResponse(content, 'ensights'),
             isUser: false,
             timestamp: new Date(),
             mode: 'ensights',
@@ -233,7 +386,7 @@ These are just the basic steps to get started with a GPT chatbot in Python. Depe
         default: // encore
           aiMessage = {
             id: (Date.now() + 1).toString(),
-            content: `I understand you're asking about: "${content}". This is a response from Encore. In a real implementation, this would connect to an actual AI service to generate meaningful responses.`,
+            content: getEnterpriseResponse(content, 'encore'),
             isUser: false,
             timestamp: new Date(),
             mode: 'encore'
