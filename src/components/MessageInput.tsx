@@ -64,7 +64,6 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
   const handleFormClick = () => {
     if (textareaRef.current) {
       textareaRef.current.focus();
-      textareaRef.current.select();
     }
   };
 
@@ -115,9 +114,9 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
     <div className={`${centered ? 'w-full' : ''}`}>
       <div className="max-w-3xl mx-auto">
         <form ref={formRef} onSubmit={handleSubmit} className="relative" onClick={handleFormClick}>
-          <div className="flex flex-col w-full rounded-xl border border-gray-200 shadow-sm bg-white">
+          <div className="flex flex-col w-full rounded-2xl border border-gray-200 shadow-sm bg-white overflow-hidden">
             {/* Input area */}
-            <div className="flex items-center w-full px-4">
+            <div className="flex items-end w-full px-4 py-3">
               <Textarea
                 ref={textareaRef}
                 value={message}
@@ -125,71 +124,73 @@ const MessageInput = ({ onSendMessage, disabled = false, centered = false }: Mes
                 onKeyDown={handleKeyDown}
                 placeholder="What do you want to know?"
                 disabled={disabled}
-                className="min-h-[64px] max-h-40 resize-none border-none focus:border-none focus:ring-0 py-4 flex-1"
+                className="min-h-[20px] max-h-40 resize-none border-none focus:border-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 flex-1 bg-transparent text-base"
                 rows={1}
               />
               
-              {/* Attachment button */}
-              {showAttachment && (
-                <button
-                  type="button"
-                  onClick={handleFileClick}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors mr-2"
+              {/* Action buttons */}
+              <div className="flex items-center gap-2 ml-3">
+                {/* Attachment button */}
+                {showAttachment && (
+                  <button
+                    type="button"
+                    onClick={handleFileClick}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-500 hover:text-gray-700"
+                  >
+                    <Paperclip size={20} />
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      className="hidden"
+                      accept={responseMode === 'endocs' 
+                        ? '.pdf,.jpg,.jpeg,.png,.gif,.svg' 
+                        : '.xlsx,.xls,.csv'}
+                    />
+                  </button>
+                )}
+                
+                <Button
+                  type="submit"
+                  disabled={!message.trim() || disabled}
+                  size="icon"
+                  className="rounded-full bg-gray-800 hover:bg-gray-900 disabled:bg-gray-300 h-8 w-8 flex-shrink-0 transition-colors"
                 >
-                  <Paperclip size={16} className="text-gray-500" />
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    className="hidden"
-                    accept={responseMode === 'endocs' 
-                      ? '.pdf,.jpg,.jpeg,.png,.gif,.svg' 
-                      : '.xlsx,.xls,.csv'}
-                  />
-                </button>
-              )}
-              
-              <Button
-                type="submit"
-                disabled={!message.trim() || disabled}
-                className="rounded-full bg-[#4E50A8] hover:bg-[#4042a0] p-3 h-auto flex-shrink-0"
-              >
-                <ArrowUp size={20} className="text-white" />
-              </Button>
+                  <ArrowUp size={16} className="text-white" />
+                </Button>
+              </div>
             </div>
             
             {/* Bottom toolbar with mode selector */}
-            <div className="flex items-center px-4 py-2 border-t border-gray-100">
-              <div className="flex items-center flex-1 gap-2">
-                {/* Mode selector styled as tabs */}
-                <div className="flex space-x-2">
-                  <Select
-                    value={responseMode}
-                    onValueChange={(value) => {
-                      setResponseMode(value as ResponseMode);
-                      if (value === 'encore') {
-                        setSelectedFile(null);
-                      }
-                    }}
-                  >
-                    <SelectTrigger className="border border-gray-200 rounded-full px-3 py-1 h-auto text-xs bg-white w-auto min-w-[80px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent align="start" className="w-[120px]">
-                      <SelectItem value="encore">Encore</SelectItem>
-                      <SelectItem value="endocs">Endocs</SelectItem>
-                      <SelectItem value="ensights">Ensights</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+            <div className="flex items-center justify-between px-4 py-2 bg-gray-50/50">
+              <div className="flex items-center gap-3">
+                {/* Mode selector */}
+                <Select
+                  value={responseMode}
+                  onValueChange={(value) => {
+                    setResponseMode(value as ResponseMode);
+                    if (value === 'encore') {
+                      setSelectedFile(null);
+                    }
+                  }}
+                >
+                  <SelectTrigger className="border-0 rounded-lg px-3 py-1.5 h-auto text-xs bg-white shadow-none w-auto min-w-[80px] text-gray-700">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent align="start" className="w-[120px]">
+                    <SelectItem value="encore">Encore</SelectItem>
+                    <SelectItem value="endocs">Endocs</SelectItem>
+                    <SelectItem value="ensights">Ensights</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               
               {/* Show selected file name if any */}
               {selectedFile && (
-                <span className="text-xs text-gray-500 ml-2 flex items-center">
+                <div className="flex items-center text-xs text-gray-500">
                   <Paperclip size={12} className="mr-1" />
-                  {selectedFile.name}
-                </span>
+                  <span className="truncate max-w-[200px]">{selectedFile.name}</span>
+                </div>
               )}
             </div>
           </div>
