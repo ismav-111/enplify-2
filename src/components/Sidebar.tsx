@@ -154,7 +154,7 @@ const Sidebar = ({
                   <div className="flex items-center">
                     {editingConversation === conv.id ? (
                       <div className="flex items-center gap-2 w-full">
-                        <Input
+                        <input
                           value={editTitle}
                           onChange={(e) => setEditTitle(e.target.value)}
                           onKeyDown={(e) => {
@@ -164,7 +164,7 @@ const Sidebar = ({
                               handleRenameCancel();
                             }
                           }}
-                          className="text-sm font-medium flex-1"
+                          className="text-sm font-medium flex-1 bg-transparent border-none outline-none focus:outline-none p-0 m-0"
                           autoFocus
                           onFocus={(e) => e.target.select()}
                           onBlur={handleRenameConfirm}
@@ -248,7 +248,7 @@ const Sidebar = ({
             >
               Delete
             </AlertDialogAction>
-          </AlertDialogFooter>
+            </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </>
