@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Plus, Menu, PanelLeft, Trash, Edit, X } from 'lucide-react';
+import { Plus, Menu, PanelLeft, Trash, Edit, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
@@ -11,19 +11,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 interface SidebarProps {
   conversations: Array<{ id: string; title: string; preview: string }>;
@@ -46,34 +35,37 @@ const Sidebar = ({
 }: SidebarProps) => {
   const [isOpen, setIsOpen] = useState(true);
   const [hoveredConversation, setHoveredConversation] = useState<string | null>(null);
-  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [editingConversation, setEditingConversation] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
-  const [newTitle, setNewTitle] = useState('');
+  const [editTitle, setEditTitle] = useState('');
 
   const handleRenameClick = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     const conversation = conversations.find(conv => conv.id === id);
     if (conversation) {
-      setSelectedConversationId(id);
-      setNewTitle(conversation.title);
-      setRenameDialogOpen(true);
+      setEditingConversation(id);
+      setEditTitle(conversation.title);
     }
+  };
+
+  const handleRenameConfirm = () => {
+    if (onRenameConversation && editingConversation && editTitle.trim()) {
+      onRenameConversation(editingConversation, editTitle.trim());
+    }
+    setEditingConversation(null);
+    setEditTitle('');
+  };
+
+  const handleRenameCancel = () => {
+    setEditingConversation(null);
+    setEditTitle('');
   };
 
   const handleDeleteClick = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     setSelectedConversationId(id);
     setDeleteDialogOpen(true);
-  };
-
-  const handleRenameConfirm = () => {
-    if (onRenameConversation && selectedConversationId && newTitle.trim()) {
-      onRenameConversation(selectedConversationId, newTitle.trim());
-    }
-    setRenameDialogOpen(false);
-    setSelectedConversationId(null);
-    setNewTitle('');
   };
 
   const handleDeleteConfirm = () => {
@@ -150,42 +142,80 @@ const Sidebar = ({
             
             <div className="space-y-1">
               {conversations.map((conv) => (
-                <button
+                <div
                   key={conv.id}
-                  onClick={() => onSelectConversation(conv.id)}
+                  onClick={() => editingConversation !== conv.id && onSelectConversation(conv.id)}
                   onMouseEnter={() => setHoveredConversation(conv.id)}
                   onMouseLeave={() => setHoveredConversation(null)}
-                  className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 hover:bg-gray-50 relative ${
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 hover:bg-gray-50 relative cursor-pointer ${
                     activeConversation === conv.id ? 'bg-[#F1F1F9]' : ''
                   }`}
                 >
                   <div className="flex items-center">
-                    <p className="text-sm font-medium text-gray-800 truncate">{conv.title}</p>
+                    {editingConversation === conv.id ? (
+                      <div className="flex items-center gap-2 w-full">
+                        <Input
+                          value={editTitle}
+                          onChange={(e) => setEditTitle(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              handleRenameConfirm();
+                            } else if (e.key === 'Escape') {
+                              handleRenameCancel();
+                            }
+                          }}
+                          className="text-sm font-medium flex-1"
+                          autoFocus
+                          onBlur={handleRenameConfirm}
+                        />
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-6 w-6 text-green-600 hover:text-green-700 hover:bg-green-50 p-1"
+                          onClick={handleRenameConfirm}
+                          title="Save"
+                        >
+                          <Check size={14} />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-6 w-6 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1"
+                          onClick={handleRenameCancel}
+                          title="Cancel"
+                        >
+                          <X size={14} />
+                        </Button>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-sm font-medium text-gray-800 truncate">{conv.title}</p>
+                        {hoveredConversation === conv.id && (
+                          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-1">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-6 w-6 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1"
+                              onClick={(e) => handleRenameClick(e, conv.id)}
+                              title="Rename conversation"
+                            >
+                              <Edit size={14} />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-6 w-6 text-gray-400 hover:text-red-600 hover:bg-red-50 p-1"
+                              onClick={(e) => handleDeleteClick(e, conv.id)}
+                              title="Delete conversation"
+                            >
+                              <Trash size={14} />
+                            </Button>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
-                  
-                  {hoveredConversation === conv.id && (
-                    <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-1">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-6 w-6 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1"
-                        onClick={(e) => handleRenameClick(e, conv.id)}
-                        title="Rename conversation"
-                      >
-                        <Edit size={14} />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-6 w-6 text-gray-400 hover:text-red-600 hover:bg-red-50 p-1"
-                        onClick={(e) => handleDeleteClick(e, conv.id)}
-                        title="Delete conversation"
-                      >
-                        <Trash size={14} />
-                      </Button>
-                    </div>
-                  )}
-                </button>
+                </div>
               ))}
             </div>
           </div>
@@ -198,49 +228,6 @@ const Sidebar = ({
           </div>
         </div>
       </div>
-
-      {/* Rename Dialog */}
-      <Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Rename conversation</DialogTitle>
-            <DialogDescription>
-              Enter a new name for this conversation.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="title" className="text-right">
-                Title
-              </Label>
-              <Input
-                id="title"
-                value={newTitle}
-                onChange={(e) => setNewTitle(e.target.value)}
-                className="col-span-3"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleRenameConfirm();
-                  }
-                }}
-                autoFocus
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setRenameDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button 
-              onClick={handleRenameConfirm}
-              className="bg-[#4E50A8] hover:bg-[#3e3f86]"
-              disabled={!newTitle.trim()}
-            >
-              Save changes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
