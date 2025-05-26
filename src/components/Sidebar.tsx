@@ -2,6 +2,28 @@
 import { useState } from 'react';
 import { Plus, Menu, PanelLeft, Trash, Edit, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface SidebarProps {
   conversations: Array<{ id: string; title: string; preview: string }>;
@@ -24,26 +46,42 @@ const Sidebar = ({
 }: SidebarProps) => {
   const [isOpen, setIsOpen] = useState(true);
   const [hoveredConversation, setHoveredConversation] = useState<string | null>(null);
+  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+  const [newTitle, setNewTitle] = useState('');
 
-  // Handle the edit/delete button clicks
   const handleRenameClick = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    // If rename callback is provided, call it with a prompt for new title
-    if (onRenameConversation) {
-      const conversation = conversations.find(conv => conv.id === id);
-      const newTitle = window.prompt('Enter new title:', conversation?.title);
-      if (newTitle && newTitle.trim()) {
-        onRenameConversation(id, newTitle.trim());
-      }
+    const conversation = conversations.find(conv => conv.id === id);
+    if (conversation) {
+      setSelectedConversationId(id);
+      setNewTitle(conversation.title);
+      setRenameDialogOpen(true);
     }
   };
 
   const handleDeleteClick = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    // If delete callback is provided, call it with confirmation
-    if (onDeleteConversation && window.confirm('Are you sure you want to delete this conversation?')) {
-      onDeleteConversation(id);
+    setSelectedConversationId(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleRenameConfirm = () => {
+    if (onRenameConversation && selectedConversationId && newTitle.trim()) {
+      onRenameConversation(selectedConversationId, newTitle.trim());
     }
+    setRenameDialogOpen(false);
+    setSelectedConversationId(null);
+    setNewTitle('');
+  };
+
+  const handleDeleteConfirm = () => {
+    if (onDeleteConversation && selectedConversationId) {
+      onDeleteConversation(selectedConversationId);
+    }
+    setDeleteDialogOpen(false);
+    setSelectedConversationId(null);
   };
 
   return (
@@ -160,6 +198,71 @@ const Sidebar = ({
           </div>
         </div>
       </div>
+
+      {/* Rename Dialog */}
+      <Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Rename conversation</DialogTitle>
+            <DialogDescription>
+              Enter a new name for this conversation.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="title" className="text-right">
+                Title
+              </Label>
+              <Input
+                id="title"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                className="col-span-3"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleRenameConfirm();
+                  }
+                }}
+                autoFocus
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRenameDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleRenameConfirm}
+              className="bg-[#4E50A8] hover:bg-[#3e3f86]"
+              disabled={!newTitle.trim()}
+            >
+              Save changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the conversation 
+              and all its messages.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteConfirm}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
