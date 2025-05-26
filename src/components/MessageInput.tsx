@@ -131,9 +131,9 @@ const MessageInput = ({
       <div className="max-w-3xl mx-auto">
         <form ref={formRef} onSubmit={handleSubmit} className="relative" onClick={handleFormClick}>
           <div className="flex flex-col w-full rounded-2xl border border-gray-200 shadow-sm bg-white overflow-hidden">
-            {/* Main input area */}
-            <div className="flex items-end w-full px-4 py-3">
-              <div className="flex items-center gap-3 flex-1">
+            {/* Textarea area */}
+            <div className="flex items-start w-full px-4 pt-4 pb-2">
+              <div className="flex items-start gap-3 flex-1">
                 {/* Mode selector */}
                 <Select
                   value={responseMode}
@@ -144,7 +144,7 @@ const MessageInput = ({
                     }
                   }}
                 >
-                  <SelectTrigger className="border-0 rounded-lg px-3 py-1.5 h-auto text-xs bg-gray-50 shadow-none w-auto min-w-[80px] text-gray-700">
+                  <SelectTrigger className="border-0 rounded-lg px-3 py-1.5 h-auto text-xs bg-gray-50 shadow-none w-auto min-w-[80px] text-gray-700 mt-1">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent align="start" className="w-[120px]">
@@ -166,12 +166,14 @@ const MessageInput = ({
                   rows={1}
                 />
               </div>
-              
-              {/* Action buttons */}
-              <div className="flex items-center gap-2 ml-3">
+            </div>
+            
+            {/* Action buttons area */}
+            <div className="flex items-center justify-between px-4 pb-3 pt-1">
+              <div className="flex items-center gap-2">
                 {/* Show selected file name if any */}
                 {selectedFile && (
-                  <div className="flex items-center text-xs text-gray-500 mr-2">
+                  <div className="flex items-center text-xs text-gray-500">
                     <Paperclip size={12} className="mr-1" />
                     <span className="truncate max-w-[150px]">{selectedFile.name}</span>
                   </div>
@@ -184,7 +186,7 @@ const MessageInput = ({
                     onClick={handleFileClick}
                     className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-500 hover:text-gray-700"
                   >
-                    <Paperclip size={20} />
+                    <Paperclip size={18} />
                     <input
                       type="file"
                       ref={fileInputRef}
@@ -196,8 +198,10 @@ const MessageInput = ({
                     />
                   </button>
                 )}
-                
-                {/* Send or Stop button */}
+              </div>
+              
+              {/* Send or Stop button */}
+              <div className="flex">
                 {isLoading ? (
                   <Button
                     type="button"
