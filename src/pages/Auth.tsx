@@ -55,23 +55,23 @@ export default function Auth() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex">
       {/* Left Side - Brand and Features */}
-      <div className="flex-1 flex flex-col justify-center px-8 lg:px-16 py-12">
-        <div className="max-w-lg">
-          <h1 className="text-4xl lg:text-5xl font-bold text-indigo-600 mb-6 font-comfortaa">
+      <div className="flex-1 flex flex-col justify-center px-8 lg:px-20 py-16">
+        <div className="max-w-xl">
+          <h1 className="text-5xl lg:text-6xl font-bold text-indigo-600 mb-8 font-comfortaa leading-tight">
             enplify<span className="text-indigo-400">.ai</span>
           </h1>
           
-          <p className="text-lg lg:text-xl text-gray-700 leading-relaxed mb-10 font-medium">
+          <p className="text-xl lg:text-2xl text-gray-700 leading-relaxed mb-12 font-medium">
             Experience seamless enterprise information integration and achieve unparalleled user experience with our innovative Gen AI solution
           </p>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             {features.map((feature, index) => (
-              <div key={index} className="flex items-start space-x-3">
-                <span className="text-xl flex-shrink-0 mt-0.5">{feature.icon}</span>
-                <span className="text-gray-700 font-medium text-sm leading-5">{feature.title}</span>
+              <div key={index} className="flex items-start space-x-4">
+                <span className="text-2xl flex-shrink-0 mt-1">{feature.icon}</span>
+                <span className="text-gray-700 font-semibold text-base leading-6">{feature.title}</span>
               </div>
             ))}
           </div>
@@ -80,30 +80,21 @@ export default function Auth() {
       
       {/* Right Side - Authentication Form */}
       <div className="flex-1 flex items-center justify-center p-8">
-        <Card className="w-full max-w-md shadow-xl border-0">
-          <CardHeader className="text-center pb-8 pt-8">
-            <CardTitle className="text-2xl font-bold text-gray-900 mb-4">
-              {isSignIn ? "Sign In" : "Sign Up"}
+        <Card className="w-full max-w-md shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
+          <CardHeader className="text-center pb-6 pt-10 px-10">
+            <CardTitle className="text-3xl font-bold text-gray-900 mb-6">
+              {isSignIn ? "Welcome back" : "Create account"}
             </CardTitle>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-600 text-base">
               {isSignIn ? (
-                <>
-                  Don't have an account?{" "}
-                  <button
-                    type="button"
-                    onClick={() => setIsSignIn(false)}
-                    className="text-indigo-600 font-medium hover:text-indigo-500 underline"
-                  >
-                    Sign up
-                  </button>
-                </>
+                "Enter your credentials to access your account"
               ) : (
                 <>
                   Already have an account?{" "}
                   <button
                     type="button"
                     onClick={() => setIsSignIn(true)}
-                    className="text-indigo-600 font-medium hover:text-indigo-500 underline"
+                    className="text-indigo-600 font-semibold hover:text-indigo-500 underline transition-colors"
                   >
                     Sign in
                   </button>
@@ -112,73 +103,83 @@ export default function Auth() {
             </p>
           </CardHeader>
 
-          <CardContent className="px-8 pb-8">
+          <CardContent className="px-10 pb-10">
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium text-gray-700">
-                  Email
+              <div className="space-y-3">
+                <Label htmlFor="email" className="text-sm font-semibold text-gray-800">
+                  Email address
                 </Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="Enter your email"
-                  className="w-full h-12 px-4"
+                  className="w-full h-12 px-4 text-base border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg"
                   {...form.register("email")}
                 />
                 {form.formState.errors.email && (
-                  <p className="text-xs text-red-600 mt-1">{form.formState.errors.email.message}</p>
+                  <p className="text-sm text-red-600 mt-2">{form.formState.errors.email.message}</p>
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium text-gray-700">
-                  Password
-                </Label>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password" className="text-sm font-semibold text-gray-800">
+                    Password
+                  </Label>
+                  {isSignIn && (
+                    <button
+                      type="button"
+                      className="text-sm text-indigo-600 hover:text-indigo-500 font-medium transition-colors"
+                    >
+                      Forgot password?
+                    </button>
+                  )}
+                </div>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    className="w-full h-12 pl-10 pr-10"
+                    className="w-full h-12 pl-12 pr-12 text-base border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg"
                     {...form.register("password")}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
                 {form.formState.errors.password && (
-                  <p className="text-xs text-red-600 mt-1">{form.formState.errors.password.message}</p>
+                  <p className="text-sm text-red-600 mt-2">{form.formState.errors.password.message}</p>
                 )}
               </div>
 
               <Button
                 type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white h-12 font-medium mt-6"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white h-12 font-semibold text-base rounded-lg transition-colors mt-8"
                 disabled={isLoading}
               >
-                {isLoading ? "Processing..." : (isSignIn ? "Sign In" : "Sign Up")}
+                {isLoading ? "Processing..." : (isSignIn ? "Sign in" : "Create account")}
               </Button>
             </form>
 
-            <div className="relative my-6">
+            <div className="relative my-8">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-3 bg-white text-gray-500">OR</span>
+                <span className="px-4 bg-white text-gray-500 font-medium">or continue with</span>
               </div>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               <Button
                 type="button"
                 variant="outline"
-                className="w-full flex items-center justify-center gap-3 h-12 border-gray-300"
+                className="w-full flex items-center justify-center gap-3 h-12 border-gray-300 hover:bg-gray-50 rounded-lg font-medium transition-colors"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -186,31 +187,41 @@ export default function Auth() {
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                 </svg>
-                <span className="font-medium">Sign in with Google</span>
+                <span className="font-medium">Continue with Google</span>
               </Button>
 
               <Button
                 type="button"
                 variant="outline"
-                className="w-full flex items-center justify-center gap-3 h-12 border-gray-300"
+                className="w-full flex items-center justify-center gap-3 h-12 border-gray-300 hover:bg-gray-50 rounded-lg font-medium transition-colors"
               >
-                <svg className="w-5 h-5" viewBox="0 0 23 23" fill="none">
-                  <path d="M11.5 0C5.159 0 0 5.159 0 11.5S5.159 23 11.5 23 23 17.841 23 11.5 17.841 0 11.5 0z" fill="#f25022"/>
-                  <path d="M11.5 0v11.5H0C0 5.159 5.159 0 11.5 0z" fill="#7fba00"/>
-                  <path d="M0 11.5h11.5V23C5.159 23 0 17.841 0 11.5z" fill="#00a4ef"/>
-                  <path d="M11.5 11.5H23c0 6.341-5.159 11.5-11.5 11.5V11.5z" fill="#ffb900"/>
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                  <rect width="24" height="24" rx="4" fill="#00BCF2"/>
+                  <path d="M3 12h9.5L9 8.5v7L12.5 12H21" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-                <span className="font-medium">Sign in with Microsoft</span>
+                <span className="font-medium">Continue with Microsoft</span>
               </Button>
             </div>
+
+            {!isSignIn && (
+              <div className="text-center pt-8">
+                <button
+                  type="button"
+                  className="text-indigo-600 text-sm hover:text-indigo-500 underline font-medium transition-colors"
+                  onClick={() => setIsSignIn(true)}
+                >
+                  ← Back to sign in
+                </button>
+              </div>
+            )}
 
             <div className="text-center pt-6">
               <button
                 type="button"
-                className="text-indigo-600 text-sm hover:text-indigo-500 underline"
+                className="text-gray-500 text-sm hover:text-gray-700 transition-colors"
                 onClick={() => navigate("/")}
               >
-                Go back to home
+                ← Back to home
               </button>
             </div>
           </CardContent>
