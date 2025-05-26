@@ -127,21 +127,23 @@ const Index = () => {
   const filteredFiles = getFilteredFiles(uploadedFiles, fileFilter);
 
   return (
-    <div className="min-h-screen bg-white flex">
-      {/* Sidebar */}
-      <Sidebar
-        conversations={conversations}
-        activeConversation={activeConversation}
-        onNewChat={createNewChat}
-        onSelectConversation={setActiveConversation}
-        onClearAll={clearAllConversations}
-        onDeleteConversation={deleteConversation}
-        onRenameConversation={renameConversation}
-      />
+    <div className="h-screen bg-white flex overflow-hidden">
+      {/* Fixed Sidebar */}
+      <div className="flex-shrink-0">
+        <Sidebar
+          conversations={conversations}
+          activeConversation={activeConversation}
+          onNewChat={createNewChat}
+          onSelectConversation={setActiveConversation}
+          onClearAll={clearAllConversations}
+          onDeleteConversation={deleteConversation}
+          onRenameConversation={renameConversation}
+        />
+      </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col relative bg-white">
-        {/* Top Bar with Files and User Icons */}
+      <div className="flex-1 flex flex-col h-screen bg-white">
+        {/* Fixed Top Bar with Files and User Icons */}
         <div className="absolute top-4 right-4 z-30 flex gap-2">
           {/* Files Icon with Popover */}
           <Popover>
@@ -320,64 +322,59 @@ const Index = () => {
           </Popover>
         </div>
 
-        {/* Chat Messages - Made scrollable */}
-        <ScrollArea className={`flex-1 bg-white ${!hasMessages ? 'flex items-center justify-center' : ''}`}>
-          {hasMessages ? (
-            <div className="max-w-3xl mx-auto px-4 py-8 w-full">
-              <div className="space-y-6">
-                {currentConversation.messages.map((message) => (
-                  <ChatMessage key={message.id} message={message} />
-                ))}
-                {isLoading && (
-                  <div className="flex gap-4">
-                    <div className="w-9 h-9 rounded-full bg-[#d5d5ec] flex items-center justify-center flex-shrink-0">
-                      <span className="text-[#4E50A8] font-semibold">e</span>
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+        {/* Scrollable Chat Content */}
+        <div className="flex-1 overflow-hidden">
+          <ScrollArea className="h-full">
+            {hasMessages ? (
+              <div className="max-w-3xl mx-auto px-4 py-8 w-full min-h-full">
+                <div className="space-y-6">
+                  {currentConversation.messages.map((message) => (
+                    <ChatMessage key={message.id} message={message} />
+                  ))}
+                  {isLoading && (
+                    <div className="flex gap-4">
+                      <div className="w-9 h-9 rounded-full bg-[#d5d5ec] flex items-center justify-center flex-shrink-0">
+                        <span className="text-[#4E50A8] font-semibold">e</span>
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-1">
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        </div>
                       </div>
                     </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="h-full flex items-center justify-center">
+                <div className="max-w-xl w-full px-4 flex flex-col items-center justify-center">
+                  <div className="text-center mb-10">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2 font-comfortaa">Welcome to enplify 2.o</h1>
+                    <p className="text-gray-600 max-w-md mx-auto mb-6">
+                      Your intelligent AI assistant. Ask me anything and I'll provide 
+                      helpful insights, answers, and information.
+                    </p>
                   </div>
-                )}
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="max-w-xl w-full px-4 flex flex-col items-center justify-center min-h-full">
-              <div className="text-center mb-10">
-                <h1 className="text-3xl font-bold text-gray-800 mb-2 font-comfortaa">Welcome to enplify 2.o</h1>
-                <p className="text-gray-600 max-w-md mx-auto mb-6">
-                  Your intelligent AI assistant. Ask me anything and I'll provide 
-                  helpful insights, answers, and information.
-                </p>
-              </div>
-              <MessageInput 
-                onSendMessage={handleSendMessage} 
-                disabled={isLoading} 
-                centered={true}
-                isLoading={isLoading}
-                onStopGeneration={handleStopGeneration}
-              />
-            </div>
-          )}
-        </ScrollArea>
+            )}
+          </ScrollArea>
+        </div>
 
-        {/* Message Input - Removed border-t separator */}
-        {hasMessages && (
-          <div className="w-full bg-white py-4">
-            <div className="max-w-3xl mx-auto px-4">
-              <MessageInput 
-                onSendMessage={handleSendMessage} 
-                disabled={isLoading} 
-                centered={false}
-                isLoading={isLoading}
-                onStopGeneration={handleStopGeneration}
-              />
-            </div>
+        {/* Fixed Message Input at Bottom */}
+        <div className="flex-shrink-0 w-full bg-white py-4 border-t border-gray-100">
+          <div className="max-w-3xl mx-auto px-4">
+            <MessageInput 
+              onSendMessage={handleSendMessage} 
+              disabled={isLoading} 
+              centered={!hasMessages}
+              isLoading={isLoading}
+              onStopGeneration={handleStopGeneration}
+            />
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
