@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 260 47% 48%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -61,7 +62,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
+    --primary: 260 47% 48%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -99,3 +100,21 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Fix for graph conversation tabs visibility */
+.recharts-wrapper .recharts-legend-wrapper {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.recharts-legend-wrapper .recharts-legend-item {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Improve tab visibility in charts */
+[data-recharts] .recharts-legend-item {
+  margin-right: 10px !important;
+  margin-bottom: 5px !important;
+}
+
