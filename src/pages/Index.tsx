@@ -1,3 +1,4 @@
+
 import { useChat } from '@/hooks/useChat';
 import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
@@ -351,7 +352,7 @@ const Index = () => {
               <div className="h-full flex items-center justify-center">
                 <div className="max-w-xl w-full px-4 flex flex-col items-center justify-center">
                   <div className="text-center mb-10">
-                    <h1 className="text-3xl font-bold text-gray-800 mb-2 font-comfortaa">Welcome to enplify 2.o</h1>
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2 font-comfortaa">Welcome to enplify2.o</h1>
                     <p className="text-gray-600 max-w-md mx-auto mb-6">
                       Your intelligent AI assistant. Ask me anything and I'll provide 
                       helpful insights, answers, and information.
@@ -364,7 +365,7 @@ const Index = () => {
         </div>
 
         {/* Fixed Message Input at Bottom */}
-        <div className="flex-shrink-0 w-full bg-white py-4 border-t border-gray-100">
+        <div className="flex-shrink-0 w-full bg-white py-4">
           <div className="max-w-3xl mx-auto px-4">
             <MessageInput 
               onSendMessage={handleSendMessage} 
