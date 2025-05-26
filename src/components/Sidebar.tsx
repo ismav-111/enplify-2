@@ -166,6 +166,7 @@ const Sidebar = ({
                           }}
                           className="text-sm font-medium flex-1"
                           autoFocus
+                          onFocus={(e) => e.target.select()}
                           onBlur={handleRenameConfirm}
                         />
                         <Button 
