@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { Plus, Menu, PanelLeft, Trash, Edit, X, Check } from 'lucide-react';
+import { Plus, Menu, PanelLeft, X, Edit, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
@@ -135,7 +134,7 @@ const Sidebar = ({
                   className="text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-50 p-1"
                   title="Clear all conversations"
                 >
-                  <Trash size={16} />
+                  <X size={16} />
                 </Button>
               )}
             </div>
@@ -190,7 +189,7 @@ const Sidebar = ({
                       </div>
                     ) : (
                       <>
-                        <p className="text-sm font-medium text-gray-800 truncate">{conv.title}</p>
+                        <p className="text-sm font-medium text-gray-800 truncate pr-12">{conv.title}</p>
                         {hoveredConversation === conv.id && (
                           <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-1">
                             <Button 
@@ -209,7 +208,7 @@ const Sidebar = ({
                               onClick={(e) => handleDeleteClick(e, conv.id)}
                               title="Delete conversation"
                             >
-                              <Trash size={14} />
+                              <X size={14} />
                             </Button>
                           </div>
                         )}
