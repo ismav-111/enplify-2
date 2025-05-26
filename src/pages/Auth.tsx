@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -46,12 +45,12 @@ export default function Auth() {
   }
 
   const features = [
-    { icon: "🚀", title: "AI-Powered Insights", desc: "Get intelligent recommendations" },
-    { icon: "⚡", title: "Lightning Fast", desc: "Process data in real-time" },
-    { icon: "🔒", title: "Enterprise Security", desc: "Bank-level encryption" },
-    { icon: "🎯", title: "Smart Analytics", desc: "Advanced reporting tools" },
-    { icon: "🌐", title: "Global Scale", desc: "Available worldwide" },
-    { icon: "💡", title: "Innovative Solutions", desc: "Cutting-edge technology" },
+    "Intuitive Chat Interface",
+    "Smart Document Handling",
+    "Seamless Integrations",
+    "Omni-Channel Support",
+    "Configurable Framework",
+    "Secure & Personalized",
   ]
 
   return (
@@ -59,49 +58,29 @@ export default function Auth() {
       {/* Left Side - Brand and Features */}
       <div className="flex-1 flex flex-col justify-center px-20 py-16 bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700">
         <div className="max-w-2xl">
-          <div className="mb-8">
-            <h1 className="text-7xl font-bold text-white mb-6 font-comfortaa leading-tight">
+          <div className="mb-12">
+            <h1 className="text-7xl font-bold text-white mb-8 font-comfortaa leading-tight">
               enplify<span className="text-blue-200">.ai</span>
             </h1>
-            <div className="w-24 h-1 bg-blue-200 rounded-full mb-8"></div>
-          </div>
-          
-          <div className="mb-12">
-            <h2 className="text-3xl font-bold text-white mb-4 leading-tight">
-              Transform Your Business with Intelligent AI Solutions
+            <div className="w-24 h-1 bg-blue-200 rounded-full mb-12"></div>
+            
+            <h2 className="text-3xl font-bold text-white mb-6 leading-tight">
+              Transform Your Enterprise with AI-Powered Solutions
             </h2>
-            <p className="text-xl text-blue-100 leading-relaxed max-w-xl font-light">
-              Unlock the power of artificial intelligence to streamline operations, enhance decision-making, and drive unprecedented growth for your enterprise.
+            <p className="text-xl text-blue-100 leading-relaxed font-light mb-12">
+              Experience seamless enterprise information integration and achieve unparalleled user experience with our innovative Gen AI solution
             </p>
           </div>
           
-          <div className="grid grid-cols-1 gap-6">
+          <div className="space-y-6">
             {features.map((feature, index) => (
-              <div key={index} className="flex items-start space-x-4 group">
-                <div className="flex-shrink-0 w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/20 group-hover:bg-white/20 transition-all duration-300">
-                  <span className="text-2xl">{feature.icon}</span>
-                </div>
+              <div key={index} className="flex items-center space-x-4 group">
+                <div className="flex-shrink-0 w-3 h-3 bg-blue-200 rounded-full group-hover:bg-white transition-all duration-300"></div>
                 <div className="flex-1">
-                  <h3 className="text-white font-semibold text-lg mb-1">{feature.title}</h3>
-                  <p className="text-blue-100 text-sm opacity-90">{feature.desc}</p>
+                  <h3 className="text-white font-semibold text-lg">{feature}</h3>
                 </div>
               </div>
             ))}
-          </div>
-          
-          <div className="mt-12 p-6 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20">
-            <p className="text-white text-sm italic">
-              "enplify.ai has revolutionized how we handle enterprise data. The AI-driven insights have increased our efficiency by 300%."
-            </p>
-            <div className="mt-3 flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center">
-                <span className="text-blue-800 font-semibold text-xs">JS</span>
-              </div>
-              <div>
-                <p className="text-white font-medium text-sm">John Smith</p>
-                <p className="text-blue-200 text-xs">CTO, TechCorp</p>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -110,7 +89,7 @@ export default function Auth() {
       <div className="flex-1 flex items-center justify-center p-8 bg-white">
         <Card className="w-full max-w-md bg-white shadow-2xl border-0 rounded-3xl overflow-hidden">
           <CardHeader className="pb-6 pt-12 px-12 text-left">
-            <CardTitle className="text-3xl font-bold text-gray-900 mb-6">
+            <CardTitle className="text-3xl font-bold text-gray-900 mb-2">
               {isSignIn ? "Sign In" : "Sign Up"}
             </CardTitle>
             <p className="text-gray-600 text-sm leading-relaxed">
