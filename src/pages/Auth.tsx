@@ -81,13 +81,22 @@ export default function Auth() {
       {/* Right Side - Authentication Form */}
       <div className="flex-1 flex items-center justify-center p-8">
         <Card className="w-full max-w-md bg-white shadow-xl border-0 rounded-2xl">
-          <CardHeader className="text-center pb-8 pt-12 px-12">
+          <CardHeader className="pb-8 pt-12 px-12 text-left">
             <CardTitle className="text-2xl font-semibold text-gray-900 mb-4">
               {isSignIn ? "Sign In" : "Sign Up"}
             </CardTitle>
             <p className="text-gray-600 text-sm">
               {isSignIn ? (
-                ""
+                <>
+                  Don't have an account?{" "}
+                  <button
+                    type="button"
+                    onClick={() => setIsSignIn(false)}
+                    className="text-indigo-600 font-medium hover:text-indigo-500 transition-colors"
+                  >
+                    Sign up
+                  </button>
+                </>
               ) : (
                 <>
                   Already have an account?{" "}
