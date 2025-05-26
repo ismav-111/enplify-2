@@ -225,7 +225,7 @@ const Sidebar = ({
         {/* Bottom padding */}
         <div className="p-4 border-t border-gray-100">
           <div className="text-xs text-gray-500 text-center">
-            enplify.ai v1.0
+            enplify 2.0
           </div>
         </div>
       </div>
