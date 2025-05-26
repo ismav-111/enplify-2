@@ -1,6 +1,5 @@
-
 import { useState, useRef } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Grid, Download, FileText, Calendar, Building, Image } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Download, FileText, Image } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -57,7 +56,7 @@ interface ChatMessageProps {
 const ChatMessage = ({ message }: ChatMessageProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
-  const [chartType, setChartType] = useState<'line' | 'bar' | 'pie' | 'grid'>('line');
+  const [chartType, setChartType] = useState<'line' | 'bar' | 'pie'>('line');
   const chartRef = useRef<HTMLDivElement>(null);
 
   const handleCopy = () => {
@@ -261,36 +260,27 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                 size="sm"
                 className={chartType === 'line' ? "bg-white shadow-sm" : ""}
                 onClick={() => setChartType('line')}
+                title="Line Chart"
               >
-                <LineChart size={16} className="mr-1" />
-                Line
+                <LineChart size={16} />
               </Button>
               <Button 
                 variant={chartType === 'bar' ? 'default' : 'ghost'}
                 size="sm"
                 className={chartType === 'bar' ? "bg-white shadow-sm" : ""}
                 onClick={() => setChartType('bar')}
+                title="Bar Chart"
               >
-                <BarChart size={16} className="mr-1" />
-                Bar
+                <BarChart size={16} />
               </Button>
               <Button 
                 variant={chartType === 'pie' ? 'default' : 'ghost'}
                 size="sm"
                 className={chartType === 'pie' ? "bg-white shadow-sm" : ""}
                 onClick={() => setChartType('pie')}
+                title="Pie Chart"
               >
-                <PieChart size={16} className="mr-1" />
-                Pie
-              </Button>
-              <Button 
-                variant={chartType === 'grid' ? 'default' : 'ghost'}
-                size="sm"
-                className={chartType === 'grid' ? "bg-white shadow-sm" : ""}
-                onClick={() => setChartType('grid')}
-              >
-                <Grid size={16} className="mr-1" />
-                Table
+                <PieChart size={16} />
               </Button>
             </div>
             <DropdownMenu>
@@ -447,40 +437,6 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
               </ResponsiveContainer>
             </div>
           )}
-          
-          {chartType === 'grid' && (
-            <div className="border border-gray-200 rounded-lg overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-gray-50/80">
-                    <TableHead className="font-semibold text-gray-900 py-3 px-4">Period</TableHead>
-                    <TableHead className="font-semibold text-gray-900 py-3 px-4 text-right">Revenue</TableHead>
-                    <TableHead className="font-semibold text-gray-900 py-3 px-4 text-right">Growth</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {message.chartData.map((row, i) => {
-                    const currentValue = Number(row.value) || 0;
-                    const prevValue = i > 0 ? Number(message.chartData[i-1].value) || 0 : currentValue;
-                    const growth = i > 0 && prevValue !== 0 ? ((currentValue - prevValue) / prevValue * 100).toFixed(1) : '0.0';
-                    return (
-                      <TableRow key={i} className="hover:bg-gray-50/50 transition-colors">
-                        <TableCell className="font-medium py-3 px-4">{row.name}</TableCell>
-                        <TableCell className="py-3 px-4 text-right font-mono font-medium">
-                          ${(currentValue/1000).toFixed(0)}k
-                        </TableCell>
-                        <TableCell className={`py-3 px-4 text-right font-medium ${
-                          parseFloat(growth) >= 0 ? 'text-green-600' : 'text-red-600'
-                        }`}>
-                          {parseFloat(growth) >= 0 ? '+' : ''}{growth}%
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
-          )}
         </div>
       </div>
     );
@@ -500,7 +456,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     <div className="flex mb-8">
       {!message.isUser && (
         <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 mt-1">
-          <span className="text-gray-600 font-medium text-sm">AI</span>
+          <span className="text-gray-600 font-medium text-sm">E</span>
         </div>
       )}
       
