@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { ArrowUp, Paperclip, Square } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -138,7 +137,7 @@ const MessageInput = ({
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Need something? Just ask"
+                placeholder="What do you want to know?"
                 disabled={disabled}
                 className="min-h-[20px] max-h-40 resize-none border-none focus:border-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 flex-1 bg-transparent text-base"
                 rows={1}
