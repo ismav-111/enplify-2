@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { ArrowUp, Paperclip, Square } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -147,7 +146,7 @@ const MessageInput = ({
             
             {/* Action buttons area */}
             <div className="flex items-center justify-between px-4 pb-3 pt-1">
-              {/* Left side: Mode selector */}
+              {/* Left side: Mode selector and attachment button */}
               <div className="flex items-center gap-2">
                 <Select
                   value={responseMode}
@@ -167,19 +166,8 @@ const MessageInput = ({
                     <SelectItem value="ensights">Ensights</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-              
-              {/* Right side: File info, attachment button, and Send/Stop button */}
-              <div className="flex items-center gap-3">
-                {/* Show selected file name if any */}
-                {selectedFile && (
-                  <div className="flex items-center text-xs text-gray-500">
-                    <Paperclip size={12} className="mr-1" />
-                    <span className="truncate max-w-[150px]">{selectedFile.name}</span>
-                  </div>
-                )}
 
-                {/* Attachment button */}
+                {/* Attachment button - next to mode selector */}
                 {showAttachment && (
                   <button
                     type="button"
@@ -197,6 +185,17 @@ const MessageInput = ({
                         : '.xlsx,.xls,.csv'}
                     />
                   </button>
+                )}
+              </div>
+              
+              {/* Right side: File info and Send/Stop button */}
+              <div className="flex items-center gap-3">
+                {/* Show selected file name if any */}
+                {selectedFile && (
+                  <div className="flex items-center text-xs text-gray-500">
+                    <Paperclip size={12} className="mr-1" />
+                    <span className="truncate max-w-[150px]">{selectedFile.name}</span>
+                  </div>
                 )}
 
                 {/* Send or Stop button */}
