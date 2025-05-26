@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -7,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
-import { Eye, EyeOff, Lock, Mail } from "lucide-react"
+import { Eye, EyeOff, Lock, Mail, MessageCircle, FileText, Zap, Headphones, Settings, Shield } from "lucide-react"
 
 const formSchema = z.object({
   email: z.string().email({
@@ -45,12 +46,30 @@ export default function Auth() {
   }
 
   const features = [
-    "Intuitive Chat Interface",
-    "Smart Document Handling",
-    "Seamless Integrations",
-    "Omni-Channel Support",
-    "Configurable Framework",
-    "Secure & Personalized",
+    {
+      title: "Intuitive Chat Interface",
+      icon: MessageCircle
+    },
+    {
+      title: "Smart Document Handling",
+      icon: FileText
+    },
+    {
+      title: "Seamless Integrations",
+      icon: Zap
+    },
+    {
+      title: "Omni-Channel Support",
+      icon: Headphones
+    },
+    {
+      title: "Configurable Framework",
+      icon: Settings
+    },
+    {
+      title: "Secure & Personalized",
+      icon: Shield
+    },
   ]
 
   return (
@@ -64,9 +83,6 @@ export default function Auth() {
             </h1>
             <div className="w-24 h-1 bg-blue-200 rounded-full mb-12"></div>
             
-            <h2 className="text-3xl font-bold text-white mb-6 leading-tight">
-              Transform Your Enterprise with AI-Powered Solutions
-            </h2>
             <p className="text-xl text-blue-100 leading-relaxed font-light mb-12">
               Experience seamless enterprise information integration and achieve unparalleled user experience with our innovative Gen AI solution
             </p>
@@ -75,9 +91,11 @@ export default function Auth() {
           <div className="space-y-6">
             {features.map((feature, index) => (
               <div key={index} className="flex items-center space-x-4 group">
-                <div className="flex-shrink-0 w-3 h-3 bg-blue-200 rounded-full group-hover:bg-white transition-all duration-300"></div>
+                <div className="flex-shrink-0 w-10 h-10 bg-blue-200/20 rounded-lg flex items-center justify-center group-hover:bg-blue-200/30 transition-all duration-300">
+                  <feature.icon className="w-5 h-5 text-blue-200" />
+                </div>
                 <div className="flex-1">
-                  <h3 className="text-white font-semibold text-lg">{feature}</h3>
+                  <h3 className="text-white font-semibold text-lg">{feature.title}</h3>
                 </div>
               </div>
             ))}
