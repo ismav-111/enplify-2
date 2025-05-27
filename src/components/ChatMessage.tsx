@@ -1,3 +1,4 @@
+
 import { useState, useRef } from 'react';
 import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Download, FileText, Image } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -167,9 +168,9 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2 h-8">
                 <Download size={16} />
-                Export
+                Download
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -240,6 +241,46 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     );
   };
 
+  const renderFormulaExplanation = () => {
+    if (!message.chartData || message.chartData.length === 0) return null;
+
+    const getFormulaByChartType = () => {
+      switch(chartType) {
+        case 'line':
+          return {
+            formula: "Revenue(t) = Base Revenue + (Growth Rate × Time) + Seasonal Adjustment",
+            explanation: "This line chart shows revenue growth over time using a linear growth model with seasonal adjustments. The formula calculates monthly revenue by adding a base amount, applying a growth rate over time, and adjusting for seasonal patterns like holiday boosts and summer slowdowns."
+          };
+        case 'bar':
+          return {
+            formula: "Monthly Revenue = Σ(Customer Segments) + Regional Performance + Product Mix",
+            explanation: "This bar chart displays monthly revenue aggregated across customer segments, regional performance, and product mix. Each bar represents the sum of all revenue sources for that specific month, allowing for easy comparison between time periods."
+          };
+        case 'pie':
+          return {
+            formula: "Percentage = (Individual Month Revenue / Total Annual Revenue) × 100",
+            explanation: "This pie chart shows the distribution of revenue across months as percentages of total annual revenue. Each slice represents how much each month contributed to the overall yearly performance, helping identify peak and low-performing periods."
+          };
+        default:
+          return { formula: "", explanation: "" };
+      }
+    };
+
+    const { formula, explanation } = getFormulaByChartType();
+
+    return (
+      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <h4 className="text-sm font-semibold text-blue-900 mb-2">Formula & Methodology</h4>
+        <div className="text-sm text-blue-800 font-mono bg-white p-2 rounded border mb-2">
+          {formula}
+        </div>
+        <p className="text-sm text-blue-700">
+          {explanation}
+        </p>
+      </div>
+    );
+  };
+
   const renderChartData = () => {
     if (!message.chartData || message.chartData.length === 0) return null;
     
@@ -253,12 +294,12 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             <h3 className="text-lg font-semibold text-gray-900">Data Analysis</h3>
             <p className="text-sm text-gray-600 mt-1">Monthly performance metrics</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
             <div className="flex bg-gray-100 rounded-lg p-1">
               <Button 
                 variant={chartType === 'line' ? 'default' : 'ghost'}
                 size="sm"
-                className={chartType === 'line' ? "bg-white shadow-sm" : ""}
+                className={`h-8 w-8 p-0 ${chartType === 'line' ? "bg-white shadow-sm" : ""}`}
                 onClick={() => setChartType('line')}
                 title="Line Chart"
               >
@@ -267,7 +308,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
               <Button 
                 variant={chartType === 'bar' ? 'default' : 'ghost'}
                 size="sm"
-                className={chartType === 'bar' ? "bg-white shadow-sm" : ""}
+                className={`h-8 w-8 p-0 ${chartType === 'bar' ? "bg-white shadow-sm" : ""}`}
                 onClick={() => setChartType('bar')}
                 title="Bar Chart"
               >
@@ -276,7 +317,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
               <Button 
                 variant={chartType === 'pie' ? 'default' : 'ghost'}
                 size="sm"
-                className={chartType === 'pie' ? "bg-white shadow-sm" : ""}
+                className={`h-8 w-8 p-0 ${chartType === 'pie' ? "bg-white shadow-sm" : ""}`}
                 onClick={() => setChartType('pie')}
                 title="Pie Chart"
               >
@@ -285,9 +326,8 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-2 h-8">
                   <Download size={16} />
-                  Export
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -307,6 +347,9 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             </DropdownMenu>
           </div>
         </div>
+        
+        {/* Formula and explanation */}
+        {renderFormulaExplanation()}
         
         {/* Chart container with clean design */}
         <div ref={chartRef} className="border border-gray-200 rounded-lg bg-white p-6">
@@ -456,7 +499,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     <div className="flex mb-8">
       {!message.isUser && (
         <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 mt-1">
-          <span className="text-gray-600 font-medium text-sm">E</span>
+          <span className="text-gray-600 font-bold text-sm font-comfortaa">e</span>
         </div>
       )}
       

@@ -502,11 +502,11 @@ const Index = () => {
                     <ChatMessage key={message.id} message={message} />
                   ))}
                   {isLoading && (
-                    <div className="flex gap-4">
-                      <div className="w-9 h-9 rounded-full bg-[#d5d5ec] flex items-center justify-center flex-shrink-0">
-                        <span className="text-[#4E50A8] font-semibold">e</span>
+                    <div className="flex mb-8">
+                      <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 mt-1">
+                        <span className="text-gray-600 font-bold text-sm font-comfortaa">e</span>
                       </div>
-                      <div className="flex-1">
+                      <div className="ml-3 flex-1">
                         <div className="flex items-center gap-1">
                           <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                           <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
