@@ -236,43 +236,81 @@ These documents are automatically indexed and kept current with your latest orga
         
       case 'ensights':
         if (content.toLowerCase().includes('sales') || content.toLowerCase().includes('revenue')) {
-          return `Here's your sales and revenue analysis for "${content}":
+          return `To analyze your sales and revenue performance for "${content}", I'll create a comprehensive chart based on your enterprise data from multiple sources including CRM, financial systems, and sales platforms. The chart will display key trends and patterns to help identify growth opportunities and potential concerns.
 
-**Key Insights:**
+**Data Analysis Overview:**
+This analysis examines 12 months of revenue data, highlighting seasonal patterns, growth trends, and performance indicators across all business segments. The visualization uses a linear growth model with seasonal adjustments to show both historical performance and projected trends.
+
+**Key Performance Indicators:**
 - Revenue growth trending upward with 12% quarter-over-quarter increase
-- Top performing months show strong correlation with marketing campaigns
+- Top performing months show strong correlation with marketing campaigns  
 - Seasonal patterns indicate Q4 typically sees 20-25% revenue boost
+- Customer acquisition costs have decreased by 8% while revenue per customer increased by 15%
 
-The data visualization below shows your 12-month revenue trend with detailed breakdowns by month.`;
+The interactive chart below shows detailed monthly revenue trends with breakdowns by customer segments and regional performance. Data is sourced from your integrated business intelligence systems and updated in real-time.`;
         }
+        
         if (content.toLowerCase().includes('customer') || content.toLowerCase().includes('retention')) {
-          return `Customer analytics and retention insights for "${content}":
+          return `To examine customer analytics and retention patterns for "${content}", I'll generate a comprehensive visualization based on your customer data warehouse, CRM analytics, and engagement tracking systems. This analysis will reveal critical insights about customer behavior and loyalty trends.
 
-**Performance Metrics:**
+**Customer Analytics Methodology:**
+The analysis combines customer lifecycle data, engagement metrics, and behavioral patterns to create a comprehensive view of retention performance. Using cohort analysis and predictive modeling, we can identify key factors influencing customer satisfaction and long-term value.
+
+**Performance Metrics & Insights:**
 - Customer retention rate: 87% (above industry average of 82%)
 - Customer lifetime value increased by 15% year-over-year
-- Churn rate decreased from 8% to 5% after implementing new onboarding
+- Churn rate decreased from 8% to 5% after implementing new onboarding process
+- Net Promoter Score improved from 7.2 to 8.6 in the last quarter
+- Average customer engagement frequency increased by 23%
 
-The chart below displays customer engagement patterns and retention trends.`;
+The chart below displays customer engagement patterns, retention curves, and predictive indicators for future performance. This data enables strategic decisions about customer success investments and retention program effectiveness.`;
         }
+        
         if (content.toLowerCase().includes('employee') || content.toLowerCase().includes('hr')) {
-          return `HR and employee performance analytics for "${content}":
+          return `To analyze HR and employee performance metrics for "${content}", I'll create a detailed visualization using data from your HRIS, performance management systems, and employee engagement platforms. This comprehensive analysis will provide insights into workforce trends and organizational health.
 
-**Workforce Insights:**
+**Workforce Analytics Framework:**
+This analysis integrates employee satisfaction surveys, performance reviews, recruitment data, and retention metrics to provide a holistic view of organizational effectiveness. The data includes longitudinal trends and comparative benchmarks against industry standards.
+
+**Key Workforce Insights:**
 - Employee satisfaction score: 8.2/10 (up from 7.8 last quarter)
-- Average time to hire reduced by 25% with new recruitment tools
-- Training completion rates improved to 94%
+- Average time to hire reduced by 25% with new recruitment automation tools
+- Training completion rates improved to 94% with enhanced learning platforms
+- Internal promotion rate increased to 68% indicating strong career development
+- Employee turnover decreased by 12% year-over-year
 
-The visualization shows key HR metrics and trends across departments.`;
+The visualization below presents department-specific metrics, trend analysis, and predictive indicators for workforce planning. This data supports strategic HR decisions and helps optimize talent management strategies across the organization.`;
         }
-        return `Business intelligence analysis for "${content}":
+        
+        if (content.toLowerCase().includes('performance') || content.toLowerCase().includes('kpi')) {
+          return `To provide comprehensive performance analysis for "${content}", I'll generate detailed visualizations using your integrated business intelligence systems, operational databases, and key performance indicator tracking platforms. This analysis will reveal critical performance trends and actionable insights.
 
-**Data Summary:**
-- Analysis based on real-time enterprise data
-- Trends show positive growth patterns across key metrics
-- Recommendations generated from predictive analytics
+**Performance Analytics Methodology:**
+The analysis combines operational metrics, financial indicators, and strategic KPIs to create a multi-dimensional view of organizational performance. Using advanced analytics and trend analysis, we identify patterns that drive business success and areas requiring attention.
 
-The interactive chart below provides detailed insights into your business performance.`;
+**Strategic Performance Indicators:**
+- Overall business performance index: 92/100 (target: 85)
+- Operational efficiency improved by 18% through process optimization
+- Customer satisfaction scores averaging 4.6/5.0 across all touchpoints
+- Revenue per employee increased by 22% year-over-year
+- Digital transformation initiatives showing 31% ROI within first year
+
+The interactive dashboard below displays real-time performance metrics with drill-down capabilities for detailed analysis. Data is automatically synchronized across all business systems to ensure accuracy and timeliness for strategic decision-making.`;
+        }
+        
+        return `To conduct comprehensive business intelligence analysis for "${content}", I'll create detailed visualizations using your enterprise data warehouse and analytics platforms. This analysis will provide strategic insights based on real-time business data and industry benchmarks.
+
+**Business Intelligence Overview:**
+This analysis leverages machine learning algorithms and statistical modeling to identify trends, patterns, and predictive indicators across your business operations. The methodology combines historical data analysis with forward-looking projections to support strategic planning.
+
+**Key Business Insights:**
+- Analysis based on real-time enterprise data from integrated business systems
+- Trend analysis shows positive growth patterns across key operational metrics
+- Predictive analytics indicate continued growth trajectory with seasonal adjustments
+- Comparative analysis against industry benchmarks shows above-average performance
+- Risk assessment models indicate stable operating environment with managed exposure
+
+The interactive visualization below provides detailed insights into your business performance with customizable views for different stakeholder needs. Data sources include financial systems, operational databases, and external market intelligence feeds for comprehensive analysis.`;
         
       default: // encore
         if (content.toLowerCase().includes('strategy') || content.toLowerCase().includes('plan')) {
