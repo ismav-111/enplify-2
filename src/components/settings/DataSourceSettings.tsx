@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase } from 'lucide-react';
+import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -126,11 +126,18 @@ const dataSources: DataSourceType[] = [
 
 const DataSourceSettings = () => {
   const [expandedSource, setExpandedSource] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const [connectedSources, setConnectedSources] = useState<Record<string, boolean>>(
     dataSources.reduce((acc, source) => ({
       ...acc,
       [source.id]: source.isConnected
     }), {})
+  );
+
+  // Filter data sources based on search query
+  const filteredDataSources = dataSources.filter(source =>
+    source.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    source.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleConnect = (sourceId: string) => {
@@ -156,6 +163,25 @@ const DataSourceSettings = () => {
       <p className="text-sm text-gray-500">
         Connect your external data sources to enhance your queries with relevant information.
       </p>
+
+      {/* Search Field */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <Input
+          type="text"
+          placeholder="Search data sources..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10"
+        />
+      </div>
+
+      {/* Show message if no results found */}
+      {searchQuery && filteredDataSources.length === 0 && (
+        <div className="text-center py-8 text-gray-500">
+          <p>No data sources found matching "{searchQuery}"</p>
+        </div>
+      )}
       
       <Accordion 
         type="single" 
@@ -164,7 +190,7 @@ const DataSourceSettings = () => {
         onValueChange={(value) => setExpandedSource(value)}
         className="w-full"
       >
-        {dataSources.map((source) => (
+        {filteredDataSources.map((source) => (
           <AccordionItem key={source.id} value={source.id}>
             <AccordionTrigger className="py-4">
               <div className="flex items-center w-full justify-between pr-4">
