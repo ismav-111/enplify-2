@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,8 +15,9 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search } from 'lucide-react';
+import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -133,6 +133,8 @@ const DataSourceSettings = () => {
       [source.id]: source.isConnected
     }), {})
   );
+  const [connectingSource, setConnectingSource] = useState<string | null>(null);
+  const [connectionProgress, setConnectionProgress] = useState(0);
 
   // Filter data sources based on search query
   const filteredDataSources = dataSources.filter(source =>
@@ -140,10 +142,30 @@ const DataSourceSettings = () => {
     source.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleConnect = (sourceId: string) => {
-    setConnectedSources(prev => ({...prev, [sourceId]: true}));
-    toast.success(`Connected to ${dataSources.find(s => s.id === sourceId)?.name}`);
-    setExpandedSource(null);
+  const handleConnect = async (sourceId: string) => {
+    setConnectingSource(sourceId);
+    setConnectionProgress(0);
+    
+    // Simulate connection progress
+    const progressInterval = setInterval(() => {
+      setConnectionProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          return 100;
+        }
+        return prev + 10;
+      });
+    }, 200);
+
+    // Simulate connection time (2 seconds)
+    setTimeout(() => {
+      clearInterval(progressInterval);
+      setConnectedSources(prev => ({...prev, [sourceId]: true}));
+      toast.success(`Connected to ${dataSources.find(s => s.id === sourceId)?.name}`);
+      setExpandedSource(null);
+      setConnectingSource(null);
+      setConnectionProgress(0);
+    }, 2000);
   };
 
   const handleDisconnect = (sourceId: string) => {
@@ -203,17 +225,38 @@ const DataSourceSettings = () => {
                     <p className="text-xs text-gray-500">{source.description}</p>
                   </div>
                 </div>
-                {connectedSources[source.id] && (
+                {connectedSources[source.id] ? (
                   <Badge className="bg-green-500 text-white hover:bg-green-600">
                     Connected
                   </Badge>
-                )}
+                ) : connectingSource === source.id ? (
+                  <Badge className="bg-blue-500 text-white">
+                    Connecting...
+                  </Badge>
+                ) : null}
               </div>
             </AccordionTrigger>
             <AccordionContent>
               <Card className="border-0 shadow-none">
                 <CardContent className="pt-4">
-                  {connectedSources[source.id] ? (
+                  {connectingSource === source.id ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span className="text-sm font-medium">Connecting to {source.name}...</span>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-xs text-gray-500">
+                          <span>Establishing connection</span>
+                          <span>{connectionProgress}%</span>
+                        </div>
+                        <Progress value={connectionProgress} className="w-full" />
+                      </div>
+                      <p className="text-xs text-gray-500">
+                        Please wait while we establish a secure connection to your data source.
+                      </p>
+                    </div>
+                  ) : connectedSources[source.id] ? (
                     <div className="space-y-4">
                       <div className="flex items-start justify-between">
                         <div>
@@ -253,6 +296,7 @@ const DataSourceSettings = () => {
                       <Button 
                         type="button" 
                         onClick={() => handleConnect(source.id)}
+                        disabled={connectingSource !== null}
                       >
                         Connect
                       </Button>
