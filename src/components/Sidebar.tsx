@@ -115,7 +115,7 @@ const Sidebar = ({
         <div className="p-4">
           <Button 
             onClick={onNewChat}
-            className="w-full bg-[#4E50A8] hover:bg-[#3e3f86] text-white rounded-lg py-3 flex items-center justify-center gap-2 transition-all duration-200"
+            className="w-full bg-[#595fb7] hover:bg-[#4e50a8] active:bg-[#373995] text-white rounded-lg py-3 flex items-center justify-center gap-2 transition-all duration-200"
           >
             <Plus size={18} />
             New chat

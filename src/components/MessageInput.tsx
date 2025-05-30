@@ -205,7 +205,7 @@ const MessageInput = ({
                     type="button"
                     onClick={handleStopClick}
                     size="icon"
-                    className="rounded-full bg-gray-800 hover:bg-gray-900 h-8 w-8 flex-shrink-0 transition-colors"
+                    className="rounded-full bg-[#595fb7] hover:bg-[#4e50a8] active:bg-[#373995] h-8 w-8 flex-shrink-0 transition-colors"
                   >
                     <Square size={16} className="text-white" fill="currentColor" />
                   </Button>
@@ -214,7 +214,7 @@ const MessageInput = ({
                     type="submit"
                     disabled={!message.trim() || disabled}
                     size="icon"
-                    className="rounded-full bg-gray-800 hover:bg-gray-900 disabled:bg-gray-300 h-8 w-8 flex-shrink-0 transition-colors"
+                    className="rounded-full bg-[#595fb7] hover:bg-[#4e50a8] active:bg-[#373995] disabled:bg-gray-300 h-8 w-8 flex-shrink-0 transition-colors"
                   >
                     <ArrowUp size={16} className="text-white" />
                   </Button>
