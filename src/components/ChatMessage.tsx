@@ -1,6 +1,5 @@
-
 import { useState, useRef } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Download, FileText, Image } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Download, FileText, Image, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -31,7 +30,8 @@ import {
   ResponsiveContainer,
   ComposedChart,
   Area,
-  AreaChart
+  AreaChart,
+  Legend
 } from 'recharts';
 import * as XLSX from 'xlsx';
 
@@ -243,13 +243,13 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
 
     switch(chartType) {
       case 'line':
-        return "This visualization employs a sophisticated linear regression model enhanced with seasonal decomposition algorithms. The methodology uses the formula: Revenue(t) = Base Revenue + (Growth Rate × Time) + Seasonal Adjustment, where seasonal adjustments are calculated using historical patterns including holiday boosts (25% increase in December), post-holiday corrections (15% decrease in January), and summer slowdowns (8% decrease in July-August). The trend line represents the underlying business trajectory after removing seasonal noise, providing clear insights into fundamental growth patterns.";
+        return "This visualization employs a sophisticated linear regression model enhanced with seasonal decomposition algorithms. The X-axis represents time periods (months/quarters) showing chronological progression, while the Y-axis displays revenue values in thousands of dollars, providing clear insight into financial performance trends. The methodology uses the formula: Revenue(t) = Base Revenue + (Growth Rate × Time) + Seasonal Adjustment, where seasonal adjustments are calculated using historical patterns including holiday boosts (25% increase in December), post-holiday corrections (15% decrease in January), and summer slowdowns (8% decrease in July-August).";
       case 'bar':
-        return "The bar chart methodology aggregates monthly revenue using the formula: Monthly Revenue = Σ(Customer Segments) + Regional Performance + Product Mix, providing a comprehensive view of business performance across different time periods. This approach enables easy identification of peak performance months, seasonal variations, and growth anomalies. The visualization incorporates data from CRM systems, financial databases, and operational metrics to provide a unified view of organizational performance.";
+        return "The bar chart methodology aggregates monthly revenue using discrete categorical analysis. The X-axis shows distinct time periods (months/quarters) as categorical variables, while the Y-axis represents absolute revenue values in thousands of dollars, enabling direct comparison between periods. This approach uses the formula: Monthly Revenue = Σ(Customer Segments) + Regional Performance + Product Mix, providing a comprehensive view of business performance across different time periods and enabling easy identification of peak performance months and growth anomalies.";
       case 'pie':
-        return "The pie chart utilizes proportional analysis with the formula: Percentage = (Individual Month Revenue / Total Annual Revenue) × 100, revealing the distribution of annual revenue across different time periods. This methodology helps identify concentration risk, seasonal dependencies, and revenue distribution patterns that inform strategic planning.";
+        return "The pie chart utilizes proportional analysis to show revenue distribution across time periods. Each segment represents a percentage of total annual revenue, with the entire circle representing 100% of the dataset. The methodology uses the formula: Percentage = (Individual Month Revenue / Total Annual Revenue) × 100, revealing the distribution and concentration patterns. This visualization helps identify seasonal dependencies, revenue concentration risk, and distribution patterns that inform strategic planning decisions.";
       case 'composed':
-        return "This advanced visualization combines multiple data series using a dual-axis approach: Primary Axis = Revenue Trends + Secondary Axis = Growth Rate %, enabling comprehensive analysis of both absolute performance and relative growth patterns. The methodology leverages cross-correlation analysis to identify leading indicators and seasonal patterns that drive business performance across multiple dimensions.";
+        return "This advanced dual-axis visualization combines absolute values with relative metrics for comprehensive analysis. The primary Y-axis (left) shows revenue values in thousands of dollars, while the secondary Y-axis (right) displays growth rate percentages. The X-axis represents time periods enabling temporal analysis. The methodology leverages cross-correlation analysis using the formula: Combined Analysis = Revenue Trends + Growth Rate Correlation, identifying leading indicators and performance patterns across multiple dimensions.";
       default:
         return "";
     }
@@ -297,66 +297,64 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             <h2 className="text-xl font-bold text-gray-900">Business Intelligence Analysis</h2>
             <p className="text-sm text-gray-600 mt-1">Interactive performance visualization with {message.chartData.length} data points</p>
           </div>
-          <div className="flex gap-3 items-center">
+          <div className="flex gap-1 items-center bg-gray-100 rounded-lg p-1">
             {/* Chart Type Selector */}
-            <div className="flex bg-gray-100 rounded-lg p-1 gap-1">
-              <Button 
-                variant="ghost"
-                size="sm"
-                className={`h-9 w-9 p-0 transition-all ${
-                  chartType === 'line' 
-                    ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
-                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
-                }`}
-                onClick={() => setChartType('line')}
-                title="Line Chart"
-              >
-                <LineChart size={16} />
-              </Button>
-              <Button 
-                variant="ghost"
-                size="sm"
-                className={`h-9 w-9 p-0 transition-all ${
-                  chartType === 'bar' 
-                    ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
-                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
-                }`}
-                onClick={() => setChartType('bar')}
-                title="Bar Chart"
-              >
-                <BarChart size={16} />
-              </Button>
-              <Button 
-                variant="ghost"
-                size="sm"
-                className={`h-9 w-9 p-0 transition-all ${
-                  chartType === 'pie' 
-                    ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
-                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
-                }`}
-                onClick={() => setChartType('pie')}
-                title="Pie Chart"
-              >
-                <PieChart size={16} />
-              </Button>
-              <Button 
-                variant="ghost"
-                size="sm"
-                className={`h-9 w-9 p-0 transition-all ${
-                  chartType === 'composed' 
-                    ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
-                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
-                }`}
-                onClick={() => setChartType('composed')}
-                title="Dual Axis Chart"
-              >
-                <BarChart size={16} />
-              </Button>
-            </div>
+            <Button 
+              variant="ghost"
+              size="sm"
+              className={`h-9 w-9 p-0 transition-all ${
+                chartType === 'line' 
+                  ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
+              }`}
+              onClick={() => setChartType('line')}
+              title="Area Chart"
+            >
+              <TrendingUp size={16} />
+            </Button>
+            <Button 
+              variant="ghost"
+              size="sm"
+              className={`h-9 w-9 p-0 transition-all ${
+                chartType === 'bar' 
+                  ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
+              }`}
+              onClick={() => setChartType('bar')}
+              title="Bar Chart"
+            >
+              <BarChart size={16} />
+            </Button>
+            <Button 
+              variant="ghost"
+              size="sm"
+              className={`h-9 w-9 p-0 transition-all ${
+                chartType === 'pie' 
+                  ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
+              }`}
+              onClick={() => setChartType('pie')}
+              title="Pie Chart"
+            >
+              <PieChart size={16} />
+            </Button>
+            <Button 
+              variant="ghost"
+              size="sm"
+              className={`h-9 w-9 p-0 transition-all ${
+                chartType === 'composed' 
+                  ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
+                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
+              }`}
+              onClick={() => setChartType('composed')}
+              title="Dual Axis Chart"
+            >
+              <LineChart size={16} />
+            </Button>
             {/* Download Button */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-9 w-9 p-0 text-gray-600 hover:text-gray-800 hover:bg-gray-200" title="Download Chart">
+                <Button variant="ghost" size="sm" className={`h-9 w-9 p-0 transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-200`} title="Download Chart">
                   <Download size={16} />
                 </Button>
               </DropdownMenuTrigger>
@@ -401,19 +399,21 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           <div className="h-[400px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               {chartType === 'line' ? (
-                <AreaChart data={chartData}>
+                <AreaChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                   <XAxis 
                     dataKey="name" 
                     axisLine={false}
                     tickLine={false}
                     tick={{ fontSize: 12, fill: '#6b7280' }}
+                    label={{ value: 'Time Period (Months)', position: 'insideBottom', offset: -5, style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
                   />
                   <YAxis 
                     axisLine={false}
                     tickLine={false}
                     tick={{ fontSize: 12, fill: '#6b7280' }}
                     tickFormatter={(value) => `$${(value/1000).toFixed(0)}k`}
+                    label={{ value: 'Revenue (USD thousands)', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
                   />
                   <Tooltip 
                     formatter={(value: any) => [`$${(value/1000).toFixed(0)}k`, 'Revenue']}
@@ -435,19 +435,21 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                   />
                 </AreaChart>
               ) : chartType === 'bar' ? (
-                <RechartsBar data={chartData}>
+                <RechartsBar data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                   <XAxis 
                     dataKey="name" 
                     axisLine={false}
                     tickLine={false}
                     tick={{ fontSize: 12, fill: '#6b7280' }}
+                    label={{ value: 'Time Period (Months)', position: 'insideBottom', offset: -5, style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
                   />
                   <YAxis 
                     axisLine={false}
                     tickLine={false}
                     tick={{ fontSize: 12, fill: '#6b7280' }}
                     tickFormatter={(value) => `$${(value/1000).toFixed(0)}k`}
+                    label={{ value: 'Revenue (USD thousands)', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
                   />
                   <Tooltip 
                     formatter={(value: any) => [`$${(value/1000).toFixed(0)}k`, 'Revenue']}
@@ -466,7 +468,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                   />
                 </RechartsBar>
               ) : chartType === 'pie' ? (
-                <RechartsPie>
+                <RechartsPie margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                   <Pie
                     data={chartData}
                     dataKey="revenue"
@@ -474,7 +476,9 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     cx="50%"
                     cy="50%"
                     outerRadius={120}
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    innerRadius={40}
+                    paddingAngle={2}
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
                     labelLine={false}
                   >
                     {chartData.map((entry, index) => (
@@ -482,7 +486,10 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     ))}
                   </Pie>
                   <Tooltip 
-                    formatter={(value: any) => [`$${(value/1000).toFixed(0)}k`, 'Revenue']}
+                    formatter={(value: any, name: string) => [
+                      `$${(value/1000).toFixed(0)}k`,
+                      `${name} Revenue`
+                    ]}
                     contentStyle={{ 
                       backgroundColor: 'white', 
                       border: '1px solid #e5e7eb',
@@ -490,15 +497,21 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                       boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                     }}
                   />
+                  <Legend 
+                    verticalAlign="bottom" 
+                    height={36}
+                    formatter={(value) => `${value}`}
+                  />
                 </RechartsPie>
               ) : (
-                <ComposedChart data={chartData}>
+                <ComposedChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                   <XAxis 
                     dataKey="name" 
                     axisLine={false}
                     tickLine={false}
                     tick={{ fontSize: 12, fill: '#6b7280' }}
+                    label={{ value: 'Time Period (Months)', position: 'insideBottom', offset: -5, style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
                   />
                   <YAxis 
                     yAxisId="revenue"
@@ -507,6 +520,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     tickLine={false}
                     tick={{ fontSize: 12, fill: '#6b7280' }}
                     tickFormatter={(value) => `$${(value/1000).toFixed(0)}k`}
+                    label={{ value: 'Revenue (USD thousands)', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
                   />
                   <YAxis 
                     yAxisId="growth"
@@ -515,6 +529,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     tickLine={false}
                     tick={{ fontSize: 12, fill: '#6b7280' }}
                     tickFormatter={(value) => `${value}%`}
+                    label={{ value: 'Growth Rate (%)', angle: 90, position: 'insideRight', style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
                   />
                   <Tooltip 
                     formatter={(value: any, name: string) => [
@@ -534,6 +549,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     dataKey="revenue" 
                     fill={chartColors.primary}
                     radius={[4, 4, 0, 0]}
+                    name="revenue"
                   />
                   <Line 
                     yAxisId="growth"
@@ -542,6 +558,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     stroke={chartColors.success}
                     strokeWidth={3}
                     dot={{ fill: chartColors.success, strokeWidth: 2, r: 4 }}
+                    name="growth"
                   />
                 </ComposedChart>
               )}
