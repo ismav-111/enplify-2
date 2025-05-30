@@ -1,6 +1,5 @@
-
 import { useState, useRef } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Download, FileText, Image, ChevronDown, ChevronUp } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Download, FileText, Image } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -17,15 +16,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  VictoryChart,
-  VictoryLine,
-  VictoryBar,
-  VictoryPie,
-  VictoryAxis,
-  VictoryTooltip,
-  VictoryTheme,
-  VictoryArea
-} from 'victory';
+  LineChart as RechartsLine,
+  BarChart as RechartsBar,
+  PieChart as RechartsPie,
+  Line,
+  Bar,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  ComposedChart,
+  Area,
+  AreaChart
+} from 'recharts';
 import * as XLSX from 'xlsx';
 
 interface ChatMessageProps {
@@ -48,8 +54,7 @@ interface ChatMessageProps {
 const ChatMessage = ({ message }: ChatMessageProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
-  const [chartType, setChartType] = useState<'line' | 'bar' | 'pie'>('line');
-  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [chartType, setChartType] = useState<'line' | 'bar' | 'pie' | 'composed'>('line');
   const chartRef = useRef<HTMLDivElement>(null);
 
   const handleCopy = () => {
@@ -231,33 +236,20 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     );
   };
 
-  const getDetailedDescription = () => {
+  const getMethodologyText = () => {
     if (!message.chartData || message.chartData.length === 0) return null;
 
     switch(chartType) {
       case 'line':
-        return {
-          title: "Linear Trend Analysis Methodology",
-          content: `This visualization employs a sophisticated linear regression model enhanced with seasonal decomposition algorithms. The methodology uses the formula: **Revenue(t) = Base Revenue + (Growth Rate × Time) + Seasonal Adjustment**, where seasonal adjustments are calculated using historical patterns including holiday boosts (25% increase in December), post-holiday corrections (15% decrease in January), and summer slowdowns (8% decrease in July-August).
-
-The trend line represents the underlying business trajectory after removing seasonal noise, providing clear insights into fundamental growth patterns. Each data point is validated against multiple business intelligence sources to ensure accuracy and consistency with enterprise reporting standards.`
-        };
+        return "This visualization employs a sophisticated linear regression model enhanced with seasonal decomposition algorithms. The methodology uses the formula: Revenue(t) = Base Revenue + (Growth Rate × Time) + Seasonal Adjustment, where seasonal adjustments are calculated using historical patterns including holiday boosts (25% increase in December), post-holiday corrections (15% decrease in January), and summer slowdowns (8% decrease in July-August). The trend line represents the underlying business trajectory after removing seasonal noise, providing clear insights into fundamental growth patterns.";
       case 'bar':
-        return {
-          title: "Comparative Revenue Analysis Framework",
-          content: `The bar chart methodology aggregates monthly revenue using the formula: **Monthly Revenue = Σ(Customer Segments) + Regional Performance + Product Mix**, providing a comprehensive view of business performance across different time periods.
-
-This approach enables easy identification of peak performance months, seasonal variations, and growth anomalies. The visualization incorporates data from CRM systems, financial databases, and operational metrics to provide a unified view of organizational performance. Each bar represents the cumulative effect of all revenue streams, customer acquisition costs, and market expansion efforts during that specific period.`
-        };
+        return "The bar chart methodology aggregates monthly revenue using the formula: Monthly Revenue = Σ(Customer Segments) + Regional Performance + Product Mix, providing a comprehensive view of business performance across different time periods. This approach enables easy identification of peak performance months, seasonal variations, and growth anomalies. The visualization incorporates data from CRM systems, financial databases, and operational metrics to provide a unified view of organizational performance.";
       case 'pie':
-        return {
-          title: "Proportional Distribution Analysis",
-          content: `The pie chart utilizes proportional analysis with the formula: **Percentage = (Individual Month Revenue / Total Annual Revenue) × 100**, revealing the distribution of annual revenue across different time periods.
-
-This methodology helps identify concentration risk, seasonal dependencies, and revenue distribution patterns that inform strategic planning. The visualization employs color-coding to highlight months contributing above or below the average threshold, enabling quick identification of performance outliers and seasonal trends that impact cash flow and business planning cycles.`
-        };
+        return "The pie chart utilizes proportional analysis with the formula: Percentage = (Individual Month Revenue / Total Annual Revenue) × 100, revealing the distribution of annual revenue across different time periods. This methodology helps identify concentration risk, seasonal dependencies, and revenue distribution patterns that inform strategic planning.";
+      case 'composed':
+        return "This advanced visualization combines multiple data series using a dual-axis approach: Primary Axis = Revenue Trends + Secondary Axis = Growth Rate %, enabling comprehensive analysis of both absolute performance and relative growth patterns. The methodology leverages cross-correlation analysis to identify leading indicators and seasonal patterns that drive business performance across multiple dimensions.";
       default:
-        return { title: "", content: "" };
+        return "";
     }
   };
 
@@ -267,15 +259,33 @@ This methodology helps identify concentration risk, seasonal dependencies, and r
     const chartColors = {
       primary: '#595fb7',
       secondary: '#4e50a8',
-      accent: '#373995'
+      accent: '#373995',
+      success: '#059669',
+      warning: '#d97706'
     };
 
-    // Transform data for Victory charts
-    const victoryData = message.chartData.map((item, index) => ({
-      x: item.name,
-      y: item.value,
-      label: `${item.name}: $${(item.value/1000).toFixed(0)}k`
+    // Transform data for Recharts
+    const chartData = message.chartData.map((item, index) => ({
+      name: item.name,
+      revenue: item.value,
+      growth: Math.round((Math.random() * 20 + 5) * 100) / 100, // Simulated growth rate
+      target: item.value * 0.9 + (Math.random() * 0.2 * item.value) // Simulated target
     }));
+
+    const pieColors = [
+      chartColors.primary,
+      chartColors.secondary,
+      chartColors.accent,
+      chartColors.success,
+      chartColors.warning,
+      '#7c3aed',
+      '#db2777',
+      '#dc2626',
+      '#ea580c',
+      '#ca8a04',
+      '#65a30d',
+      '#0891b2'
+    ];
     
     return (
       <div className="mt-8 space-y-6">
@@ -327,13 +337,25 @@ This methodology helps identify concentration risk, seasonal dependencies, and r
               >
                 <PieChart size={16} />
               </Button>
+              <Button 
+                variant="ghost"
+                size="sm"
+                className={`h-9 w-9 p-0 transition-all ${
+                  chartType === 'composed' 
+                    ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
+                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
+                }`}
+                onClick={() => setChartType('composed')}
+                title="Dual Axis Chart"
+              >
+                <BarChart size={16} />
+              </Button>
             </div>
-            {/* Download Menu */}
+            {/* Download Button */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2 h-9">
+                <Button variant="ghost" size="sm" className="h-9 w-9 p-0 text-gray-600 hover:text-gray-800 hover:bg-gray-200" title="Download Chart">
                   <Download size={16} />
-                  Export
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -354,144 +376,172 @@ This methodology helps identify concentration risk, seasonal dependencies, and r
           </div>
         </div>
 
-        {/* Expandable Description */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg overflow-hidden">
-          <button
-            onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-            className="w-full p-4 text-left flex items-center justify-between hover:bg-blue-100 transition-colors"
-          >
-            <div>
-              <h3 className="text-sm font-semibold text-blue-900">Analysis Methodology & Technical Details</h3>
-              <p className="text-xs text-blue-700 mt-1">
-                {isDescriptionExpanded ? 'Click to collapse detailed explanation' : 'Click to expand formula, methodology and technical details'}
-              </p>
-            </div>
-            {isDescriptionExpanded ? (
-              <ChevronUp size={20} className="text-blue-700" />
-            ) : (
-              <ChevronDown size={20} className="text-blue-700" />
-            )}
-          </button>
-          
-          {isDescriptionExpanded && (
-            <div className="px-4 pb-4 border-t border-blue-200 bg-blue-25">
-              <div className="pt-4">
-                <h4 className="text-sm font-semibold text-blue-900 mb-3">{getDetailedDescription()?.title}</h4>
-                <div className="text-sm text-blue-800 leading-relaxed">
-                  {getDetailedDescription()?.content}
-                </div>
-              </div>
-            </div>
-          )}
+        {/* Methodology Text with Hover Expansion */}
+        <div className="relative group">
+          <p className="text-sm text-gray-700 leading-relaxed cursor-help">
+            <span className="line-clamp-2 group-hover:line-clamp-none transition-all duration-300">
+              {getMethodologyText()}
+            </span>
+            <span className="text-blue-600 text-xs ml-2 group-hover:hidden">... hover to expand</span>
+          </p>
         </div>
         
         {/* Chart Container */}
         <div ref={chartRef} className="border border-gray-200 rounded-lg bg-white p-6 shadow-sm">
           <div className="h-[400px] w-full">
-            {chartType === 'line' && (
-              <VictoryChart
-                theme={VictoryTheme.material}
-                width={800}
-                height={400}
-                padding={{ left: 80, top: 40, right: 40, bottom: 60 }}
-              >
-                <VictoryAxis
-                  dependentAxis
-                  tickFormat={(value) => `$${(value/1000).toFixed(0)}k`}
-                  style={{
-                    tickLabels: { fontSize: 12, fill: "#6b7280" },
-                    grid: { stroke: "#e5e7eb", strokeDasharray: "3,3" }
-                  }}
-                />
-                <VictoryAxis
-                  style={{
-                    tickLabels: { fontSize: 12, fill: "#6b7280" }
-                  }}
-                />
-                <VictoryLine
-                  data={victoryData}
-                  style={{
-                    data: { stroke: chartColors.primary, strokeWidth: 3 }
-                  }}
-                  animate={{
-                    duration: 1000,
-                    onLoad: { duration: 500 }
-                  }}
-                />
-                <VictoryArea
-                  data={victoryData}
-                  style={{
-                    data: { fill: chartColors.primary, fillOpacity: 0.1 }
-                  }}
-                />
-              </VictoryChart>
-            )}
-            
-            {chartType === 'bar' && (
-              <VictoryChart
-                theme={VictoryTheme.material}
-                width={800}
-                height={400}
-                padding={{ left: 80, top: 40, right: 40, bottom: 60 }}
-              >
-                <VictoryAxis
-                  dependentAxis
-                  tickFormat={(value) => `$${(value/1000).toFixed(0)}k`}
-                  style={{
-                    tickLabels: { fontSize: 12, fill: "#6b7280" },
-                    grid: { stroke: "#e5e7eb", strokeDasharray: "3,3" }
-                  }}
-                />
-                <VictoryAxis
-                  style={{
-                    tickLabels: { fontSize: 12, fill: "#6b7280" }
-                  }}
-                />
-                <VictoryBar
-                  data={victoryData}
-                  style={{
-                    data: { fill: chartColors.primary }
-                  }}
-                  animate={{
-                    duration: 1000,
-                    onLoad: { duration: 500 }
-                  }}
-                  cornerRadius={{ top: 4, bottom: 0 }}
-                />
-              </VictoryChart>
-            )}
-            
-            {chartType === 'pie' && (
-              <VictoryPie
-                data={victoryData}
-                width={800}
-                height={400}
-                colorScale={[
-                  chartColors.primary,
-                  chartColors.secondary,
-                  chartColors.accent,
-                  '#7c3aed',
-                  '#db2777',
-                  '#dc2626',
-                  '#ea580c',
-                  '#d97706',
-                  '#ca8a04',
-                  '#65a30d',
-                  '#059669',
-                  '#0891b2'
-                ]}
-                labelComponent={
-                  <VictoryTooltip
-                    style={{ fontSize: 12, fill: "white" }}
-                    flyoutStyle={{ stroke: "#6b7280", fill: "#374151" }}
+            <ResponsiveContainer width="100%" height="100%">
+              {chartType === 'line' && (
+                <AreaChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: '#6b7280' }}
                   />
-                }
-                animate={{
-                  duration: 1000,
-                  onLoad: { duration: 500 }
-                }}
-              />
-            )}
+                  <YAxis 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: '#6b7280' }}
+                    tickFormatter={(value) => `$${(value/1000).toFixed(0)}k`}
+                  />
+                  <Tooltip 
+                    formatter={(value: any) => [`$${(value/1000).toFixed(0)}k`, 'Revenue']}
+                    labelStyle={{ color: '#374151' }}
+                    contentStyle={{ 
+                      backgroundColor: 'white', 
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                    }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="revenue" 
+                    stroke={chartColors.primary}
+                    fill={chartColors.primary}
+                    fillOpacity={0.1}
+                    strokeWidth={3}
+                  />
+                </AreaChart>
+              )}
+              
+              {chartType === 'bar' && (
+                <RechartsBar data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: '#6b7280' }}
+                  />
+                  <YAxis 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: '#6b7280' }}
+                    tickFormatter={(value) => `$${(value/1000).toFixed(0)}k`}
+                  />
+                  <Tooltip 
+                    formatter={(value: any) => [`$${(value/1000).toFixed(0)}k`, 'Revenue']}
+                    labelStyle={{ color: '#374151' }}
+                    contentStyle={{ 
+                      backgroundColor: 'white', 
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                    }}
+                  />
+                  <Bar 
+                    dataKey="revenue" 
+                    fill={chartColors.primary}
+                    radius={[4, 4, 0, 0]}
+                  />
+                </RechartsBar>
+              )}
+              
+              {chartType === 'pie' && (
+                <RechartsPie>
+                  <Pie
+                    data={chartData}
+                    dataKey="revenue"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={120}
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    labelLine={false}
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    formatter={(value: any) => [`$${(value/1000).toFixed(0)}k`, 'Revenue']}
+                    contentStyle={{ 
+                      backgroundColor: 'white', 
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                    }}
+                  />
+                </RechartsPie>
+              )}
+
+              {chartType === 'composed' && (
+                <ComposedChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: '#6b7280' }}
+                  />
+                  <YAxis 
+                    yAxisId="revenue"
+                    orientation="left"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: '#6b7280' }}
+                    tickFormatter={(value) => `$${(value/1000).toFixed(0)}k`}
+                  />
+                  <YAxis 
+                    yAxisId="growth"
+                    orientation="right"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 12, fill: '#6b7280' }}
+                    tickFormatter={(value) => `${value}%`}
+                  />
+                  <Tooltip 
+                    formatter={(value: any, name: string) => [
+                      name === 'revenue' ? `$${(value/1000).toFixed(0)}k` : `${value}%`,
+                      name === 'revenue' ? 'Revenue' : 'Growth Rate'
+                    ]}
+                    labelStyle={{ color: '#374151' }}
+                    contentStyle={{ 
+                      backgroundColor: 'white', 
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                    }}
+                  />
+                  <Bar 
+                    yAxisId="revenue"
+                    dataKey="revenue" 
+                    fill={chartColors.primary}
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Line 
+                    yAxisId="growth"
+                    type="monotone" 
+                    dataKey="growth" 
+                    stroke={chartColors.success}
+                    strokeWidth={3}
+                    dot={{ fill: chartColors.success, strokeWidth: 2, r: 4 }}
+                  />
+                </ComposedChart>
+              )}
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
