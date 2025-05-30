@@ -1,3 +1,4 @@
+
 import { useState, useRef } from 'react';
 import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Download, FileText, Image, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -291,6 +292,24 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     
     return (
       <div className="mt-8 space-y-6">
+        {/* Methodology Text with Expand Option */}
+        <div className="relative">
+          <p 
+            className="text-sm text-gray-700 leading-relaxed cursor-pointer transition-all duration-300"
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            <span className={isExpanded ? '' : 'line-clamp-2'}>
+              {getMethodologyText()}
+            </span>
+            {!isExpanded && (
+              <span className="text-blue-600 text-xs ml-2 hover:underline">... click to expand</span>
+            )}
+            {isExpanded && (
+              <span className="text-blue-600 text-xs ml-2 hover:underline">... click to collapse</span>
+            )}
+          </p>
+        </div>
+
         {/* Header Section */}
         <div className="flex items-center justify-between">
           <div>
@@ -374,24 +393,6 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-        </div>
-
-        {/* Methodology Text with Hover Expansion */}
-        <div className="relative group">
-          <p 
-            className="text-sm text-gray-700 leading-relaxed cursor-pointer transition-all duration-300"
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
-            <span className={isExpanded ? '' : 'line-clamp-2'}>
-              {getMethodologyText()}
-            </span>
-            {!isExpanded && (
-              <span className="text-blue-600 text-xs ml-2 hover:underline">... click to expand</span>
-            )}
-            {isExpanded && (
-              <span className="text-blue-600 text-xs ml-2 hover:underline">... click to collapse</span>
-            )}
-          </p>
         </div>
         
         {/* Chart Container */}
@@ -580,15 +581,69 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   };
 
   const renderFormattedContent = () => {
-    if (message.mode !== 'ensights') {
+    // For Ensights mode, handle special formatting
+    if (message.mode === 'ensights') {
+      const lines = message.content.split('\n');
+      const firstLine = lines[0];
+      const restOfContent = lines.slice(1).join('\n');
+
       return (
-        <div className="text-sm leading-relaxed">
-          {message.content}
+        <div className="space-y-4">
+          <p className="text-sm leading-relaxed text-gray-700">
+            {firstLine}
+          </p>
+          {restOfContent && (
+            <div className="relative">
+              <div 
+                className="text-sm text-gray-700 leading-relaxed cursor-pointer transition-all duration-300"
+                onClick={() => setIsExpanded(!isExpanded)}
+              >
+                <div className={isExpanded ? '' : 'line-clamp-3'}>
+                  {restOfContent.split('\n').map((line, index) => {
+                    const trimmedLine = line.trim();
+                    
+                    if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
+                      return (
+                        <h3 key={index} className="text-base font-semibold text-gray-900 mt-4 mb-2 first:mt-0">
+                          {trimmedLine.replace(/\*\*/g, '')}
+                        </h3>
+                      );
+                    } else if (trimmedLine.startsWith('###')) {
+                      return (
+                        <h4 key={index} className="text-sm font-medium text-gray-800 mt-3 mb-1">
+                          {trimmedLine.replace(/### /g, '')}
+                        </h4>
+                      );
+                    } else if (trimmedLine.startsWith('- ')) {
+                      return (
+                        <li key={index} className="ml-4 text-sm text-gray-700">
+                          {trimmedLine.replace(/^- /, '')}
+                        </li>
+                      );
+                    } else if (trimmedLine !== '') {
+                      return (
+                        <p key={index} className="text-sm leading-relaxed text-gray-700 mb-2">
+                          {trimmedLine}
+                        </p>
+                      );
+                    }
+                    return null;
+                  })}
+                </div>
+                {!isExpanded && (
+                  <span className="text-blue-600 text-xs hover:underline cursor-pointer">... click to expand</span>
+                )}
+                {isExpanded && (
+                  <span className="text-blue-600 text-xs hover:underline cursor-pointer">... click to collapse</span>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       );
     }
 
-    // Format Ensights content with proper structure
+    // Format content for Encore and Endocs modes
     const lines = message.content.split('\n');
     const formattedContent = [];
     let currentListItems: JSX.Element[] = [];
@@ -601,7 +656,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // Close any open list before adding heading
         if (inList && currentListItems.length > 0) {
           formattedContent.push(
-            <ul key={`list-${index}`} className="list-disc list-inside space-y-1 my-3 text-gray-700">
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-1 my-3 text-gray-700 ml-4">
               {currentListItems}
             </ul>
           );
@@ -619,7 +674,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // Close any open list before adding sub-heading
         if (inList && currentListItems.length > 0) {
           formattedContent.push(
-            <ul key={`list-${index}`} className="list-disc list-inside space-y-1 my-3 text-gray-700">
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-1 my-3 text-gray-700 ml-4">
               {currentListItems}
             </ul>
           );
@@ -637,7 +692,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // List items
         inList = true;
         currentListItems.push(
-          <li key={`li-${index}`} className="ml-4">
+          <li key={`li-${index}`}>
             {trimmedLine.replace(/^- /, '')}
           </li>
         );
@@ -645,7 +700,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // Empty line - close the list
         if (currentListItems.length > 0) {
           formattedContent.push(
-            <ul key={`list-${index}`} className="list-disc list-inside space-y-1 my-3 text-gray-700">
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-1 my-3 text-gray-700 ml-4">
               {currentListItems}
             </ul>
           );
@@ -656,7 +711,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // Close any open list before adding paragraph
         if (inList && currentListItems.length > 0) {
           formattedContent.push(
-            <ul key={`list-${index}`} className="list-disc list-inside space-y-1 my-3 text-gray-700">
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-1 my-3 text-gray-700 ml-4">
               {currentListItems}
             </ul>
           );
@@ -666,7 +721,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         
         // Regular paragraphs
         formattedContent.push(
-          <p key={index} className="text-sm leading-relaxed text-gray-700 mb-4">
+          <p key={index} className="text-sm leading-relaxed text-gray-700 mb-3">
             {trimmedLine}
           </p>
         );
@@ -676,7 +731,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     // Close any remaining open list
     if (inList && currentListItems.length > 0) {
       formattedContent.push(
-        <ul key="final-list" className="list-disc list-inside space-y-1 my-3 text-gray-700">
+        <ul key="final-list" className="list-disc list-inside space-y-1 my-3 text-gray-700 ml-4">
           {currentListItems}
         </ul>
       );
