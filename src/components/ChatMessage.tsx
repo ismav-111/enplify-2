@@ -520,12 +520,24 @@ This methodology helps identify concentration risk, seasonal dependencies, and r
     // Format Ensights content with proper structure
     const lines = message.content.split('\n');
     const formattedContent = [];
-    let currentSection = '';
+    let currentListItems = [];
+    let inList = false;
 
     lines.forEach((line, index) => {
       const trimmedLine = line.trim();
       
       if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
+        // Close any open list before adding heading
+        if (inList && currentListItems.length > 0) {
+          formattedContent.push(
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-1 my-3 text-gray-700">
+              {currentListItems}
+            </ul>
+          );
+          currentListItems = [];
+          inList = false;
+        }
+        
         // Main headings
         formattedContent.push(
           <h2 key={index} className="text-lg font-bold text-gray-900 mt-6 mb-3 first:mt-0">
@@ -533,6 +545,17 @@ This methodology helps identify concentration risk, seasonal dependencies, and r
           </h2>
         );
       } else if (trimmedLine.startsWith('###')) {
+        // Close any open list before adding sub-heading
+        if (inList && currentListItems.length > 0) {
+          formattedContent.push(
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-1 my-3 text-gray-700">
+              {currentListItems}
+            </ul>
+          );
+          currentListItems = [];
+          inList = false;
+        }
+        
         // Sub-headings
         formattedContent.push(
           <h3 key={index} className="text-base font-semibold text-gray-800 mt-4 mb-2">
@@ -541,24 +564,36 @@ This methodology helps identify concentration risk, seasonal dependencies, and r
         );
       } else if (trimmedLine.startsWith('- ')) {
         // List items
-        if (currentSection !== 'list') {
-          formattedContent.push(<ul key={`list-start-${index}`} className="list-disc list-inside space-y-1 my-3 text-gray-700">);
-          currentSection = 'list';
-        }
-        formattedContent.push(
-          <li key={index} className="ml-4">
+        inList = true;
+        currentListItems.push(
+          <li key={`li-${index}`} className="ml-4">
             {trimmedLine.replace(/^- /, '')}
           </li>
         );
-      } else if (trimmedLine === '' && currentSection === 'list') {
-        formattedContent.push(<div key={`list-end-${index}`}>{"</ul>"}</div>);
-        currentSection = '';
-      } else if (trimmedLine !== '') {
-        // Regular paragraphs
-        if (currentSection === 'list') {
-          formattedContent.push(<div key={`list-end-${index}`}>{"</ul>"}</div>);
-          currentSection = '';
+      } else if (trimmedLine === '' && inList) {
+        // Empty line - close the list
+        if (currentListItems.length > 0) {
+          formattedContent.push(
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-1 my-3 text-gray-700">
+              {currentListItems}
+            </ul>
+          );
+          currentListItems = [];
+          inList = false;
         }
+      } else if (trimmedLine !== '') {
+        // Close any open list before adding paragraph
+        if (inList && currentListItems.length > 0) {
+          formattedContent.push(
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-1 my-3 text-gray-700">
+              {currentListItems}
+            </ul>
+          );
+          currentListItems = [];
+          inList = false;
+        }
+        
+        // Regular paragraphs
         formattedContent.push(
           <p key={index} className="text-sm leading-relaxed text-gray-700 mb-4">
             {trimmedLine}
@@ -566,6 +601,15 @@ This methodology helps identify concentration risk, seasonal dependencies, and r
         );
       }
     });
+
+    // Close any remaining open list
+    if (inList && currentListItems.length > 0) {
+      formattedContent.push(
+        <ul key="final-list" className="list-disc list-inside space-y-1 my-3 text-gray-700">
+          {currentListItems}
+        </ul>
+      );
+    }
 
     return <div className="space-y-2">{formattedContent}</div>;
   };
