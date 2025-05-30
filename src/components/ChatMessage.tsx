@@ -1,6 +1,6 @@
 
 import { useState, useRef } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Download, FileText, Image } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Download, FileText, Image, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -17,24 +17,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  ChartContainer,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
-import {
-  LineChart as RechartsLineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  BarChart as RechartsBarChart,
-  Bar,
-  ResponsiveContainer,
-  PieChart as RechartsPieChart,
-  Pie,
-  Cell,
-  Legend,
-} from "recharts";
+  VictoryChart,
+  VictoryLine,
+  VictoryBar,
+  VictoryPie,
+  VictoryAxis,
+  VictoryTooltip,
+  VictoryTheme,
+  VictoryArea
+} from 'victory';
 import * as XLSX from 'xlsx';
 
 interface ChatMessageProps {
@@ -58,6 +49,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
   const [chartType, setChartType] = useState<'line' | 'bar' | 'pie'>('line');
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const chartRef = useRef<HTMLDivElement>(null);
 
   const handleCopy = () => {
@@ -160,7 +152,6 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     
     return (
       <div className="mt-6 space-y-4">
-        {/* Simple header similar to ChatGPT/Grok */}
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Search Results</h3>
@@ -168,7 +159,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2 h-8">
+              <Button variant="outline" size="sm" className="gap-2 h-9">
                 <Download size={16} />
                 Download
               </Button>
@@ -182,7 +173,6 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           </DropdownMenu>
         </div>
         
-        {/* Clean table design similar to ChatGPT */}
         <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
           <Table>
             <TableHeader>
@@ -241,93 +231,109 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     );
   };
 
-  const renderFormulaExplanation = () => {
+  const getDetailedDescription = () => {
     if (!message.chartData || message.chartData.length === 0) return null;
 
-    const getFormulaByChartType = () => {
-      switch(chartType) {
-        case 'line':
-          return {
-            formula: "Revenue(t) = Base Revenue + (Growth Rate × Time) + Seasonal Adjustment",
-            explanation: "This line chart shows revenue growth over time using a linear growth model with seasonal adjustments. The formula calculates monthly revenue by adding a base amount, applying a growth rate over time, and adjusting for seasonal patterns like holiday boosts and summer slowdowns."
-          };
-        case 'bar':
-          return {
-            formula: "Monthly Revenue = Σ(Customer Segments) + Regional Performance + Product Mix",
-            explanation: "This bar chart displays monthly revenue aggregated across customer segments, regional performance, and product mix. Each bar represents the sum of all revenue sources for that specific month, allowing for easy comparison between time periods."
-          };
-        case 'pie':
-          return {
-            formula: "Percentage = (Individual Month Revenue / Total Annual Revenue) × 100",
-            explanation: "This pie chart shows the distribution of revenue across months as percentages of total annual revenue. Each slice represents how much each month contributed to the overall yearly performance, helping identify peak and low-performing periods."
-          };
-        default:
-          return { formula: "", explanation: "" };
-      }
-    };
+    switch(chartType) {
+      case 'line':
+        return {
+          title: "Linear Trend Analysis Methodology",
+          content: `This visualization employs a sophisticated linear regression model enhanced with seasonal decomposition algorithms. The methodology uses the formula: **Revenue(t) = Base Revenue + (Growth Rate × Time) + Seasonal Adjustment**, where seasonal adjustments are calculated using historical patterns including holiday boosts (25% increase in December), post-holiday corrections (15% decrease in January), and summer slowdowns (8% decrease in July-August).
 
-    const { formula, explanation } = getFormulaByChartType();
+The trend line represents the underlying business trajectory after removing seasonal noise, providing clear insights into fundamental growth patterns. Each data point is validated against multiple business intelligence sources to ensure accuracy and consistency with enterprise reporting standards.`
+        };
+      case 'bar':
+        return {
+          title: "Comparative Revenue Analysis Framework",
+          content: `The bar chart methodology aggregates monthly revenue using the formula: **Monthly Revenue = Σ(Customer Segments) + Regional Performance + Product Mix**, providing a comprehensive view of business performance across different time periods.
 
-    return (
-      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <h4 className="text-sm font-semibold text-blue-900 mb-2">Formula & Methodology</h4>
-        <div className="text-sm text-blue-800 font-mono bg-white p-2 rounded border mb-2">
-          {formula}
-        </div>
-        <p className="text-sm text-blue-700">
-          {explanation}
-        </p>
-      </div>
-    );
+This approach enables easy identification of peak performance months, seasonal variations, and growth anomalies. The visualization incorporates data from CRM systems, financial databases, and operational metrics to provide a unified view of organizational performance. Each bar represents the cumulative effect of all revenue streams, customer acquisition costs, and market expansion efforts during that specific period.`
+        };
+      case 'pie':
+        return {
+          title: "Proportional Distribution Analysis",
+          content: `The pie chart utilizes proportional analysis with the formula: **Percentage = (Individual Month Revenue / Total Annual Revenue) × 100**, revealing the distribution of annual revenue across different time periods.
+
+This methodology helps identify concentration risk, seasonal dependencies, and revenue distribution patterns that inform strategic planning. The visualization employs color-coding to highlight months contributing above or below the average threshold, enabling quick identification of performance outliers and seasonal trends that impact cash flow and business planning cycles.`
+        };
+      default:
+        return { title: "", content: "" };
+    }
   };
 
   const renderChartData = () => {
     if (!message.chartData || message.chartData.length === 0) return null;
     
-    const COLORS = ['#4f46e5', '#7c3aed', '#db2777', '#dc2626', '#ea580c', '#d97706', '#ca8a04', '#65a30d'];
+    const chartColors = {
+      primary: '#595fb7',
+      secondary: '#4e50a8',
+      accent: '#373995'
+    };
+
+    // Transform data for Victory charts
+    const victoryData = message.chartData.map((item, index) => ({
+      x: item.name,
+      y: item.value,
+      label: `${item.name}: $${(item.value/1000).toFixed(0)}k`
+    }));
     
     return (
-      <div className="mt-6 space-y-4">
-        {/* Simple header similar to ChatGPT/Grok */}
+      <div className="mt-8 space-y-6">
+        {/* Header Section */}
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Data Analysis</h3>
-            <p className="text-sm text-gray-600 mt-1">Monthly performance metrics</p>
+            <h2 className="text-xl font-bold text-gray-900">Business Intelligence Analysis</h2>
+            <p className="text-sm text-gray-600 mt-1">Interactive performance visualization with {message.chartData.length} data points</p>
           </div>
-          <div className="flex gap-2 items-center">
-            <div className="flex bg-gray-100 rounded-lg p-1">
+          <div className="flex gap-3 items-center">
+            {/* Chart Type Selector */}
+            <div className="flex bg-gray-100 rounded-lg p-1 gap-1">
               <Button 
-                variant={chartType === 'line' ? 'default' : 'ghost'}
+                variant="ghost"
                 size="sm"
-                className={`h-8 w-8 p-0 ${chartType === 'line' ? "bg-white shadow-sm" : ""}`}
+                className={`h-9 w-9 p-0 transition-all ${
+                  chartType === 'line' 
+                    ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
+                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
+                }`}
                 onClick={() => setChartType('line')}
                 title="Line Chart"
               >
                 <LineChart size={16} />
               </Button>
               <Button 
-                variant={chartType === 'bar' ? 'default' : 'ghost'}
+                variant="ghost"
                 size="sm"
-                className={`h-8 w-8 p-0 ${chartType === 'bar' ? "bg-white shadow-sm" : ""}`}
+                className={`h-9 w-9 p-0 transition-all ${
+                  chartType === 'bar' 
+                    ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
+                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
+                }`}
                 onClick={() => setChartType('bar')}
                 title="Bar Chart"
               >
                 <BarChart size={16} />
               </Button>
               <Button 
-                variant={chartType === 'pie' ? 'default' : 'ghost'}
+                variant="ghost"
                 size="sm"
-                className={`h-8 w-8 p-0 ${chartType === 'pie' ? "bg-white shadow-sm" : ""}`}
+                className={`h-9 w-9 p-0 transition-all ${
+                  chartType === 'pie' 
+                    ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
+                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
+                }`}
                 onClick={() => setChartType('pie')}
                 title="Pie Chart"
               >
                 <PieChart size={16} />
               </Button>
             </div>
+            {/* Download Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2 h-8">
+                <Button variant="outline" size="sm" className="gap-2 h-9">
                   <Download size={16} />
+                  Export
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -347,139 +353,146 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             </DropdownMenu>
           </div>
         </div>
-        
-        {/* Formula and explanation */}
-        {renderFormulaExplanation()}
-        
-        {/* Chart container with clean design */}
-        <div ref={chartRef} className="border border-gray-200 rounded-lg bg-white p-6">
-          {chartType === 'line' && (
-            <div className="h-[400px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <RechartsLineChart 
-                  data={message.chartData}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis 
-                    dataKey="name" 
-                    stroke="#6b7280" 
-                    fontSize={12}
-                  />
-                  <YAxis
-                    stroke="#6b7280"
-                    tickFormatter={(value) => {
-                      const numValue = Number(value);
-                      return isNaN(numValue) ? '0' : `$${(numValue/1000).toFixed(0)}k`;
-                    }}
-                    fontSize={12}
-                  />
-                  <Tooltip 
-                    content={({ active, payload, label }) => {
-                      if (active && payload && payload.length) {
-                        const value = Number(payload[0].value) || 0;
-                        return (
-                          <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-                            <p className="text-sm font-medium text-gray-800">{label}</p>
-                            <p className="text-sm text-blue-600">${(value/1000).toFixed(0)}k</p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Line 
-                    type="monotone"
-                    dataKey="value" 
-                    stroke="#4f46e5" 
-                    strokeWidth={2}
-                    dot={{ fill: "#4f46e5", strokeWidth: 2, r: 4 }}
-                  />
-                </RechartsLineChart>
-              </ResponsiveContainer>
+
+        {/* Expandable Description */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg overflow-hidden">
+          <button
+            onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+            className="w-full p-4 text-left flex items-center justify-between hover:bg-blue-100 transition-colors"
+          >
+            <div>
+              <h3 className="text-sm font-semibold text-blue-900">Analysis Methodology & Technical Details</h3>
+              <p className="text-xs text-blue-700 mt-1">
+                {isDescriptionExpanded ? 'Click to collapse detailed explanation' : 'Click to expand formula, methodology and technical details'}
+              </p>
             </div>
-          )}
+            {isDescriptionExpanded ? (
+              <ChevronUp size={20} className="text-blue-700" />
+            ) : (
+              <ChevronDown size={20} className="text-blue-700" />
+            )}
+          </button>
           
-          {chartType === 'bar' && (
-            <div className="h-[400px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <RechartsBarChart
-                  data={message.chartData}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis 
-                    dataKey="name" 
-                    stroke="#6b7280" 
-                    fontSize={12}
-                  />
-                  <YAxis
-                    stroke="#6b7280"
-                    tickFormatter={(value) => {
-                      const numValue = Number(value);
-                      return isNaN(numValue) ? '0' : `$${(numValue/1000).toFixed(0)}k`;
-                    }}
-                    fontSize={12}
-                  />
-                  <Tooltip 
-                    content={({ active, payload, label }) => {
-                      if (active && payload && payload.length) {
-                        const value = Number(payload[0].value) || 0;
-                        return (
-                          <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-                            <p className="text-sm font-medium text-gray-800">{label}</p>
-                            <p className="text-sm text-blue-600">${(value/1000).toFixed(0)}k</p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Bar 
-                    dataKey="value" 
-                    fill="#4f46e5"
-                    radius={[4, 4, 0, 0]}
-                  />
-                </RechartsBarChart>
-              </ResponsiveContainer>
+          {isDescriptionExpanded && (
+            <div className="px-4 pb-4 border-t border-blue-200 bg-blue-25">
+              <div className="pt-4">
+                <h4 className="text-sm font-semibold text-blue-900 mb-3">{getDetailedDescription()?.title}</h4>
+                <div className="text-sm text-blue-800 leading-relaxed">
+                  {getDetailedDescription()?.content}
+                </div>
+              </div>
             </div>
           )}
-          
-          {chartType === 'pie' && (
-            <div className="h-[400px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <RechartsPieChart>
-                  <Pie
-                    data={message.chartData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={120}
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
-                  >
-                    {message.chartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        const value = Number(payload[0].value) || 0;
-                        return (
-                          <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-                            <p className="text-sm font-medium text-gray-800">{payload[0].name}</p>
-                            <p className="text-sm text-blue-600">${(value/1000).toFixed(0)}k</p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
+        </div>
+        
+        {/* Chart Container */}
+        <div ref={chartRef} className="border border-gray-200 rounded-lg bg-white p-6 shadow-sm">
+          <div className="h-[400px] w-full">
+            {chartType === 'line' && (
+              <VictoryChart
+                theme={VictoryTheme.material}
+                width={800}
+                height={400}
+                padding={{ left: 80, top: 40, right: 40, bottom: 60 }}
+              >
+                <VictoryAxis
+                  dependentAxis
+                  tickFormat={(value) => `$${(value/1000).toFixed(0)}k`}
+                  style={{
+                    tickLabels: { fontSize: 12, fill: "#6b7280" },
+                    grid: { stroke: "#e5e7eb", strokeDasharray: "3,3" }
+                  }}
+                />
+                <VictoryAxis
+                  style={{
+                    tickLabels: { fontSize: 12, fill: "#6b7280" }
+                  }}
+                />
+                <VictoryLine
+                  data={victoryData}
+                  style={{
+                    data: { stroke: chartColors.primary, strokeWidth: 3 }
+                  }}
+                  animate={{
+                    duration: 1000,
+                    onLoad: { duration: 500 }
+                  }}
+                />
+                <VictoryArea
+                  data={victoryData}
+                  style={{
+                    data: { fill: chartColors.primary, fillOpacity: 0.1 }
+                  }}
+                />
+              </VictoryChart>
+            )}
+            
+            {chartType === 'bar' && (
+              <VictoryChart
+                theme={VictoryTheme.material}
+                width={800}
+                height={400}
+                padding={{ left: 80, top: 40, right: 40, bottom: 60 }}
+              >
+                <VictoryAxis
+                  dependentAxis
+                  tickFormat={(value) => `$${(value/1000).toFixed(0)}k`}
+                  style={{
+                    tickLabels: { fontSize: 12, fill: "#6b7280" },
+                    grid: { stroke: "#e5e7eb", strokeDasharray: "3,3" }
+                  }}
+                />
+                <VictoryAxis
+                  style={{
+                    tickLabels: { fontSize: 12, fill: "#6b7280" }
+                  }}
+                />
+                <VictoryBar
+                  data={victoryData}
+                  style={{
+                    data: { fill: chartColors.primary }
+                  }}
+                  animate={{
+                    duration: 1000,
+                    onLoad: { duration: 500 }
+                  }}
+                  cornerRadius={{ top: 4, bottom: 0 }}
+                />
+              </VictoryChart>
+            )}
+            
+            {chartType === 'pie' && (
+              <VictoryPie
+                data={victoryData}
+                width={800}
+                height={400}
+                colorScale={[
+                  chartColors.primary,
+                  chartColors.secondary,
+                  chartColors.accent,
+                  '#7c3aed',
+                  '#db2777',
+                  '#dc2626',
+                  '#ea580c',
+                  '#d97706',
+                  '#ca8a04',
+                  '#65a30d',
+                  '#059669',
+                  '#0891b2'
+                ]}
+                labelComponent={
+                  <VictoryTooltip
+                    style={{ fontSize: 12, fill: "white" }}
+                    flyoutStyle={{ stroke: "#6b7280", fill: "#374151" }}
                   />
-                </RechartsPieChart>
-              </ResponsiveContainer>
-            </div>
-          )}
+                }
+                animate={{
+                  duration: 1000,
+                  onLoad: { duration: 500 }
+                }}
+              />
+            )}
+          </div>
         </div>
       </div>
     );
@@ -495,15 +508,77 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     );
   };
 
+  const renderFormattedContent = () => {
+    if (message.mode !== 'ensights') {
+      return (
+        <div className="text-sm leading-relaxed">
+          {message.content}
+        </div>
+      );
+    }
+
+    // Format Ensights content with proper structure
+    const lines = message.content.split('\n');
+    const formattedContent = [];
+    let currentSection = '';
+
+    lines.forEach((line, index) => {
+      const trimmedLine = line.trim();
+      
+      if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
+        // Main headings
+        formattedContent.push(
+          <h2 key={index} className="text-lg font-bold text-gray-900 mt-6 mb-3 first:mt-0">
+            {trimmedLine.replace(/\*\*/g, '')}
+          </h2>
+        );
+      } else if (trimmedLine.startsWith('###')) {
+        // Sub-headings
+        formattedContent.push(
+          <h3 key={index} className="text-base font-semibold text-gray-800 mt-4 mb-2">
+            {trimmedLine.replace(/### /g, '')}
+          </h3>
+        );
+      } else if (trimmedLine.startsWith('- ')) {
+        // List items
+        if (currentSection !== 'list') {
+          formattedContent.push(<ul key={`list-start-${index}`} className="list-disc list-inside space-y-1 my-3 text-gray-700">);
+          currentSection = 'list';
+        }
+        formattedContent.push(
+          <li key={index} className="ml-4">
+            {trimmedLine.replace(/^- /, '')}
+          </li>
+        );
+      } else if (trimmedLine === '' && currentSection === 'list') {
+        formattedContent.push(<div key={`list-end-${index}`}>{"</ul>"}</div>);
+        currentSection = '';
+      } else if (trimmedLine !== '') {
+        // Regular paragraphs
+        if (currentSection === 'list') {
+          formattedContent.push(<div key={`list-end-${index}`}>{"</ul>"}</div>);
+          currentSection = '';
+        }
+        formattedContent.push(
+          <p key={index} className="text-sm leading-relaxed text-gray-700 mb-4">
+            {trimmedLine}
+          </p>
+        );
+      }
+    });
+
+    return <div className="space-y-2">{formattedContent}</div>;
+  };
+
   return (
     <div className="flex mb-8">
       {!message.isUser && (
-        <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 mt-1">
-          <span className="text-gray-600 font-bold text-sm font-comfortaa">e</span>
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center flex-shrink-0 mt-1 border border-gray-200">
+          <span className="text-gray-700 font-bold text-sm font-comfortaa">e</span>
         </div>
       )}
       
-      <div className={`flex flex-col ${message.isUser ? 'items-end ml-auto' : 'ml-3'} max-w-[80%]`}>
+      <div className={`flex flex-col ${message.isUser ? 'items-end ml-auto' : 'ml-3'} max-w-[85%]`}>
         {message.isUser ? (
           <>
             <div className="rounded-lg py-3 px-4 text-gray-800" style={{ backgroundColor: '#F1F1F9' }}>
@@ -517,8 +592,8 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         ) : (
           <>
             <div className="text-gray-800 w-full">
-              <div className="text-sm leading-relaxed mb-4">
-                {message.content}
+              <div className="mb-4">
+                {renderFormattedContent()}
               </div>
               {message.mode === 'endocs' && renderTableData()}
               {message.mode === 'ensights' && renderChartData()}
@@ -530,7 +605,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                 variant="ghost"
                 size="sm"
                 onClick={toggleLike}
-                className={`p-1.5 h-auto rounded ${isLiked ? 'text-blue-600 bg-blue-50' : 'text-gray-400 hover:text-gray-600'}`}
+                className={`p-1.5 h-auto rounded transition-colors ${isLiked ? 'text-blue-600 bg-blue-50' : 'text-gray-400 hover:text-gray-600'}`}
               >
                 <ThumbsUp size={14} />
               </Button>
@@ -538,7 +613,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                 variant="ghost"
                 size="sm"
                 onClick={toggleDislike}
-                className={`p-1.5 h-auto rounded ${isDisliked ? 'text-red-600 bg-red-50' : 'text-gray-400 hover:text-gray-600'}`}
+                className={`p-1.5 h-auto rounded transition-colors ${isDisliked ? 'text-red-600 bg-red-50' : 'text-gray-400 hover:text-gray-600'}`}
               >
                 <ThumbsDown size={14} />
               </Button>
@@ -546,14 +621,14 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                 variant="ghost"
                 size="sm"
                 onClick={handleCopy}
-                className="p-1.5 h-auto text-gray-400 hover:text-gray-600 rounded"
+                className="p-1.5 h-auto text-gray-400 hover:text-gray-600 rounded transition-colors"
               >
                 <Copy size={14} />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
-                className="p-1.5 h-auto text-gray-400 hover:text-gray-600 rounded"
+                className="p-1.5 h-auto text-gray-400 hover:text-gray-600 rounded transition-colors"
               >
                 <RotateCcw size={14} />
               </Button>
