@@ -1,6 +1,5 @@
-
 import { useState, useRef } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Download, FileText, Image, TrendingUp } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -58,6 +57,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   const [isDisliked, setIsDisliked] = useState(false);
   const [chartType, setChartType] = useState<'line' | 'bar' | 'pie' | 'composed'>('line');
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isMethodologyExpanded, setIsMethodologyExpanded] = useState(false);
   const chartRef = useRef<HTMLDivElement>(null);
 
   const handleCopy = () => {
@@ -155,6 +155,28 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     img.src = url;
   };
 
+  const getSourceInfo = () => {
+    switch (message.mode) {
+      case 'endocs':
+        return {
+          title: 'Document Sources',
+          items: ['company_policies.pdf', 'employee_handbook.docx', 'quarterly_reports.xlsx', 'meeting_notes.txt']
+        };
+      case 'ensights':
+        return {
+          title: 'Data Sources', 
+          items: ['sales_database.sql', 'revenue_analytics.csv', 'customer_metrics.json', 'financial_reports.xlsx']
+        };
+      case 'encore':
+        return {
+          title: 'Knowledge Sources',
+          items: ['knowledge_base.md', 'documentation.pdf', 'faq_database.json', 'support_articles.html']
+        };
+      default:
+        return null;
+    }
+  };
+
   const renderTableData = () => {
     if (!message.tableData || message.tableData.length === 0) return null;
     
@@ -169,7 +191,6 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="gap-2 h-9">
                 <Download size={16} />
-                Download
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -292,21 +313,18 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     
     return (
       <div className="mt-8 space-y-6">
-        {/* Methodology Text with Expand Option */}
+        {/* Methodology Text */}
         <div className="relative">
           <p 
             className="text-sm text-gray-700 leading-relaxed cursor-pointer transition-all duration-300"
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={() => setIsMethodologyExpanded(!isMethodologyExpanded)}
           >
-            <span className={isExpanded ? '' : 'line-clamp-2'}>
+            <span className={isMethodologyExpanded ? '' : 'line-clamp-2'}>
               {getMethodologyText()}
             </span>
-            {!isExpanded && (
-              <span className="text-blue-600 text-xs ml-2 hover:underline">... click to expand</span>
-            )}
-            {isExpanded && (
-              <span className="text-blue-600 text-xs ml-2 hover:underline">... click to collapse</span>
-            )}
+            <span className="text-blue-600 text-xs ml-2 hover:underline">
+              {isMethodologyExpanded ? '... click to collapse' : '... click to expand'}
+            </span>
           </p>
         </div>
 
@@ -342,7 +360,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
               onClick={() => setChartType('bar')}
               title="Bar Chart"
             >
-              <BarChart size={16} />
+              <BarChart2 size={16} />
             </Button>
             <Button 
               variant="ghost"
@@ -368,7 +386,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
               onClick={() => setChartType('composed')}
               title="Dual Axis Chart"
             >
-              <LineChart size={16} />
+              <Activity size={16} />
             </Button>
             {/* Download Button */}
             <DropdownMenu>
@@ -589,54 +607,49 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
 
       return (
         <div className="space-y-4">
-          <p className="text-sm leading-relaxed text-gray-700">
+          <p className="text-base leading-relaxed text-gray-800 font-medium">
             {firstLine}
-          </p>
-          {restOfContent && (
-            <div className="relative">
-              <div 
-                className="text-sm text-gray-700 leading-relaxed cursor-pointer transition-all duration-300"
+            {restOfContent && (
+              <span 
+                className="text-blue-600 text-sm ml-2 hover:underline cursor-pointer font-normal"
                 onClick={() => setIsExpanded(!isExpanded)}
               >
-                <div className={isExpanded ? '' : 'line-clamp-3'}>
-                  {restOfContent.split('\n').map((line, index) => {
-                    const trimmedLine = line.trim();
-                    
-                    if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
-                      return (
-                        <h3 key={index} className="text-base font-semibold text-gray-900 mt-4 mb-2 first:mt-0">
-                          {trimmedLine.replace(/\*\*/g, '')}
-                        </h3>
-                      );
-                    } else if (trimmedLine.startsWith('###')) {
-                      return (
-                        <h4 key={index} className="text-sm font-medium text-gray-800 mt-3 mb-1">
-                          {trimmedLine.replace(/### /g, '')}
-                        </h4>
-                      );
-                    } else if (trimmedLine.startsWith('- ')) {
-                      return (
-                        <li key={index} className="ml-4 text-sm text-gray-700">
-                          {trimmedLine.replace(/^- /, '')}
-                        </li>
-                      );
-                    } else if (trimmedLine !== '') {
-                      return (
-                        <p key={index} className="text-sm leading-relaxed text-gray-700 mb-2">
-                          {trimmedLine}
-                        </p>
-                      );
-                    }
-                    return null;
-                  })}
-                </div>
-                {!isExpanded && (
-                  <span className="text-blue-600 text-xs hover:underline cursor-pointer">... click to expand</span>
-                )}
-                {isExpanded && (
-                  <span className="text-blue-600 text-xs hover:underline cursor-pointer">... click to collapse</span>
-                )}
-              </div>
+                {isExpanded ? '... click to collapse' : '... click to expand'}
+              </span>
+            )}
+          </p>
+          {restOfContent && isExpanded && (
+            <div className="text-sm text-gray-700 leading-relaxed space-y-3">
+              {restOfContent.split('\n').map((line, index) => {
+                const trimmedLine = line.trim();
+                
+                if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
+                  return (
+                    <h3 key={index} className="text-lg font-semibold text-gray-900 mt-6 mb-3 first:mt-0">
+                      {trimmedLine.replace(/\*\*/g, '')}
+                    </h3>
+                  );
+                } else if (trimmedLine.startsWith('###')) {
+                  return (
+                    <h4 key={index} className="text-base font-medium text-gray-800 mt-4 mb-2">
+                      {trimmedLine.replace(/### /g, '')}
+                    </h4>
+                  );
+                } else if (trimmedLine.startsWith('- ')) {
+                  return (
+                    <li key={index} className="ml-4 text-sm text-gray-700 list-disc">
+                      {trimmedLine.replace(/^- /, '')}
+                    </li>
+                  );
+                } else if (trimmedLine !== '') {
+                  return (
+                    <p key={index} className="text-sm leading-relaxed text-gray-700">
+                      {trimmedLine}
+                    </p>
+                  );
+                }
+                return null;
+              })}
             </div>
           )}
         </div>
@@ -656,7 +669,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // Close any open list before adding heading
         if (inList && currentListItems.length > 0) {
           formattedContent.push(
-            <ul key={`list-${index}`} className="list-disc list-inside space-y-1 my-3 text-gray-700 ml-4">
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-4 text-gray-700 ml-4">
               {currentListItems}
             </ul>
           );
@@ -666,7 +679,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         
         // Main headings
         formattedContent.push(
-          <h2 key={index} className="text-lg font-bold text-gray-900 mt-6 mb-3 first:mt-0">
+          <h2 key={index} className="text-xl font-bold text-gray-900 mt-6 mb-4 first:mt-0">
             {trimmedLine.replace(/\*\*/g, '')}
           </h2>
         );
@@ -674,7 +687,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // Close any open list before adding sub-heading
         if (inList && currentListItems.length > 0) {
           formattedContent.push(
-            <ul key={`list-${index}`} className="list-disc list-inside space-y-1 my-3 text-gray-700 ml-4">
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-4 text-gray-700 ml-4">
               {currentListItems}
             </ul>
           );
@@ -684,7 +697,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         
         // Sub-headings
         formattedContent.push(
-          <h3 key={index} className="text-base font-semibold text-gray-800 mt-4 mb-2">
+          <h3 key={index} className="text-lg font-semibold text-gray-800 mt-5 mb-3">
             {trimmedLine.replace(/### /g, '')}
           </h3>
         );
@@ -692,7 +705,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // List items
         inList = true;
         currentListItems.push(
-          <li key={`li-${index}`}>
+          <li key={`li-${index}`} className="text-sm leading-relaxed">
             {trimmedLine.replace(/^- /, '')}
           </li>
         );
@@ -700,7 +713,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // Empty line - close the list
         if (currentListItems.length > 0) {
           formattedContent.push(
-            <ul key={`list-${index}`} className="list-disc list-inside space-y-1 my-3 text-gray-700 ml-4">
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-4 text-gray-700 ml-4">
               {currentListItems}
             </ul>
           );
@@ -711,7 +724,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // Close any open list before adding paragraph
         if (inList && currentListItems.length > 0) {
           formattedContent.push(
-            <ul key={`list-${index}`} className="list-disc list-inside space-y-1 my-3 text-gray-700 ml-4">
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-4 text-gray-700 ml-4">
               {currentListItems}
             </ul>
           );
@@ -721,7 +734,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         
         // Regular paragraphs
         formattedContent.push(
-          <p key={index} className="text-sm leading-relaxed text-gray-700 mb-3">
+          <p key={index} className="text-base leading-relaxed text-gray-800 mb-4">
             {trimmedLine}
           </p>
         );
@@ -731,13 +744,35 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     // Close any remaining open list
     if (inList && currentListItems.length > 0) {
       formattedContent.push(
-        <ul key="final-list" className="list-disc list-inside space-y-1 my-3 text-gray-700 ml-4">
+        <ul key="final-list" className="list-disc list-inside space-y-2 my-4 text-gray-700 ml-4">
           {currentListItems}
         </ul>
       );
     }
 
-    return <div className="space-y-2">{formattedContent}</div>;
+    return <div className="space-y-3">{formattedContent}</div>;
+  };
+
+  const renderSourceInfo = () => {
+    const sourceInfo = getSourceInfo();
+    if (!sourceInfo) return null;
+
+    return (
+      <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <h4 className="text-sm font-semibold text-gray-900 mb-2">{sourceInfo.title}</h4>
+        <div className="flex flex-wrap gap-2">
+          {sourceInfo.items.map((source, index) => (
+            <span 
+              key={index}
+              className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200"
+            >
+              <FileText size={12} className="mr-1" />
+              {source}
+            </span>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -752,7 +787,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         {message.isUser ? (
           <>
             <div className="rounded-lg py-3 px-4 text-gray-800" style={{ backgroundColor: '#F1F1F9' }}>
-              <p className="text-sm">{message.content}</p>
+              <p className="text-sm leading-relaxed">{message.content}</p>
               {renderFileInfo()}
             </div>
             <span className="text-xs text-gray-500 mt-1">
@@ -767,10 +802,11 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
               </div>
               {message.mode === 'endocs' && renderTableData()}
               {message.mode === 'ensights' && renderChartData()}
+              {renderSourceInfo()}
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center gap-1 mt-2">
+            <div className="flex items-center gap-1 mt-3">
               <Button
                 variant="ghost"
                 size="sm"
