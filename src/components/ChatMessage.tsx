@@ -1,3 +1,4 @@
+
 import { useState, useRef } from 'react';
 import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart, LineChart, PieChart, Download, FileText, Image } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -55,6 +56,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
   const [chartType, setChartType] = useState<'line' | 'bar' | 'pie' | 'composed'>('line');
+  const [isExpanded, setIsExpanded] = useState(false);
   const chartRef = useRef<HTMLDivElement>(null);
 
   const handleCopy = () => {
@@ -378,11 +380,19 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
 
         {/* Methodology Text with Hover Expansion */}
         <div className="relative group">
-          <p className="text-sm text-gray-700 leading-relaxed cursor-help">
-            <span className="line-clamp-2 group-hover:line-clamp-none transition-all duration-300">
+          <p 
+            className="text-sm text-gray-700 leading-relaxed cursor-pointer transition-all duration-300"
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            <span className={isExpanded ? '' : 'line-clamp-2'}>
               {getMethodologyText()}
             </span>
-            <span className="text-blue-600 text-xs ml-2 group-hover:hidden">... hover to expand</span>
+            {!isExpanded && (
+              <span className="text-blue-600 text-xs ml-2 hover:underline">... click to expand</span>
+            )}
+            {isExpanded && (
+              <span className="text-blue-600 text-xs ml-2 hover:underline">... click to collapse</span>
+            )}
           </p>
         </div>
         
@@ -390,7 +400,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         <div ref={chartRef} className="border border-gray-200 rounded-lg bg-white p-6 shadow-sm">
           <div className="h-[400px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              {chartType === 'line' && (
+              {chartType === 'line' ? (
                 <AreaChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                   <XAxis 
@@ -424,9 +434,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     strokeWidth={3}
                   />
                 </AreaChart>
-              )}
-              
-              {chartType === 'bar' && (
+              ) : chartType === 'bar' ? (
                 <RechartsBar data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                   <XAxis 
@@ -457,9 +465,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     radius={[4, 4, 0, 0]}
                   />
                 </RechartsBar>
-              )}
-              
-              {chartType === 'pie' && (
+              ) : chartType === 'pie' ? (
                 <RechartsPie>
                   <Pie
                     data={chartData}
@@ -485,9 +491,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     }}
                   />
                 </RechartsPie>
-              )}
-
-              {chartType === 'composed' && (
+              ) : (
                 <ComposedChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                   <XAxis 
@@ -570,7 +574,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     // Format Ensights content with proper structure
     const lines = message.content.split('\n');
     const formattedContent = [];
-    let currentListItems = [];
+    let currentListItems: JSX.Element[] = [];
     let inList = false;
 
     lines.forEach((line, index) => {
