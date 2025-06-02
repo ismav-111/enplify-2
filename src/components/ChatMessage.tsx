@@ -607,11 +607,11 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
 
       return (
         <div className="space-y-4">
-          <p className="text-base leading-relaxed text-gray-800">
+          <p className="text-base leading-relaxed text-gray-800 font-medium">
             {firstLine}
             {restOfContent && (
               <span 
-                className="text-blue-600 text-sm ml-2 hover:underline cursor-pointer"
+                className="text-blue-600 text-sm ml-2 hover:underline cursor-pointer font-normal"
                 onClick={() => setIsExpanded(!isExpanded)}
               >
                 {isExpanded ? '... click to collapse' : '... click to expand'}
