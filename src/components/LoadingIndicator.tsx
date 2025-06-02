@@ -38,11 +38,8 @@ const LoadingIndicator = ({ mode }: LoadingIndicatorProps) => {
             </div>
             <div className="relative">
               <div className={`h-3 w-32 rounded-lg ${getGradientClasses()} opacity-20`}></div>
-              <div className={`absolute top-0 left-0 h-3 rounded-lg ${getGradientClasses()} animate-pulse`}
-                   style={{ 
-                     width: '32%',
-                     animation: 'loading-sweep 2s ease-in-out infinite'
-                   }}></div>
+              <div className={`absolute top-0 left-0 h-3 rounded-lg ${getGradientClasses()} loading-sweep`}
+                   style={{ width: '32%' }}></div>
             </div>
           </div>
           <p className="text-sm text-gray-500 mt-2">
@@ -52,14 +49,6 @@ const LoadingIndicator = ({ mode }: LoadingIndicatorProps) => {
           </p>
         </div>
       </div>
-      
-      <style jsx>{`
-        @keyframes loading-sweep {
-          0% { width: 0%; left: 0%; }
-          50% { width: 100%; left: 0%; }
-          100% { width: 0%; left: 100%; }
-        }
-      `}</style>
     </div>
   );
 };

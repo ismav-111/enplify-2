@@ -46,7 +46,7 @@ const Index = () => {
       <Sidebar 
         conversations={conversations}
         activeConversation={activeConversation}
-        onConversationSelect={setActiveConversation}
+        onSelectConversation={setActiveConversation}
         onNewChat={createNewChat}
         onDeleteConversation={deleteConversation}
         onRenameConversation={renameConversation}
@@ -175,7 +175,6 @@ const Index = () => {
             disabled={false}
             centered={true}
             isLoading={isLoading}
-            onStopGeneration={() => setIsLoading(false)}
           />
         </div>
       </div>
