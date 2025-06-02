@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { ArrowUp, Paperclip, Square } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -127,7 +128,7 @@ const MessageInput = ({
 
   return (
     <div className={`${centered ? 'w-full' : ''}`}>
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <form ref={formRef} onSubmit={handleSubmit} className="relative" onClick={handleFormClick}>
           <div className="flex flex-col w-full rounded-2xl border border-gray-200 shadow-sm bg-white overflow-hidden">
             {/* Textarea area */}
