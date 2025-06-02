@@ -492,11 +492,11 @@ const Index = () => {
           </Dialog>
         )}
 
-        {/* Scrollable Chat Content - Increased width */}
+        {/* Scrollable Chat Content - Reduced width */}
         <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full">
             {hasMessages ? (
-              <div className="max-w-5xl mx-auto px-6 py-8 w-full min-h-full">
+              <div className="max-w-4xl mx-auto px-6 py-8 w-full min-h-full">
                 <div className="space-y-6">
                   {currentConversation.messages.map((message) => (
                     <ChatMessage key={message.id} message={message} />
@@ -533,9 +533,9 @@ const Index = () => {
           </ScrollArea>
         </div>
 
-        {/* Fixed Message Input at Bottom - Increased width */}
+        {/* Fixed Message Input at Bottom - Reduced width */}
         <div className="flex-shrink-0 w-full bg-white py-4">
-          <div className="max-w-5xl mx-auto px-6">
+          <div className="max-w-4xl mx-auto px-6">
             <MessageInput 
               onSendMessage={handleSendMessage} 
               disabled={isLoading} 
