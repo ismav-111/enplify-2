@@ -492,11 +492,11 @@ const Index = () => {
           </Dialog>
         )}
 
-        {/* Scrollable Chat Content */}
+        {/* Scrollable Chat Content - Increased width */}
         <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full">
             {hasMessages ? (
-              <div className="max-w-3xl mx-auto px-4 py-8 w-full min-h-full">
+              <div className="max-w-5xl mx-auto px-6 py-8 w-full min-h-full">
                 <div className="space-y-6">
                   {currentConversation.messages.map((message) => (
                     <ChatMessage key={message.id} message={message} />
@@ -519,10 +519,10 @@ const Index = () => {
               </div>
             ) : (
               <div className="h-full flex items-center justify-center">
-                <div className="max-w-xl w-full px-4 flex flex-col items-center justify-center">
+                <div className="max-w-2xl w-full px-6 flex flex-col items-center justify-center">
                   <div className="text-center mb-10">
                     <h1 className="text-3xl font-bold text-gray-800 mb-2 font-comfortaa">Welcome to enplify2.o</h1>
-                    <p className="text-gray-600 max-w-md mx-auto mb-6">
+                    <p className="text-gray-600 max-w-lg mx-auto mb-6">
                       Your intelligent AI assistant. Ask me anything and I'll provide 
                       helpful insights, answers, and information.
                     </p>
@@ -533,9 +533,9 @@ const Index = () => {
           </ScrollArea>
         </div>
 
-        {/* Fixed Message Input at Bottom */}
+        {/* Fixed Message Input at Bottom - Increased width */}
         <div className="flex-shrink-0 w-full bg-white py-4">
-          <div className="max-w-3xl mx-auto px-4">
+          <div className="max-w-5xl mx-auto px-6">
             <MessageInput 
               onSendMessage={handleSendMessage} 
               disabled={isLoading} 
