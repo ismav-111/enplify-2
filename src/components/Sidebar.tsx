@@ -98,7 +98,7 @@ const Sidebar = ({
       >
         {/* Header with close button */}
         <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-[#4E50A8] font-comfortaa">
+          <h1 className="text-2xl font-bold text-[#4E50A8] font-inter">
             enplify.ai
           </h1>
           <Button 
@@ -115,7 +115,7 @@ const Sidebar = ({
         <div className="p-4">
           <Button 
             onClick={onNewChat}
-            className="w-full bg-[#595fb7] hover:bg-[#4e50a8] active:bg-[#373995] text-white rounded-lg py-3 flex items-center justify-center gap-2 transition-all duration-200"
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 rounded-lg py-3 flex items-center justify-center gap-2 transition-all duration-200"
           >
             <Plus size={18} />
             New chat
