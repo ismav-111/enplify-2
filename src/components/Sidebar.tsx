@@ -98,7 +98,7 @@ const Sidebar = ({
       >
         {/* Header with close button */}
         <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-[#4E50A8] font-inter">
+          <h1 className="text-2xl font-bold text-[#4E50A8] font-comfortaa">
             enplify.ai
           </h1>
           <Button 
@@ -224,7 +224,7 @@ const Sidebar = ({
 
         {/* Bottom padding */}
         <div className="p-4 border-t border-gray-100">
-          <div className="text-xs text-gray-500 text-center">
+          <div className="text-xs text-gray-500 text-center font-comfortaa">
             enplify 2.0
           </div>
         </div>
