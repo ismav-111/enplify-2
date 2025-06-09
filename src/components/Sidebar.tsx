@@ -115,7 +115,7 @@ const Sidebar = ({
         <div className="p-4">
           <Button 
             onClick={onNewChat}
-            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 rounded-lg py-3 flex items-center justify-center gap-2 transition-all duration-200"
+            className="w-full bg-[#595fb7] hover:bg-[#4e50a8] active:bg-[#373995] text-white rounded-lg py-3 flex items-center justify-center gap-2 transition-all duration-200"
           >
             <Plus size={18} />
             New chat
@@ -224,7 +224,7 @@ const Sidebar = ({
 
         {/* Bottom padding */}
         <div className="p-4 border-t border-gray-100">
-          <div className="text-xs text-gray-500 text-center font-comfortaa">
+          <div className="text-xs text-gray-500 text-center">
             enplify 2.0
           </div>
         </div>

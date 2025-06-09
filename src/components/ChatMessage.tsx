@@ -1,6 +1,5 @@
-
 import { useState, useRef } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, ExternalLink, Edit } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -159,28 +158,22 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   const getSourceInfo = () => {
     switch (message.mode) {
       case 'endocs':
-        return [
-          { id: 1, title: 'Company Policies Manual', url: 'company_policies.pdf', type: 'PDF' },
-          { id: 2, title: 'Employee Handbook 2024', url: 'employee_handbook.docx', type: 'DOCX' },
-          { id: 3, title: 'Q3 Financial Reports', url: 'quarterly_reports.xlsx', type: 'XLSX' },
-          { id: 4, title: 'Team Meeting Notes', url: 'meeting_notes.txt', type: 'TXT' }
-        ];
+        return {
+          title: 'Document Sources',
+          items: ['company_policies.pdf', 'employee_handbook.docx', 'quarterly_reports.xlsx', 'meeting_notes.txt']
+        };
       case 'ensights':
-        return [
-          { id: 1, title: 'Sales Performance Database', url: 'sales_database.sql', type: 'Database' },
-          { id: 2, title: 'Revenue Analytics Report', url: 'revenue_analytics.csv', type: 'CSV' },
-          { id: 3, title: 'Customer Metrics Dashboard', url: 'customer_metrics.json', type: 'JSON' },
-          { id: 4, title: 'Financial Analysis 2024', url: 'financial_reports.xlsx', type: 'XLSX' }
-        ];
+        return {
+          title: 'Data Sources', 
+          items: ['sales_database.sql', 'revenue_analytics.csv', 'customer_metrics.json', 'financial_reports.xlsx']
+        };
       case 'encore':
-        return [
-          { id: 1, title: 'Knowledge Base Documentation', url: 'knowledge_base.md', type: 'Markdown' },
-          { id: 2, title: 'Technical Documentation', url: 'documentation.pdf', type: 'PDF' },
-          { id: 3, title: 'FAQ Database', url: 'faq_database.json', type: 'JSON' },
-          { id: 4, title: 'Support Articles Archive', url: 'support_articles.html', type: 'HTML' }
-        ];
+        return {
+          title: 'Knowledge Sources',
+          items: ['knowledge_base.md', 'documentation.pdf', 'faq_database.json', 'support_articles.html']
+        };
       default:
-        return [];
+        return null;
     }
   };
 
@@ -606,21 +599,16 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   };
 
   const renderFormattedContent = () => {
-    const sources = getSourceInfo();
-    
     // For Ensights mode, handle special formatting
     if (message.mode === 'ensights') {
       const lines = message.content.split('\n');
       const firstLine = lines[0];
       const restOfContent = lines.slice(1).join('\n');
 
-      // Add source citations to the content
-      const contentWithCitations = firstLine + (sources.length > 0 ? ` [${sources.map(s => s.id).join(',')}]` : '');
-
       return (
         <div className="space-y-4">
           <p className="text-base leading-relaxed text-gray-800 font-medium">
-            {contentWithCitations}
+            {firstLine}
             {restOfContent && (
               <span 
                 className="text-blue-600 text-sm ml-2 hover:underline cursor-pointer font-normal"
@@ -668,7 +656,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       );
     }
 
-    // Format content for Encore and Endocs modes with citations
+    // Format content for Encore and Endocs modes
     const lines = message.content.split('\n');
     const formattedContent = [];
     let currentListItems: JSX.Element[] = [];
@@ -744,15 +732,10 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           inList = false;
         }
         
-        // Add citations to the first paragraph
-        const contentWithCitations = index === 0 && sources.length > 0 
-          ? `${trimmedLine} [${sources.map(s => s.id).join(',')}]` 
-          : trimmedLine;
-        
         // Regular paragraphs
         formattedContent.push(
           <p key={index} className="text-base leading-relaxed text-gray-800 mb-4">
-            {contentWithCitations}
+            {trimmedLine}
           </p>
         );
       }
@@ -771,39 +754,21 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   };
 
   const renderSourceInfo = () => {
-    const sources = getSourceInfo();
-    if (sources.length === 0) return null;
+    const sourceInfo = getSourceInfo();
+    if (!sourceInfo) return null;
 
     return (
-      <div className="mt-6 border-t border-gray-100 pt-4">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-sm font-medium text-gray-600">Sources</span>
-          <div className="flex-1 h-px bg-gray-200"></div>
-        </div>
-        <div className="grid gap-2">
-          {sources.map((source) => (
-            <div 
-              key={source.id}
-              className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer group"
+      <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <h4 className="text-sm font-semibold text-gray-900 mb-2">{sourceInfo.title}</h4>
+        <div className="flex flex-wrap gap-2">
+          {sourceInfo.items.map((source, index) => (
+            <span 
+              key={index}
+              className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200"
             >
-              <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-medium">
-                {source.id}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-gray-900 truncate">
-                    {source.title}
-                  </p>
-                  <span className="text-xs text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full">
-                    {source.type}
-                  </span>
-                </div>
-                <p className="text-xs text-gray-600 truncate mt-0.5">
-                  {source.url}
-                </p>
-              </div>
-              <ExternalLink size={14} className="text-gray-400 group-hover:text-gray-600 transition-colors" />
-            </div>
+              <FileText size={12} className="mr-1" />
+              {source}
+            </span>
           ))}
         </div>
       </div>
@@ -821,30 +786,13 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       <div className={`flex flex-col ${message.isUser ? 'items-end ml-auto' : 'ml-3'} max-w-[85%]`}>
         {message.isUser ? (
           <>
-            <div className="rounded-2xl py-3 px-4 text-gray-800 bg-[#4E50A8] text-white max-w-full">
-              <p className="text-sm leading-relaxed break-words">{message.content}</p>
+            <div className="rounded-lg py-3 px-4 text-gray-800" style={{ backgroundColor: '#F1F1F9' }}>
+              <p className="text-sm leading-relaxed">{message.content}</p>
               {renderFileInfo()}
             </div>
-            <div className="flex items-center gap-2 mt-2">
-              <span className="text-xs text-gray-500">
-                {message.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-              </span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleCopy}
-                className="p-1 h-auto text-gray-400 hover:text-gray-600 rounded transition-colors"
-              >
-                <Copy size={12} />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="p-1 h-auto text-gray-400 hover:text-gray-600 rounded transition-colors"
-              >
-                <Edit size={12} />
-              </Button>
-            </div>
+            <span className="text-xs text-gray-500 mt-1">
+              {message.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+            </span>
           </>
         ) : (
           <>

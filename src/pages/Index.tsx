@@ -169,7 +169,7 @@ const Index = () => {
   const filteredFiles = getFilteredFiles(uploadedFiles, fileFilter, fileSearchQuery);
 
   return (
-    <div className="h-screen bg-white flex overflow-hidden font-inter">
+    <div className="h-screen bg-white flex overflow-hidden">
       {/* Fixed Sidebar */}
       <div className="flex-shrink-0">
         <Sidebar
@@ -492,21 +492,19 @@ const Index = () => {
           </Dialog>
         )}
 
-        {/* Scrollable Chat Content - Improved alignment */}
+        {/* Scrollable Chat Content - Increased width */}
         <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full">
             {hasMessages ? (
-              <div className="max-w-4xl mx-auto px-6 py-8 w-full min-h-full">
+              <div className="max-w-5xl mx-auto px-6 py-8 w-full min-h-full">
                 <div className="space-y-6">
                   {currentConversation.messages.map((message) => (
-                    <div key={message.id} className="chat-message">
-                      <ChatMessage message={message} />
-                    </div>
+                    <ChatMessage key={message.id} message={message} />
                   ))}
                   {isLoading && (
                     <div className="flex mb-8">
                       <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 mt-1">
-                        <span className="text-gray-600 font-bold text-sm font-inter">e</span>
+                        <span className="text-gray-600 font-bold text-sm font-comfortaa">e</span>
                       </div>
                       <div className="ml-3 flex-1">
                         <div className="flex items-center gap-1">
@@ -523,8 +521,8 @@ const Index = () => {
               <div className="h-full flex items-center justify-center">
                 <div className="max-w-2xl w-full px-6 flex flex-col items-center justify-center">
                   <div className="text-center mb-10">
-                    <h1 className="text-3xl font-bold text-gray-800 mb-2 font-inter">Welcome to enplify2.o</h1>
-                    <p className="text-gray-600 max-w-lg mx-auto mb-6 text-lg leading-relaxed">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2 font-comfortaa">Welcome to enplify2.o</h1>
+                    <p className="text-gray-600 max-w-lg mx-auto mb-6">
                       Your intelligent AI assistant. Ask me anything and I'll provide 
                       helpful insights, answers, and information.
                     </p>
@@ -535,9 +533,9 @@ const Index = () => {
           </ScrollArea>
         </div>
 
-        {/* Fixed Message Input at Bottom - Reduced width */}
+        {/* Fixed Message Input at Bottom - Increased width */}
         <div className="flex-shrink-0 w-full bg-white py-4">
-          <div className="max-w-4xl mx-auto px-6">
+          <div className="max-w-5xl mx-auto px-6">
             <MessageInput 
               onSendMessage={handleSendMessage} 
               disabled={isLoading} 
