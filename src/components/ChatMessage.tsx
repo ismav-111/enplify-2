@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -62,6 +62,11 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(message.content);
+  };
+
+  const handleEdit = () => {
+    // TODO: Implement edit functionality
+    console.log('Edit message:', message.id);
   };
 
   const toggleLike = () => {
@@ -786,13 +791,33 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       <div className={`flex flex-col ${message.isUser ? 'items-end ml-auto' : 'ml-3'} max-w-[85%]`}>
         {message.isUser ? (
           <>
-            <div className="rounded-lg py-3 px-4 text-gray-800" style={{ backgroundColor: '#F1F1F9' }}>
+            <div className="rounded-2xl py-3 px-4 text-gray-800 max-w-lg" style={{ backgroundColor: '#F1F1F9' }}>
               <p className="text-sm leading-relaxed">{message.content}</p>
               {renderFileInfo()}
             </div>
-            <span className="text-xs text-gray-500 mt-1">
-              {message.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-            </span>
+            <div className="flex items-center gap-2 mt-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleEdit}
+                className="p-1.5 h-auto text-gray-400 hover:text-gray-600 rounded transition-colors"
+                title="Edit message"
+              >
+                <Edit size={14} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCopy}
+                className="p-1.5 h-auto text-gray-400 hover:text-gray-600 rounded transition-colors"
+                title="Copy message"
+              >
+                <Copy size={14} />
+              </Button>
+              <span className="text-xs text-gray-500">
+                {message.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+              </span>
+            </div>
           </>
         ) : (
           <>

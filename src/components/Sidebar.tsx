@@ -80,7 +80,7 @@ const Sidebar = ({
     <>
       {/* Toggle Button - Visible when sidebar is closed */}
       {!isOpen && (
-        <div className="fixed top-4 left-4 z-30">
+        <div className="fixed top-4 left-4 z-30 flex items-center gap-3">
           <Button 
             onClick={() => setIsOpen(true)} 
             variant="secondary" 
@@ -89,6 +89,11 @@ const Sidebar = ({
           >
             <Menu size={20} />
           </Button>
+          <div className="bg-white px-3 py-2 rounded-full shadow-md border border-gray-200">
+            <span className="text-lg font-bold text-[#4E50A8] font-comfortaa">
+              enplify.ai
+            </span>
+          </div>
         </div>
       )}
 
@@ -224,7 +229,7 @@ const Sidebar = ({
 
         {/* Bottom padding */}
         <div className="p-4 border-t border-gray-100">
-          <div className="text-xs text-gray-500 text-center">
+          <div className="text-xs text-gray-500 text-center font-comfortaa">
             enplify 2.0
           </div>
         </div>
