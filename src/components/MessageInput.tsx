@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { ArrowUp, Paperclip, Square } from 'lucide-react';
 import { Button } from '@/components/ui/button';

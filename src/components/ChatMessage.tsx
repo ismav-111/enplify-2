@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -803,7 +803,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                 className="p-1.5 h-auto text-gray-400 hover:text-gray-600 rounded transition-colors"
                 title="Edit message"
               >
-                <Edit size={14} />
+                <Edit2 size={14} />
               </Button>
               <Button
                 variant="ghost"
