@@ -1,5 +1,6 @@
+
 import { useState, useRef } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, ExternalLink } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, ExternalLink, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -820,13 +821,30 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       <div className={`flex flex-col ${message.isUser ? 'items-end ml-auto' : 'ml-3'} max-w-[85%]`}>
         {message.isUser ? (
           <>
-            <div className="rounded-lg py-3 px-4 text-gray-800" style={{ backgroundColor: '#F1F1F9' }}>
-              <p className="text-sm leading-relaxed">{message.content}</p>
+            <div className="rounded-2xl py-3 px-4 text-gray-800 bg-[#4E50A8] text-white max-w-full">
+              <p className="text-sm leading-relaxed break-words">{message.content}</p>
               {renderFileInfo()}
             </div>
-            <span className="text-xs text-gray-500 mt-1">
-              {message.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-            </span>
+            <div className="flex items-center gap-2 mt-2">
+              <span className="text-xs text-gray-500">
+                {message.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCopy}
+                className="p-1 h-auto text-gray-400 hover:text-gray-600 rounded transition-colors"
+              >
+                <Copy size={12} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="p-1 h-auto text-gray-400 hover:text-gray-600 rounded transition-colors"
+              >
+                <Edit size={12} />
+              </Button>
+            </div>
           </>
         ) : (
           <>
