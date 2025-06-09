@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Plus, Menu, PanelLeft, Trash, Edit, X, Check } from 'lucide-react';
+import { Plus, PanelLeft, Trash, Edit, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
@@ -81,19 +81,19 @@ const Sidebar = ({
       {/* Toggle Button - Visible when sidebar is closed */}
       {!isOpen && (
         <div className="fixed top-4 left-4 z-30 flex items-center gap-3">
+          <div className="bg-white px-3 py-2 rounded-full border border-gray-200">
+            <span className="text-lg font-bold text-[#4E50A8] font-comfortaa">
+              enplify.ai
+            </span>
+          </div>
           <Button 
             onClick={() => setIsOpen(true)} 
             variant="secondary" 
             size="icon"
             className="h-10 w-10 rounded-full shadow-md"
           >
-            <Menu size={20} />
+            <PanelLeft size={20} />
           </Button>
-          <div className="bg-white px-3 py-2 rounded-full shadow-md border border-gray-200">
-            <span className="text-lg font-bold text-[#4E50A8] font-comfortaa">
-              enplify.ai
-            </span>
-          </div>
         </div>
       )}
 
