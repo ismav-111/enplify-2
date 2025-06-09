@@ -492,7 +492,7 @@ const Index = () => {
           </Dialog>
         )}
 
-        {/* Scrollable Chat Content with inline MessageInput */}
+        {/* Scrollable Chat Content - Increased width */}
         <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full">
             {hasMessages ? (
@@ -515,17 +515,6 @@ const Index = () => {
                       </div>
                     </div>
                   )}
-                  
-                  {/* MessageInput inline with messages */}
-                  <div className="pt-4">
-                    <MessageInput 
-                      onSendMessage={handleSendMessage} 
-                      disabled={isLoading} 
-                      centered={false}
-                      isLoading={isLoading}
-                      onStopGeneration={handleStopGeneration}
-                    />
-                  </div>
                 </div>
               </div>
             ) : (
@@ -538,21 +527,23 @@ const Index = () => {
                       helpful insights, answers, and information.
                     </p>
                   </div>
-                  
-                  {/* MessageInput for new chat */}
-                  <div className="w-full max-w-3xl">
-                    <MessageInput 
-                      onSendMessage={handleSendMessage} 
-                      disabled={isLoading} 
-                      centered={true}
-                      isLoading={isLoading}
-                      onStopGeneration={handleStopGeneration}
-                    />
-                  </div>
                 </div>
               </div>
             )}
           </ScrollArea>
+        </div>
+
+        {/* Fixed Message Input at Bottom - Increased width */}
+        <div className="flex-shrink-0 w-full bg-white py-4">
+          <div className="max-w-5xl mx-auto px-6">
+            <MessageInput 
+              onSendMessage={handleSendMessage} 
+              disabled={isLoading} 
+              centered={!hasMessages}
+              isLoading={isLoading}
+              onStopGeneration={handleStopGeneration}
+            />
+          </div>
         </div>
       </div>
     </div>
