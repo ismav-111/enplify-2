@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -621,7 +620,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
 
       return (
         <div className="space-y-4">
-          <p className="text-base leading-relaxed text-gray-800 font-medium">
+          <p className="text-lg leading-relaxed text-gray-900 font-medium">
             {firstLine}
             {restOfContent && (
               <span 
@@ -633,31 +632,31 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             )}
           </p>
           {restOfContent && isExpanded && (
-            <div className="text-sm text-gray-700 leading-relaxed space-y-3">
+            <div className="text-base text-gray-800 leading-relaxed space-y-4">
               {restOfContent.split('\n').map((line, index) => {
                 const trimmedLine = line.trim();
                 
                 if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
                   return (
-                    <h3 key={index} className="text-lg font-semibold text-gray-900 mt-6 mb-3 first:mt-0">
+                    <h3 key={index} className="text-xl font-bold text-gray-900 mt-8 mb-4 first:mt-0">
                       {trimmedLine.replace(/\*\*/g, '')}
                     </h3>
                   );
                 } else if (trimmedLine.startsWith('###')) {
                   return (
-                    <h4 key={index} className="text-base font-medium text-gray-800 mt-4 mb-2">
+                    <h4 key={index} className="text-lg font-semibold text-gray-900 mt-6 mb-3">
                       {trimmedLine.replace(/### /g, '')}
                     </h4>
                   );
                 } else if (trimmedLine.startsWith('- ')) {
                   return (
-                    <li key={index} className="ml-4 text-sm text-gray-700 list-disc">
+                    <li key={index} className="ml-6 text-base text-gray-800 list-disc leading-relaxed">
                       {trimmedLine.replace(/^- /, '')}
                     </li>
                   );
                 } else if (trimmedLine !== '') {
                   return (
-                    <p key={index} className="text-sm leading-relaxed text-gray-700">
+                    <p key={index} className="text-base leading-relaxed text-gray-800">
                       {trimmedLine}
                     </p>
                   );
@@ -683,7 +682,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // Close any open list before adding heading
         if (inList && currentListItems.length > 0) {
           formattedContent.push(
-            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-4 text-gray-700 ml-4">
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-6 text-gray-800 ml-6">
               {currentListItems}
             </ul>
           );
@@ -693,7 +692,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         
         // Main headings
         formattedContent.push(
-          <h2 key={index} className="text-xl font-bold text-gray-900 mt-6 mb-4 first:mt-0">
+          <h2 key={index} className="text-xl font-bold text-gray-900 mt-8 mb-4 first:mt-0">
             {trimmedLine.replace(/\*\*/g, '')}
           </h2>
         );
@@ -701,7 +700,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // Close any open list before adding sub-heading
         if (inList && currentListItems.length > 0) {
           formattedContent.push(
-            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-4 text-gray-700 ml-4">
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-6 text-gray-800 ml-6">
               {currentListItems}
             </ul>
           );
@@ -711,7 +710,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         
         // Sub-headings
         formattedContent.push(
-          <h3 key={index} className="text-lg font-semibold text-gray-800 mt-5 mb-3">
+          <h3 key={index} className="text-lg font-semibold text-gray-900 mt-6 mb-3">
             {trimmedLine.replace(/### /g, '')}
           </h3>
         );
@@ -719,7 +718,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // List items
         inList = true;
         currentListItems.push(
-          <li key={`li-${index}`} className="text-sm leading-relaxed">
+          <li key={`li-${index}`} className="text-base leading-relaxed">
             {trimmedLine.replace(/^- /, '')}
           </li>
         );
@@ -727,7 +726,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // Empty line - close the list
         if (currentListItems.length > 0) {
           formattedContent.push(
-            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-4 text-gray-700 ml-4">
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-6 text-gray-800 ml-6">
               {currentListItems}
             </ul>
           );
@@ -738,7 +737,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // Close any open list before adding paragraph
         if (inList && currentListItems.length > 0) {
           formattedContent.push(
-            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-4 text-gray-700 ml-4">
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-6 text-gray-800 ml-6">
               {currentListItems}
             </ul>
           );
@@ -758,13 +757,13 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     // Close any remaining open list
     if (inList && currentListItems.length > 0) {
       formattedContent.push(
-        <ul key="final-list" className="list-disc list-inside space-y-2 my-4 text-gray-700 ml-4">
+        <ul key="final-list" className="list-disc list-inside space-y-2 my-6 text-gray-800 ml-6">
           {currentListItems}
         </ul>
       );
     }
 
-    return <div className="space-y-3">{formattedContent}</div>;
+    return <div className="space-y-4">{formattedContent}</div>;
   };
 
   const renderSourceInfo = () => {
@@ -854,7 +853,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         ) : (
           <>
             <div className="text-gray-800 w-full">
-              <div className="mb-4">
+              <div className="mb-6">
                 {renderFormattedContent()}
               </div>
               {message.mode === 'endocs' && renderTableData()}
@@ -907,3 +906,5 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
 };
 
 export default ChatMessage;
+
+}
