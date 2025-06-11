@@ -1,3 +1,4 @@
+
 import { useState, useRef } from 'react';
 import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -33,6 +34,11 @@ import {
   AreaChart,
   Legend
 } from 'recharts';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import * as XLSX from 'xlsx';
 
 interface ChatMessageProps {
@@ -165,17 +171,20 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       case 'endocs':
         return {
           title: 'Document Sources',
-          items: ['company_policies.pdf', 'employee_handbook.docx', 'quarterly_reports.xlsx', 'meeting_notes.txt']
+          items: ['company_policies.pdf', 'employee_handbook.docx', 'quarterly_reports.xlsx', 'meeting_notes.txt'],
+          icon: FileText
         };
       case 'ensights':
         return {
           title: 'Data Sources', 
-          items: ['sales_database.sql', 'revenue_analytics.csv', 'customer_metrics.json', 'financial_reports.xlsx']
+          items: ['sales_database.sql', 'revenue_analytics.csv', 'customer_metrics.json', 'financial_reports.xlsx'],
+          icon: BarChart2
         };
       case 'encore':
         return {
           title: 'Knowledge Sources',
-          items: ['knowledge_base.md', 'documentation.pdf', 'faq_database.json', 'support_articles.html']
+          items: ['knowledge_base.md', 'documentation.pdf', 'faq_database.json', 'support_articles.html'],
+          icon: FileText
         };
       default:
         return null;
@@ -762,26 +771,49 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     const sourceInfo = getSourceInfo();
     if (!sourceInfo) return null;
 
+    const SourceIcon = sourceInfo.icon;
+
     return (
-      <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-        <h4 className="text-sm font-semibold text-gray-900 mb-2">{sourceInfo.title}</h4>
-        <div className="flex flex-wrap gap-2">
-          {sourceInfo.items.map((source, index) => (
-            <span 
-              key={index}
-              className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200"
-            >
-              <FileText size={12} className="mr-1" />
-              {source}
+      <div className="mt-4 flex items-center gap-2 text-sm text-gray-600">
+        <span className="flex items-center gap-1">
+          <SourceIcon size={14} />
+          Sources:
+        </span>
+        <div className="flex items-center gap-1">
+          {sourceInfo.items.slice(0, 2).map((source, index) => (
+            <span key={index} className="text-blue-600 hover:text-blue-800 cursor-pointer">
+              {source}{index < 1 && sourceInfo.items.length > 2 ? ',' : ''}
             </span>
           ))}
+          {sourceInfo.items.length > 2 && (
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <span className="text-blue-600 hover:text-blue-800 cursor-pointer ml-1">
+                  +{sourceInfo.items.length - 2} more
+                </span>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-80 p-4" align="start">
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-gray-900">{sourceInfo.title}</h4>
+                  <div className="grid gap-2">
+                    {sourceInfo.items.map((source, index) => (
+                      <div key={index} className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-md">
+                        <SourceIcon size={12} className="text-gray-500 flex-shrink-0" />
+                        <span className="text-xs text-gray-700 truncate">{source}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+          )}
         </div>
       </div>
     );
   };
 
   return (
-    <div className="flex mb-8">
+    <div className="flex mb-4">
       {!message.isUser && (
         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center flex-shrink-0 mt-1 border border-gray-200">
           <span className="text-gray-700 font-bold text-sm font-comfortaa">e</span>
