@@ -620,7 +620,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
 
       return (
         <div className="space-y-4">
-          <p className="text-lg leading-relaxed text-gray-900 font-medium">
+          <p className="text-lg leading-7 text-gray-900 font-medium">
             {firstLine}
             {restOfContent && (
               <span 
@@ -632,7 +632,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             )}
           </p>
           {restOfContent && isExpanded && (
-            <div className="text-base text-gray-800 leading-relaxed space-y-4">
+            <div className="text-base text-gray-800 leading-7 space-y-4">
               {restOfContent.split('\n').map((line, index) => {
                 const trimmedLine = line.trim();
                 
@@ -650,13 +650,13 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                   );
                 } else if (trimmedLine.startsWith('- ')) {
                   return (
-                    <li key={index} className="ml-6 text-base text-gray-800 list-disc leading-relaxed">
+                    <li key={index} className="ml-6 text-base text-gray-800 list-disc leading-7">
                       {trimmedLine.replace(/^- /, '')}
                     </li>
                   );
                 } else if (trimmedLine !== '') {
                   return (
-                    <p key={index} className="text-base leading-relaxed text-gray-800">
+                    <p key={index} className="text-base leading-7 text-gray-800">
                       {trimmedLine}
                     </p>
                   );
@@ -718,7 +718,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // List items
         inList = true;
         currentListItems.push(
-          <li key={`li-${index}`} className="text-base leading-relaxed">
+          <li key={`li-${index}`} className="text-base leading-7">
             {trimmedLine.replace(/^- /, '')}
           </li>
         );
@@ -747,7 +747,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         
         // Regular paragraphs
         formattedContent.push(
-          <p key={index} className="text-base leading-relaxed text-gray-800 mb-4">
+          <p key={index} className="text-base leading-7 text-gray-800 mb-4">
             {trimmedLine}
           </p>
         );
@@ -906,5 +906,3 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
 };
 
 export default ChatMessage;
-
-}
