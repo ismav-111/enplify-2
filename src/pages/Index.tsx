@@ -1,3 +1,4 @@
+
 import { useChat } from '@/hooks/useChat';
 import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
@@ -507,16 +508,86 @@ const Index = () => {
                         <span className="text-gray-700 font-bold text-sm font-comfortaa">e</span>
                       </div>
                       <div className="ml-3 flex-1">
-                        <div className="flex flex-col space-y-3">
-                          {/* Gradient shimmer bars */}
-                          <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full animate-pulse bg-[length:200%_100%] bg-gradient-to-r"></div>
-                          <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full animate-pulse bg-[length:200%_100%] w-4/5"></div>
-                          <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full animate-pulse bg-[length:200%_100%] w-3/5"></div>
-                          
-                          {/* Pulsing gradient orb */}
-                          <div className="mt-4 flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full bg-gradient-to-r from-[#595fb7] to-[#4e50a8] animate-pulse"></div>
-                            <div className="text-sm text-gray-500 animate-pulse">Generating response...</div>
+                        <div className="relative overflow-hidden">
+                          {/* Animated gradient waves */}
+                          <div className="space-y-4">
+                            <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
+                              <div 
+                                className="absolute inset-0 bg-gradient-to-r from-transparent via-[#595fb7] to-transparent opacity-60"
+                                style={{
+                                  animation: 'wave 2s ease-in-out infinite',
+                                  background: 'linear-gradient(90deg, transparent, #595fb7, #4e50a8, transparent)',
+                                  transform: 'translateX(-100%)'
+                                }}
+                              />
+                            </div>
+                            <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden w-4/5">
+                              <div 
+                                className="absolute inset-0 bg-gradient-to-r from-transparent via-[#4e50a8] to-transparent opacity-60"
+                                style={{
+                                  animation: 'wave 2s ease-in-out infinite 0.3s',
+                                  background: 'linear-gradient(90deg, transparent, #4e50a8, #595fb7, transparent)',
+                                  transform: 'translateX(-100%)'
+                                }}
+                              />
+                            </div>
+                            <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden w-3/5">
+                              <div 
+                                className="absolute inset-0 bg-gradient-to-r from-transparent via-[#6366f1] to-transparent opacity-60"
+                                style={{
+                                  animation: 'wave 2s ease-in-out infinite 0.6s',
+                                  background: 'linear-gradient(90deg, transparent, #6366f1, #595fb7, transparent)',
+                                  transform: 'translateX(-100%)'
+                                }}
+                              />
+                            </div>
+                          </div>
+
+                          {/* Floating particles */}
+                          <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+                            <div 
+                              className="absolute w-1 h-1 bg-[#595fb7] rounded-full opacity-60"
+                              style={{
+                                animation: 'float1 3s ease-in-out infinite',
+                                left: '10%',
+                                top: '20%'
+                              }}
+                            />
+                            <div 
+                              className="absolute w-1.5 h-1.5 bg-[#4e50a8] rounded-full opacity-40"
+                              style={{
+                                animation: 'float2 4s ease-in-out infinite',
+                                left: '60%',
+                                top: '40%'
+                              }}
+                            />
+                            <div 
+                              className="absolute w-1 h-1 bg-[#6366f1] rounded-full opacity-50"
+                              style={{
+                                animation: 'float3 3.5s ease-in-out infinite',
+                                left: '80%',
+                                top: '10%'
+                              }}
+                            />
+                          </div>
+
+                          {/* Status text with pulsing effect */}
+                          <div className="mt-6 flex items-center gap-3">
+                            <div className="relative">
+                              <div className="w-4 h-4 rounded-full bg-gradient-to-r from-[#595fb7] to-[#4e50a8] animate-pulse"></div>
+                              <div 
+                                className="absolute inset-0 w-4 h-4 rounded-full bg-gradient-to-r from-[#595fb7] to-[#4e50a8] opacity-40"
+                                style={{ animation: 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite' }}
+                              />
+                            </div>
+                            <div className="text-sm text-gray-600 font-medium">
+                              <span className="animate-pulse">Crafting your response</span>
+                              <span 
+                                className="inline-block ml-1"
+                                style={{ animation: 'dots 1.5s steps(4, end) infinite' }}
+                              >
+                                ...</span>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -553,6 +624,35 @@ const Index = () => {
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes wave {
+          0% { transform: translateX(-100%); }
+          50% { transform: translateX(100%); }
+          100% { transform: translateX(100%); }
+        }
+        
+        @keyframes float1 {
+          0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+          50% { transform: translateY(-8px) rotate(180deg); opacity: 0.3; }
+        }
+        
+        @keyframes float2 {
+          0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.4; }
+          50% { transform: translateY(-12px) rotate(-180deg); opacity: 0.8; }
+        }
+        
+        @keyframes float3 {
+          0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.5; }
+          50% { transform: translateY(-6px) rotate(90deg); opacity: 0.2; }
+        }
+        
+        @keyframes dots {
+          0%, 20% { content: '.'; }
+          40% { content: '..'; }
+          60%, 100% { content: '...'; }
+        }
+      `}</style>
     </div>
   );
 };
