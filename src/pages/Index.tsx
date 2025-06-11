@@ -1,4 +1,3 @@
-
 import { useChat } from '@/hooks/useChat';
 import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
@@ -625,7 +624,7 @@ const Index = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes wave {
           0% { transform: translateX(-100%); }
           50% { transform: translateX(100%); }
