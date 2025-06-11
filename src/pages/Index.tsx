@@ -497,7 +497,7 @@ const Index = () => {
           <ScrollArea className="h-full">
             {hasMessages ? (
               <div className="max-w-5xl mx-auto px-6 py-8 w-full min-h-full">
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {currentConversation.messages.map((message) => (
                     <ChatMessage key={message.id} message={message} />
                   ))}
@@ -657,3 +657,5 @@ const Index = () => {
 };
 
 export default Index;
+
+</edits_to_apply>
