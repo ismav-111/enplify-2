@@ -503,14 +503,21 @@ const Index = () => {
                   ))}
                   {isLoading && (
                     <div className="flex mb-8">
-                      <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 mt-1">
-                        <span className="text-gray-600 font-bold text-sm font-comfortaa">e</span>
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center flex-shrink-0 mt-1 border border-gray-200">
+                        <span className="text-gray-700 font-bold text-sm font-comfortaa">e</span>
                       </div>
                       <div className="ml-3 flex-1">
-                        <div className="flex items-center gap-1">
-                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        <div className="flex flex-col space-y-3">
+                          {/* Gradient shimmer bars */}
+                          <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full animate-pulse bg-[length:200%_100%] bg-gradient-to-r"></div>
+                          <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full animate-pulse bg-[length:200%_100%] w-4/5"></div>
+                          <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full animate-pulse bg-[length:200%_100%] w-3/5"></div>
+                          
+                          {/* Pulsing gradient orb */}
+                          <div className="mt-4 flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full bg-gradient-to-r from-[#595fb7] to-[#4e50a8] animate-pulse"></div>
+                            <div className="text-sm text-gray-500 animate-pulse">Generating response...</div>
+                          </div>
                         </div>
                       </div>
                     </div>
