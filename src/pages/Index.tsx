@@ -507,74 +507,74 @@ const Index = () => {
                         <span className="text-gray-700 font-bold text-sm font-comfortaa">e</span>
                       </div>
                       <div className="ml-3 flex-1">
-                        <div className="relative overflow-hidden">
-                          {/* Single gradient wave animation */}
-                          <div className="relative h-8 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="relative overflow-hidden max-w-md">
+                          {/* Compact gradient wave animation */}
+                          <div className="relative h-4 bg-gray-100 rounded-full overflow-hidden">
                             <div 
-                              className="absolute inset-0 bg-gradient-to-r from-transparent via-[#595fb7] via-[#4e50a8] via-[#6366f1] to-transparent opacity-80"
+                              className="absolute inset-0 bg-gradient-to-r from-transparent via-[#595fb7] via-[#4e50a8] via-[#6366f1] to-transparent opacity-90"
                               style={{
-                                animation: 'gradientWave 2.5s ease-in-out infinite',
+                                animation: 'compactWave 2s ease-in-out infinite',
                                 background: 'linear-gradient(90deg, transparent 0%, #595fb7 25%, #4e50a8 50%, #6366f1 75%, transparent 100%)',
-                                transform: 'translateX(-100%)',
-                                width: '200%'
-                              }}
-                            />
-                            {/* Secondary overlay for depth */}
-                            <div 
-                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white via-transparent to-transparent opacity-30"
-                              style={{
-                                animation: 'shimmer 2s ease-in-out infinite 0.5s',
-                                background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.8) 50%, transparent 100%)',
                                 transform: 'translateX(-100%)',
                                 width: '150%'
                               }}
                             />
+                            {/* Shimmer effect */}
+                            <div 
+                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white via-transparent to-transparent opacity-40"
+                              style={{
+                                animation: 'compactShimmer 1.5s ease-in-out infinite 0.3s',
+                                background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.9) 50%, transparent 100%)',
+                                transform: 'translateX(-100%)',
+                                width: '120%'
+                              }}
+                            />
                           </div>
 
-                          {/* Floating orbs for extra engagement */}
+                          {/* Floating micro orbs */}
                           <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
                             <div 
-                              className="absolute w-2 h-2 bg-gradient-to-r from-[#595fb7] to-[#4e50a8] rounded-full opacity-60"
+                              className="absolute w-1 h-1 bg-gradient-to-r from-[#595fb7] to-[#4e50a8] rounded-full opacity-70"
                               style={{
-                                animation: 'floatOrb1 4s ease-in-out infinite',
-                                left: '10%',
+                                animation: 'microOrb1 3s ease-in-out infinite',
+                                left: '15%',
+                                top: '25%'
+                              }}
+                            />
+                            <div 
+                              className="absolute w-0.5 h-0.5 bg-gradient-to-r from-[#4e50a8] to-[#6366f1] rounded-full opacity-60"
+                              style={{
+                                animation: 'microOrb2 2.5s ease-in-out infinite',
+                                left: '65%',
+                                top: '75%'
+                              }}
+                            />
+                            <div 
+                              className="absolute w-0.5 h-0.5 bg-gradient-to-r from-[#6366f1] to-[#595fb7] rounded-full opacity-50"
+                              style={{
+                                animation: 'microOrb3 3.5s ease-in-out infinite',
+                                left: '80%',
                                 top: '20%'
                               }}
                             />
-                            <div 
-                              className="absolute w-1.5 h-1.5 bg-gradient-to-r from-[#4e50a8] to-[#6366f1] rounded-full opacity-50"
-                              style={{
-                                animation: 'floatOrb2 3.5s ease-in-out infinite',
-                                left: '70%',
-                                top: '60%'
-                              }}
-                            />
-                            <div 
-                              className="absolute w-1 h-1 bg-gradient-to-r from-[#6366f1] to-[#595fb7] rounded-full opacity-40"
-                              style={{
-                                animation: 'floatOrb3 4.5s ease-in-out infinite',
-                                left: '85%',
-                                top: '10%'
-                              }}
-                            />
                           </div>
 
-                          {/* Status text with enhanced styling */}
-                          <div className="mt-4 flex items-center gap-3">
+                          {/* Compact status text */}
+                          <div className="mt-3 flex items-center gap-2">
                             <div className="relative">
-                              <div className="w-3 h-3 rounded-full bg-gradient-to-r from-[#595fb7] to-[#4e50a8] animate-pulse"></div>
+                              <div className="w-2 h-2 rounded-full bg-gradient-to-r from-[#595fb7] to-[#4e50a8] animate-pulse"></div>
                               <div 
-                                className="absolute inset-0 w-3 h-3 rounded-full bg-gradient-to-r from-[#595fb7] to-[#4e50a8] opacity-40"
-                                style={{ animation: 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite' }}
+                                className="absolute inset-0 w-2 h-2 rounded-full bg-gradient-to-r from-[#595fb7] to-[#4e50a8] opacity-30"
+                                style={{ animation: 'compactPing 1.5s cubic-bezier(0, 0, 0.2, 1) infinite' }}
                               />
                             </div>
-                            <div className="text-sm text-gray-600 font-medium">
+                            <div className="text-xs text-gray-600 font-medium">
                               <span className="bg-gradient-to-r from-[#595fb7] to-[#4e50a8] bg-clip-text text-transparent animate-pulse">
-                                Crafting your response
+                                Thinking
                               </span>
                               <span 
                                 className="inline-block ml-1 text-[#4e50a8]"
-                                style={{ animation: 'dots 1.5s steps(4, end) infinite' }}
+                                style={{ animation: 'compactDots 1.2s steps(4, end) infinite' }}
                               >
                                 ...</span>
                             </div>
@@ -616,37 +616,39 @@ const Index = () => {
       </div>
 
       <style>{`
-        @keyframes gradientWave {
+        @keyframes compactWave {
           0% { transform: translateX(-100%); }
-          50% { transform: translateX(50%); }
-          100% { transform: translateX(200%); }
+          50% { transform: translateX(30%); }
+          100% { transform: translateX(150%); }
         }
         
-        @keyframes shimmer {
+        @keyframes compactShimmer {
           0% { transform: translateX(-100%); }
-          100% { transform: translateX(200%); }
+          100% { transform: translateX(150%); }
         }
         
-        @keyframes floatOrb1 {
+        @keyframes microOrb1 {
+          0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.7; }
+          33% { transform: translateY(-4px) translateX(6px) scale(1.3); opacity: 0.9; }
+          66% { transform: translateY(-2px) translateX(8px) scale(0.8); opacity: 0.4; }
+        }
+        
+        @keyframes microOrb2 {
           0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.6; }
-          25% { transform: translateY(-8px) translateX(10px) scale(1.2); opacity: 0.8; }
-          50% { transform: translateY(-4px) translateX(20px) scale(0.9); opacity: 0.4; }
-          75% { transform: translateY(-12px) translateX(5px) scale(1.1); opacity: 0.7; }
+          40% { transform: translateY(-3px) translateX(-5px) scale(1.2); opacity: 0.8; }
+          80% { transform: translateY(-1px) translateX(-3px) scale(0.9); opacity: 0.3; }
         }
         
-        @keyframes floatOrb2 {
+        @keyframes microOrb3 {
           0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.5; }
-          33% { transform: translateY(-10px) translateX(-15px) scale(1.3); opacity: 0.7; }
-          66% { transform: translateY(-6px) translateX(-8px) scale(0.8); opacity: 0.3; }
+          50% { transform: translateY(-2px) translateX(-4px) scale(1.1); opacity: 0.7; }
         }
         
-        @keyframes floatOrb3 {
-          0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.4; }
-          40% { transform: translateY(-6px) translateX(-10px) scale(1.1); opacity: 0.6; }
-          80% { transform: translateY(-14px) translateX(-5px) scale(0.9); opacity: 0.2; }
+        @keyframes compactPing {
+          75%, 100% { transform: scale(2); opacity: 0; }
         }
         
-        @keyframes dots {
+        @keyframes compactDots {
           0%, 20% { content: '.'; }
           40% { content: '..'; }
           60%, 100% { content: '...'; }
