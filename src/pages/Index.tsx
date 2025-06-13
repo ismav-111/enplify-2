@@ -508,81 +508,72 @@ const Index = () => {
                       </div>
                       <div className="ml-3 flex-1">
                         <div className="relative overflow-hidden">
-                          {/* Animated gradient waves */}
-                          <div className="space-y-4">
-                            <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
-                              <div 
-                                className="absolute inset-0 bg-gradient-to-r from-transparent via-[#595fb7] to-transparent opacity-60"
-                                style={{
-                                  animation: 'wave 2s ease-in-out infinite',
-                                  background: 'linear-gradient(90deg, transparent, #595fb7, #4e50a8, transparent)',
-                                  transform: 'translateX(-100%)'
-                                }}
-                              />
-                            </div>
-                            <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden w-4/5">
-                              <div 
-                                className="absolute inset-0 bg-gradient-to-r from-transparent via-[#4e50a8] to-transparent opacity-60"
-                                style={{
-                                  animation: 'wave 2s ease-in-out infinite 0.3s',
-                                  background: 'linear-gradient(90deg, transparent, #4e50a8, #595fb7, transparent)',
-                                  transform: 'translateX(-100%)'
-                                }}
-                              />
-                            </div>
-                            <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden w-3/5">
-                              <div 
-                                className="absolute inset-0 bg-gradient-to-r from-transparent via-[#6366f1] to-transparent opacity-60"
-                                style={{
-                                  animation: 'wave 2s ease-in-out infinite 0.6s',
-                                  background: 'linear-gradient(90deg, transparent, #6366f1, #595fb7, transparent)',
-                                  transform: 'translateX(-100%)'
-                                }}
-                              />
-                            </div>
+                          {/* Single gradient wave animation */}
+                          <div className="relative h-8 bg-gray-100 rounded-full overflow-hidden">
+                            <div 
+                              className="absolute inset-0 bg-gradient-to-r from-transparent via-[#595fb7] via-[#4e50a8] via-[#6366f1] to-transparent opacity-80"
+                              style={{
+                                animation: 'gradientWave 2.5s ease-in-out infinite',
+                                background: 'linear-gradient(90deg, transparent 0%, #595fb7 25%, #4e50a8 50%, #6366f1 75%, transparent 100%)',
+                                transform: 'translateX(-100%)',
+                                width: '200%'
+                              }}
+                            />
+                            {/* Secondary overlay for depth */}
+                            <div 
+                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white via-transparent to-transparent opacity-30"
+                              style={{
+                                animation: 'shimmer 2s ease-in-out infinite 0.5s',
+                                background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.8) 50%, transparent 100%)',
+                                transform: 'translateX(-100%)',
+                                width: '150%'
+                              }}
+                            />
                           </div>
 
-                          {/* Floating particles */}
+                          {/* Floating orbs for extra engagement */}
                           <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
                             <div 
-                              className="absolute w-1 h-1 bg-[#595fb7] rounded-full opacity-60"
+                              className="absolute w-2 h-2 bg-gradient-to-r from-[#595fb7] to-[#4e50a8] rounded-full opacity-60"
                               style={{
-                                animation: 'float1 3s ease-in-out infinite',
+                                animation: 'floatOrb1 4s ease-in-out infinite',
                                 left: '10%',
                                 top: '20%'
                               }}
                             />
                             <div 
-                              className="absolute w-1.5 h-1.5 bg-[#4e50a8] rounded-full opacity-40"
+                              className="absolute w-1.5 h-1.5 bg-gradient-to-r from-[#4e50a8] to-[#6366f1] rounded-full opacity-50"
                               style={{
-                                animation: 'float2 4s ease-in-out infinite',
-                                left: '60%',
-                                top: '40%'
+                                animation: 'floatOrb2 3.5s ease-in-out infinite',
+                                left: '70%',
+                                top: '60%'
                               }}
                             />
                             <div 
-                              className="absolute w-1 h-1 bg-[#6366f1] rounded-full opacity-50"
+                              className="absolute w-1 h-1 bg-gradient-to-r from-[#6366f1] to-[#595fb7] rounded-full opacity-40"
                               style={{
-                                animation: 'float3 3.5s ease-in-out infinite',
-                                left: '80%',
+                                animation: 'floatOrb3 4.5s ease-in-out infinite',
+                                left: '85%',
                                 top: '10%'
                               }}
                             />
                           </div>
 
-                          {/* Status text with pulsing effect */}
-                          <div className="mt-6 flex items-center gap-3">
+                          {/* Status text with enhanced styling */}
+                          <div className="mt-4 flex items-center gap-3">
                             <div className="relative">
-                              <div className="w-4 h-4 rounded-full bg-gradient-to-r from-[#595fb7] to-[#4e50a8] animate-pulse"></div>
+                              <div className="w-3 h-3 rounded-full bg-gradient-to-r from-[#595fb7] to-[#4e50a8] animate-pulse"></div>
                               <div 
-                                className="absolute inset-0 w-4 h-4 rounded-full bg-gradient-to-r from-[#595fb7] to-[#4e50a8] opacity-40"
+                                className="absolute inset-0 w-3 h-3 rounded-full bg-gradient-to-r from-[#595fb7] to-[#4e50a8] opacity-40"
                                 style={{ animation: 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite' }}
                               />
                             </div>
                             <div className="text-sm text-gray-600 font-medium">
-                              <span className="animate-pulse">Crafting your response</span>
+                              <span className="bg-gradient-to-r from-[#595fb7] to-[#4e50a8] bg-clip-text text-transparent animate-pulse">
+                                Crafting your response
+                              </span>
                               <span 
-                                className="inline-block ml-1"
+                                className="inline-block ml-1 text-[#4e50a8]"
                                 style={{ animation: 'dots 1.5s steps(4, end) infinite' }}
                               >
                                 ...</span>
@@ -625,25 +616,34 @@ const Index = () => {
       </div>
 
       <style>{`
-        @keyframes wave {
+        @keyframes gradientWave {
           0% { transform: translateX(-100%); }
-          50% { transform: translateX(100%); }
-          100% { transform: translateX(100%); }
+          50% { transform: translateX(50%); }
+          100% { transform: translateX(200%); }
         }
         
-        @keyframes float1 {
-          0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
-          50% { transform: translateY(-8px) rotate(180deg); opacity: 0.3; }
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(200%); }
         }
         
-        @keyframes float2 {
-          0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.4; }
-          50% { transform: translateY(-12px) rotate(-180deg); opacity: 0.8; }
+        @keyframes floatOrb1 {
+          0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.6; }
+          25% { transform: translateY(-8px) translateX(10px) scale(1.2); opacity: 0.8; }
+          50% { transform: translateY(-4px) translateX(20px) scale(0.9); opacity: 0.4; }
+          75% { transform: translateY(-12px) translateX(5px) scale(1.1); opacity: 0.7; }
         }
         
-        @keyframes float3 {
-          0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.5; }
-          50% { transform: translateY(-6px) rotate(90deg); opacity: 0.2; }
+        @keyframes floatOrb2 {
+          0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.5; }
+          33% { transform: translateY(-10px) translateX(-15px) scale(1.3); opacity: 0.7; }
+          66% { transform: translateY(-6px) translateX(-8px) scale(0.8); opacity: 0.3; }
+        }
+        
+        @keyframes floatOrb3 {
+          0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.4; }
+          40% { transform: translateY(-6px) translateX(-10px) scale(1.1); opacity: 0.6; }
+          80% { transform: translateY(-14px) translateX(-5px) scale(0.9); opacity: 0.2; }
         }
         
         @keyframes dots {
