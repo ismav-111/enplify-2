@@ -41,7 +41,8 @@ interface FileItem {
   type: string;
   size: number;
   date: Date;
-  url?: string; // Optional URL for viewing files
+  url?: string;
+  chatSessionId?: string; // New field to track which chat session the file belongs to
 }
 
 const Index = () => {
@@ -58,20 +59,18 @@ const Index = () => {
     renameConversation
   } = useChat();
 
-  // Sample uploaded files data (in a real app, this would come from a backend)
+  // Updated sample files with chatSessionId assignments
   const [uploadedFiles, setUploadedFiles] = useState<FileItem[]>([
-    { id: '1', name: 'report.pdf', type: 'application/pdf', size: 2500000, date: new Date(2023, 4, 15), url: '/placeholder.svg' },
-    { id: '2', name: 'data.xlsx', type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size: 1800000, date: new Date(2023, 4, 10) },
-    { id: '3', name: 'image.jpg', type: 'image/jpeg', size: 850000, date: new Date(2023, 4, 5), url: '/placeholder.svg' },
-    { id: '4', name: 'presentation.pptx', type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', size: 3200000, date: new Date(2023, 4, 1) },
-    { id: '5', name: 'notes.txt', type: 'text/plain', size: 25000, date: new Date(2023, 3, 28) },
-    { id: '6', name: 'contract.pdf', type: 'application/pdf', size: 1200000, date: new Date(2023, 3, 25), url: '/placeholder.svg' },
-    { id: '7', name: 'screenshot.png', type: 'image/png', size: 950000, date: new Date(2023, 3, 20), url: '/placeholder.svg' },
-    { id: '8', name: 'requirements.docx', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', size: 780000, date: new Date(2023, 3, 15) },
-    { id: '9', name: 'dataset.csv', type: 'text/csv', size: 920000, date: new Date(2023, 3, 10) },
-    { id: '10', name: 'logo.svg', type: 'image/svg+xml', size: 150000, date: new Date(2023, 3, 5), url: '/placeholder.svg' },
-    { id: '11', name: 'video.mp4', type: 'video/mp4', size: 8500000, date: new Date(2023, 3, 1) },
-    { id: '12', name: 'audio.mp3', type: 'audio/mpeg', size: 4200000, date: new Date(2023, 2, 25) }
+    { id: '1', name: 'quarterly_report.pdf', type: 'application/pdf', size: 2500000, date: new Date(2023, 4, 15), url: '/placeholder.svg', chatSessionId: '1' },
+    { id: '2', name: 'sales_data.xlsx', type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size: 1800000, date: new Date(2023, 4, 10), chatSessionId: '1' },
+    { id: '3', name: 'employee_handbook.pdf', type: 'application/pdf', size: 850000, date: new Date(2023, 4, 5), url: '/placeholder.svg', chatSessionId: '2' },
+    { id: '4', name: 'financial_analysis.xlsx', type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size: 3200000, date: new Date(2023, 4, 1), chatSessionId: '3' },
+    { id: '5', name: 'policy_document.pdf', type: 'application/pdf', size: 1200000, date: new Date(2023, 3, 25), url: '/placeholder.svg', chatSessionId: '2' },
+    { id: '6', name: 'meeting_notes.docx', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', size: 780000, date: new Date(2023, 3, 15), chatSessionId: '1' },
+    { id: '7', name: 'revenue_tracking.xlsx', type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size: 920000, date: new Date(2023, 3, 10), chatSessionId: '3' },
+    { id: '8', name: 'compliance_guide.pdf', type: 'application/pdf', size: 1500000, date: new Date(2023, 3, 5), url: '/placeholder.svg', chatSessionId: '4' },
+    { id: '9', name: 'budget_forecast.xlsx', type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size: 2100000, date: new Date(2023, 3, 1), chatSessionId: '1' },
+    { id: '10', name: 'training_manual.pdf', type: 'application/pdf', size: 1800000, date: new Date(2023, 2, 25), url: '/placeholder.svg', chatSessionId: '2' }
   ]);
   
   // Active file filter - 'all', 'endocs' or 'ensights'
@@ -110,23 +109,26 @@ const Index = () => {
     else return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
   };
 
-  // Filter files based on type and search query
+  // Updated filter function to consider chat session and mode-specific file types
   const getFilteredFiles = (files: FileItem[], filter: 'all' | 'endocs' | 'ensights', searchQuery: string): FileItem[] => {
     let filteredFiles = files;
     
-    // Filter by type
+    // First filter by current chat session
+    if (currentConversation) {
+      filteredFiles = filteredFiles.filter(file => 
+        file.chatSessionId === currentConversation.id
+      );
+    }
+    
+    // Then filter by type based on mode
     if (filter !== 'all') {
       const endocsTypes = [
-        'application/pdf', 
-        'image/jpeg', 
-        'image/png', 
-        'image/gif', 
-        'image/svg+xml'
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
       ];
       
       const ensightsTypes = [
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
-        'text/csv'
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       ];
       
       const allowedTypes = filter === 'endocs' ? endocsTypes : ensightsTypes;
@@ -147,9 +149,8 @@ const Index = () => {
   const getFileTypeDisplay = (fileType: string): string => {
     switch(fileType) {
       case 'application/pdf': return 'PDF';
-      case 'image/jpeg': case 'image/png': case 'image/gif': return 'IMG';
+      case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': return 'DOC';
       case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': return 'XLS';
-      case 'text/csv': return 'CSV';
       default: return fileType.split('/')[1]?.toUpperCase().slice(0, 3) || 'FILE';
     }
   };
@@ -161,12 +162,15 @@ const Index = () => {
 
   // Check if file can be viewed (has URL and is viewable type)
   const canViewFile = (file: FileItem): boolean => {
-    const viewableTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml', 'application/pdf'];
+    const viewableTypes = ['application/pdf'];
     return !!file.url && viewableTypes.includes(file.type);
   };
 
   // Get filtered files based on current filter and search
   const filteredFiles = getFilteredFiles(uploadedFiles, fileFilter, fileSearchQuery);
+
+  // Get the current conversation mode for smart filtering
+  const currentMode = currentConversation?.mode || 'encore';
 
   return (
     <div className="h-screen bg-white flex overflow-hidden">
@@ -196,8 +200,8 @@ const Index = () => {
             </PopoverTrigger>
             <PopoverContent className="w-80 p-0" align="end">
               <div className="p-4 border-b border-gray-100">
-                <h3 className="text-sm font-medium">Your Uploaded Files</h3>
-                <p className="text-xs text-gray-500 mt-1">Recent files you've shared in conversations</p>
+                <h3 className="text-sm font-medium">Session Files</h3>
+                <p className="text-xs text-gray-500 mt-1">Files from this conversation ({currentConversation?.title || 'Current Session'})</p>
                 
                 {/* Search input */}
                 <div className="relative mt-3 mb-3">
@@ -210,7 +214,7 @@ const Index = () => {
                   />
                 </div>
                 
-                {/* File type filter tabs */}
+                {/* File type filter tabs - show only relevant modes */}
                 <div className="flex gap-2">
                   <Button 
                     variant={fileFilter === 'all' ? 'default' : 'outline'} 
@@ -226,7 +230,7 @@ const Index = () => {
                     className={fileFilter === 'endocs' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
                     onClick={() => setFileFilter('endocs')}
                   >
-                    Endocs
+                    Docs
                   </Button>
                   <Button 
                     variant={fileFilter === 'ensights' ? 'default' : 'outline'} 
@@ -234,7 +238,7 @@ const Index = () => {
                     className={fileFilter === 'ensights' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
                     onClick={() => setFileFilter('ensights')}
                   >
-                    Ensights
+                    Excel
                   </Button>
                 </div>
               </div>
@@ -291,7 +295,10 @@ const Index = () => {
                   
                   {filteredFiles.length === 0 && (
                     <div className="p-4 text-center text-gray-500 text-sm">
-                      {fileSearchQuery ? 'No files found matching your search' : `No ${fileFilter} files found`}
+                      {fileSearchQuery 
+                        ? 'No files found matching your search' 
+                        : `No ${fileFilter === 'all' ? '' : fileFilter + ' '}files in this session`
+                      }
                     </div>
                   )}
                 </div>
@@ -308,9 +315,9 @@ const Index = () => {
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[700px] max-h-[80vh] flex flex-col">
                     <DialogHeader>
-                      <DialogTitle>All {fileFilter !== 'all' ? fileFilter + ' ' : ''}Files</DialogTitle>
+                      <DialogTitle>All {fileFilter !== 'all' ? fileFilter + ' ' : ''}Session Files</DialogTitle>
                       <DialogDescription>
-                        Browse all your uploaded {fileFilter !== 'all' ? fileFilter + ' ' : ''}files
+                        Browse all your uploaded {fileFilter !== 'all' ? fileFilter + ' ' : ''}files from this conversation
                       </DialogDescription>
                     </DialogHeader>
                     
@@ -341,7 +348,7 @@ const Index = () => {
                         className={fileFilter === 'endocs' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
                         onClick={() => setFileFilter('endocs')}
                       >
-                        Endocs
+                        Docs
                       </Button>
                       <Button 
                         variant={fileFilter === 'ensights' ? 'default' : 'outline'} 
@@ -349,7 +356,7 @@ const Index = () => {
                         className={fileFilter === 'ensights' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
                         onClick={() => setFileFilter('ensights')}
                       >
-                        Ensights
+                        Excel
                       </Button>
                     </div>
                     
@@ -408,7 +415,10 @@ const Index = () => {
                         
                         {filteredFiles.length === 0 && (
                           <div className="col-span-2 p-8 text-center text-gray-500">
-                            {fileSearchQuery ? 'No files found matching your search' : `No ${fileFilter} files found`}
+                            {fileSearchQuery 
+                              ? 'No files found matching your search' 
+                              : `No ${fileFilter === 'all' ? '' : fileFilter + ' '}files in this session`
+                            }
                           </div>
                         )}
                       </div>
@@ -469,13 +479,7 @@ const Index = () => {
                 </DialogDescription>
               </DialogHeader>
               <div className="flex items-center justify-center p-4 bg-gray-50 rounded-md min-h-[400px]">
-                {viewingFile.type.startsWith('image/') ? (
-                  <img 
-                    src={viewingFile.url} 
-                    alt={viewingFile.name}
-                    className="max-w-full max-h-[400px] object-contain"
-                  />
-                ) : viewingFile.type === 'application/pdf' ? (
+                {viewingFile.type === 'application/pdf' ? (
                   <div className="text-center text-gray-500">
                     <Files size={48} className="mx-auto mb-2" />
                     <p>PDF Preview</p>
@@ -509,7 +513,7 @@ const Index = () => {
                       <div className="ml-3 flex-1">
                         <div className="relative overflow-hidden max-w-md">
                           {/* Compact gradient wave animation */}
-                          <div className="relative h-4 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="relative h-3 bg-gray-100 rounded-full overflow-hidden">
                             <div 
                               className="absolute inset-0 bg-gradient-to-r from-transparent via-[#595fb7] via-[#4e50a8] via-[#6366f1] to-transparent opacity-90"
                               style={{
