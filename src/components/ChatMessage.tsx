@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2 } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -63,6 +63,10 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   const [chartType, setChartType] = useState<'line' | 'bar' | 'pie' | 'composed'>('line');
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMethodologyExpanded, setIsMethodologyExpanded] = useState(false);
+  const [isTableMaximized, setIsTableMaximized] = useState(false);
+  const [isChartMaximized, setIsChartMaximized] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const chartRef = useRef<HTMLDivElement>(null);
 
   const handleCopy = () => {
@@ -190,29 +194,52 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     }
   };
 
+  // Pagination logic for table
+  const getPaginatedData = () => {
+    if (!message.tableData) return [];
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return message.tableData.slice(startIndex, endIndex);
+  };
+
+  const totalPages = Math.ceil((message.tableData?.length || 0) / itemsPerPage);
+
   const renderTableData = () => {
     if (!message.tableData || message.tableData.length === 0) return null;
     
-    return (
-      <div className="mt-6 space-y-4">
+    const paginatedData = getPaginatedData();
+    
+    const tableContent = (
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Search Results</h3>
             <p className="text-sm text-gray-600 mt-1">{message.tableData.length} documents found</p>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2 h-9">
-                <Download size={16} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleDownloadExcel} className="cursor-pointer">
-                <FileText size={16} className="mr-2" />
-                Download Excel
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsTableMaximized(true)}
+              className="h-9 w-9"
+              title="Maximize table"
+            >
+              <Maximize size={16} />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2 h-9">
+                  <Download size={16} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleDownloadExcel} className="cursor-pointer">
+                  <FileText size={16} className="mr-2" />
+                  Download Excel
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
         
         <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
@@ -237,7 +264,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {message.tableData.map((row, i) => (
+              {paginatedData.map((row, i) => (
                 <TableRow key={i} className="hover:bg-gray-50/50 transition-colors border-b border-gray-100 last:border-b-0">
                   <TableCell className="py-3 px-4">
                     <div className="font-medium text-gray-900">{row.title}</div>
@@ -269,7 +296,82 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             </TableBody>
           </Table>
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-gray-700">
+              Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, message.tableData.length)} of {message.tableData.length} results
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="h-9"
+              >
+                <ChevronLeft size={16} />
+                Previous
+              </Button>
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={page === currentPage ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(page)}
+                    className="h-9 w-9"
+                  >
+                    {page}
+                  </Button>
+                ))}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="h-9"
+              >
+                Next
+                <ChevronRight size={16} />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
+    );
+    
+    return (
+      <>
+        <div className="mt-6">
+          {tableContent}
+        </div>
+
+        {/* Maximized Table Dialog */}
+        <Dialog open={isTableMaximized} onOpenChange={setIsTableMaximized}>
+          <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full flex flex-col p-6">
+            <DialogHeader className="flex-shrink-0">
+              <div className="flex items-center justify-between">
+                <DialogTitle className="text-xl font-semibold">Search Results - Full View</DialogTitle>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsTableMaximized(false)}
+                  className="h-9 w-9"
+                  title="Minimize table"
+                >
+                  <Minimize size={16} />
+                </Button>
+              </div>
+            </DialogHeader>
+            <div className="flex-1 overflow-auto">
+              {tableContent}
+            </div>
+          </DialogContent>
+        </Dialog>
+      </>
     );
   };
 
@@ -323,9 +425,9 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       '#65a30d',
       '#0891b2'
     ];
-    
-    return (
-      <div className="mt-8 space-y-6">
+
+    const chartContent = (
+      <div className="space-y-6">
         {/* Methodology Text */}
         <div className="relative">
           <p 
@@ -401,10 +503,20 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             >
               <Activity size={16} />
             </Button>
+            {/* Maximize Button */}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-9 w-9 p-0 transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-200" 
+              onClick={() => setIsChartMaximized(true)}
+              title="Maximize Chart"
+            >
+              <Maximize size={16} />
+            </Button>
             {/* Download Button */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className={`h-9 w-9 p-0 transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-200`} title="Download Chart">
+                <Button variant="ghost" size="sm" className="h-9 w-9 p-0 transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-200" title="Download Chart">
                   <Download size={16} />
                 </Button>
               </DropdownMenuTrigger>
@@ -598,6 +710,37 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           </div>
         </div>
       </div>
+    );
+    
+    return (
+      <>
+        <div className="mt-8">
+          {chartContent}
+        </div>
+
+        {/* Maximized Chart Dialog */}
+        <Dialog open={isChartMaximized} onOpenChange={setIsChartMaximized}>
+          <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full flex flex-col p-6">
+            <DialogHeader className="flex-shrink-0">
+              <div className="flex items-center justify-between">
+                <DialogTitle className="text-xl font-semibold">Business Intelligence Analysis - Full View</DialogTitle>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsChartMaximized(false)}
+                  className="h-9 w-9"
+                  title="Minimize chart"
+                >
+                  <Minimize size={16} />
+                </Button>
+              </div>
+            </DialogHeader>
+            <div className="flex-1 overflow-auto">
+              {chartContent}
+            </div>
+          </DialogContent>
+        </Dialog>
+      </>
     );
   };
 
