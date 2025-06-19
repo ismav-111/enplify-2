@@ -200,26 +200,32 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     }
   };
 
-  // Generate 20 sample rows for endocs
+  // Generate exactly 20 sample rows for endocs
   const generateSampleData = () => {
+    const departments = ['HR', 'Finance', 'IT', 'Legal', 'Operations', 'Marketing', 'Sales', 'Research'];
+    const documentTypes = ['Policy', 'Handbook', 'Report', 'Manual', 'Guide', 'Procedure', 'Contract', 'Analysis'];
+    
     return Array.from({ length: 20 }, (_, i) => ({
-      title: `Document_${i + 1}.pdf`,
-      content: `Sample content for document ${i + 1}. This document contains important information about company policies, procedures, and guidelines that employees need to follow.`,
-      relevance: `${Math.floor(Math.random() * 20) + 80}%`,
+      title: `${documentTypes[i % documentTypes.length]}_Document_${String(i + 1).padStart(2, '0')}.pdf`,
+      content: `This document contains comprehensive information about ${documentTypes[i % documentTypes.length].toLowerCase()} guidelines, procedures, and important details that all team members need to understand and follow. Document ${i + 1} includes specific requirements and implementation details.`,
+      relevance: `${Math.floor(Math.random() * 15) + 85}%`,
       lastUpdated: `2024-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
-      department: ['HR', 'Finance', 'IT', 'Legal', 'Operations'][Math.floor(Math.random() * 5)]
+      department: departments[i % departments.length]
     }));
   };
 
+  // Always use the generated data for consistency
+  const sampleData = generateSampleData();
+
   // Pagination logic for table
   const getPaginatedData = () => {
-    const data = message.tableData || generateSampleData();
+    const data = message.tableData || sampleData;
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     return data.slice(startIndex, endIndex);
   };
 
-  const totalItems = message.tableData?.length || 20;
+  const totalItems = message.tableData?.length || sampleData.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const renderTableData = () => {
@@ -335,17 +341,30 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                 Previous
               </Button>
               <div className="flex items-center gap-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <Button
-                    key={page}
-                    variant={page === currentPage ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setCurrentPage(page)}
-                    className="h-9 w-9"
-                  >
-                    {page}
-                  </Button>
-                ))}
+                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                  let pageNumber;
+                  if (totalPages <= 5) {
+                    pageNumber = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNumber = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNumber = totalPages - 4 + i;
+                  } else {
+                    pageNumber = currentPage - 2 + i;
+                  }
+                  
+                  return (
+                    <Button
+                      key={pageNumber}
+                      variant={pageNumber === currentPage ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(pageNumber)}
+                      className="h-9 w-9"
+                    >
+                      {pageNumber}
+                    </Button>
+                  );
+                })}
               </div>
               <Button
                 variant="outline"
@@ -374,7 +393,8 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full flex flex-col p-6">
             <DialogHeader className="flex-shrink-0">
               <DialogTitle className="sr-only">Search Results - Full View</DialogTitle>
-              <div className="flex items-center justify-end">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold">Search Results - Full View</h2>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -744,8 +764,9 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         <Dialog open={isChartMaximized} onOpenChange={setIsChartMaximized}>
           <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full flex flex-col p-6">
             <DialogHeader className="flex-shrink-0">
-              <DialogTitle className="text-xl font-semibold">Business Intelligence Analysis - Full View</DialogTitle>
-              <div className="flex items-center justify-end">
+              <DialogTitle className="sr-only">Business Intelligence Analysis - Full View</DialogTitle>
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold">Business Intelligence Analysis - Full View</h2>
                 <Button
                   variant="ghost"
                   size="icon"
