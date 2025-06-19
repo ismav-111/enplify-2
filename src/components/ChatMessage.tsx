@@ -200,18 +200,31 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     }
   };
 
-  // Generate exactly 20 sample rows for endocs
+  // Generate 35 sample rows for endocs
   const generateSampleData = () => {
-    const departments = ['HR', 'Finance', 'IT', 'Legal', 'Operations', 'Marketing', 'Sales', 'Research'];
-    const documentTypes = ['Policy', 'Handbook', 'Report', 'Manual', 'Guide', 'Procedure', 'Contract', 'Analysis'];
+    const departments = ['HR', 'Finance', 'IT', 'Legal', 'Operations', 'Marketing', 'Sales', 'Research', 'Support', 'Quality'];
+    const documentTypes = ['Policy', 'Handbook', 'Report', 'Manual', 'Guide', 'Procedure', 'Contract', 'Analysis', 'Specification', 'Review'];
+    const contentTemplates = [
+      'This document contains comprehensive information about {type} guidelines, procedures, and important details that all team members need to understand and follow.',
+      'Essential {type} documentation covering key requirements, implementation strategies, and compliance standards for the {dept} department.',
+      'Detailed {type} reference material including best practices, troubleshooting guides, and step-by-step procedures for operational excellence.',
+      'Critical {type} documentation outlining policies, standards, and protocols essential for maintaining organizational efficiency and compliance.',
+      'Comprehensive {type} resource containing detailed information, guidelines, and procedural documentation for effective {dept} operations.'
+    ];
     
-    return Array.from({ length: 20 }, (_, i) => ({
-      title: `${documentTypes[i % documentTypes.length]}_Document_${String(i + 1).padStart(2, '0')}.pdf`,
-      content: `This document contains comprehensive information about ${documentTypes[i % documentTypes.length].toLowerCase()} guidelines, procedures, and important details that all team members need to understand and follow. Document ${i + 1} includes specific requirements and implementation details.`,
-      relevance: `${Math.floor(Math.random() * 15) + 85}%`,
-      lastUpdated: `2024-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
-      department: departments[i % departments.length]
-    }));
+    return Array.from({ length: 35 }, (_, i) => {
+      const dept = departments[i % departments.length];
+      const docType = documentTypes[i % documentTypes.length];
+      const template = contentTemplates[i % contentTemplates.length];
+      
+      return {
+        title: `${docType}_Document_${String(i + 1).padStart(2, '0')}.pdf`,
+        content: template.replace(/{type}/g, docType.toLowerCase()).replace(/{dept}/g, dept),
+        relevance: `${Math.floor(Math.random() * 15) + 85}%`,
+        lastUpdated: `2024-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
+        department: dept
+      };
+    });
   };
 
   // Always use the generated data for consistency
@@ -388,9 +401,9 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           {tableContent}
         </div>
 
-        {/* Maximized Table Dialog */}
+        {/* Maximized Table Dialog - No close button, only minimize */}
         <Dialog open={isTableMaximized} onOpenChange={setIsTableMaximized}>
-          <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full flex flex-col p-6">
+          <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full flex flex-col p-6" hideCloseButton>
             <DialogHeader className="flex-shrink-0">
               <DialogTitle className="sr-only">Search Results - Full View</DialogTitle>
               <div className="flex items-center justify-between">
@@ -760,9 +773,9 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           {chartContent}
         </div>
 
-        {/* Maximized Chart Dialog */}
+        {/* Maximized Chart Dialog - No close button, only minimize */}
         <Dialog open={isChartMaximized} onOpenChange={setIsChartMaximized}>
-          <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full flex flex-col p-6">
+          <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full flex flex-col p-6" hideCloseButton>
             <DialogHeader className="flex-shrink-0">
               <DialogTitle className="sr-only">Business Intelligence Analysis - Full View</DialogTitle>
               <div className="flex items-center justify-between">
