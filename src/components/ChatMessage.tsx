@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -373,6 +372,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         <Dialog open={isTableMaximized} onOpenChange={setIsTableMaximized}>
           <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full flex flex-col p-6">
             <DialogHeader className="flex-shrink-0">
+              <DialogTitle className="sr-only">Search Results - Full View</DialogTitle>
               <div className="flex items-center justify-end">
                 <Button
                   variant="ghost"
