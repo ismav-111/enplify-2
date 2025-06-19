@@ -203,25 +203,38 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
 
   // Pagination logic for table
   const getPaginatedData = () => {
-    if (!message.tableData) return [];
+    if (!message.tableData) {
+      // Generate 20 sample rows for endocs
+      const sampleData = Array.from({ length: 20 }, (_, i) => ({
+        title: `Document_${i + 1}.pdf`,
+        content: `Sample content for document ${i + 1}. This document contains important information about company policies, procedures, and guidelines that employees need to follow.`,
+        relevance: `${Math.floor(Math.random() * 20) + 80}%`,
+        lastUpdated: `2024-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
+        department: ['HR', 'Finance', 'IT', 'Legal', 'Operations'][Math.floor(Math.random() * 5)]
+      }));
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      return sampleData.slice(startIndex, endIndex);
+    }
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     return message.tableData.slice(startIndex, endIndex);
   };
 
-  const totalPages = Math.ceil((message.tableData?.length || 0) / itemsPerPage);
+  const totalPages = Math.ceil((message.tableData?.length || 20) / itemsPerPage);
 
   const renderTableData = () => {
-    if (!message.tableData || message.tableData.length === 0) return null;
+    if (message.mode !== 'endocs') return null;
     
     const paginatedData = getPaginatedData();
+    const totalItems = message.tableData?.length || 20;
     
     const tableContent = (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Search Results</h3>
-            <p className="text-sm text-gray-600 mt-1">{message.tableData.length} documents found</p>
+            <p className="text-sm text-gray-600 mt-1">{totalItems} documents found</p>
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -281,9 +294,9 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                   </TableCell>
                   <TableCell className="py-3 px-4 text-center">
                     <span className={`inline-flex px-2 py-1 rounded-md text-xs font-medium ${
-                      Number(row.relevance) >= 90 
+                      Number(row.relevance.replace('%', '')) >= 90 
                         ? 'bg-green-100 text-green-800' 
-                        : Number(row.relevance) >= 80 
+                        : Number(row.relevance.replace('%', '')) >= 80 
                         ? 'bg-yellow-100 text-yellow-800'
                         : 'bg-gray-100 text-gray-800'
                     }`}>
@@ -308,7 +321,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         {totalPages > 1 && (
           <div className="flex items-center justify-between">
             <p className="text-sm text-gray-700">
-              Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, message.tableData.length)} of {message.tableData.length} results
+              Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} results
             </p>
             <div className="flex items-center gap-2">
               <Button
@@ -360,8 +373,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         <Dialog open={isTableMaximized} onOpenChange={setIsTableMaximized}>
           <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full flex flex-col p-6">
             <DialogHeader className="flex-shrink-0">
-              <div className="flex items-center justify-between">
-                <DialogTitle className="text-xl font-semibold">Search Results - Full View</DialogTitle>
+              <div className="flex items-center justify-end">
                 <Button
                   variant="ghost"
                   size="icon"
