@@ -200,33 +200,32 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     }
   };
 
-  // Pagination logic for table
-  const getPaginatedData = () => {
-    if (!message.tableData) {
-      // Generate 20 sample rows for endocs
-      const sampleData = Array.from({ length: 20 }, (_, i) => ({
-        title: `Document_${i + 1}.pdf`,
-        content: `Sample content for document ${i + 1}. This document contains important information about company policies, procedures, and guidelines that employees need to follow.`,
-        relevance: `${Math.floor(Math.random() * 20) + 80}%`,
-        lastUpdated: `2024-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
-        department: ['HR', 'Finance', 'IT', 'Legal', 'Operations'][Math.floor(Math.random() * 5)]
-      }));
-      const startIndex = (currentPage - 1) * itemsPerPage;
-      const endIndex = startIndex + itemsPerPage;
-      return sampleData.slice(startIndex, endIndex);
-    }
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return message.tableData.slice(startIndex, endIndex);
+  // Generate 20 sample rows for endocs
+  const generateSampleData = () => {
+    return Array.from({ length: 20 }, (_, i) => ({
+      title: `Document_${i + 1}.pdf`,
+      content: `Sample content for document ${i + 1}. This document contains important information about company policies, procedures, and guidelines that employees need to follow.`,
+      relevance: `${Math.floor(Math.random() * 20) + 80}%`,
+      lastUpdated: `2024-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
+      department: ['HR', 'Finance', 'IT', 'Legal', 'Operations'][Math.floor(Math.random() * 5)]
+    }));
   };
 
-  const totalPages = Math.ceil((message.tableData?.length || 20) / itemsPerPage);
+  // Pagination logic for table
+  const getPaginatedData = () => {
+    const data = message.tableData || generateSampleData();
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return data.slice(startIndex, endIndex);
+  };
+
+  const totalItems = message.tableData?.length || 20;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const renderTableData = () => {
     if (message.mode !== 'endocs') return null;
     
     const paginatedData = getPaginatedData();
-    const totalItems = message.tableData?.length || 20;
     
     const tableContent = (
       <div className="space-y-4">
@@ -236,15 +235,17 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             <p className="text-sm text-gray-600 mt-1">{totalItems} documents found</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsTableMaximized(true)}
-              className="h-9 w-9"
-              title="Maximize table"
-            >
-              <Maximize size={16} />
-            </Button>
+            {!isTableMaximized && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsTableMaximized(true)}
+                className="h-9 w-9"
+                title="Maximize table"
+              >
+                <Maximize size={16} />
+              </Button>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2 h-9">
@@ -523,15 +524,17 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
               <Activity size={16} />
             </Button>
             {/* Maximize Button */}
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="h-9 w-9 p-0 transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-200" 
-              onClick={() => setIsChartMaximized(true)}
-              title="Maximize Chart"
-            >
-              <Maximize size={16} />
-            </Button>
+            {!isChartMaximized && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-9 w-9 p-0 transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-200" 
+                onClick={() => setIsChartMaximized(true)}
+                title="Maximize Chart"
+              >
+                <Maximize size={16} />
+              </Button>
+            )}
             {/* Download Button */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -741,8 +744,8 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         <Dialog open={isChartMaximized} onOpenChange={setIsChartMaximized}>
           <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full flex flex-col p-6">
             <DialogHeader className="flex-shrink-0">
-              <div className="flex items-center justify-between">
-                <DialogTitle className="text-xl font-semibold">Business Intelligence Analysis - Full View</DialogTitle>
+              <DialogTitle className="text-xl font-semibold">Business Intelligence Analysis - Full View</DialogTitle>
+              <div className="flex items-center justify-end">
                 <Button
                   variant="ghost"
                   size="icon"
