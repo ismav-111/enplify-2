@@ -200,7 +200,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     }
   };
 
-  // Generate 35 sample rows for endocs
+  // Generate sample data with consistent 25 rows for endocs
   const generateSampleData = () => {
     const departments = ['HR', 'Finance', 'IT', 'Legal', 'Operations', 'Marketing', 'Sales', 'Research', 'Support', 'Quality'];
     const documentTypes = ['Policy', 'Handbook', 'Report', 'Manual', 'Guide', 'Procedure', 'Contract', 'Analysis', 'Specification', 'Review'];
@@ -209,16 +209,21 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       'Essential {type} documentation covering key requirements, implementation strategies, and compliance standards for the {dept} department.',
       'Detailed {type} reference material including best practices, troubleshooting guides, and step-by-step procedures for operational excellence.',
       'Critical {type} documentation outlining policies, standards, and protocols essential for maintaining organizational efficiency and compliance.',
-      'Comprehensive {type} resource containing detailed information, guidelines, and procedural documentation for effective {dept} operations.'
+      'Comprehensive {type} resource containing detailed information, guidelines, and procedural documentation for effective {dept} operations.',
+      'Strategic {type} framework document outlining operational methodologies, quality assurance protocols, and performance metrics for {dept} excellence.',
+      'Technical {type} specification containing detailed implementation guidelines, system requirements, and configuration parameters for optimal performance.',
+      'Regulatory {type} compliance document ensuring adherence to industry standards, legal requirements, and organizational governance policies.',
+      'Operational {type} manual providing step-by-step instructions, troubleshooting procedures, and maintenance protocols for daily operations.',
+      'Administrative {type} resource covering workflow processes, approval procedures, and documentation standards for efficient {dept} management.'
     ];
     
-    return Array.from({ length: 35 }, (_, i) => {
+    return Array.from({ length: 25 }, (_, i) => {
       const dept = departments[i % departments.length];
       const docType = documentTypes[i % documentTypes.length];
       const template = contentTemplates[i % contentTemplates.length];
       
       return {
-        title: `${docType}_Document_${String(i + 1).padStart(2, '0')}.pdf`,
+        title: `${docType}_Document_${String(i + 1).padStart(3, '0')}.pdf`,
         content: template.replace(/{type}/g, docType.toLowerCase()).replace(/{dept}/g, dept),
         relevance: `${Math.floor(Math.random() * 15) + 85}%`,
         lastUpdated: `2024-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
@@ -227,18 +232,19 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     });
   };
 
-  // Always use the generated data for consistency
-  const sampleData = generateSampleData();
-
   // Pagination logic for table
   const getPaginatedData = () => {
-    const data = message.tableData || sampleData;
+    const data = message.mode === 'endocs' ? generateSampleData() : (message.tableData || []);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     return data.slice(startIndex, endIndex);
   };
 
-  const totalItems = message.tableData?.length || sampleData.length;
+  const getTotalItems = () => {
+    return message.mode === 'endocs' ? 25 : (message.tableData?.length || 0);
+  };
+
+  const totalItems = getTotalItems();
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const renderTableData = () => {
@@ -401,7 +407,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           {tableContent}
         </div>
 
-        {/* Maximized Table Dialog - No close button, only minimize */}
+        {/* Maximized Table Dialog */}
         <Dialog open={isTableMaximized} onOpenChange={setIsTableMaximized}>
           <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full flex flex-col p-6" hideCloseButton>
             <DialogHeader className="flex-shrink-0">
