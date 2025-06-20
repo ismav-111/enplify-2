@@ -1,3 +1,5 @@
+
+import React from 'react';
 import { useChat } from '@/hooks/useChat';
 import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
