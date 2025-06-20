@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -92,14 +91,7 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out'
 			},
 			fontFamily: {
-				sans: ['Inter', 'system-ui', 'sans-serif'],
-				inter: ['Inter', 'system-ui', 'sans-serif'],
 				comfortaa: ['Comfortaa', 'sans-serif'],
-				mono: ['Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace'],
-			},
-			fontSize: {
-				'body': ['16px', { lineHeight: '1.6', fontWeight: '400' }],
-				'body-lg': ['18px', { lineHeight: '1.6', fontWeight: '400' }],
 			}
 		}
 	},
