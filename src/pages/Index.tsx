@@ -623,24 +623,51 @@ const Index = () => {
         }
         
         @keyframes microOrb1 {
-          0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.7; }
-          33% { transform: translateY(-4px) translateX(6px) scale(1.3); opacity: 0.9; }
-          66% { transform: translateY(-2px) translateX(8px) scale(0.8); opacity: 0.4; }
+          0%, 100% { 
+            transform: translateY(0px) translateX(0px) scale(1); 
+            opacity: 0.7; 
+          }
+          33% { 
+            transform: translateY(-4px) translateX(6px) scale(1.3); 
+            opacity: 0.9; 
+          }
+          66% { 
+            transform: translateY(-2px) translateX(8px) scale(0.8); 
+            opacity: 0.4; 
+          }
         }
         
         @keyframes microOrb2 {
-          0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.6; }
-          40% { transform: translateY(-3px) translateX(-5px) scale(1.2); opacity: 0.8; }
-          80% { transform: translateY(-1px) translateX(-3px) scale(0.9); opacity: 0.3; }
+          0%, 100% { 
+            transform: translateY(0px) translateX(0px) scale(1); 
+            opacity: 0.6; 
+          }
+          40% { 
+            transform: translateY(-3px) translateX(-5px) scale(1.2); 
+            opacity: 0.8; 
+          }
+          80% { 
+            transform: translateY(-1px) translateX(-3px) scale(0.9); 
+            opacity: 0.3; 
+          }
         }
         
         @keyframes microOrb3 {
-          0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.5; }
-          50% { transform: translateY(-2px) translateX(-4px) scale(1.1); opacity: 0.7; }
+          0%, 100% { 
+            transform: translateY(0px) translateX(0px) scale(1); 
+            opacity: 0.5; 
+          }
+          50% { 
+            transform: translateY(-2px) translateX(-4px) scale(1.1); 
+            opacity: 0.7; 
+          }
         }
         
         @keyframes compactPing {
-          75%, 100% { transform: scale(2); opacity: 0; }
+          75%, 100% { 
+            transform: scale(2); 
+            opacity: 0; 
+          }
         }
         
         @keyframes compactDots {
