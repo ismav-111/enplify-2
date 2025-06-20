@@ -60,7 +60,6 @@ const Index = () => {
     renameConversation
   } = useChat();
 
-  // Updated to make chatSessionId required for all files
   const [uploadedFiles, setUploadedFiles] = useState<FileItem[]>([
     { id: '1', name: 'quarterly_report.pdf', type: 'application/pdf', size: 2500000, date: new Date(2023, 4, 15), url: '/placeholder.svg', chatSessionId: '1' },
     { id: '2', name: 'sales_data.xlsx', type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size: 1800000, date: new Date(2023, 4, 10), chatSessionId: '1' },
@@ -74,16 +73,10 @@ const Index = () => {
     { id: '10', name: 'training_manual.pdf', type: 'application/pdf', size: 1800000, date: new Date(2023, 2, 25), url: '/placeholder.svg', chatSessionId: '2' }
   ]);
   
-  // Active file filter - 'all', 'endocs' or 'ensights'
   const [fileFilter, setFileFilter] = useState<'all' | 'endocs' | 'ensights'>('all');
-  
-  // Search query for files
   const [fileSearchQuery, setFileSearchQuery] = useState('');
-  
-  // File viewer state
   const [viewingFile, setViewingFile] = useState<FileItem | null>(null);
 
-  // Create a new chat automatically when there are no conversations
   useEffect(() => {
     if (conversations.length === 0) {
       createNewChat();
@@ -94,7 +87,6 @@ const Index = () => {
   const hasMessages = currentConversation && currentConversation.messages.length > 0;
 
   const handleSendMessage = (message: string, mode: ResponseMode, files?: File[]) => {
-    // Add uploaded files to the current session
     if (files && files.length > 0 && currentConversation) {
       const newFiles: FileItem[] = files.map(file => ({
         id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
@@ -109,15 +101,13 @@ const Index = () => {
       setUploadedFiles(prev => [...prev, ...newFiles]);
     }
     
-    sendMessage(message, mode, files?.[0]); // Keep single file for backward compatibility
+    sendMessage(message, mode, files?.[0]);
   };
 
   const handleStopGeneration = () => {
-    // TODO: Implement stop generation logic in useChat hook
     console.log('Stop generation requested');
   };
 
-  // Format file size
   const formatFileSize = (bytes: number): string => {
     if (bytes < 1024) return bytes + ' B';
     else if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
@@ -125,18 +115,15 @@ const Index = () => {
     else return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
   };
 
-  // Updated filter function to consider chat session and mode-specific file types
   const getFilteredFiles = (files: FileItem[], filter: 'all' | 'endocs' | 'ensights', searchQuery: string): FileItem[] => {
     let filteredFiles = files;
     
-    // First filter by current chat session
     if (currentConversation) {
       filteredFiles = filteredFiles.filter(file => 
         file.chatSessionId === currentConversation.id
       );
     }
     
-    // Then filter by type based on mode
     if (filter !== 'all') {
       const endocsTypes = [
         'application/pdf',
@@ -151,7 +138,6 @@ const Index = () => {
       filteredFiles = filteredFiles.filter(file => allowedTypes.includes(file.type));
     }
     
-    // Filter by search query
     if (searchQuery.trim()) {
       filteredFiles = filteredFiles.filter(file => 
         file.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -161,7 +147,6 @@ const Index = () => {
     return filteredFiles;
   };
 
-  // Get file type display text
   const getFileTypeDisplay = (fileType: string): string => {
     switch(fileType) {
       case 'application/pdf': return 'PDF';
@@ -171,21 +156,17 @@ const Index = () => {
     }
   };
 
-  // Delete file function
   const handleDeleteFile = (fileId: string) => {
     setUploadedFiles(files => files.filter(file => file.id !== fileId));
   };
 
-  // Check if file can be viewed (has URL and is viewable type)
   const canViewFile = (file: FileItem): boolean => {
     const viewableTypes = ['application/pdf'];
     return !!file.url && viewableTypes.includes(file.type);
   };
 
-  // Get filtered files based on current filter and search
   const filteredFiles = getFilteredFiles(uploadedFiles, fileFilter, fileSearchQuery);
 
-  // Get files for current session only - this is the key fix for the badge count
   const sessionFiles = currentConversation 
     ? uploadedFiles.filter(file => file.chatSessionId === currentConversation.id)
     : [];
@@ -229,7 +210,6 @@ const Index = () => {
                     Files from this conversation ({currentConversation?.title || 'Current Session'}) - {sessionFiles.length} file{sessionFiles.length !== 1 ? 's' : ''}
                   </p>
                   
-                  {/* Search input */}
                   <div className="relative mt-3 mb-3">
                     <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                     <Input
@@ -240,7 +220,6 @@ const Index = () => {
                     />
                   </div>
                   
-                  {/* File type filter tabs - show only relevant modes */}
                   <div className="flex gap-2">
                     <Button 
                       variant={fileFilter === 'all' ? 'default' : 'outline'} 
@@ -347,7 +326,6 @@ const Index = () => {
                         </DialogDescription>
                       </DialogHeader>
                       
-                      {/* Search input in dialog */}
                       <div className="relative mb-4">
                         <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                         <Input
@@ -358,7 +336,6 @@ const Index = () => {
                         />
                       </div>
                       
-                      {/* File type filter tabs in dialog */}
                       <div className="flex gap-2 mb-4">
                         <Button 
                           variant={fileFilter === 'all' ? 'default' : 'outline'} 
@@ -522,7 +499,7 @@ const Index = () => {
             </Dialog>
           )}
 
-          {/* Scrollable Chat Content - Updated to match Lovable proportions */}
+          {/* Scrollable Chat Content */}
           <div className="flex-1 overflow-hidden">
             <ScrollArea className="h-full">
               {hasMessages ? (
@@ -538,7 +515,6 @@ const Index = () => {
                         </div>
                         <div className="ml-3 flex-1">
                           <div className="relative overflow-hidden max-w-xs">
-                            {/* Updated compact gradient wave animation */}
                             <div className="relative h-2.5 bg-gray-100 rounded-full overflow-hidden">
                               <div 
                                 className="absolute inset-0 bg-gradient-to-r from-transparent via-[#4E50A8] to-transparent opacity-80"
@@ -549,7 +525,6 @@ const Index = () => {
                               />
                             </div>
 
-                            {/* Updated status text */}
                             <div className="mt-2 flex items-center gap-2">
                               <div className="relative">
                                 <div className="w-1.5 h-1.5 rounded-full bg-[#4E50A8] animate-pulse"></div>
@@ -595,7 +570,7 @@ const Index = () => {
             </ScrollArea>
           </div>
 
-          {/* Fixed Message Input at Bottom - Updated to match Lovable proportions */}
+          {/* Fixed Message Input at Bottom */}
           <div className="flex-shrink-0 w-full bg-white py-3">
             <div className="max-w-4xl mx-auto px-4">
               <MessageInput 
