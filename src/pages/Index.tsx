@@ -603,7 +603,7 @@ const Index = () => {
                   disabled={isLoading} 
                   centered={!hasMessages}
                   isLoading={isLoading}
-                  onStopGen={handleStopGeneration}
+                  onStopGeneration={handleStopGeneration}
                 />
               </div>
             </div>
