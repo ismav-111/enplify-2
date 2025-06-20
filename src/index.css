@@ -128,32 +128,3 @@
   margin-right: 10px !important;
   margin-bottom: 5px !important;
 }
-
-/* Aura glow effects */
-.aura-glow {
-  position: relative;
-}
-
-.aura-glow::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, #6366f1, #8b5cf6, #a855f7, #ec4899);
-  border-radius: inherit;
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.aura-glow:hover::before {
-  opacity: 0.7;
-  animation: aura-pulse 2s infinite;
-}
-
-@keyframes aura-pulse {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
-}

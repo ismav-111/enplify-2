@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,7 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2 } from 'lucide-react';
+import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Settings } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -122,6 +123,19 @@ const dataSources: DataSourceType[] = [
       { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
     ]
   },
+  {
+    id: 'servicenow',
+    name: 'ServiceNow',
+    description: 'Connect to your ServiceNow instance and incidents',
+    icon: Settings,
+    isConnected: false,
+    fields: [
+      { id: 'instance_url', label: 'ServiceNow Instance URL', type: 'text', placeholder: 'https://your-instance.service-now.com', required: true },
+      { id: 'username', label: 'Username', type: 'text', placeholder: 'Enter your username', required: true },
+      { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
+      { id: 'table', label: 'Table Name (Optional)', type: 'text', placeholder: 'incident, change_request, etc.', required: false },
+    ]
+  },
 ];
 
 const DataSourceSettings = () => {
@@ -194,7 +208,7 @@ const DataSourceSettings = () => {
           placeholder="Search data sources..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10"
+          className="pl-10 hover:border-indigo-300 focus:border-indigo-500 transition-colors"
         />
       </div>
 
@@ -213,11 +227,11 @@ const DataSourceSettings = () => {
         className="w-full"
       >
         {filteredDataSources.map((source) => (
-          <AccordionItem key={source.id} value={source.id}>
-            <AccordionTrigger className="py-4">
+          <AccordionItem key={source.id} value={source.id} className="border rounded-lg mb-2 hover:shadow-sm transition-shadow">
+            <AccordionTrigger className="py-4 hover:no-underline">
               <div className="flex items-center w-full justify-between pr-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-gray-100 rounded-lg">
+                  <div className="p-2 bg-gray-100 rounded-lg group-hover:bg-indigo-50 transition-colors">
                     <source.icon className="h-5 w-5 text-gray-700" />
                   </div>
                   <div className="text-left">
@@ -272,7 +286,7 @@ const DataSourceSettings = () => {
                         <Button 
                           variant="outline" 
                           onClick={() => handleDisconnect(source.id)}
-                          className="text-red-500 hover:text-red-600"
+                          className="text-red-500 hover:text-red-600 hover:border-red-300"
                         >
                           Disconnect
                         </Button>
@@ -290,6 +304,7 @@ const DataSourceSettings = () => {
                             type={field.type}
                             placeholder={field.placeholder}
                             required={field.required}
+                            className="hover:border-indigo-300 focus:border-indigo-500 transition-colors"
                           />
                         </div>
                       ))}
@@ -297,6 +312,7 @@ const DataSourceSettings = () => {
                         type="button" 
                         onClick={() => handleConnect(source.id)}
                         disabled={connectingSource !== null}
+                        className="hover:scale-105 transition-transform"
                       >
                         Connect
                       </Button>

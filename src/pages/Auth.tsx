@@ -117,7 +117,7 @@ export default function Auth() {
         {/* Subtle aura glow on the right side */}
         <div className="absolute inset-0 bg-gradient-to-l from-purple-50/50 to-transparent"></div>
         
-        <Card className="w-full max-w-md bg-white/80 backdrop-blur-sm shadow-2xl border-0 rounded-3xl overflow-hidden relative z-10 aura-glow">
+        <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-2xl border-0 rounded-3xl overflow-hidden relative z-10 transition-shadow duration-300 hover:shadow-3xl">
           <CardHeader className="pb-6 pt-12 px-12 text-left">
             <CardTitle className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
               {isSignIn ? "Sign In" : "Sign Up"}
@@ -161,7 +161,7 @@ export default function Auth() {
                     id="email"
                     type="email"
                     placeholder="Enter your email"
-                    className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all"
+                    className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
                     {...form.register("email")}
                   />
                 </div>
@@ -180,7 +180,7 @@ export default function Auth() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    className="w-full h-12 pl-12 pr-12 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all"
+                    className="w-full h-12 pl-12 pr-12 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
                     {...form.register("password")}
                   />
                   <button
@@ -229,7 +229,7 @@ export default function Auth() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full flex items-center justify-center gap-3 h-12 border-gray-200 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 rounded-xl font-semibold transition-all text-sm hover:shadow-md hover:border-indigo-300"
+                className="w-full flex items-center justify-center gap-3 h-12 border-gray-200 hover:bg-gray-50 hover:border-indigo-200 rounded-xl font-semibold transition-all text-sm"
               >
                 <svg className="w-5 h-5" viewBox="0 0 23 23">
                   <path fill="#f35325" d="M1 1h10v10H1z"/>
@@ -243,7 +243,7 @@ export default function Auth() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full flex items-center justify-center gap-3 h-12 border-gray-200 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 rounded-xl font-semibold transition-all text-sm hover:shadow-md hover:border-indigo-300"
+                className="w-full flex items-center justify-center gap-3 h-12 border-gray-200 hover:bg-gray-50 hover:border-indigo-200 rounded-xl font-semibold transition-all text-sm"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
