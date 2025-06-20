@@ -128,3 +128,14 @@
   margin-right: 10px !important;
   margin-bottom: 5px !important;
 }
+
+/* Normalize Enplify heading font sizes - make them bold instead of different sizes */
+.enplify-heading {
+  font-weight: 700 !important;
+  font-size: inherit !important;
+}
+
+/* Apply consistent font styling for prompt headings */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700 !important;
+}
