@@ -1,3 +1,4 @@
+
 import { useChat } from '@/hooks/useChat';
 import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
@@ -431,8 +432,8 @@ const Index = () => {
                                       Delete
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
+                                </AlertDialog>
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -564,7 +565,8 @@ const Index = () => {
                                 className="inline-block ml-1 text-[#4E50A8]"
                                 style={{ animation: 'compactDots 1.2s steps(4, end) infinite' }}
                               >
-                                ...</span>
+                                ...
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -620,7 +622,7 @@ const Index = () => {
         
         @keyframes microOrb1 {
           0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.7; }
-          33% { transform: translateY(-4px) translateX(6px) scale(1.3); opacity: 0.9; }
+          33% {  transform: translateY(-4px) translateX(6px) scale(1.3); opacity: 0.9; }
           66% { transform: translateY(-2px) translateX(8px) scale(0.8); opacity: 0.4; }
         }
         
