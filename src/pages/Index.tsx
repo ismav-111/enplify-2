@@ -48,8 +48,8 @@ interface FileItem {
 const Index = () => {
   const {
     conversations,
-    activeConversation,
-    setActiveConversation,
+    activeConversationId,
+    setActiveConversationId,
     createNewChat,
     sendMessage,
     clearAllConversations,
@@ -198,9 +198,9 @@ const Index = () => {
       <div className="flex-shrink-0">
         <Sidebar
           conversations={conversations}
-          activeConversation={activeConversation}
+          activeConversationId={activeConversationId}
           onNewChat={createNewChat}
-          onSelectConversation={setActiveConversation}
+          onSelectConversation={setActiveConversationId}
           onClearAll={clearAllConversations}
           onDeleteConversation={deleteConversation}
           onRenameConversation={renameConversation}
@@ -214,10 +214,10 @@ const Index = () => {
           {/* Files Icon with Popover */}
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow">
+              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow relative">
                 <Files size={18} className="text-[#4E50A8]" />
                 {sessionFiles.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-[#4E50A8] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-[#4E50A8] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium min-w-[20px]">
                     {sessionFiles.length}
                   </span>
                 )}
