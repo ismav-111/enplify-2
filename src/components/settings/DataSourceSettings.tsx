@@ -18,7 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Settings } from 'lucide-react';
+import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Settings, Server, Cloud } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -49,7 +49,7 @@ const dataSources: DataSourceType[] = [
     id: 'snowflake',
     name: 'Snowflake',
     description: 'Connect to your Snowflake data warehouse',
-    icon: Database,
+    icon: Cloud,
     isConnected: true,
     fields: [
       { id: 'account', label: 'Account Identifier', type: 'text', placeholder: 'your-account', required: true },
@@ -127,7 +127,7 @@ const dataSources: DataSourceType[] = [
     id: 'servicenow',
     name: 'ServiceNow',
     description: 'Connect to your ServiceNow instance and incidents',
-    icon: Settings,
+    icon: Server,
     isConnected: false,
     fields: [
       { id: 'instance_url', label: 'ServiceNow Instance URL', type: 'text', placeholder: 'https://your-instance.service-now.com', required: true },
@@ -229,26 +229,30 @@ const DataSourceSettings = () => {
         {filteredDataSources.map((source) => (
           <AccordionItem key={source.id} value={source.id} className="border rounded-lg hover:shadow-sm transition-shadow">
             <AccordionTrigger className="px-4 py-4 hover:no-underline">
-              <div className="flex items-center w-full">
-                <div className="flex items-center gap-3 flex-1">
-                  <div className="p-2 bg-gray-100 rounded-lg">
-                    <source.icon className="h-5 w-5 text-gray-700" />
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg border border-indigo-100">
+                    <source.icon className="h-5 w-5 text-indigo-600" />
                   </div>
-                  <div className="text-left flex-1">
-                    <h3 className="text-sm font-medium">{source.name}</h3>
+                  <div className="text-left">
+                    <h3 className="text-sm font-medium text-gray-900">{source.name}</h3>
                     <p className="text-xs text-gray-500 mt-0.5">{source.description}</p>
                   </div>
                 </div>
-                <div className="ml-4">
+                <div className="flex items-center gap-2 ml-4">
                   {connectedSources[source.id] ? (
-                    <Badge className="bg-green-500 text-white hover:bg-green-600">
+                    <Badge className="bg-green-500 text-white hover:bg-green-600 text-xs px-2 py-1">
                       Connected
                     </Badge>
                   ) : connectingSource === source.id ? (
-                    <Badge className="bg-blue-500 text-white">
+                    <Badge className="bg-blue-500 text-white text-xs px-2 py-1">
                       Connecting...
                     </Badge>
-                  ) : null}
+                  ) : (
+                    <Badge variant="outline" className="text-xs px-2 py-1 text-gray-500">
+                      Not Connected
+                    </Badge>
+                  )}
                 </div>
               </div>
             </AccordionTrigger>
@@ -257,7 +261,7 @@ const DataSourceSettings = () => {
                 {connectingSource === source.id ? (
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="h-4 w-4 animate-spin text-indigo-600" />
                       <span className="text-sm font-medium">Connecting to {source.name}...</span>
                     </div>
                     <div className="space-y-2">
@@ -279,7 +283,7 @@ const DataSourceSettings = () => {
                         <p className="text-xs text-gray-500">Data source is currently active</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Label htmlFor={`${source.id}-active`}>Active</Label>
+                        <Label htmlFor={`${source.id}-active`} className="text-sm">Active</Label>
                         <Switch id={`${source.id}-active`} defaultChecked />
                       </div>
                     </div>
