@@ -129,13 +129,51 @@
   margin-bottom: 5px !important;
 }
 
-/* Normalize Enplify heading font sizes - make them bold instead of different sizes */
-.enplify-heading {
-  font-weight: 700 !important;
-  font-size: inherit !important;
+/* Fix settings hover issue - prevent color change on hover */
+button[data-testid="settings-button"]:hover,
+.settings-button:hover,
+button:has(svg[data-lucide="settings"]):hover {
+  color: inherit !important;
+  background-color: rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Apply consistent font styling for prompt headings */
+/* Normalize ALL heading font sizes in Enplify responses - keep only bold weight */
+.enplify-content h1,
+.enplify-content h2,
+.enplify-content h3,
+.enplify-content h4,
+.enplify-content h5,
+.enplify-content h6,
+.message-content h1,
+.message-content h2,
+.message-content h3,
+.message-content h4,
+.message-content h5,
+.message-content h6,
+.chat-message h1,
+.chat-message h2,
+.chat-message h3,
+.chat-message h4,
+.chat-message h5,
+.chat-message h6 {
+  font-size: inherit !important;
+  font-weight: 700 !important;
+  line-height: inherit !important;
+  margin: 0.5em 0 !important;
+}
+
+/* Global heading normalization for all Enplify content */
 h1, h2, h3, h4, h5, h6 {
+  font-weight: 700 !important;
+}
+
+/* Specific targeting for AI response content */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  font-size: inherit !important;
   font-weight: 700 !important;
 }
