@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight, Table } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight, Table, Database, Globe, Server } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -67,7 +67,15 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
   const [chartType, setChartType] = useState<'line' | 'bar' | 'pie' | 'composed'>('line');
-  const [viewMode, setViewMode] = useState<'text' | 'table' | 'chart'>('text'); // New state for view mode
+  
+  // Set default view mode based on message mode
+  const getDefaultViewMode = () => {
+    if (message.mode === 'endocs') return 'table';
+    if (message.mode === 'ensights') return 'chart';
+    return 'text';
+  };
+  
+  const [viewMode, setViewMode] = useState<'text' | 'table' | 'chart'>(getDefaultViewMode());
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMethodologyExpanded, setIsMethodologyExpanded] = useState(false);
   const [isTableMaximized, setIsTableMaximized] = useState(false);
@@ -75,6 +83,11 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const chartRef = useRef<HTMLDivElement>(null);
+
+  // Update view mode when message mode changes
+  useEffect(() => {
+    setViewMode(getDefaultViewMode());
+  }, [message.mode]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(message.content);
@@ -181,19 +194,34 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       case 'endocs':
         return {
           title: 'Document Sources',
-          items: ['company_policies.pdf', 'employee_handbook.docx', 'quarterly_reports.xlsx', 'meeting_notes.txt'],
+          items: [
+            { name: 'company_policies.pdf', type: 'pdf', icon: FileText },
+            { name: 'employee_handbook.docx', type: 'doc', icon: FileText },
+            { name: 'quarterly_reports.xlsx', type: 'excel', icon: Table },
+            { name: 'meeting_notes.txt', type: 'text', icon: FileText }
+          ],
           icon: FileText
         };
       case 'ensights':
         return {
           title: 'Data Sources', 
-          items: ['sales_database.sql', 'revenue_analytics.csv', 'customer_metrics.json', 'financial_reports.xlsx'],
+          items: [
+            { name: 'sales_database.sql', type: 'database', icon: Database },
+            { name: 'revenue_analytics.csv', type: 'csv', icon: Table },
+            { name: 'customer_metrics.json', type: 'api', icon: Globe },
+            { name: 'financial_reports.xlsx', type: 'excel', icon: Table }
+          ],
           icon: BarChart2
         };
       case 'encore':
         return {
           title: 'Knowledge Sources',
-          items: ['knowledge_base.md', 'documentation.pdf', 'faq_database.json', 'support_articles.html'],
+          items: [
+            { name: 'knowledge_base.md', type: 'markdown', icon: FileText },
+            { name: 'documentation.pdf', type: 'pdf', icon: FileText },
+            { name: 'faq_database.json', type: 'api', icon: Globe },
+            { name: 'support_articles.html', type: 'web', icon: Globe }
+          ],
           icon: FileText
         };
       default:
@@ -1055,46 +1083,35 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     return <div className="space-y-4">{formattedContent}</div>;
   };
 
-  const renderSourceInfo = () => {
+  // Updated renderSourceInfo to show source cards at bottom
+  const renderSourceCards = () => {
+    if (message.mode !== 'endocs' && message.mode !== 'ensights') return null;
+    
     const sourceInfo = getSourceInfo();
     if (!sourceInfo) return null;
 
-    const SourceIcon = sourceInfo.icon;
-
     return (
-      <div className="mt-4 flex items-center gap-2 text-sm text-gray-600">
-        <span className="flex items-center gap-1">
-          <SourceIcon size={14} />
-          Sources:
-        </span>
-        <div className="flex items-center gap-1">
-          {sourceInfo.items.slice(0, 2).map((source, index) => (
-            <span key={index} className="text-blue-600 hover:text-blue-800 cursor-pointer">
-              {source}{index < 1 && sourceInfo.items.length > 2 ? ',' : ''}
-            </span>
-          ))}
-          {sourceInfo.items.length > 2 && (
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <span className="text-blue-600 hover:text-blue-800 cursor-pointer ml-1">
-                  +{sourceInfo.items.length - 2} more
+      <div className="mt-6 pt-4 border-t border-gray-100">
+        <div className="flex items-center gap-2 mb-3">
+          <sourceInfo.icon size={16} className="text-gray-600" />
+          <span className="text-sm font-medium text-gray-700">{sourceInfo.title}</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {sourceInfo.items.map((source, index) => {
+            const SourceIcon = source.icon;
+            return (
+              <div 
+                key={index}
+                className="flex items-center gap-2 px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer border border-gray-200"
+              >
+                <SourceIcon size={14} className="text-gray-500" />
+                <span className="text-sm text-gray-700">{source.name}</span>
+                <span className="text-xs text-gray-500 bg-white px-1.5 py-0.5 rounded uppercase font-medium">
+                  {source.type}
                 </span>
-              </HoverCardTrigger>
-              <HoverCardContent className="w-80 p-4" align="start">
-                <div className="space-y-3">
-                  <h4 className="text-sm font-semibold text-gray-900">{sourceInfo.title}</h4>
-                  <div className="grid gap-2">
-                    {sourceInfo.items.map((source, index) => (
-                      <div key={index} className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-md">
-                        <SourceIcon size={12} className="text-gray-500 flex-shrink-0" />
-                        <span className="text-xs text-gray-700 truncate">{source}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
-          )}
+              </div>
+            );
+          })}
         </div>
       </div>
     );
@@ -1161,7 +1178,8 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
               {/* Legacy rendering for ensights without context bar */}
               {message.mode === 'ensights' && !renderContextBar() && message.chartData && renderChartData()}
               
-              {renderSourceInfo()}
+              {/* Show source cards at bottom for endocs and ensights */}
+              {renderSourceCards()}
             </div>
 
             {/* Action Buttons */}
