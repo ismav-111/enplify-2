@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -76,13 +77,13 @@ export default function Auth() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex">
       {/* Left Side - Brand and Features */}
-      <div className="flex-1 flex flex-col justify-center px-20 py-16 bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700">
+      <div className="flex-1 flex flex-col justify-center px-20 py-16 bg-gradient-to-br from-[#1F3A93] via-[#6C9A8B] to-[#1F3A93]">
         <div className="max-w-2xl">
           <div className="mb-12">
             <h1 className="text-7xl font-bold text-white mb-8 font-comfortaa leading-tight">
               enplify<span className="text-white">.ai</span>
             </h1>
-            <div className="w-24 h-1 bg-blue-200 rounded-full mb-12"></div>
+            <div className="w-24 h-1 bg-[#6C9A8B] rounded-full mb-12"></div>
             
             <p className="text-xl text-blue-100 leading-relaxed font-light mb-12">
               Experience seamless enterprise information integration and achieve unparalleled user experience with our innovative Gen AI solution
@@ -92,8 +93,8 @@ export default function Auth() {
           <div className="space-y-6">
             {features.map((feature, index) => (
               <div key={index} className="flex items-center space-x-4 group">
-                <div className="flex-shrink-0 w-10 h-10 bg-blue-200/20 rounded-lg flex items-center justify-center group-hover:bg-blue-200/30 transition-all duration-300">
-                  <feature.icon className="w-5 h-5 text-blue-200" />
+                <div className="flex-shrink-0 w-10 h-10 bg-[#6C9A8B]/30 rounded-lg flex items-center justify-center group-hover:bg-[#6C9A8B]/40 transition-all duration-300">
+                  <feature.icon className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-white font-semibold text-lg">{feature.title}</h3>
@@ -118,7 +119,7 @@ export default function Auth() {
                   <button
                     type="button"
                     onClick={() => setIsSignIn(false)}
-                    className="text-indigo-600 font-semibold hover:text-indigo-500 transition-colors underline-offset-2 hover:underline"
+                    className="text-[#1F3A93] font-semibold hover:text-[#1a3280] transition-colors underline-offset-2 hover:underline"
                   >
                     Sign up
                   </button>
@@ -129,7 +130,7 @@ export default function Auth() {
                   <button
                     type="button"
                     onClick={() => setIsSignIn(true)}
-                    className="text-indigo-600 font-semibold hover:text-indigo-500 transition-colors underline-offset-2 hover:underline"
+                    className="text-[#1F3A93] font-semibold hover:text-[#1a3280] transition-colors underline-offset-2 hover:underline"
                   >
                     Sign in
                   </button>
@@ -150,7 +151,7 @@ export default function Auth() {
                     id="email"
                     type="email"
                     placeholder="Enter your email"
-                    className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all"
+                    className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-[#1F3A93] focus:ring-[#1F3A93] rounded-xl bg-gray-50 focus:bg-white transition-all"
                     {...form.register("email")}
                   />
                 </div>
@@ -169,7 +170,7 @@ export default function Auth() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    className="w-full h-12 pl-12 pr-12 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all"
+                    className="w-full h-12 pl-12 pr-12 text-sm border-gray-200 focus:border-[#1F3A93] focus:ring-[#1F3A93] rounded-xl bg-gray-50 focus:bg-white transition-all"
                     {...form.register("password")}
                   />
                   <button
@@ -188,7 +189,7 @@ export default function Auth() {
                     <button
                       type="button"
                       onClick={() => setShowForgotPassword(true)}
-                      className="text-xs text-indigo-600 hover:text-indigo-500 font-semibold transition-colors underline-offset-2 hover:underline"
+                      className="text-xs text-[#1F3A93] hover:text-[#1a3280] font-semibold transition-colors underline-offset-2 hover:underline"
                     >
                       Forgot password?
                     </button>
@@ -198,7 +199,7 @@ export default function Auth() {
 
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white h-12 font-semibold text-sm rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 mt-8"
+                className="w-full h-12 font-semibold text-sm rounded-xl mt-8"
                 disabled={isLoading}
               >
                 {isLoading ? "Processing..." : (isSignIn ? "Sign In" : "Sign Up")}
