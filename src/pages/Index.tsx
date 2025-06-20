@@ -184,13 +184,10 @@ const Index = () => {
   // Get filtered files based on current filter and search
   const filteredFiles = getFilteredFiles(uploadedFiles, fileFilter, fileSearchQuery);
 
-  // Get files for current session only
+  // Get files for current session only - this is the key fix for the badge count
   const sessionFiles = currentConversation 
     ? uploadedFiles.filter(file => file.chatSessionId === currentConversation.id)
     : [];
-
-  // Get the current conversation mode for smart filtering
-  const currentMode = currentConversation?.mode || 'encore';
 
   return (
     <div className="h-screen bg-white flex overflow-hidden">
@@ -214,10 +211,10 @@ const Index = () => {
           {/* Files Icon with Popover */}
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow">
+              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow relative">
                 <Files size={18} className="text-[#4E50A8]" />
                 {sessionFiles.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-[#4E50A8] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-[#4E50A8] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
                     {sessionFiles.length}
                   </span>
                 )}
