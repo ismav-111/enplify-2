@@ -191,7 +191,7 @@ const Index = () => {
     : [];
 
   return (
-    <>
+    <div className="relative">
       <div className="h-screen bg-white flex overflow-hidden">
         {/* Fixed Sidebar */}
         <div className="flex-shrink-0">
@@ -649,7 +649,7 @@ const Index = () => {
           60%, 100% { content: '...'; }
         }
       `}</style>
-    </>
+    </div>
   );
 };
 
