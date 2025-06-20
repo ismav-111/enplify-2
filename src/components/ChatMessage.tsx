@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight, Table } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -14,7 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  Table,
+  Table as TableComponent,
   TableBody,
   TableCell,
   TableHead,
@@ -67,6 +67,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
   const [chartType, setChartType] = useState<'line' | 'bar' | 'pie' | 'composed'>('line');
+  const [viewMode, setViewMode] = useState<'text' | 'table' | 'chart'>('text'); // New state for view mode
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMethodologyExpanded, setIsMethodologyExpanded] = useState(false);
   const [isTableMaximized, setIsTableMaximized] = useState(false);
@@ -232,6 +233,20 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     });
   };
 
+  // Convert table data to chart data for endocs
+  const convertTableToChartData = () => {
+    const tableData = generateSampleData();
+    const departmentCounts = tableData.reduce((acc, item) => {
+      acc[item.department] = (acc[item.department] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return Object.entries(departmentCounts).map(([name, value]) => ({
+      name,
+      value
+    }));
+  };
+
   // Pagination logic for table
   const getPaginatedData = () => {
     const data = message.mode === 'endocs' ? generateSampleData() : (message.tableData || []);
@@ -247,6 +262,185 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   const totalItems = getTotalItems();
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
+  // Context bar for both endocs and ensights
+  const renderContextBar = () => {
+    if (message.mode !== 'endocs' && message.mode !== 'ensights') return null;
+
+    return (
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-xl font-bold text-gray-900">
+            {message.mode === 'endocs' ? 'Document Analysis' : 'Business Intelligence Analysis'}
+          </h2>
+          <p className="text-sm text-gray-600 mt-1">
+            {message.mode === 'endocs' 
+              ? `Interactive document visualization with ${totalItems} documents` 
+              : `Interactive performance visualization with ${message.chartData?.length || 0} data points`
+            }
+          </p>
+        </div>
+        <div className="flex gap-1 items-center bg-gray-100 rounded-lg p-1">
+          {/* View Mode Selector */}
+          <Button 
+            variant="ghost"
+            size="sm"
+            className={`h-9 w-9 p-0 transition-all ${
+              viewMode === 'text' 
+                ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
+                : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
+            }`}
+            onClick={() => setViewMode('text')}
+            title="Text View"
+          >
+            <FileText size={16} />
+          </Button>
+          <Button 
+            variant="ghost"
+            size="sm"
+            className={`h-9 w-9 p-0 transition-all ${
+              viewMode === 'table' 
+                ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
+                : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
+            }`}
+            onClick={() => setViewMode('table')}
+            title="Table View"
+          >
+            <Table size={16} />
+          </Button>
+          <Button 
+            variant="ghost"
+            size="sm"
+            className={`h-9 w-9 p-0 transition-all ${
+              viewMode === 'chart' 
+                ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
+                : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
+            }`}
+            onClick={() => setViewMode('chart')}
+            title="Chart View"
+          >
+            <BarChart2 size={16} />
+          </Button>
+          
+          {/* Chart Type Selector - only show when in chart mode */}
+          {viewMode === 'chart' && (
+            <>
+              <div className="w-px h-6 bg-gray-300 mx-1" />
+              <Button 
+                variant="ghost"
+                size="sm"
+                className={`h-9 w-9 p-0 transition-all ${
+                  chartType === 'line' 
+                    ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
+                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
+                }`}
+                onClick={() => setChartType('line')}
+                title="Area Chart"
+              >
+                <TrendingUp size={16} />
+              </Button>
+              <Button 
+                variant="ghost"
+                size="sm"
+                className={`h-9 w-9 p-0 transition-all ${
+                  chartType === 'bar' 
+                    ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
+                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
+                }`}
+                onClick={() => setChartType('bar')}
+                title="Bar Chart"
+              >
+                <BarChart2 size={16} />
+              </Button>
+              <Button 
+                variant="ghost"
+                size="sm"
+                className={`h-9 w-9 p-0 transition-all ${
+                  chartType === 'pie' 
+                    ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
+                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
+                }`}
+                onClick={() => setChartType('pie')}
+                title="Pie Chart"
+              >
+                <PieChart size={16} />
+              </Button>
+              <Button 
+                variant="ghost"
+                size="sm"
+                className={`h-9 w-9 p-0 transition-all ${
+                  chartType === 'composed' 
+                    ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
+                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
+                }`}
+                onClick={() => setChartType('composed')}
+                title="Dual Axis Chart"
+              >
+                <Activity size={16} />
+              </Button>
+            </>
+          )}
+          
+          {/* Maximize and Download buttons */}
+          {viewMode === 'table' && !isTableMaximized && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsTableMaximized(true)}
+              className="h-9 w-9 p-0 transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-200"
+              title="Maximize table"
+            >
+              <Maximize size={16} />
+            </Button>
+          )}
+          {viewMode === 'chart' && !isChartMaximized && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-9 w-9 p-0 transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-200" 
+              onClick={() => setIsChartMaximized(true)}
+              title="Maximize Chart"
+            >
+              <Maximize size={16} />
+            </Button>
+          )}
+          
+          {/* Download Button */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-9 w-9 p-0 transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-200" title="Download">
+                <Download size={16} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {viewMode === 'table' && (
+                <DropdownMenuItem onClick={handleDownloadExcel} className="cursor-pointer">
+                  <FileText size={16} className="mr-2" />
+                  Download Excel
+                </DropdownMenuItem>
+              )}
+              {viewMode === 'chart' && (
+                <>
+                  <DropdownMenuItem onClick={() => downloadChartAsImage('png')} className="cursor-pointer">
+                    <Image size={16} className="mr-2" />
+                    Download PNG
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => downloadChartAsImage('jpg')} className="cursor-pointer">
+                    <Image size={16} className="mr-2" />
+                    Download JPG
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => downloadChartAsImage('svg')} className="cursor-pointer">
+                    <Image size={16} className="mr-2" />
+                    Download SVG
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+    );
+  };
+
   const renderTableData = () => {
     if (message.mode !== 'endocs') return null;
     
@@ -254,41 +448,8 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     
     const tableContent = (
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900">Search Results</h3>
-            <p className="text-sm text-gray-600 mt-1">{totalItems} documents found</p>
-          </div>
-          <div className="flex items-center gap-2">
-            {!isTableMaximized && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsTableMaximized(true)}
-                className="h-9 w-9"
-                title="Maximize table"
-              >
-                <Maximize size={16} />
-              </Button>
-            )}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2 h-9">
-                  <Download size={16} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={handleDownloadExcel} className="cursor-pointer">
-                  <FileText size={16} className="mr-2" />
-                  Download Excel
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-        
         <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
-          <Table>
+          <TableComponent>
             <TableHeader>
               <TableRow className="bg-gray-50/80">
                 <TableHead className="font-semibold text-gray-900 py-3 px-4">
@@ -339,7 +500,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
+          </TableComponent>
         </div>
 
         {/* Pagination */}
@@ -435,24 +596,33 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   };
 
   const getMethodologyText = () => {
-    if (!message.chartData || message.chartData.length === 0) return null;
+    const chartData = message.mode === 'endocs' ? convertTableToChartData() : message.chartData;
+    if (!chartData || chartData.length === 0) return null;
 
     switch(chartType) {
       case 'line':
-        return "This visualization employs a sophisticated linear regression model enhanced with seasonal decomposition algorithms. The X-axis represents time periods (months/quarters) showing chronological progression, while the Y-axis displays revenue values in thousands of dollars, providing clear insight into financial performance trends. The methodology uses the formula: Revenue(t) = Base Revenue + (Growth Rate × Time) + Seasonal Adjustment, where seasonal adjustments are calculated using historical patterns including holiday boosts (25% increase in December), post-holiday corrections (15% decrease in January), and summer slowdowns (8% decrease in July-August).";
+        return message.mode === 'endocs' 
+          ? "This visualization employs document frequency analysis across departments using linear trend modeling. The X-axis represents different departments, while the Y-axis displays document count, providing clear insight into document distribution patterns across organizational units."
+          : "This visualization employs a sophisticated linear regression model enhanced with seasonal decomposition algorithms. The X-axis represents time periods (months/quarters) showing chronological progression, while the Y-axis displays revenue values in thousands of dollars, providing clear insight into financial performance trends. The methodology uses the formula: Revenue(t) = Base Revenue + (Growth Rate × Time) + Seasonal Adjustment, where seasonal adjustments are calculated using historical patterns including holiday boosts (25% increase in December), post-holiday corrections (15% decrease in January), and summer slowdowns (8% decrease in July-August).";
       case 'bar':
-        return "The bar chart methodology aggregates monthly revenue using discrete categorical analysis. The X-axis shows distinct time periods (months/quarters) as categorical variables, while the Y-axis represents absolute revenue values in thousands of dollars, enabling direct comparison between periods. This approach uses the formula: Monthly Revenue = Σ(Customer Segments) + Regional Performance + Product Mix, providing a comprehensive view of business performance across different time periods and enabling easy identification of peak performance months and growth anomalies.";
+        return message.mode === 'endocs'
+          ? "The bar chart methodology aggregates document counts using discrete categorical analysis. The X-axis shows distinct departments as categorical variables, while the Y-axis represents absolute document counts, enabling direct comparison between departments and identification of documentation density patterns."
+          : "The bar chart methodology aggregates monthly revenue using discrete categorical analysis. The X-axis shows distinct time periods (months/quarters) as categorical variables, while the Y-axis represents absolute revenue values in thousands of dollars, enabling direct comparison between periods. This approach uses the formula: Monthly Revenue = Σ(Customer Segments) + Regional Performance + Product Mix, providing a comprehensive view of business performance across different time periods and enabling easy identification of peak performance months and growth anomalies.";
       case 'pie':
-        return "The pie chart utilizes proportional analysis to show revenue distribution across time periods. Each segment represents a percentage of total annual revenue, with the entire circle representing 100% of the dataset. The methodology uses the formula: Percentage = (Individual Month Revenue / Total Annual Revenue) × 100, revealing the distribution and concentration patterns. This visualization helps identify seasonal dependencies, revenue concentration risk, and distribution patterns that inform strategic planning decisions.";
+        return message.mode === 'endocs'
+          ? "The pie chart utilizes proportional analysis to show document distribution across departments. Each segment represents a percentage of total documents, with the entire circle representing 100% of the document library. This visualization helps identify departmental documentation concentration and distribution patterns."
+          : "The pie chart utilizes proportional analysis to show revenue distribution across time periods. Each segment represents a percentage of total annual revenue, with the entire circle representing 100% of the dataset. The methodology uses the formula: Percentage = (Individual Month Revenue / Total Annual Revenue) × 100, revealing the distribution and concentration patterns. This visualization helps identify seasonal dependencies, revenue concentration risk, and distribution patterns that inform strategic planning decisions.";
       case 'composed':
-        return "This advanced dual-axis visualization combines absolute values with relative metrics for comprehensive analysis. The primary Y-axis (left) shows revenue values in thousands of dollars, while the secondary Y-axis (right) displays growth rate percentages. The X-axis represents time periods enabling temporal analysis. The methodology leverages cross-correlation analysis using the formula: Combined Analysis = Revenue Trends + Growth Rate Correlation, identifying leading indicators and performance patterns across multiple dimensions.";
+        return message.mode === 'endocs'
+          ? "This advanced dual-axis visualization combines document counts with relevance metrics for comprehensive analysis. The primary Y-axis (left) shows document counts, while the secondary Y-axis (right) displays average relevance scores. This approach enables correlation analysis between document volume and content quality across departments."
+          : "This advanced dual-axis visualization combines absolute values with relative metrics for comprehensive analysis. The primary Y-axis (left) shows revenue values in thousands of dollars, while the secondary Y-axis (right) displays growth rate percentages. The X-axis represents time periods enabling temporal analysis. The methodology leverages cross-correlation analysis using the formula: Combined Analysis = Revenue Trends + Growth Rate Correlation, identifying leading indicators and performance patterns across multiple dimensions.";
       default:
         return "";
     }
   };
 
   const renderChartData = () => {
-    if (!message.chartData || message.chartData.length === 0) return null;
+    if ((message.mode !== 'ensights' && message.mode !== 'endocs') || viewMode !== 'chart') return null;
     
     const chartColors = {
       primary: '#595fb7',
@@ -462,10 +632,14 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       warning: '#d97706'
     };
 
+    // Use appropriate data based on mode
+    const rawChartData = message.mode === 'endocs' ? convertTableToChartData() : message.chartData;
+    if (!rawChartData || rawChartData.length === 0) return null;
+
     // Transform data for Recharts
-    const chartData = message.chartData.map((item, index) => ({
+    const chartData = rawChartData.map((item, index) => ({
       name: item.name,
-      revenue: item.value,
+      [message.mode === 'endocs' ? 'documents' : 'revenue']: item.value,
       growth: Math.round((Math.random() * 20 + 5) * 100) / 100, // Simulated growth rate
       target: item.value * 0.9 + (Math.random() * 0.2 * item.value) // Simulated target
     }));
@@ -485,6 +659,13 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       '#0891b2'
     ];
 
+    const dataKey = message.mode === 'endocs' ? 'documents' : 'revenue';
+    const yAxisLabel = message.mode === 'endocs' ? 'Document Count' : 'Revenue (USD thousands)';
+    const tooltipFormatter = (value: any) => [
+      message.mode === 'endocs' ? `${value} docs` : `$${(value/1000).toFixed(0)}k`,
+      message.mode === 'endocs' ? 'Documents' : 'Revenue'
+    ];
+
     const chartContent = (
       <div className="space-y-6">
         {/* Methodology Text */}
@@ -501,103 +682,6 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             </span>
           </p>
         </div>
-
-        {/* Header Section */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">Business Intelligence Analysis</h2>
-            <p className="text-sm text-gray-600 mt-1">Interactive performance visualization with {message.chartData.length} data points</p>
-          </div>
-          <div className="flex gap-1 items-center bg-gray-100 rounded-lg p-1">
-            {/* Chart Type Selector */}
-            <Button 
-              variant="ghost"
-              size="sm"
-              className={`h-9 w-9 p-0 transition-all ${
-                chartType === 'line' 
-                  ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
-                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
-              }`}
-              onClick={() => setChartType('line')}
-              title="Area Chart"
-            >
-              <TrendingUp size={16} />
-            </Button>
-            <Button 
-              variant="ghost"
-              size="sm"
-              className={`h-9 w-9 p-0 transition-all ${
-                chartType === 'bar' 
-                  ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
-                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
-              }`}
-              onClick={() => setChartType('bar')}
-              title="Bar Chart"
-            >
-              <BarChart2 size={16} />
-            </Button>
-            <Button 
-              variant="ghost"
-              size="sm"
-              className={`h-9 w-9 p-0 transition-all ${
-                chartType === 'pie' 
-                  ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
-                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
-              }`}
-              onClick={() => setChartType('pie')}
-              title="Pie Chart"
-            >
-              <PieChart size={16} />
-            </Button>
-            <Button 
-              variant="ghost"
-              size="sm"
-              className={`h-9 w-9 p-0 transition-all ${
-                chartType === 'composed' 
-                  ? "bg-[#595fb7] text-white shadow-sm hover:bg-[#4e50a8]" 
-                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
-              }`}
-              onClick={() => setChartType('composed')}
-              title="Dual Axis Chart"
-            >
-              <Activity size={16} />
-            </Button>
-            {/* Maximize Button */}
-            {!isChartMaximized && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-9 w-9 p-0 transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-200" 
-                onClick={() => setIsChartMaximized(true)}
-                title="Maximize Chart"
-              >
-                <Maximize size={16} />
-              </Button>
-            )}
-            {/* Download Button */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-9 w-9 p-0 transition-all text-gray-600 hover:text-gray-800 hover:bg-gray-200" title="Download Chart">
-                  <Download size={16} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => downloadChartAsImage('png')} className="cursor-pointer">
-                  <Image size={16} className="mr-2" />
-                  Download PNG
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => downloadChartAsImage('jpg')} className="cursor-pointer">
-                  <Image size={16} className="mr-2" />
-                  Download JPG
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => downloadChartAsImage('svg')} className="cursor-pointer">
-                  <Image size={16} className="mr-2" />
-                  Download SVG
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
         
         {/* Chart Container */}
         <div ref={chartRef} className="border border-gray-200 rounded-lg bg-white p-6 shadow-sm">
@@ -611,17 +695,17 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     axisLine={false}
                     tickLine={false}
                     tick={{ fontSize: 12, fill: '#6b7280' }}
-                    label={{ value: 'Time Period (Months)', position: 'insideBottom', offset: -5, style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
+                    label={{ value: message.mode === 'endocs' ? 'Departments' : 'Time Period (Months)', position: 'insideBottom', offset: -5, style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
                   />
                   <YAxis 
                     axisLine={false}
                     tickLine={false}
                     tick={{ fontSize: 12, fill: '#6b7280' }}
-                    tickFormatter={(value) => `$${(value/1000).toFixed(0)}k`}
-                    label={{ value: 'Revenue (USD thousands)', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
+                    tickFormatter={(value) => message.mode === 'endocs' ? `${value}` : `$${(value/1000).toFixed(0)}k`}
+                    label={{ value: yAxisLabel, angle: -90, position: 'insideLeft', style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
                   />
                   <Tooltip 
-                    formatter={(value: any) => [`$${(value/1000).toFixed(0)}k`, 'Revenue']}
+                    formatter={tooltipFormatter}
                     labelStyle={{ color: '#374151' }}
                     contentStyle={{ 
                       backgroundColor: 'white', 
@@ -632,7 +716,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                   />
                   <Area 
                     type="monotone" 
-                    dataKey="revenue" 
+                    dataKey={dataKey} 
                     stroke={chartColors.primary}
                     fill={chartColors.primary}
                     fillOpacity={0.1}
@@ -647,17 +731,17 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     axisLine={false}
                     tickLine={false}
                     tick={{ fontSize: 12, fill: '#6b7280' }}
-                    label={{ value: 'Time Period (Months)', position: 'insideBottom', offset: -5, style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
+                    label={{ value: message.mode === 'endocs' ? 'Departments' : 'Time Period (Months)', position: 'insideBottom', offset: -5, style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
                   />
                   <YAxis 
                     axisLine={false}
                     tickLine={false}
                     tick={{ fontSize: 12, fill: '#6b7280' }}
-                    tickFormatter={(value) => `$${(value/1000).toFixed(0)}k`}
-                    label={{ value: 'Revenue (USD thousands)', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
+                    tickFormatter={(value) => message.mode === 'endocs' ? `${value}` : `$${(value/1000).toFixed(0)}k`}
+                    label={{ value: yAxisLabel, angle: -90, position: 'insideLeft', style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
                   />
                   <Tooltip 
-                    formatter={(value: any) => [`$${(value/1000).toFixed(0)}k`, 'Revenue']}
+                    formatter={tooltipFormatter}
                     labelStyle={{ color: '#374151' }}
                     contentStyle={{ 
                       backgroundColor: 'white', 
@@ -667,7 +751,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     }}
                   />
                   <Bar 
-                    dataKey="revenue" 
+                    dataKey={dataKey} 
                     fill={chartColors.primary}
                     radius={[4, 4, 0, 0]}
                   />
@@ -676,7 +760,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                 <RechartsPie margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                   <Pie
                     data={chartData}
-                    dataKey="revenue"
+                    dataKey={dataKey}
                     nameKey="name"
                     cx="50%"
                     cy="50%"
@@ -692,8 +776,8 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                   </Pie>
                   <Tooltip 
                     formatter={(value: any, name: string) => [
-                      `$${(value/1000).toFixed(0)}k`,
-                      `${name} Revenue`
+                      message.mode === 'endocs' ? `${value} docs` : `$${(value/1000).toFixed(0)}k`,
+                      `${name} ${message.mode === 'endocs' ? 'Documents' : 'Revenue'}`
                     ]}
                     contentStyle={{ 
                       backgroundColor: 'white', 
@@ -716,16 +800,16 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     axisLine={false}
                     tickLine={false}
                     tick={{ fontSize: 12, fill: '#6b7280' }}
-                    label={{ value: 'Time Period (Months)', position: 'insideBottom', offset: -5, style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
+                    label={{ value: message.mode === 'endocs' ? 'Departments' : 'Time Period (Months)', position: 'insideBottom', offset: -5, style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
                   />
                   <YAxis 
-                    yAxisId="revenue"
+                    yAxisId="primary"
                     orientation="left"
                     axisLine={false}
                     tickLine={false}
                     tick={{ fontSize: 12, fill: '#6b7280' }}
-                    tickFormatter={(value) => `$${(value/1000).toFixed(0)}k`}
-                    label={{ value: 'Revenue (USD thousands)', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
+                    tickFormatter={(value) => message.mode === 'endocs' ? `${value}` : `$${(value/1000).toFixed(0)}k`}
+                    label={{ value: yAxisLabel, angle: -90, position: 'insideLeft', style: { textAnchor: 'middle', fontSize: '12px', fill: '#374151' } }}
                   />
                   <YAxis 
                     yAxisId="growth"
@@ -738,8 +822,8 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                   />
                   <Tooltip 
                     formatter={(value: any, name: string) => [
-                      name === 'revenue' ? `$${(value/1000).toFixed(0)}k` : `${value}%`,
-                      name === 'revenue' ? 'Revenue' : 'Growth Rate'
+                      name === dataKey ? (message.mode === 'endocs' ? `${value} docs` : `$${(value/1000).toFixed(0)}k`) : `${value}%`,
+                      name === dataKey ? (message.mode === 'endocs' ? 'Documents' : 'Revenue') : 'Growth Rate'
                     ]}
                     labelStyle={{ color: '#374151' }}
                     contentStyle={{ 
@@ -750,11 +834,11 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                     }}
                   />
                   <Bar 
-                    yAxisId="revenue"
-                    dataKey="revenue" 
+                    yAxisId="primary"
+                    dataKey={dataKey} 
                     fill={chartColors.primary}
                     radius={[4, 4, 0, 0]}
-                    name="revenue"
+                    name={dataKey}
                   />
                   <Line 
                     yAxisId="growth"
@@ -783,9 +867,9 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         <Dialog open={isChartMaximized} onOpenChange={setIsChartMaximized}>
           <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full flex flex-col p-6" hideCloseButton>
             <DialogHeader className="flex-shrink-0">
-              <DialogTitle className="sr-only">Business Intelligence Analysis - Full View</DialogTitle>
+              <DialogTitle className="sr-only">{message.mode === 'endocs' ? 'Document Analysis' : 'Business Intelligence Analysis'} - Full View</DialogTitle>
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">Business Intelligence Analysis - Full View</h2>
+                <h2 className="text-xl font-semibold">{message.mode === 'endocs' ? 'Document Analysis' : 'Business Intelligence Analysis'} - Full View</h2>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -1058,11 +1142,25 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         ) : (
           <>
             <div className="text-gray-800 w-full">
-              <div className="mb-6">
-                {renderFormattedContent()}
-              </div>
-              {message.mode === 'endocs' && renderTableData()}
-              {message.mode === 'ensights' && renderChartData()}
+              {/* Render context bar for endocs and ensights */}
+              {(message.mode === 'endocs' || message.mode === 'ensights') && renderContextBar()}
+              
+              {/* Show text content only when in text mode or for encore mode */}
+              {(viewMode === 'text' || message.mode === 'encore' || (message.mode !== 'endocs' && message.mode !== 'ensights')) && (
+                <div className="mb-6">
+                  {renderFormattedContent()}
+                </div>
+              )}
+              
+              {/* Show table when in table mode for endocs */}
+              {message.mode === 'endocs' && viewMode === 'table' && renderTableData()}
+              
+              {/* Show chart when in chart mode for ensights or endocs */}
+              {((message.mode === 'ensights' && (viewMode === 'chart' || message.chartData)) || (message.mode === 'endocs' && viewMode === 'chart')) && renderChartData()}
+              
+              {/* Legacy rendering for ensights without context bar */}
+              {message.mode === 'ensights' && !renderContextBar() && message.chartData && renderChartData()}
+              
               {renderSourceInfo()}
             </div>
 
