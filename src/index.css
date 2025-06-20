@@ -14,16 +14,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 228 68% 35%;
+    --primary: 250 84% 54%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 162 24% 52%;
+    --secondary: 283 39% 53%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 162 24% 52%;
+    --accent: 283 39% 53%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
@@ -31,18 +31,18 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 228 68% 35%;
+    --ring: 250 84% 54%;
 
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 228 68% 35%;
+    --sidebar-primary: 250 84% 54%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 162 24% 52%;
+    --sidebar-accent: 283 39% 53%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 228 68% 35%;
+    --sidebar-ring: 250 84% 54%;
   }
 
   .dark {
@@ -55,16 +55,16 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 228 68% 45%;
+    --primary: 250 84% 60%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
-    --secondary: 162 24% 42%;
+    --secondary: 283 39% 60%;
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 162 24% 42%;
+    --accent: 283 39% 60%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -72,15 +72,15 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 228 68% 45%;
+    --ring: 250 84% 60%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 228 68% 45%;
+    --sidebar-primary: 250 84% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 162 24% 42%;
+    --sidebar-accent: 283 39% 60%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 228 68% 45%;
+    --sidebar-ring: 250 84% 60%;
   }
 }
 
@@ -94,19 +94,22 @@
   }
 }
 
-/* Custom primary button styles */
+/* Custom primary button styles with aura effect */
 .btn-primary {
-  background-color: #1F3A93;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
   color: white;
+  box-shadow: 0 4px 15px 0 rgba(99, 102, 241, 0.3);
 }
 
 .btn-primary:hover {
-  background-color: #1a3280;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%);
+  box-shadow: 0 8px 25px 0 rgba(99, 102, 241, 0.4);
+  transform: translateY(-2px);
 }
 
 .btn-primary:active,
 .btn-primary[data-state="pressed"] {
-  background-color: #152a6d;
+  background: linear-gradient(135deg, #4338ca 0%, #6d28d9 50%, #7e22ce 100%);
 }
 
 /* Fix for graph conversation tabs visibility */
@@ -124,4 +127,33 @@
 [data-recharts] .recharts-legend-item {
   margin-right: 10px !important;
   margin-bottom: 5px !important;
+}
+
+/* Aura glow effects */
+.aura-glow {
+  position: relative;
+}
+
+.aura-glow::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #6366f1, #8b5cf6, #a855f7, #ec4899);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.aura-glow:hover::before {
+  opacity: 0.7;
+  animation: aura-pulse 2s infinite;
+}
+
+@keyframes aura-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }
