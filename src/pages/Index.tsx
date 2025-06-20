@@ -1,4 +1,3 @@
-
 import { useChat } from '@/hooks/useChat';
 import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
@@ -603,7 +602,7 @@ const Index = () => {
                 disabled={isLoading} 
                 centered={!hasMessages}
                 isLoading={isLoading}
-                onStopGeneration={handleStopGeneration}
+                onStopGen={handleStopGeneration}
               />
             </div>
           </div>
