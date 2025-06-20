@@ -533,7 +533,7 @@ const Index = () => {
                       ))}
                       {isLoading && (
                         <div className="flex mb-6">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center flex-shrink-0 mt-1 border border-gray-200">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center mx-auto mb-4 border border-gray-200">
                             <span className="text-[#4E50A8] font-bold text-sm font-comfortaa">e</span>
                           </div>
                           <div className="ml-3 flex-1">
@@ -644,9 +644,9 @@ const Index = () => {
           }
           
           @keyframes compactDots {
-            0%, 20% { content: '.'; }
-            40% { content: '..'; }
-            60%, 100% { content: '...'; }
+            0%, 20% { opacity: 1; }
+            40% { opacity: 1; }
+            60%, 100% { opacity: 1; }
           }
         `}</style>
       </div>
