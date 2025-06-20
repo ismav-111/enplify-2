@@ -339,9 +339,9 @@ const Index = () => {
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[700px] max-h-[80vh] flex flex-col">
                     <DialogHeader>
-                      <DialogTitle>All {fileFilter !== 'all' ? fileFilter + ' ' : ''}Session Files</DialogTitle>
+                      <DialogTitle>All {fileFilter !== 'all' ? fileFilter + ' '}Session Files</DialogTitle>
                       <DialogDescription>
-                        Browse all your uploaded {fileFilter !== 'all' ? fileFilter + ' ' : ''}files from this conversation
+                        Browse all your uploaded {fileFilter !== 'all' ? fileFilter + ' '}files from this conversation
                       </DialogDescription>
                     </DialogHeader>
                     
@@ -520,88 +520,48 @@ const Index = () => {
           </Dialog>
         )}
 
-        {/* Scrollable Chat Content - Increased width */}
+        {/* Scrollable Chat Content - Updated to match Lovable proportions */}
         <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full">
             {hasMessages ? (
-              <div className="max-w-5xl mx-auto px-6 py-8 w-full min-h-full">
-                <div className="space-y-4">
+              <div className="max-w-4xl mx-auto px-4 py-6 w-full min-h-full">
+                <div className="space-y-6">
                   {currentConversation.messages.map((message) => (
                     <ChatMessage key={message.id} message={message} />
                   ))}
                   {isLoading && (
-                    <div className="flex mb-8">
+                    <div className="flex mb-6">
                       <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center flex-shrink-0 mt-1 border border-gray-200">
-                        <span className="text-gray-700 font-bold text-sm font-comfortaa">e</span>
+                        <span className="text-[#4E50A8] font-bold text-sm font-comfortaa">e</span>
                       </div>
                       <div className="ml-3 flex-1">
-                        <div className="relative overflow-hidden max-w-md">
-                          {/* Compact gradient wave animation */}
-                          <div className="relative h-3 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="relative overflow-hidden max-w-xs">
+                          {/* Updated compact gradient wave animation */}
+                          <div className="relative h-2.5 bg-gray-100 rounded-full overflow-hidden">
                             <div 
-                              className="absolute inset-0 bg-gradient-to-r from-transparent via-[#595fb7] via-[#4e50a8] via-[#6366f1] to-transparent opacity-90"
+                              className="absolute inset-0 bg-gradient-to-r from-transparent via-[#4E50A8] to-transparent opacity-80"
                               style={{
-                                animation: 'compactWave 2s ease-in-out infinite',
-                                background: 'linear-gradient(90deg, transparent 0%, #595fb7 25%, #4e50a8 50%, #6366f1 75%, transparent 100%)',
-                                transform: 'translateX(-100%)',
-                                width: '150%'
-                              }}
-                            />
-                            {/* Shimmer effect */}
-                            <div 
-                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white via-transparent to-transparent opacity-40"
-                              style={{
-                                animation: 'compactShimmer 1.5s ease-in-out infinite 0.3s',
-                                background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.9) 50%, transparent 100%)',
-                                transform: 'translateX(-100%)',
+                                animation: 'compactWave 1.8s ease-in-out infinite',
                                 width: '120%'
                               }}
                             />
                           </div>
 
-                          {/* Floating micro orbs */}
-                          <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-                            <div 
-                              className="absolute w-1 h-1 bg-gradient-to-r from-[#595fb7] to-[#4e50a8] rounded-full opacity-70"
-                              style={{
-                                animation: 'microOrb1 3s ease-in-out infinite',
-                                left: '15%',
-                                top: '25%'
-                              }}
-                            />
-                            <div 
-                              className="absolute w-0.5 h-0.5 bg-gradient-to-r from-[#4e50a8] to-[#6366f1] rounded-full opacity-60"
-                              style={{
-                                animation: 'microOrb2 2.5s ease-in-out infinite',
-                                left: '65%',
-                                top: '75%'
-                              }}
-                            />
-                            <div 
-                              className="absolute w-0.5 h-0.5 bg-gradient-to-r from-[#6366f1] to-[#595fb7] rounded-full opacity-50"
-                              style={{
-                                animation: 'microOrb3 3.5s ease-in-out infinite',
-                                left: '80%',
-                                top: '20%'
-                              }}
-                            />
-                          </div>
-
-                          {/* Compact status text */}
-                          <div className="mt-3 flex items-center gap-2">
+                          {/* Updated status text */}
+                          <div className="mt-2 flex items-center gap-2">
                             <div className="relative">
-                              <div className="w-2 h-2 rounded-full bg-gradient-to-r from-[#595fb7] to-[#4e50a8] animate-pulse"></div>
+                              <div className="w-1.5 h-1.5 rounded-full bg-[#4E50A8] animate-pulse"></div>
                               <div 
-                                className="absolute inset-0 w-2 h-2 rounded-full bg-gradient-to-r from-[#595fb7] to-[#4e50a8] opacity-30"
+                                className="absolute inset-0 w-1.5 h-1.5 rounded-full bg-[#4E50A8] opacity-30"
                                 style={{ animation: 'compactPing 1.5s cubic-bezier(0, 0, 0.2, 1) infinite' }}
                               />
                             </div>
                             <div className="text-xs text-gray-600 font-medium">
-                              <span className="bg-gradient-to-r from-[#595fb7] to-[#4e50a8] bg-clip-text text-transparent animate-pulse">
+                              <span className="text-[#4E50A8] animate-pulse">
                                 Thinking
                               </span>
                               <span 
-                                className="inline-block ml-1 text-[#4e50a8]"
+                                className="inline-block ml-1 text-[#4E50A8]"
                                 style={{ animation: 'compactDots 1.2s steps(4, end) infinite' }}
                               >
                                 ...</span>
@@ -616,11 +576,14 @@ const Index = () => {
             ) : (
               <div className="h-full flex items-center justify-center">
                 <div className="max-w-2xl w-full px-6 flex flex-col items-center justify-center">
-                  <div className="text-center mb-10">
-                    <h1 className="text-3xl font-bold text-gray-800 mb-2 font-comfortaa">Welcome to enplify2.o</h1>
-                    <p className="text-gray-600 max-w-lg mx-auto mb-6">
-                      Your intelligent AI assistant. Ask me anything and I'll provide 
-                      helpful insights, answers, and information.
+                  <div className="text-center mb-8">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center mx-auto mb-4 border border-gray-200">
+                      <span className="text-[#4E50A8] font-bold text-2xl font-comfortaa">e</span>
+                    </div>
+                    <h1 className="text-2xl font-bold text-gray-800 mb-2 font-comfortaa">Welcome to enplify2.o</h1>
+                    <p className="text-gray-600 max-w-md mx-auto">
+                      Your intelligent AI assistant for documents, insights, and conversations. 
+                      Choose your mode and start exploring.
                     </p>
                   </div>
                 </div>
@@ -629,9 +592,9 @@ const Index = () => {
           </ScrollArea>
         </div>
 
-        {/* Fixed Message Input at Bottom - Increased width */}
-        <div className="flex-shrink-0 w-full bg-white py-4">
-          <div className="max-w-5xl mx-auto px-6">
+        {/* Fixed Message Input at Bottom - Updated to match Lovable proportions */}
+        <div className="flex-shrink-0 w-full bg-white py-3">
+          <div className="max-w-4xl mx-auto px-4">
             <MessageInput 
               onSendMessage={handleSendMessage} 
               disabled={isLoading} 
