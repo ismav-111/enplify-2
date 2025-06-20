@@ -48,8 +48,8 @@ interface FileItem {
 const Index = () => {
   const {
     conversations,
-    activeConversationId,
-    setActiveConversationId,
+    activeConversation,
+    setActiveConversation,
     createNewChat,
     sendMessage,
     clearAllConversations,
@@ -198,9 +198,9 @@ const Index = () => {
       <div className="flex-shrink-0">
         <Sidebar
           conversations={conversations}
-          activeConversationId={activeConversationId}
+          activeConversation={activeConversation}
           onNewChat={createNewChat}
-          onSelectConversation={setActiveConversationId}
+          onSelectConversation={setActiveConversation}
           onClearAll={clearAllConversations}
           onDeleteConversation={deleteConversation}
           onRenameConversation={renameConversation}
