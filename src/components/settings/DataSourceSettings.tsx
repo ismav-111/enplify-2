@@ -1,24 +1,10 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Settings, Server, Cloud } from 'lucide-react';
+import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Server, Cloud, ChevronDown } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -139,7 +125,6 @@ const dataSources: DataSourceType[] = [
 ];
 
 const DataSourceSettings = () => {
-  const [expandedSource, setExpandedSource] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [connectedSources, setConnectedSources] = useState<Record<string, boolean>>(
     dataSources.reduce((acc, source) => ({
@@ -147,6 +132,7 @@ const DataSourceSettings = () => {
       [source.id]: source.isConnected
     }), {})
   );
+  const [expandedSource, setExpandedSource] = useState<string | null>(null);
   const [connectingSource, setConnectingSource] = useState<string | null>(null);
   const [connectionProgress, setConnectionProgress] = useState(0);
 
@@ -187,6 +173,10 @@ const DataSourceSettings = () => {
     toast.success(`Disconnected from ${dataSources.find(s => s.id === sourceId)?.name}`);
   };
 
+  const toggleExpanded = (sourceId: string) => {
+    setExpandedSource(expandedSource === sourceId ? null : sourceId);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header Section */}
@@ -210,7 +200,7 @@ const DataSourceSettings = () => {
           placeholder="Search data sources..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 bg-white border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
+          className="pl-10"
         />
       </div>
 
@@ -223,50 +213,61 @@ const DataSourceSettings = () => {
       )}
       
       {/* Data Sources List */}
-      <Accordion 
-        type="single" 
-        collapsible 
-        value={expandedSource || undefined}
-        onValueChange={(value) => setExpandedSource(value)}
-        className="w-full space-y-3"
-      >
+      <div className="space-y-3">
         {filteredDataSources.map((source) => (
-          <AccordionItem 
-            key={source.id} 
-            value={source.id} 
-            className="border border-gray-200 rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-200"
-          >
-            <AccordionTrigger className="px-6 py-4 hover:no-underline">
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center gap-4">
-                  <div className="p-2 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg border border-indigo-100">
-                    <source.icon className="h-5 w-5 text-indigo-600" />
-                  </div>
-                  <div className="text-left">
-                    <h3 className="font-medium text-gray-900">{source.name}</h3>
-                    <p className="text-sm text-gray-500 mt-0.5">{source.description}</p>
-                  </div>
+          <div key={source.id} className="border border-gray-200 rounded-lg bg-white">
+            {/* Main Row */}
+            <div 
+              className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50"
+              onClick={() => !connectedSources[source.id] && toggleExpanded(source.id)}
+            >
+              <div className="flex items-center gap-4">
+                <div className="p-2 bg-gray-50 rounded-lg">
+                  <source.icon className="h-5 w-5 text-gray-600" />
                 </div>
-                <div className="flex items-center gap-3 ml-4">
-                  {connectedSources[source.id] ? (
-                    <Badge className="bg-green-100 text-green-800 hover:bg-green-200 border-green-200">
-                      Connected
-                    </Badge>
-                  ) : connectingSource === source.id ? (
-                    <Badge className="bg-blue-100 text-blue-800 border-blue-200">
-                      Connecting...
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline" className="text-gray-500 border-gray-200">
-                      Not Connected
-                    </Badge>
-                  )}
+                <div>
+                  <h3 className="font-medium text-gray-900">{source.name}</h3>
+                  <p className="text-sm text-gray-500">{source.description}</p>
                 </div>
               </div>
-            </AccordionTrigger>
-            
-            <AccordionContent className="px-6 pb-6">
-              <div className="pt-2 border-t border-gray-100">
+              <div className="flex items-center gap-3">
+                {connectedSources[source.id] ? (
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-green-100 text-green-800 border-green-200">
+                      Connected
+                    </Badge>
+                    <ChevronDown 
+                      className={`h-4 w-4 text-gray-400 cursor-pointer transition-transform ${
+                        expandedSource === source.id ? 'rotate-180' : ''
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleExpanded(source.id);
+                      }}
+                    />
+                  </div>
+                ) : connectingSource === source.id ? (
+                  <Badge className="bg-blue-100 text-blue-800 border-blue-200">
+                    Connecting...
+                  </Badge>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-gray-500">
+                      Not Connected
+                    </Badge>
+                    <ChevronDown 
+                      className={`h-4 w-4 text-gray-400 transition-transform ${
+                        expandedSource === source.id ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Expanded Content */}
+            {expandedSource === source.id && (
+              <div className="border-t border-gray-100 p-4">
                 {connectingSource === source.id ? (
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
@@ -307,7 +308,7 @@ const DataSourceSettings = () => {
                     </div>
                   </div>
                 ) : (
-                  <form className="space-y-4 mt-4">
+                  <form className="space-y-4">
                     {source.fields.map((field) => (
                       <div key={field.id} className="space-y-2">
                         <label htmlFor={`${source.id}-${field.id}`} className="block text-sm font-medium text-gray-700">
@@ -318,7 +319,6 @@ const DataSourceSettings = () => {
                           type={field.type}
                           placeholder={field.placeholder}
                           required={field.required}
-                          className="bg-white border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
                         />
                       </div>
                     ))}
@@ -335,10 +335,10 @@ const DataSourceSettings = () => {
                   </form>
                 )}
               </div>
-            </AccordionContent>
-          </AccordionItem>
+            )}
+          </div>
         ))}
-      </Accordion>
+      </div>
     </div>
   );
 };
