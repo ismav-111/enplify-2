@@ -189,16 +189,18 @@ const DataSourceSettings = () => {
 
   return (
     <div className="space-y-6">
+      {/* Header Section */}
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Data Sources</h2>
-        <Badge variant="outline" className="text-xs">
+        <div>
+          <h2 className="text-xl font-semibold text-gray-900">Data Sources</h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Connect your external data sources to enhance your queries with relevant information.
+          </p>
+        </div>
+        <Badge variant="outline" className="text-xs px-3 py-1">
           {Object.values(connectedSources).filter(Boolean).length} Connected
         </Badge>
       </div>
-      
-      <p className="text-sm text-gray-500">
-        Connect your external data sources to enhance your queries with relevant information.
-      </p>
 
       {/* Search Field */}
       <div className="relative">
@@ -208,82 +210,89 @@ const DataSourceSettings = () => {
           placeholder="Search data sources..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 hover:border-indigo-300 focus:border-indigo-500 transition-colors"
+          className="pl-10 bg-white border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
         />
       </div>
 
-      {/* Show message if no results found */}
+      {/* No Results Message */}
       {searchQuery && filteredDataSources.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
-          <p>No data sources found matching "{searchQuery}"</p>
+        <div className="text-center py-12 text-gray-500">
+          <Search className="h-8 w-8 mx-auto mb-3 text-gray-300" />
+          <p className="text-sm">No data sources found matching "{searchQuery}"</p>
         </div>
       )}
       
+      {/* Data Sources List */}
       <Accordion 
         type="single" 
         collapsible 
         value={expandedSource || undefined}
         onValueChange={(value) => setExpandedSource(value)}
-        className="w-full space-y-2"
+        className="w-full space-y-3"
       >
         {filteredDataSources.map((source) => (
-          <AccordionItem key={source.id} value={source.id} className="border rounded-lg hover:shadow-sm transition-shadow">
-            <AccordionTrigger className="px-4 py-4 hover:no-underline">
+          <AccordionItem 
+            key={source.id} 
+            value={source.id} 
+            className="border border-gray-200 rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-200"
+          >
+            <AccordionTrigger className="px-6 py-4 hover:no-underline">
               <div className="flex items-center justify-between w-full">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <div className="p-2 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg border border-indigo-100">
                     <source.icon className="h-5 w-5 text-indigo-600" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-sm font-medium text-gray-900">{source.name}</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">{source.description}</p>
+                    <h3 className="font-medium text-gray-900">{source.name}</h3>
+                    <p className="text-sm text-gray-500 mt-0.5">{source.description}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 ml-4">
+                <div className="flex items-center gap-3 ml-4">
                   {connectedSources[source.id] ? (
-                    <Badge className="bg-green-500 text-white hover:bg-green-600 text-xs px-2 py-1">
+                    <Badge className="bg-green-100 text-green-800 hover:bg-green-200 border-green-200">
                       Connected
                     </Badge>
                   ) : connectingSource === source.id ? (
-                    <Badge className="bg-blue-500 text-white text-xs px-2 py-1">
+                    <Badge className="bg-blue-100 text-blue-800 border-blue-200">
                       Connecting...
                     </Badge>
                   ) : (
-                    <Badge variant="outline" className="text-xs px-2 py-1 text-gray-500">
+                    <Badge variant="outline" className="text-gray-500 border-gray-200">
                       Not Connected
                     </Badge>
                   )}
                 </div>
               </div>
             </AccordionTrigger>
-            <AccordionContent className="px-4 pb-4">
-              <div className="pt-2">
+            
+            <AccordionContent className="px-6 pb-6">
+              <div className="pt-2 border-t border-gray-100">
                 {connectingSource === source.id ? (
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
                       <Loader2 className="h-4 w-4 animate-spin text-indigo-600" />
-                      <span className="text-sm font-medium">Connecting to {source.name}...</span>
+                      <span className="font-medium text-gray-900">Connecting to {source.name}...</span>
                     </div>
                     <div className="space-y-2">
-                      <div className="flex justify-between text-xs text-gray-500">
-                        <span>Establishing connection</span>
+                      <div className="flex justify-between text-sm text-gray-500">
+                        <span>Establishing secure connection</span>
                         <span>{connectionProgress}%</span>
                       </div>
-                      <Progress value={connectionProgress} className="w-full" />
+                      <Progress value={connectionProgress} className="w-full h-2" />
                     </div>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm text-gray-500">
                       Please wait while we establish a secure connection to your data source.
                     </p>
                   </div>
                 ) : connectedSources[source.id] ? (
                   <div className="space-y-4">
-                    <div className="flex items-start justify-between">
+                    <div className="flex items-start justify-between p-4 bg-green-50 rounded-lg border border-green-200">
                       <div>
-                        <h4 className="text-sm font-medium">Connection Status</h4>
-                        <p className="text-xs text-gray-500">Data source is currently active</p>
+                        <h4 className="font-medium text-green-900">Connection Active</h4>
+                        <p className="text-sm text-green-700 mt-1">Data source is currently connected and active</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Label htmlFor={`${source.id}-active`} className="text-sm">Active</Label>
+                        <Label htmlFor={`${source.id}-active`} className="text-sm text-green-700">Active</Label>
                         <Switch id={`${source.id}-active`} defaultChecked />
                       </div>
                     </div>
@@ -291,17 +300,17 @@ const DataSourceSettings = () => {
                       <Button 
                         variant="outline" 
                         onClick={() => handleDisconnect(source.id)}
-                        className="text-red-500 hover:text-red-600 hover:border-red-300"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 hover:border-red-300"
                       >
                         Disconnect
                       </Button>
                     </div>
                   </div>
                 ) : (
-                  <form className="space-y-4">
+                  <form className="space-y-4 mt-4">
                     {source.fields.map((field) => (
                       <div key={field.id} className="space-y-2">
-                        <label htmlFor={`${source.id}-${field.id}`} className="text-sm font-medium block">
+                        <label htmlFor={`${source.id}-${field.id}`} className="block text-sm font-medium text-gray-700">
                           {field.label} {field.required && <span className="text-red-500">*</span>}
                         </label>
                         <Input 
@@ -309,18 +318,18 @@ const DataSourceSettings = () => {
                           type={field.type}
                           placeholder={field.placeholder}
                           required={field.required}
-                          className="hover:border-indigo-300 focus:border-indigo-500 transition-colors"
+                          className="bg-white border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
                         />
                       </div>
                     ))}
-                    <div className="pt-2">
+                    <div className="pt-4 border-t border-gray-100">
                       <Button 
                         type="button" 
                         onClick={() => handleConnect(source.id)}
                         disabled={connectingSource !== null}
-                        className="hover:scale-105 transition-transform"
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white"
                       >
-                        Connect
+                        Connect to {source.name}
                       </Button>
                     </div>
                   </form>
