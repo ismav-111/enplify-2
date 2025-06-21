@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight, Table, Database, Globe, Server } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -297,10 +298,10 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     return (
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-xl font-bold text-gray-900">
+          <h2 className="text-base font-bold text-gray-900">
             {message.mode === 'endocs' ? 'Document Analysis' : 'Business Intelligence Analysis'}
           </h2>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-base text-gray-600 mt-1">
             {message.mode === 'endocs' 
               ? `Interactive document visualization with ${totalItems} documents` 
               : `Interactive performance visualization with ${message.chartData?.length || 0} data points`
@@ -480,19 +481,19 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           <TableComponent>
             <TableHeader>
               <TableRow className="bg-gray-50/80">
-                <TableHead className="font-semibold text-gray-900 py-3 px-4">
+                <TableHead className="font-semibold text-gray-900 py-3 px-4 text-base">
                   Document
                 </TableHead>
-                <TableHead className="font-semibold text-gray-900 py-3 px-4">
+                <TableHead className="font-semibold text-gray-900 py-3 px-4 text-base">
                   Content
                 </TableHead>
-                <TableHead className="font-semibold text-gray-900 py-3 px-4 text-center">
+                <TableHead className="font-semibold text-gray-900 py-3 px-4 text-center text-base">
                   Relevance
                 </TableHead>
-                <TableHead className="font-semibold text-gray-900 py-3 px-4">
+                <TableHead className="font-semibold text-gray-900 py-3 px-4 text-base">
                   Modified
                 </TableHead>
-                <TableHead className="font-semibold text-gray-900 py-3 px-4">
+                <TableHead className="font-semibold text-gray-900 py-3 px-4 text-base">
                   Department
                 </TableHead>
               </TableRow>
@@ -501,13 +502,13 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
               {paginatedData.map((row, i) => (
                 <TableRow key={i} className="hover:bg-gray-50/50 transition-colors border-b border-gray-100 last:border-b-0">
                   <TableCell className="py-3 px-4">
-                    <div className="font-medium text-gray-900">{row.title}</div>
+                    <div className="font-medium text-gray-900 text-base">{row.title}</div>
                   </TableCell>
                   <TableCell className="py-3 px-4 max-w-md">
-                    <div className="text-gray-700 text-sm line-clamp-2">{row.content}</div>
+                    <div className="text-gray-700 text-base line-clamp-2">{row.content}</div>
                   </TableCell>
                   <TableCell className="py-3 px-4 text-center">
-                    <span className={`inline-flex px-2 py-1 rounded-md text-xs font-medium ${
+                    <span className={`inline-flex px-2 py-1 rounded-md text-sm font-medium ${
                       Number(row.relevance.replace('%', '')) >= 90 
                         ? 'bg-green-100 text-green-800' 
                         : Number(row.relevance.replace('%', '')) >= 80 
@@ -517,11 +518,11 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                       {row.relevance}
                     </span>
                   </TableCell>
-                  <TableCell className="py-3 px-4 text-gray-600 text-sm">
+                  <TableCell className="py-3 px-4 text-gray-600 text-base">
                     {row.lastUpdated}
                   </TableCell>
                   <TableCell className="py-3 px-4">
-                    <span className="inline-flex px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium">
+                    <span className="inline-flex px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-sm font-medium">
                       {row.department}
                     </span>
                   </TableCell>
@@ -534,7 +535,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-700">
+            <p className="text-base text-gray-700">
               Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} results
             </p>
             <div className="flex items-center gap-2">
@@ -602,7 +603,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             <DialogHeader className="flex-shrink-0">
               <DialogTitle className="sr-only">Search Results - Full View</DialogTitle>
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">Search Results - Full View</h2>
+                <h2 className="text-base font-semibold">Search Results - Full View</h2>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -699,13 +700,13 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         {/* Methodology Text */}
         <div className="relative">
           <p 
-            className="text-sm text-gray-700 leading-relaxed cursor-pointer transition-all duration-300"
+            className="text-base text-gray-700 leading-relaxed cursor-pointer transition-all duration-300"
             onClick={() => setIsMethodologyExpanded(!isMethodologyExpanded)}
           >
             <span className={isMethodologyExpanded ? '' : 'line-clamp-2'}>
               {getMethodologyText()}
             </span>
-            <span className="text-blue-600 text-xs ml-2 hover:underline">
+            <span className="text-blue-600 text-sm ml-2 hover:underline">
               {isMethodologyExpanded ? '... click to collapse' : '... click to expand'}
             </span>
           </p>
@@ -897,7 +898,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             <DialogHeader className="flex-shrink-0">
               <DialogTitle className="sr-only">{message.mode === 'endocs' ? 'Document Analysis' : 'Business Intelligence Analysis'} - Full View</DialogTitle>
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">{message.mode === 'endocs' ? 'Document Analysis' : 'Business Intelligence Analysis'} - Full View</h2>
+                <h2 className="text-base font-semibold">{message.mode === 'endocs' ? 'Document Analysis' : 'Business Intelligence Analysis'} - Full View</h2>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -922,7 +923,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     if (!message.file) return null;
     
     return (
-      <div className="text-xs text-gray-500 mt-1">
+      <div className="text-sm text-gray-500 mt-1">
         Attached file: {message.file.name}
       </div>
     );
@@ -937,7 +938,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
 
       return (
         <div className="space-y-4">
-          <p className="text-lg leading-7 text-gray-900 font-medium">
+          <p className="text-base leading-relaxed text-gray-900 font-medium">
             {firstLine}
             {restOfContent && (
               <span 
@@ -949,31 +950,31 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             )}
           </p>
           {restOfContent && isExpanded && (
-            <div className="text-base text-gray-800 leading-7 space-y-4">
+            <div className="text-base text-gray-800 leading-relaxed space-y-4">
               {restOfContent.split('\n').map((line, index) => {
                 const trimmedLine = line.trim();
                 
                 if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
                   return (
-                    <h3 key={index} className="text-xl font-bold text-gray-900 mt-8 mb-4 first:mt-0">
+                    <h3 key={index} className="text-base font-bold text-gray-900 mt-6 mb-3 first:mt-0">
                       {trimmedLine.replace(/\*\*/g, '')}
                     </h3>
                   );
                 } else if (trimmedLine.startsWith('###')) {
                   return (
-                    <h4 key={index} className="text-lg font-semibold text-gray-900 mt-6 mb-3">
+                    <h4 key={index} className="text-base font-bold text-gray-900 mt-4 mb-2">
                       {trimmedLine.replace(/### /g, '')}
                     </h4>
                   );
                 } else if (trimmedLine.startsWith('- ')) {
                   return (
-                    <li key={index} className="ml-6 text-base text-gray-800 list-disc leading-7">
+                    <li key={index} className="ml-6 text-base text-gray-800 list-disc leading-relaxed">
                       {trimmedLine.replace(/^- /, '')}
                     </li>
                   );
                 } else if (trimmedLine !== '') {
                   return (
-                    <p key={index} className="text-base leading-7 text-gray-800">
+                    <p key={index} className="text-base leading-relaxed text-gray-800">
                       {trimmedLine}
                     </p>
                   );
@@ -999,7 +1000,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // Close any open list before adding heading
         if (inList && currentListItems.length > 0) {
           formattedContent.push(
-            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-6 text-gray-800 ml-6">
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-4 text-gray-800 ml-6">
               {currentListItems}
             </ul>
           );
@@ -1007,9 +1008,9 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           inList = false;
         }
         
-        // Main headings
+        // Main headings - consistent 16px bold
         formattedContent.push(
-          <h2 key={index} className="text-xl font-bold text-gray-900 mt-8 mb-4 first:mt-0">
+          <h2 key={index} className="text-base font-bold text-gray-900 mt-6 mb-3 first:mt-0">
             {trimmedLine.replace(/\*\*/g, '')}
           </h2>
         );
@@ -1017,7 +1018,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // Close any open list before adding sub-heading
         if (inList && currentListItems.length > 0) {
           formattedContent.push(
-            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-6 text-gray-800 ml-6">
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-4 text-gray-800 ml-6">
               {currentListItems}
             </ul>
           );
@@ -1025,9 +1026,9 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           inList = false;
         }
         
-        // Sub-headings
+        // Sub-headings - consistent 16px bold
         formattedContent.push(
-          <h3 key={index} className="text-lg font-semibold text-gray-900 mt-6 mb-3">
+          <h3 key={index} className="text-base font-bold text-gray-900 mt-4 mb-2">
             {trimmedLine.replace(/### /g, '')}
           </h3>
         );
@@ -1035,7 +1036,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // List items
         inList = true;
         currentListItems.push(
-          <li key={`li-${index}`} className="text-base leading-7">
+          <li key={`li-${index}`} className="text-base leading-relaxed">
             {trimmedLine.replace(/^- /, '')}
           </li>
         );
@@ -1043,7 +1044,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // Empty line - close the list
         if (currentListItems.length > 0) {
           formattedContent.push(
-            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-6 text-gray-800 ml-6">
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-4 text-gray-800 ml-6">
               {currentListItems}
             </ul>
           );
@@ -1054,7 +1055,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         // Close any open list before adding paragraph
         if (inList && currentListItems.length > 0) {
           formattedContent.push(
-            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-6 text-gray-800 ml-6">
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 my-4 text-gray-800 ml-6">
               {currentListItems}
             </ul>
           );
@@ -1062,9 +1063,9 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
           inList = false;
         }
         
-        // Regular paragraphs
+        // Regular paragraphs - consistent 16px
         formattedContent.push(
-          <p key={index} className="text-base leading-7 text-gray-800 mb-4">
+          <p key={index} className="text-base leading-relaxed text-gray-800 mb-3">
             {trimmedLine}
           </p>
         );
@@ -1074,13 +1075,13 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     // Close any remaining open list
     if (inList && currentListItems.length > 0) {
       formattedContent.push(
-        <ul key="final-list" className="list-disc list-inside space-y-2 my-6 text-gray-800 ml-6">
+        <ul key="final-list" className="list-disc list-inside space-y-2 my-4 text-gray-800 ml-6">
           {currentListItems}
         </ul>
       );
     }
 
-    return <div className="space-y-4">{formattedContent}</div>;
+    return <div className="space-y-3">{formattedContent}</div>;
   };
 
   // Updated renderSourceInfo to show source cards at bottom
@@ -1094,7 +1095,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
       <div className="mt-6 pt-4 border-t border-gray-100">
         <div className="flex items-center gap-2 mb-3">
           <sourceInfo.icon size={16} className="text-gray-600" />
-          <span className="text-sm font-medium text-gray-700">{sourceInfo.title}</span>
+          <span className="text-base font-medium text-gray-700">{sourceInfo.title}</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {sourceInfo.items.map((source, index) => {
@@ -1105,7 +1106,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
                 className="flex items-center gap-2 px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer border border-gray-200"
               >
                 <SourceIcon size={14} className="text-gray-500" />
-                <span className="text-sm text-gray-700">{source.name}</span>
+                <span className="text-base text-gray-700">{source.name}</span>
                 <span className="text-xs text-gray-500 bg-white px-1.5 py-0.5 rounded uppercase font-medium">
                   {source.type}
                 </span>
@@ -1129,7 +1130,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         {message.isUser ? (
           <>
             <div className="rounded-2xl py-3 px-4 text-gray-800 max-w-lg" style={{ backgroundColor: '#F1F1F9' }}>
-              <p className="text-sm leading-relaxed">{message.content}</p>
+              <p className="text-base leading-relaxed">{message.content}</p>
               {renderFileInfo()}
             </div>
             <div className="flex items-center gap-2 mt-2">
