@@ -137,7 +137,8 @@ button:has(svg[data-lucide="settings"]):hover {
   background-color: rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Normalize ALL content in Enplify AI responses to 16px with consistent styling */
+/* COMPREHENSIVE font normalization for ALL Enplify AI responses */
+/* Target all possible containers and elements that might contain AI responses */
 .enplify-content,
 .enplify-content *,
 .message-content,
@@ -145,12 +146,20 @@ button:has(svg[data-lucide="settings"]):hover {
 .chat-message,
 .chat-message *,
 .prose,
-.prose * {
+.prose *,
+[class*="message"],
+[class*="message"] *,
+[class*="chat"],
+[class*="chat"] *,
+[class*="ai-response"],
+[class*="ai-response"] *,
+[class*="response"],
+[class*="response"] * {
   font-size: 16px !important;
   line-height: 1.5 !important;
 }
 
-/* Make headings bold but keep same 16px size as regular text */
+/* Headings should be 16px bold - NO size variations */
 .enplify-content h1,
 .enplify-content h2,
 .enplify-content h3,
@@ -174,39 +183,148 @@ button:has(svg[data-lucide="settings"]):hover {
 .prose h3,
 .prose h4,
 .prose h5,
-.prose h6 {
+.prose h6,
+[class*="message"] h1,
+[class*="message"] h2,
+[class*="message"] h3,
+[class*="message"] h4,
+[class*="message"] h5,
+[class*="message"] h6,
+[class*="chat"] h1,
+[class*="chat"] h2,
+[class*="chat"] h3,
+[class*="chat"] h4,
+[class*="chat"] h5,
+[class*="chat"] h6,
+[class*="ai-response"] h1,
+[class*="ai-response"] h2,
+[class*="ai-response"] h3,
+[class*="ai-response"] h4,
+[class*="ai-response"] h5,
+[class*="ai-response"] h6,
+[class*="response"] h1,
+[class*="response"] h2,
+[class*="response"] h3,
+[class*="response"] h4,
+[class*="response"] h5,
+[class*="response"] h6 {
   font-size: 16px !important;
   font-weight: 700 !important;
   line-height: 1.5 !important;
   margin: 0.5em 0 !important;
 }
 
-/* Ensure paragraphs and other text elements are also 16px regular */
+/* All other text elements should be 16px regular */
 .enplify-content p,
 .enplify-content div,
 .enplify-content span,
 .enplify-content li,
 .enplify-content td,
 .enplify-content th,
+.enplify-content strong,
+.enplify-content em,
+.enplify-content b,
+.enplify-content i,
 .message-content p,
 .message-content div,
 .message-content span,
 .message-content li,
 .message-content td,
 .message-content th,
+.message-content strong,
+.message-content em,
+.message-content b,
+.message-content i,
 .chat-message p,
 .chat-message div,
 .chat-message span,
 .chat-message li,
 .chat-message td,
 .chat-message th,
+.chat-message strong,
+.chat-message em,
+.chat-message b,
+.chat-message i,
 .prose p,
 .prose div,
 .prose span,
 .prose li,
 .prose td,
-.prose th {
+.prose th,
+.prose strong,
+.prose em,
+.prose b,
+.prose i,
+[class*="message"] p,
+[class*="message"] div,
+[class*="message"] span,
+[class*="message"] li,
+[class*="message"] strong,
+[class*="message"] em,
+[class*="chat"] p,
+[class*="chat"] div,
+[class*="chat"] span,
+[class*="chat"] li,
+[class*="chat"] strong,
+[class*="chat"] em,
+[class*="ai-response"] p,
+[class*="ai-response"] div,
+[class*="ai-response"] span,
+[class*="ai-response"] li,
+[class*="ai-response"] strong,
+[class*="ai-response"] em,
+[class*="response"] p,
+[class*="response"] div,
+[class*="response"] span,
+[class*="response"] li,
+[class*="response"] strong,
+[class*="response"] em {
   font-size: 16px !important;
   font-weight: 400 !important;
   line-height: 1.5 !important;
+}
+
+/* Override any markdown or rich text formatting that might change font sizes */
+.enplify-content .text-lg,
+.enplify-content .text-xl,
+.enplify-content .text-2xl,
+.enplify-content .text-3xl,
+.message-content .text-lg,
+.message-content .text-xl,
+.message-content .text-2xl,
+.message-content .text-3xl,
+.chat-message .text-lg,
+.chat-message .text-xl,
+.chat-message .text-2xl,
+.chat-message .text-3xl,
+.prose .text-lg,
+.prose .text-xl,
+.prose .text-2xl,
+.prose .text-3xl {
+  font-size: 16px !important;
+}
+
+/* Ensure bold and italic styling works at 16px */
+.enplify-content strong,
+.enplify-content b,
+.message-content strong,
+.message-content b,
+.chat-message strong,
+.chat-message b,
+.prose strong,
+.prose b {
+  font-weight: 700 !important;
+  font-size: 16px !important;
+}
+
+.enplify-content em,
+.enplify-content i,
+.message-content em,
+.message-content i,
+.chat-message em,
+.chat-message i,
+.prose em,
+.prose i {
+  font-style: italic !important;
+  font-size: 16px !important;
 }
