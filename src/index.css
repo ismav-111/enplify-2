@@ -137,7 +137,20 @@ button:has(svg[data-lucide="settings"]):hover {
   background-color: rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Normalize ALL heading font sizes in Enplify responses - keep only bold weight */
+/* Normalize ALL content in Enplify AI responses to 16px with consistent styling */
+.enplify-content,
+.enplify-content *,
+.message-content,
+.message-content *,
+.chat-message,
+.chat-message *,
+.prose,
+.prose * {
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+}
+
+/* Make headings bold but keep same 16px size as regular text */
 .enplify-content h1,
 .enplify-content h2,
 .enplify-content h3,
@@ -155,25 +168,45 @@ button:has(svg[data-lucide="settings"]):hover {
 .chat-message h3,
 .chat-message h4,
 .chat-message h5,
-.chat-message h6 {
-  font-size: inherit !important;
-  font-weight: 700 !important;
-  line-height: inherit !important;
-  margin: 0.5em 0 !important;
-}
-
-/* Global heading normalization for all Enplify content */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 700 !important;
-}
-
-/* Specific targeting for AI response content */
+.chat-message h6,
 .prose h1,
 .prose h2,
 .prose h3,
 .prose h4,
 .prose h5,
 .prose h6 {
-  font-size: inherit !important;
+  font-size: 16px !important;
   font-weight: 700 !important;
+  line-height: 1.5 !important;
+  margin: 0.5em 0 !important;
+}
+
+/* Ensure paragraphs and other text elements are also 16px regular */
+.enplify-content p,
+.enplify-content div,
+.enplify-content span,
+.enplify-content li,
+.enplify-content td,
+.enplify-content th,
+.message-content p,
+.message-content div,
+.message-content span,
+.message-content li,
+.message-content td,
+.message-content th,
+.chat-message p,
+.chat-message div,
+.chat-message span,
+.chat-message li,
+.chat-message td,
+.chat-message th,
+.prose p,
+.prose div,
+.prose span,
+.prose li,
+.prose td,
+.prose th {
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
 }
