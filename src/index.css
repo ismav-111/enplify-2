@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -129,12 +128,29 @@
   margin-bottom: 5px !important;
 }
 
-/* Fix settings hover issue - prevent color change on hover */
+/* Fix settings hover issue - proper hover state */
 button[data-testid="settings-button"]:hover,
 .settings-button:hover,
 button:has(svg[data-lucide="settings"]):hover {
-  color: inherit !important;
-  background-color: rgba(0, 0, 0, 0.1) !important;
+  background-color: rgba(99, 102, 241, 0.1) !important;
+  color: rgb(99, 102, 241) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+/* Updated chat loader with gradient */
+.chat-loader,
+.loader,
+[class*="loader"],
+[class*="spinner"] {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%) !important;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+}
+
+.chat-loader::after,
+.loader::after,
+[class*="loader"]::after,
+[class*="spinner"]::after {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%) !important;
 }
 
 /* ULTIMATE font size override for ALL AI responses - using highest specificity */
