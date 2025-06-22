@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -178,22 +179,22 @@ const DataSourceSettings = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-8">
+    <div className="max-w-4xl mx-auto p-6">
       {/* Header Section */}
-      <div className="mb-8">
+      <div className="mb-6">
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-2xl font-bold text-gray-900">Data Sources</h2>
           <Badge variant="outline" className="px-3 py-1 text-sm bg-blue-50 text-blue-700 border-blue-200">
             {Object.values(connectedSources).filter(Boolean).length} Connected
           </Badge>
         </div>
-        <p className="text-gray-600 text-sm">
+        <p className="text-gray-600 text-sm m-2">
           Connect your external data sources to enhance your queries with relevant information.
         </p>
       </div>
 
       {/* Search Field */}
-      <div className="relative mb-8">
+      <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
         <Input
           type="text"
@@ -213,24 +214,24 @@ const DataSourceSettings = () => {
       )}
       
       {/* Data Sources List */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         {filteredDataSources.map((source, index) => (
           <div key={source.id}>
             <div className="bg-white border border-gray-100 rounded-lg hover:shadow-sm transition-shadow">
               {/* Main Row */}
               <div 
-                className="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50/50 transition-colors"
+                className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50/50 transition-colors"
                 onClick={() => !connectedSources[source.id] && toggleExpanded(source.id)}
               >
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-gray-50 rounded-lg border border-gray-100">
                     <source.icon className="h-5 w-5 text-gray-600" />
                   </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 text-sm leading-tight mb-1">
+                  <div className="m-2">
+                    <h3 className="text-sm font-bold text-gray-900 leading-tight">
                       {source.name}
                     </h3>
-                    <p className="text-gray-600 text-xs leading-tight">
+                    <p className="text-xs text-gray-600 leading-tight">
                       {source.description}
                     </p>
                   </div>
@@ -273,14 +274,14 @@ const DataSourceSettings = () => {
               {/* Expanded Content */}
               {expandedSource === source.id && (
                 <div className="border-t border-gray-100">
-                  <div className="p-6 bg-gray-50/30">
+                  <div className="p-4 bg-gray-50/30">
                     {connectingSource === source.id ? (
-                      <div className="space-y-6">
+                      <div className="space-y-4">
                         <div className="flex items-center gap-3">
                           <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
                           <span className="font-medium text-gray-900 text-sm">Connecting to {source.name}...</span>
                         </div>
-                        <div className="space-y-3">
+                        <div className="space-y-2">
                           <div className="flex justify-between text-sm text-gray-600">
                             <span>Establishing secure connection</span>
                             <span>{connectionProgress}%</span>
@@ -292,7 +293,7 @@ const DataSourceSettings = () => {
                         </p>
                       </div>
                     ) : connectedSources[source.id] ? (
-                      <div className="space-y-6">
+                      <div className="space-y-4">
                         <div className="flex items-start justify-between p-4 bg-green-50 rounded-lg border border-green-200">
                           <div>
                             <h4 className="font-semibold text-green-900 text-sm mb-1">Connection Active</h4>
@@ -314,7 +315,7 @@ const DataSourceSettings = () => {
                         </div>
                       </div>
                     ) : (
-                      <form className="space-y-5 bg-white p-6 rounded-lg border border-gray-100">
+                      <form className="space-y-4 bg-white p-4 rounded-lg border border-gray-100">
                         {source.fields.map((field) => (
                           <div key={field.id} className="space-y-2">
                             <label htmlFor={`${source.id}-${field.id}`} className="block text-sm font-medium text-gray-700">
@@ -329,7 +330,7 @@ const DataSourceSettings = () => {
                             />
                           </div>
                         ))}
-                        <div className="pt-4 border-t border-gray-100">
+                        <div className="pt-3 border-t border-gray-100">
                           <Button 
                             type="button" 
                             onClick={() => handleConnect(source.id)}
