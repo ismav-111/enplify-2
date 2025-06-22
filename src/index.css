@@ -129,39 +129,12 @@
   margin-bottom: 5px !important;
 }
 
-/* Fixed settings hover state - proper styling */
-button[data-testid="settings-button"],
-.settings-button,
-button:has(svg[data-lucide="settings"]) {
-  transition: all 0.2s ease-in-out;
-  border-radius: 8px;
-  padding: 8px;
-}
-
+/* Fix settings hover issue - prevent color change on hover */
 button[data-testid="settings-button"]:hover,
 .settings-button:hover,
 button:has(svg[data-lucide="settings"]):hover {
-  background-color: rgba(99, 102, 241, 0.1) !important;
-  color: rgb(99, 102, 241) !important;
-  transform: scale(1.05);
-}
-
-/* Chat loader color update - purple theme */
-.loader,
-.loading-spinner,
-[data-loading="true"],
-.animate-spin {
-  color: rgb(99, 102, 241) !important;
-}
-
-/* Specific loader elements */
-svg.animate-spin {
-  color: rgb(99, 102, 241) !important;
-}
-
-.loader2,
-[data-lucide="loader-2"] {
-  color: rgb(99, 102, 241) !important;
+  color: inherit !important;
+  background-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 /* ULTIMATE font size override for ALL AI responses - using highest specificity */
