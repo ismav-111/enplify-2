@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -178,10 +179,10 @@ const DataSourceSettings = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-8">
+    <div className="space-y-6">
       {/* Header Section */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
+      <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-3">
           <h2 className="text-2xl font-bold text-gray-900">Data Sources</h2>
           <Badge variant="outline" className="px-3 py-1 text-sm bg-blue-50 text-blue-700 border-blue-200">
             {Object.values(connectedSources).filter(Boolean).length} Connected
@@ -193,128 +194,132 @@ const DataSourceSettings = () => {
       </div>
 
       {/* Search Field */}
-      <div className="relative mb-8">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-        <Input
-          type="text"
-          placeholder="Search data sources..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-        />
+      <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            type="text"
+            placeholder="Search data sources..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+          />
+        </div>
       </div>
 
       {/* No Results Message */}
       {searchQuery && filteredDataSources.length === 0 && (
-        <div className="text-center py-16 text-gray-500">
-          <Search className="h-8 w-8 mx-auto mb-4 text-gray-300" />
-          <p className="text-sm">No data sources found matching "{searchQuery}"</p>
+        <div className="bg-white rounded-lg border border-gray-200 p-12 shadow-sm">
+          <div className="text-center text-gray-500">
+            <Search className="h-8 w-8 mx-auto mb-4 text-gray-300" />
+            <p className="text-sm">No data sources found matching "{searchQuery}"</p>
+          </div>
         </div>
       )}
       
       {/* Data Sources List */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         {filteredDataSources.map((source, index) => (
-          <div key={source.id}>
-            <div className="bg-white border border-gray-100 rounded-lg hover:shadow-sm transition-shadow">
-              {/* Main Row */}
-              <div 
-                className="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50/50 transition-colors"
-                onClick={() => !connectedSources[source.id] && toggleExpanded(source.id)}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
-                    <source.icon className="h-5 w-5 text-gray-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 text-sm leading-tight mb-1">
-                      {source.name}
-                    </h3>
-                    <p className="text-gray-600 text-xs leading-tight">
-                      {source.description}
-                    </p>
-                  </div>
+          <div key={source.id} className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+            {/* Main Row */}
+            <div 
+              className="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={() => !connectedSources[source.id] && toggleExpanded(source.id)}
+            >
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
+                  <source.icon className="h-5 w-5 text-gray-600" />
                 </div>
-                <div className="flex items-center gap-3">
-                  {connectedSources[source.id] ? (
-                    <div className="flex items-center gap-3">
-                      <Badge className="bg-green-50 text-green-700 border-green-200 hover:bg-green-50 text-xs px-3 py-1 font-medium">
-                        Connected
-                      </Badge>
-                      <ChevronDown 
-                        className={`h-4 w-4 text-gray-400 cursor-pointer transition-transform hover:text-gray-600 ${
-                          expandedSource === source.id ? 'rotate-180' : ''
-                        }`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleExpanded(source.id);
-                        }}
-                      />
-                    </div>
-                  ) : connectingSource === source.id ? (
-                    <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-xs px-3 py-1 font-medium">
-                      Connecting...
-                    </Badge>
-                  ) : (
-                    <div className="flex items-center gap-3">
-                      <Badge variant="outline" className="text-gray-500 text-xs px-3 py-1 border-gray-300 font-medium">
-                        Not Connected
-                      </Badge>
-                      <ChevronDown 
-                        className={`h-4 w-4 text-gray-400 transition-transform hover:text-gray-600 ${
-                          expandedSource === source.id ? 'rotate-180' : ''
-                        }`}
-                      />
-                    </div>
-                  )}
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-900 text-base mb-1">
+                    {source.name}
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    {source.description}
+                  </p>
                 </div>
               </div>
+              <div className="flex items-center gap-4">
+                {connectedSources[source.id] ? (
+                  <div className="flex items-center gap-3">
+                    <Badge className="bg-green-50 text-green-700 border-green-200 hover:bg-green-50 text-sm px-3 py-1 font-medium">
+                      Connected
+                    </Badge>
+                    <ChevronDown 
+                      className={`h-4 w-4 text-gray-400 cursor-pointer transition-transform hover:text-gray-600 ${
+                        expandedSource === source.id ? 'rotate-180' : ''
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleExpanded(source.id);
+                      }}
+                    />
+                  </div>
+                ) : connectingSource === source.id ? (
+                  <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-sm px-3 py-1 font-medium">
+                    Connecting...
+                  </Badge>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <Badge variant="outline" className="text-gray-500 text-sm px-3 py-1 border-gray-300 font-medium">
+                      Not Connected
+                    </Badge>
+                    <ChevronDown 
+                      className={`h-4 w-4 text-gray-400 transition-transform hover:text-gray-600 ${
+                        expandedSource === source.id ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
 
-              {/* Expanded Content */}
-              {expandedSource === source.id && (
-                <div className="border-t border-gray-100">
-                  <div className="p-6 bg-gray-50/30">
-                    {connectingSource === source.id ? (
-                      <div className="space-y-6">
-                        <div className="flex items-center gap-3">
-                          <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
-                          <span className="font-medium text-gray-900 text-sm">Connecting to {source.name}...</span>
-                        </div>
-                        <div className="space-y-3">
-                          <div className="flex justify-between text-sm text-gray-600">
-                            <span>Establishing secure connection</span>
-                            <span>{connectionProgress}%</span>
-                          </div>
-                          <Progress value={connectionProgress} className="w-full h-2" />
-                        </div>
-                        <p className="text-sm text-gray-600">
-                          Please wait while we establish a secure connection to your data source.
-                        </p>
+            {/* Expanded Content */}
+            {expandedSource === source.id && (
+              <div className="border-t border-gray-100 bg-gray-50">
+                <div className="p-6">
+                  {connectingSource === source.id ? (
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-3">
+                        <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+                        <span className="font-medium text-gray-900 text-sm">Connecting to {source.name}...</span>
                       </div>
-                    ) : connectedSources[source.id] ? (
-                      <div className="space-y-6">
-                        <div className="flex items-start justify-between p-4 bg-green-50 rounded-lg border border-green-200">
-                          <div>
-                            <h4 className="font-semibold text-green-900 text-sm mb-1">Connection Active</h4>
-                            <p className="text-sm text-green-700">Data source is currently connected and active</p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Label htmlFor={`${source.id}-active`} className="text-sm text-green-700">Active</Label>
-                            <Switch id={`${source.id}-active`} defaultChecked />
-                          </div>
+                      <div className="space-y-3">
+                        <div className="flex justify-between text-sm text-gray-600">
+                          <span>Establishing secure connection</span>
+                          <span>{connectionProgress}%</span>
                         </div>
+                        <Progress value={connectionProgress} className="w-full h-2" />
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        Please wait while we establish a secure connection to your data source.
+                      </p>
+                    </div>
+                  ) : connectedSources[source.id] ? (
+                    <div className="space-y-6">
+                      <div className="flex items-start justify-between p-4 bg-green-50 rounded-lg border border-green-200">
                         <div>
-                          <Button 
-                            variant="outline" 
-                            onClick={() => handleDisconnect(source.id)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 hover:border-red-300 text-sm px-4 py-2"
-                          >
-                            Disconnect
-                          </Button>
+                          <h4 className="font-semibold text-green-900 text-sm mb-1">Connection Active</h4>
+                          <p className="text-sm text-green-700">Data source is currently connected and active</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Label htmlFor={`${source.id}-active`} className="text-sm text-green-700">Active</Label>
+                          <Switch id={`${source.id}-active`} defaultChecked />
                         </div>
                       </div>
-                    ) : (
-                      <form className="space-y-5 bg-white p-6 rounded-lg border border-gray-100">
+                      <div>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => handleDisconnect(source.id)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 hover:border-red-300"
+                        >
+                          Disconnect
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-white rounded-lg border border-gray-200 p-6">
+                      <form className="space-y-5">
                         {source.fields.map((field) => (
                           <div key={field.id} className="space-y-2">
                             <label htmlFor={`${source.id}-${field.id}`} className="block text-sm font-medium text-gray-700">
@@ -334,17 +339,17 @@ const DataSourceSettings = () => {
                             type="button" 
                             onClick={() => handleConnect(source.id)}
                             disabled={connectingSource !== null}
-                            className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-6 py-2"
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
                           >
                             Connect to {source.name}
                           </Button>
                         </div>
                       </form>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         ))}
       </div>
