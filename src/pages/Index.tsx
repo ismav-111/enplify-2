@@ -42,7 +42,7 @@ interface FileItem {
   size: number;
   date: Date;
   url?: string;
-  chatSessionId: string;
+  chatSessionId?: string; // New field to track which chat session the file belongs to
 }
 
 const Index = () => {
@@ -59,7 +59,7 @@ const Index = () => {
     renameConversation
   } = useChat();
 
-  // Updated to make chatSessionId required for all files
+  // Updated sample files with chatSessionId assignments
   const [uploadedFiles, setUploadedFiles] = useState<FileItem[]>([
     { id: '1', name: 'quarterly_report.pdf', type: 'application/pdf', size: 2500000, date: new Date(2023, 4, 15), url: '/placeholder.svg', chatSessionId: '1' },
     { id: '2', name: 'sales_data.xlsx', type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size: 1800000, date: new Date(2023, 4, 10), chatSessionId: '1' },
@@ -92,23 +92,8 @@ const Index = () => {
   const currentConversation = getCurrentConversation();
   const hasMessages = currentConversation && currentConversation.messages.length > 0;
 
-  const handleSendMessage = (message: string, mode: ResponseMode, files?: File[]) => {
-    // Add uploaded files to the current session
-    if (files && files.length > 0 && currentConversation) {
-      const newFiles: FileItem[] = files.map(file => ({
-        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        date: new Date(),
-        chatSessionId: currentConversation.id,
-        url: file.type === 'application/pdf' ? '/placeholder.svg' : undefined
-      }));
-      
-      setUploadedFiles(prev => [...prev, ...newFiles]);
-    }
-    
-    sendMessage(message, mode, files?.[0]); // Keep single file for backward compatibility
+  const handleSendMessage = (message: string, mode: ResponseMode, file?: File) => {
+    sendMessage(message, mode, file);
   };
 
   const handleStopGeneration = () => {
@@ -184,10 +169,8 @@ const Index = () => {
   // Get filtered files based on current filter and search
   const filteredFiles = getFilteredFiles(uploadedFiles, fileFilter, fileSearchQuery);
 
-  // Get files for current session only - this is the key fix for the badge count
-  const sessionFiles = currentConversation 
-    ? uploadedFiles.filter(file => file.chatSessionId === currentConversation.id)
-    : [];
+  // Get the current conversation mode for smart filtering
+  const currentMode = currentConversation?.mode || 'encore';
 
   return (
     <div className="h-screen bg-white flex overflow-hidden">
@@ -211,21 +194,14 @@ const Index = () => {
           {/* Files Icon with Popover */}
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow relative">
+              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow">
                 <Files size={18} className="text-[#4E50A8]" />
-                {sessionFiles.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-[#4E50A8] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
-                    {sessionFiles.length}
-                  </span>
-                )}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80 p-0" align="end">
               <div className="p-4 border-b border-gray-100">
                 <h3 className="text-sm font-medium">Session Files</h3>
-                <p className="text-xs text-gray-500 mt-1">
-                  Files from this conversation ({currentConversation?.title || 'Current Session'}) - {sessionFiles.length} file{sessionFiles.length !== 1 ? 's' : ''}
-                </p>
+                <p className="text-xs text-gray-500 mt-1">Files from this conversation ({currentConversation?.title || 'Current Session'})</p>
                 
                 {/* Search input */}
                 <div className="relative mt-3 mb-3">

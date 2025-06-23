@@ -51,30 +51,29 @@ const ProfileSettings = () => {
   };
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Profile Information */}
-      <Card className="shadow-sm border-gray-200">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-semibold text-gray-900">Profile Information</CardTitle>
-          <CardDescription className="text-gray-600">
+      <Card>
+        <CardHeader>
+          <CardTitle>Profile Information</CardTitle>
+          <CardDescription>
             Update your account details
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleProfileSave}>
-          <CardContent className="space-y-4 pt-0">
+          <CardContent className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="fullName" className="text-sm font-medium text-gray-700">
+              <label htmlFor="fullName" className="text-sm font-medium">
                 Full Name
               </label>
               <Input
                 id="fullName"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="h-10"
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="text-sm font-medium">
                 Email
               </label>
               <Input
@@ -82,90 +81,82 @@ const ProfileSettings = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-10"
               />
             </div>
           </CardContent>
-          <CardFooter className="pt-4 border-t border-gray-100">
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-              Save Changes
-            </Button>
+          <CardFooter>
+            <Button type="submit">Save Changes</Button>
           </CardFooter>
         </form>
       </Card>
       
       {/* Password Update */}
-      <Card className="shadow-sm border-gray-200">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-semibold text-gray-900">Password</CardTitle>
-          <CardDescription className="text-gray-600">
+      <Card>
+        <CardHeader>
+          <CardTitle>Password</CardTitle>
+          <CardDescription>
             Update your password
           </CardDescription>
         </CardHeader>
         <form onSubmit={handlePasswordSave}>
-          <CardContent className="space-y-4 pt-0">
+          <CardContent className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="currentPassword" className="text-sm font-medium text-gray-700">
+              <label htmlFor="currentPassword" className="text-sm font-medium">
                 Current Password
               </label>
-              <Input id="currentPassword" type="password" className="h-10" />
+              <Input id="currentPassword" type="password" />
             </div>
             <div className="space-y-2">
-              <label htmlFor="newPassword" className="text-sm font-medium text-gray-700">
+              <label htmlFor="newPassword" className="text-sm font-medium">
                 New Password
               </label>
-              <Input id="newPassword" type="password" className="h-10" />
+              <Input id="newPassword" type="password" />
             </div>
             <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
+              <label htmlFor="confirmPassword" className="text-sm font-medium">
                 Confirm New Password
               </label>
-              <Input id="confirmPassword" type="password" className="h-10" />
+              <Input id="confirmPassword" type="password" />
             </div>
           </CardContent>
-          <CardFooter className="pt-4 border-t border-gray-100">
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-              Update Password
-            </Button>
+          <CardFooter>
+            <Button type="submit">Update Password</Button>
           </CardFooter>
         </form>
       </Card>
       
       {/* Data Management */}
-      <Card className="shadow-sm border-gray-200">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-semibold text-gray-900">Data Management</CardTitle>
-          <CardDescription className="text-gray-600">
+      <Card>
+        <CardHeader>
+          <CardTitle>Data Management</CardTitle>
+          <CardDescription>
             Manage your data and account
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6 pt-0">
+        <CardContent className="space-y-6">
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-2">Export Your Data</h3>
-            <p className="text-sm text-gray-600 mb-3">
+            <h3 className="text-sm font-medium mb-2">Export Your Data</h3>
+            <p className="text-sm text-gray-500 mb-3">
               Download a copy of your data
             </p>
             <Button 
               variant="outline" 
               onClick={handleDownloadData}
-              className="border-gray-300 hover:bg-gray-50"
             >
               Download Data
             </Button>
           </div>
           
-          <Separator className="bg-gray-200" />
+          <Separator />
           
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-2">Clear Conversations</h3>
-            <p className="text-sm text-gray-600 mb-3">
+            <h3 className="text-sm font-medium mb-2">Clear Conversations</h3>
+            <p className="text-sm text-gray-500 mb-3">
               Remove all your conversation history
             </p>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="outline" className="border-gray-300 hover:bg-gray-50">
-                  Clear All Conversations
-                </Button>
+                <Button variant="outline">Clear All Conversations</Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
@@ -182,11 +173,11 @@ const ProfileSettings = () => {
             </AlertDialog>
           </div>
           
-          <Separator className="bg-gray-200" />
+          <Separator />
           
           <div>
-            <h3 className="text-sm font-semibold text-red-600 mb-2">Danger Zone</h3>
-            <p className="text-sm text-gray-600 mb-3">
+            <h3 className="text-sm font-medium text-red-500 mb-2">Danger Zone</h3>
+            <p className="text-sm text-gray-500 mb-3">
               Permanently delete your account and all of your data
             </p>
             <AlertDialog>
