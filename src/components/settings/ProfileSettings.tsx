@@ -55,13 +55,13 @@ const ProfileSettings = () => {
       {/* Profile Information */}
       <Card className="shadow-sm border-gray-200">
         <CardHeader className="pb-4">
-          <CardTitle className="text-xl font-semibold text-gray-900">Profile Information</CardTitle>
+          <CardTitle className="text-lg font-semibold text-gray-900">Profile Information</CardTitle>
           <CardDescription className="text-gray-600">
             Update your account details
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleProfileSave}>
-          <CardContent className="space-y-6 pt-0">
+          <CardContent className="space-y-4 pt-0">
             <div className="space-y-2">
               <label htmlFor="fullName" className="text-sm font-medium text-gray-700">
                 Full Name
@@ -86,7 +86,7 @@ const ProfileSettings = () => {
               />
             </div>
           </CardContent>
-          <CardFooter className="pt-6 border-t border-gray-100">
+          <CardFooter className="pt-4 border-t border-gray-100">
             <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
               Save Changes
             </Button>
@@ -97,13 +97,13 @@ const ProfileSettings = () => {
       {/* Password Update */}
       <Card className="shadow-sm border-gray-200">
         <CardHeader className="pb-4">
-          <CardTitle className="text-xl font-semibold text-gray-900">Password</CardTitle>
+          <CardTitle className="text-lg font-semibold text-gray-900">Password</CardTitle>
           <CardDescription className="text-gray-600">
             Update your password
           </CardDescription>
         </CardHeader>
         <form onSubmit={handlePasswordSave}>
-          <CardContent className="space-y-6 pt-0">
+          <CardContent className="space-y-4 pt-0">
             <div className="space-y-2">
               <label htmlFor="currentPassword" className="text-sm font-medium text-gray-700">
                 Current Password
@@ -123,7 +123,7 @@ const ProfileSettings = () => {
               <Input id="confirmPassword" type="password" className="h-10" />
             </div>
           </CardContent>
-          <CardFooter className="pt-6 border-t border-gray-100">
+          <CardFooter className="pt-4 border-t border-gray-100">
             <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
               Update Password
             </Button>
@@ -134,15 +134,15 @@ const ProfileSettings = () => {
       {/* Data Management */}
       <Card className="shadow-sm border-gray-200">
         <CardHeader className="pb-4">
-          <CardTitle className="text-xl font-semibold text-gray-900">Data Management</CardTitle>
+          <CardTitle className="text-lg font-semibold text-gray-900">Data Management</CardTitle>
           <CardDescription className="text-gray-600">
             Manage your data and account
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-8 pt-0">
+        <CardContent className="space-y-6 pt-0">
           <div>
             <h3 className="text-sm font-semibold text-gray-900 mb-2">Export Your Data</h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-600 mb-3">
               Download a copy of your data
             </p>
             <Button 
@@ -158,7 +158,7 @@ const ProfileSettings = () => {
           
           <div>
             <h3 className="text-sm font-semibold text-gray-900 mb-2">Clear Conversations</h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-600 mb-3">
               Remove all your conversation history
             </p>
             <AlertDialog>
@@ -186,7 +186,7 @@ const ProfileSettings = () => {
           
           <div>
             <h3 className="text-sm font-semibold text-red-600 mb-2">Danger Zone</h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-600 mb-3">
               Permanently delete your account and all of your data
             </p>
             <AlertDialog>
