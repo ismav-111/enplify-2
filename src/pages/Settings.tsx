@@ -18,67 +18,49 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => navigate('/')}
-                className="hover:bg-gray-100"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </Button>
-              <h1 className="text-2xl font-semibold text-gray-900">Settings</h1>
-            </div>
-            
+    <div className="min-h-screen bg-white">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center">
             <Button 
-              variant="outline" 
-              onClick={handleLogout}
-              className="flex items-center gap-2 hover:bg-gray-50"
+              variant="ghost" 
+              size="icon" 
+              onClick={() => navigate('/')}
+              className="mr-4"
             >
-              <LogOut className="h-4 w-4" />
-              Logout
+              <ChevronLeft className="h-5 w-5" />
             </Button>
+            <h1 className="text-2xl font-bold text-gray-800">Settings</h1>
           </div>
+          
+          <Button 
+            variant="outline" 
+            onClick={handleLogout}
+            className="flex items-center gap-2"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </Button>
         </div>
         
-        {/* Content */}
-        <div className="px-6 py-8">
-          <Tabs 
-            value={activeTab} 
-            onValueChange={setActiveTab}
-            className="w-full"
-          >
-            <div className="mb-8">
-              <TabsList className="grid w-full max-w-md grid-cols-2 bg-gray-100 p-1 rounded-lg">
-                <TabsTrigger 
-                  value="profile"
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-sm"
-                >
-                  Profile
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="data-sources"
-                  className="data-[state=active]:bg-white data-[state=active]:shadow-sm"
-                >
-                  Data Sources
-                </TabsTrigger>
-              </TabsList>
-            </div>
-            
-            <TabsContent value="profile" className="mt-0">
-              <ProfileSettings />
-            </TabsContent>
-            
-            <TabsContent value="data-sources" className="mt-0">
-              <DataSourceSettings />
-            </TabsContent>
-          </Tabs>
-        </div>
+        <Tabs 
+          value={activeTab} 
+          onValueChange={setActiveTab}
+          className="w-full"
+        >
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="data-sources">Data Sources</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="profile" className="mt-4">
+            <ProfileSettings />
+          </TabsContent>
+          
+          <TabsContent value="data-sources" className="mt-4">
+            <DataSourceSettings />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
