@@ -211,8 +211,8 @@ const Index = () => {
           {/* Files Icon with Popover */}
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow relative">
-                <Files size={18} className="text-[#4E50A8]" />
+              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow relative hover:bg-blue-50 transition-colors">
+                <Files size={18} className="text-[#4E50A8] hover:text-blue-700 transition-colors" />
                 {sessionFiles.length > 0 && (
                   <span className="absolute -top-1 -right-1 bg-[#4E50A8] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
                     {sessionFiles.length}
@@ -229,7 +229,7 @@ const Index = () => {
                 
                 {/* Search input */}
                 <div className="relative mt-3 mb-3">
-                  <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-700 transition-colors" />
                   <Input
                     placeholder="Search files..."
                     value={fileSearchQuery}
@@ -283,16 +283,16 @@ const Index = () => {
                           <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="h-6 w-6"
+                            className="h-6 w-6 hover:bg-blue-50 hover:text-blue-700 transition-colors"
                             onClick={() => setViewingFile(file)}
                           >
-                            <Eye size={12} />
+                            <Eye size={12} className="hover:text-blue-700 transition-colors" />
                           </Button>
                         )}
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500 hover:text-red-700">
-                              <Trash2 size={12} />
+                            <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-red-50 hover:text-red-700 transition-colors">
+                              <Trash2 size={12} className="text-red-500 hover:text-red-700 transition-colors" />
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
@@ -456,10 +456,10 @@ const Index = () => {
           {/* User avatar */}
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow">
+              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow hover:bg-blue-50 transition-colors">
                 <Avatar className="h-10 w-10">
-                  <AvatarFallback className="bg-white text-gray-700">
-                    <User size={18} />
+                  <AvatarFallback className="bg-white text-gray-700 hover:text-blue-700 transition-colors">
+                    <User size={18} className="hover:text-blue-700 transition-colors" />
                   </AvatarFallback>
                 </Avatar>
               </Button>
@@ -481,9 +481,9 @@ const Index = () => {
                   <Button 
                     variant="ghost" 
                     size="sm"
-                    className="w-full justify-start text-gray-700 hover:bg-gray-100"
+                    className="w-full justify-start text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
                   >
-                    <Settings size={16} className="mr-2" />
+                    <Settings size={16} className="mr-2 hover:text-blue-700 transition-colors" />
                     Settings
                   </Button>
                 </Link>
