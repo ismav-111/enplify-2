@@ -191,7 +191,7 @@ const ProfileSettings = () => {
             </p>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="secondary">Delete Account</Button>
+                <Button variant="outline">Delete Account</Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
