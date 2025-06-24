@@ -87,7 +87,7 @@ const ProfileSettings = () => {
             </div>
           </CardContent>
           <CardFooter className="pt-4 border-t border-gray-100">
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+            <Button type="submit" variant="secondary">
               Save Changes
             </Button>
           </CardFooter>
@@ -124,7 +124,7 @@ const ProfileSettings = () => {
             </div>
           </CardContent>
           <CardFooter className="pt-4 border-t border-gray-100">
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+            <Button type="submit" variant="secondary">
               Update Password
             </Button>
           </CardFooter>
