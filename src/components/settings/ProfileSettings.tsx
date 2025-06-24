@@ -185,13 +185,13 @@ const ProfileSettings = () => {
           <Separator className="bg-gray-200" />
           
           <div>
-            <h3 className="text-sm font-semibold text-red-600 mb-2">Danger Zone</h3>
+            <h3 className="text-sm font-semibold text-gray-900 mb-2">Delete Account</h3>
             <p className="text-sm text-gray-600 mb-3">
               Permanently delete your account and all of your data
             </p>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="destructive">Delete Account</Button>
+                <Button variant="secondary">Delete Account</Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>

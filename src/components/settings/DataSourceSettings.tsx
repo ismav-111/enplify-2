@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -308,9 +309,8 @@ const DataSourceSettings = () => {
                       </div>
                       <div>
                         <Button 
-                          variant="outline" 
+                          variant="secondary" 
                           onClick={() => handleDisconnect(source.id)}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 hover:border-red-300"
                         >
                           Disconnect
                         </Button>
@@ -338,7 +338,7 @@ const DataSourceSettings = () => {
                             type="button" 
                             onClick={() => handleConnect(source.id)}
                             disabled={connectingSource !== null}
-                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                            variant="secondary"
                           >
                             Connect to {source.name}
                           </Button>
