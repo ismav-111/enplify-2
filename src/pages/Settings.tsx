@@ -19,19 +19,22 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto px-4 py-6">
+      <div className="max-w-6xl mx-auto px-6 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => navigate('/')}
-              className="mr-3 hover:bg-gray-100"
+              className="h-10 w-10 rounded-full hover:bg-gray-100 transition-colors"
             >
               <ChevronLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
+              <p className="text-gray-600 mt-1">Manage your account and preferences</p>
+            </div>
           </div>
           
           <Button 
@@ -50,16 +53,16 @@ const Settings = () => {
           onValueChange={setActiveTab}
           className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-2 mb-6 bg-white border border-gray-200 h-12">
+          <TabsList className="grid w-full grid-cols-2 mb-8 bg-white border border-gray-200 h-14 rounded-lg">
             <TabsTrigger 
               value="profile" 
-              className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 h-10 text-sm font-medium"
+              className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 h-12 text-base font-medium rounded-lg transition-all"
             >
               Profile
             </TabsTrigger>
             <TabsTrigger 
               value="data-sources" 
-              className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 h-10 text-sm font-medium"
+              className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 h-12 text-base font-medium rounded-lg transition-all"
             >
               Data Sources
             </TabsTrigger>
