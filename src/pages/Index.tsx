@@ -229,7 +229,7 @@ const Index = () => {
                 
                 {/* Search input */}
                 <div className="relative mt-3 mb-3">
-                  <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-700 transition-colors" />
+                  <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   <Input
                     placeholder="Search files..."
                     value={fileSearchQuery}
@@ -286,13 +286,13 @@ const Index = () => {
                             className="h-6 w-6 hover:bg-blue-50 hover:text-blue-700 transition-colors"
                             onClick={() => setViewingFile(file)}
                           >
-                            <Eye size={12} className="hover:text-blue-700 transition-colors" />
+                            <Eye size={12} />
                           </Button>
                         )}
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-red-50 hover:text-red-700 transition-colors">
-                              <Trash2 size={12} className="text-red-500 hover:text-red-700 transition-colors" />
+                              <Trash2 size={12} className="text-red-500" />
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
@@ -458,8 +458,8 @@ const Index = () => {
             <PopoverTrigger asChild>
               <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow hover:bg-blue-50 transition-colors">
                 <Avatar className="h-10 w-10">
-                  <AvatarFallback className="bg-white text-gray-700 hover:text-blue-700 transition-colors">
-                    <User size={18} className="hover:text-blue-700 transition-colors" />
+                  <AvatarFallback className="bg-white text-gray-700">
+                    <User size={18} />
                   </AvatarFallback>
                 </Avatar>
               </Button>
@@ -483,7 +483,7 @@ const Index = () => {
                     size="sm"
                     className="w-full justify-start text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
                   >
-                    <Settings size={16} className="mr-2 hover:text-blue-700 transition-colors" />
+                    <Settings size={16} className="mr-2" />
                     Settings
                   </Button>
                 </Link>
