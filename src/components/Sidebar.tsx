@@ -82,7 +82,7 @@ const Sidebar = ({
       {!isOpen && (
         <div className="fixed top-4 left-4 z-30 flex items-center gap-3">
           <div className="bg-white px-6 py-3 rounded-full">
-            <span className="text-2xl font-bold text-[#4E50A8] font-comfortaa">
+            <span className="text-4xl font-bold text-[#4E50A8] font-comfortaa">
               enplify.ai
             </span>
           </div>
@@ -103,7 +103,7 @@ const Sidebar = ({
       >
         {/* Header with close button */}
         <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-[#4E50A8] font-comfortaa">
+          <h1 className="text-4xl font-bold text-[#4E50A8] font-comfortaa">
             enplify.ai
           </h1>
           <Button 
