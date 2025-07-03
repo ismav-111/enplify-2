@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
-import { Eye, EyeOff, Lock, Mail, MessageCircle, FileText, Zap, Headphones, Settings, Shield, Sparkles } from "lucide-react"
+import { Eye, EyeOff, Lock, Mail } from "lucide-react"
 import ForgotPasswordDialog from "@/components/ForgotPasswordDialog"
 
 const formSchema = z.object({
@@ -47,48 +47,14 @@ export default function Auth() {
     }, 1000)
   }
 
-  const features = [
-    {
-      title: "Intuitive Chat Interface",
-      description: "Natural conversations with your enterprise data",
-      icon: MessageCircle
-    },
-    {
-      title: "Smart Document Handling",
-      description: "AI-powered document analysis and insights",
-      icon: FileText
-    },
-    {
-      title: "Seamless Integrations",
-      description: "Connect with your existing enterprise systems",
-      icon: Zap
-    },
-    {
-      title: "Omni-Channel Support",
-      description: "Unified experience across all touchpoints",
-      icon: Headphones
-    },
-    {
-      title: "Configurable Framework",
-      description: "Customize workflows to match your needs",
-      icon: Settings
-    },
-    {
-      title: "Secure & Personalized",
-      description: "Enterprise-grade security with personal touch",
-      icon: Shield
-    },
-  ]
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex">
-      {/* Left Side - Enhanced Brand and Features */}
-      <div className="flex-1 flex flex-col justify-center px-16 py-16 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      {/* Left Side - Brand */}
+      <div className="flex-1 flex flex-col justify-center items-center px-16 py-16 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
         {/* Enhanced background elements */}
-        <div className="absolute inset-0 opacity-30">
+        <div className="absolute inset-0 opacity-20">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute bottom-1/3 right-1/4 w-72 h-72 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 right-1/3 w-48 h-48 bg-gradient-to-r from-pink-500 to-indigo-500 rounded-full blur-2xl animate-pulse delay-2000"></div>
         </div>
         
         {/* Subtle grid pattern */}
@@ -99,68 +65,53 @@ export default function Auth() {
           }}></div>
         </div>
         
-        <div className="max-w-2xl relative z-10">
-          {/* Enhanced Brand Section */}
-          <div className="mb-16">
-            <div className="flex items-center mb-6">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl flex items-center justify-center mr-4 shadow-2xl">
-                <Sparkles className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-6xl font-bold text-white font-comfortaa leading-tight tracking-tight">
-                  enplify<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">.ai</span>
-                </h1>
-                <div className="flex items-center mt-2">
-                  <div className="w-8 h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mr-2"></div>
-                  <span className="text-blue-200 text-sm font-medium tracking-wider uppercase">Enterprise AI Platform</span>
-                </div>
-              </div>
+        <div className="max-w-2xl relative z-10 text-center">
+          {/* Typography-focused Brand */}
+          <div className="mb-8">
+            <h1 className="text-8xl font-bold text-white font-comfortaa leading-tight tracking-tight mb-4">
+              enplify<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">.ai</span>
+            </h1>
+            
+            <div className="flex items-center justify-center mb-6">
+              <div className="w-12 h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mr-3"></div>
+              <span className="text-blue-200 text-lg font-medium tracking-wider">A generative AI solution from Quadrant</span>
+              <div className="w-12 h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full ml-3"></div>
             </div>
             
-            <p className="text-2xl text-blue-100 leading-relaxed font-light mb-8 max-w-xl">
+            <p className="text-xl text-blue-100 leading-relaxed font-light max-w-2xl mx-auto">
               Transform your enterprise with intelligent AI solutions that seamlessly integrate information and deliver exceptional user experiences.
             </p>
-            
-            {/* Value Proposition */}
-            <div className="flex flex-wrap gap-4 mb-12">
-              <div className="bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
-                <span className="text-white text-sm font-medium">🚀 95% Faster Implementation</span>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
-                <span className="text-white text-sm font-medium">🔒 Enterprise Security</span>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
-                <span className="text-white text-sm font-medium">⚡ Real-time Insights</span>
-              </div>
-            </div>
           </div>
           
-          {/* Enhanced Features Grid */}
-          <div className="grid grid-cols-1 gap-6">
-            {features.map((feature, index) => (
-              <div key={index} className="group flex items-start space-x-4 p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 hover:transform hover:scale-105">
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm rounded-xl flex items-center justify-center group-hover:bg-gradient-to-r group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all duration-300 border border-white/20">
-                  <feature.icon className="w-6 h-6 text-blue-300 group-hover:text-white transition-colors duration-300" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-white font-semibold text-lg mb-1 group-hover:text-blue-100 transition-colors duration-300">
-                    {feature.title}
-                  </h3>
-                  <p className="text-blue-200/80 text-sm leading-relaxed group-hover:text-blue-100 transition-colors duration-300">
-                    {feature.description}
-                  </p>
-                </div>
+          {/* Minimal Key Features */}
+          <div className="grid grid-cols-3 gap-8 mb-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm rounded-xl flex items-center justify-center mx-auto mb-3 border border-white/20">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-400 rounded-lg"></div>
               </div>
-            ))}
+              <h3 className="text-white font-semibold text-lg">Intelligent</h3>
+              <p className="text-blue-200/80 text-sm">Smart AI interactions</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm rounded-xl flex items-center justify-center mx-auto mb-3 border border-white/20">
+                <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-400 rounded-lg"></div>
+              </div>
+              <h3 className="text-white font-semibold text-lg">Secure</h3>
+              <p className="text-blue-200/80 text-sm">Enterprise-grade security</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm rounded-xl flex items-center justify-center mx-auto mb-3 border border-white/20">
+                <div className="w-8 h-8 bg-gradient-to-r from-pink-400 to-indigo-400 rounded-lg"></div>
+              </div>
+              <h3 className="text-white font-semibold text-lg">Seamless</h3>
+              <p className="text-blue-200/80 text-sm">Easy integration</p>
+            </div>
           </div>
           
           {/* Trust Indicators */}
-          <div className="mt-16 pt-8 border-t border-white/20">
-            <p className="text-blue-200/60 text-sm mb-4 font-medium uppercase tracking-wider">Trusted by Enterprise Leaders</p>
-            <div className="flex items-center space-x-8 opacity-60">
-              <div className="text-white/40 text-xs font-bold tracking-wider">FORTUNE 500</div>
-              <div className="w-1 h-1 bg-white/40 rounded-full"></div>
-              <div className="text-white/40 text-xs font-bold tracking-wider">ISO CERTIFIED</div>
+          <div className="pt-6 border-t border-white/20">
+            <div className="flex items-center justify-center space-x-8 opacity-60">
+              <div className="text-white/40 text-xs font-bold tracking-wider">ENTERPRISE READY</div>
               <div className="w-1 h-1 bg-white/40 rounded-full"></div>
               <div className="text-white/40 text-xs font-bold tracking-wider">SOC 2 COMPLIANT</div>
             </div>
@@ -176,18 +127,18 @@ export default function Auth() {
         <Card className="w-full max-w-md bg-white/95 backdrop-blur-sm shadow-2xl border-0 rounded-3xl overflow-hidden relative z-10 transition-shadow duration-300 hover:shadow-3xl">
           <CardHeader className="pb-6 pt-12 px-12 text-left">
             <CardTitle className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
-              {isSignIn ? "Sign In" : "Sign Up"}
+              {isSignIn ? "Welcome Back" : "Get Started"}
             </CardTitle>
             <p className="text-gray-600 text-sm leading-relaxed">
               {isSignIn ? (
                 <>
-                  Don't have an account?{" "}
+                  New to enplify.ai?{" "}
                   <button
                     type="button"
                     onClick={() => setIsSignIn(false)}
                     className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all underline-offset-2 hover:underline"
                   >
-                    Sign up
+                    Create account
                   </button>
                 </>
               ) : (
@@ -268,11 +219,11 @@ export default function Auth() {
                 className="w-full h-12 font-semibold text-sm rounded-xl mt-8"
                 disabled={isLoading}
               >
-                {isLoading ? "Processing..." : (isSignIn ? "Sign In" : "Sign Up")}
+                {isLoading ? "Processing..." : (isSignIn ? "Sign In" : "Create Account")}
               </Button>
             </form>
 
-            <div className="relative my-8">
+            <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-200" />
               </div>
@@ -282,20 +233,6 @@ export default function Auth() {
             </div>
 
             <div className="space-y-3">
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full flex items-center justify-center gap-3 h-12 border-gray-200 hover:bg-gray-50 hover:border-indigo-200 rounded-xl font-semibold transition-all text-sm"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 23 23">
-                  <path fill="#f35325" d="M1 1h10v10H1z"/>
-                  <path fill="#81bc06" d="M12 1h10v10H12z"/>
-                  <path fill="#05a6f0" d="M1 12h10v10H1z"/>
-                  <path fill="#ffba08" d="M12 12h10v10H12z"/>
-                </svg>
-                <span className="text-gray-700">Continue with Microsoft</span>
-              </Button>
-
               <Button
                 type="button"
                 variant="outline"
