@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -65,48 +66,48 @@ export default function Auth() {
         </div>
         
         <div className="max-w-xl relative z-10 text-center">
-          {/* Typography-focused Brand */}
-          <div className="mb-8">
-            <h1 className="text-6xl font-bold text-white font-comfortaa leading-tight tracking-tight mb-4">
+          {/* PROMINENT BRAND LOGO */}
+          <div className="mb-12">
+            <h1 className="text-8xl font-bold text-white font-comfortaa leading-none tracking-tight mb-8">
               enplify<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">.ai</span>
             </h1>
             
-            <div className="flex items-center justify-center mb-6">
-              <div className="w-8 h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mr-3"></div>
-              <span className="text-blue-200 text-sm font-medium tracking-wider">A generative AI solution from Quadrant</span>
-              <div className="w-8 h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full ml-3"></div>
+            <div className="flex items-center justify-center mb-8">
+              <div className="w-12 h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mr-4"></div>
+              <span className="text-blue-200 text-lg font-medium tracking-wider">A generative AI solution from Quadrant</span>
+              <div className="w-12 h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full ml-4"></div>
             </div>
             
-            <p className="text-lg text-blue-100 leading-relaxed font-light max-w-lg mx-auto mb-8">
+            <p className="text-xl text-blue-100 leading-relaxed font-light max-w-lg mx-auto mb-12">
               Transform your enterprise with intelligent AI solutions that deliver exceptional user experiences.
             </p>
           </div>
           
           {/* Key Features Grid */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-6">
             <div className="text-left">
-              <h3 className="text-white font-semibold text-sm mb-1">Intuitive Chat Interface</h3>
-              <p className="text-blue-200/70 text-xs">Natural conversations</p>
+              <h3 className="text-white font-semibold text-base mb-2">Intuitive Chat Interface</h3>
+              <p className="text-blue-200/70 text-sm">Natural conversations</p>
             </div>
             <div className="text-left">
-              <h3 className="text-white font-semibold text-sm mb-1">Smart Document Handling</h3>
-              <p className="text-blue-200/70 text-xs">Intelligent processing</p>
+              <h3 className="text-white font-semibold text-base mb-2">Smart Document Handling</h3>
+              <p className="text-blue-200/70 text-sm">Intelligent processing</p>
             </div>
             <div className="text-left">
-              <h3 className="text-white font-semibold text-sm mb-1">Seamless Integrations</h3>
-              <p className="text-blue-200/70 text-xs">Connect everything</p>
+              <h3 className="text-white font-semibold text-base mb-2">Seamless Integrations</h3>
+              <p className="text-blue-200/70 text-sm">Connect everything</p>
             </div>
             <div className="text-left">
-              <h3 className="text-white font-semibold text-sm mb-1">Omni-Channel Support</h3>
-              <p className="text-blue-200/70 text-xs">Multi-platform ready</p>
+              <h3 className="text-white font-semibold text-base mb-2">Omni-Channel Support</h3>
+              <p className="text-blue-200/70 text-sm">Multi-platform ready</p>
             </div>
             <div className="text-left">
-              <h3 className="text-white font-semibold text-sm mb-1">Configurable Framework</h3>
-              <p className="text-blue-200/70 text-xs">Tailored solutions</p>
+              <h3 className="text-white font-semibold text-base mb-2">Configurable Framework</h3>
+              <p className="text-blue-200/70 text-sm">Tailored solutions</p>
             </div>
             <div className="text-left">
-              <h3 className="text-white font-semibold text-sm mb-1">Secure & Personalized</h3>
-              <p className="text-blue-200/70 text-xs">Protected experiences</p>
+              <h3 className="text-white font-semibold text-base mb-2">Secure & Personalized</h3>
+              <p className="text-blue-200/70 text-sm">Protected experiences</p>
             </div>
           </div>
         </div>
