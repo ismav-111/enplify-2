@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -151,6 +152,15 @@ button:has(svg[data-lucide="settings"]):hover {
 [class*="loader"]::after,
 [class*="spinner"]::after {
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%) !important;
+}
+
+/* Product Logo Class - Overrides global font size for branding */
+.product-logo {
+  font-size: 4rem !important; /* 64px - much larger than the global 16px */
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+  font-family: 'Comfortaa', sans-serif !important;
+  letter-spacing: -0.02em !important;
 }
 
 /* ULTIMATE font size override for ALL AI responses - using highest specificity */

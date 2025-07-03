@@ -68,7 +68,7 @@ export default function Auth() {
         <div className="max-w-xl relative z-10 text-center">
           {/* PROMINENT BRAND LOGO */}
           <div className="mb-12">
-            <h1 className="text-8xl font-bold text-white font-comfortaa leading-none tracking-tight mb-8">
+            <h1 className="product-logo text-white leading-none tracking-tight mb-8">
               enplify<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">.ai</span>
             </h1>
             
