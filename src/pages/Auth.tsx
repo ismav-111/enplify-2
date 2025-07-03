@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -50,11 +49,11 @@ export default function Auth() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex">
       {/* Left Side - Brand */}
-      <div className="flex-1 flex flex-col justify-center items-center px-16 py-16 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      <div className="flex-1 flex flex-col justify-center items-center px-12 py-12 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
         {/* Enhanced background elements */}
         <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-1/3 right-1/4 w-72 h-72 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/3 right-1/4 w-64 h-64 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
         
         {/* Subtle grid pattern */}
@@ -65,55 +64,49 @@ export default function Auth() {
           }}></div>
         </div>
         
-        <div className="max-w-2xl relative z-10 text-center">
+        <div className="max-w-xl relative z-10 text-center">
           {/* Typography-focused Brand */}
           <div className="mb-8">
-            <h1 className="text-8xl font-bold text-white font-comfortaa leading-tight tracking-tight mb-4">
+            <h1 className="text-6xl font-bold text-white font-comfortaa leading-tight tracking-tight mb-4">
               enplify<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">.ai</span>
             </h1>
             
             <div className="flex items-center justify-center mb-6">
-              <div className="w-12 h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mr-3"></div>
-              <span className="text-blue-200 text-lg font-medium tracking-wider">A generative AI solution from Quadrant</span>
-              <div className="w-12 h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full ml-3"></div>
+              <div className="w-8 h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mr-3"></div>
+              <span className="text-blue-200 text-sm font-medium tracking-wider">A generative AI solution from Quadrant</span>
+              <div className="w-8 h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full ml-3"></div>
             </div>
             
-            <p className="text-xl text-blue-100 leading-relaxed font-light max-w-2xl mx-auto">
-              Transform your enterprise with intelligent AI solutions that seamlessly integrate information and deliver exceptional user experiences.
+            <p className="text-lg text-blue-100 leading-relaxed font-light max-w-lg mx-auto mb-8">
+              Transform your enterprise with intelligent AI solutions that deliver exceptional user experiences.
             </p>
           </div>
           
-          {/* Minimal Key Features */}
-          <div className="grid grid-cols-3 gap-8 mb-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm rounded-xl flex items-center justify-center mx-auto mb-3 border border-white/20">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-400 rounded-lg"></div>
-              </div>
-              <h3 className="text-white font-semibold text-lg">Intelligent</h3>
-              <p className="text-blue-200/80 text-sm">Smart AI interactions</p>
+          {/* Key Features Grid */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-left">
+              <h3 className="text-white font-semibold text-sm mb-1">Intuitive Chat Interface</h3>
+              <p className="text-blue-200/70 text-xs">Natural conversations</p>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm rounded-xl flex items-center justify-center mx-auto mb-3 border border-white/20">
-                <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-400 rounded-lg"></div>
-              </div>
-              <h3 className="text-white font-semibold text-lg">Secure</h3>
-              <p className="text-blue-200/80 text-sm">Enterprise-grade security</p>
+            <div className="text-left">
+              <h3 className="text-white font-semibold text-sm mb-1">Smart Document Handling</h3>
+              <p className="text-blue-200/70 text-xs">Intelligent processing</p>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm rounded-xl flex items-center justify-center mx-auto mb-3 border border-white/20">
-                <div className="w-8 h-8 bg-gradient-to-r from-pink-400 to-indigo-400 rounded-lg"></div>
-              </div>
-              <h3 className="text-white font-semibold text-lg">Seamless</h3>
-              <p className="text-blue-200/80 text-sm">Easy integration</p>
+            <div className="text-left">
+              <h3 className="text-white font-semibold text-sm mb-1">Seamless Integrations</h3>
+              <p className="text-blue-200/70 text-xs">Connect everything</p>
             </div>
-          </div>
-          
-          {/* Trust Indicators */}
-          <div className="pt-6 border-t border-white/20">
-            <div className="flex items-center justify-center space-x-8 opacity-60">
-              <div className="text-white/40 text-xs font-bold tracking-wider">ENTERPRISE READY</div>
-              <div className="w-1 h-1 bg-white/40 rounded-full"></div>
-              <div className="text-white/40 text-xs font-bold tracking-wider">SOC 2 COMPLIANT</div>
+            <div className="text-left">
+              <h3 className="text-white font-semibold text-sm mb-1">Omni-Channel Support</h3>
+              <p className="text-blue-200/70 text-xs">Multi-platform ready</p>
+            </div>
+            <div className="text-left">
+              <h3 className="text-white font-semibold text-sm mb-1">Configurable Framework</h3>
+              <p className="text-blue-200/70 text-xs">Tailored solutions</p>
+            </div>
+            <div className="text-left">
+              <h3 className="text-white font-semibold text-sm mb-1">Secure & Personalized</h3>
+              <p className="text-blue-200/70 text-xs">Protected experiences</p>
             </div>
           </div>
         </div>
