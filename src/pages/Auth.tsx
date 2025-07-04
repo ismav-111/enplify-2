@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -103,25 +104,25 @@ export default function Auth() {
       setTimeout(() => {
         setIsLoading(false)
         setOrgRegistrationStep("verify")
-      }, 1500)
+      }, 1000)
     } else if (orgRegistrationStep === "verify") {
       console.log("Demo: Code verified successfully")
       setTimeout(() => {
         setIsLoading(false)
         setOrgRegistrationStep("orgname")
-      }, 1500)
+      }, 1000)
     } else if (orgRegistrationStep === "orgname") {
       console.log("Demo: Organization name set to", data.organizationName)
       setTimeout(() => {
         setIsLoading(false)
         setOrgRegistrationStep("password")
-      }, 1500)
+      }, 1000)
     } else if (orgRegistrationStep === "password") {
       console.log("Demo: Organization registration completed")
       setTimeout(() => {
         setIsLoading(false)
         navigate("/")
-      }, 1500)
+      }, 1000)
     }
   }
 
