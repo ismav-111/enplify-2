@@ -86,84 +86,80 @@ export default function Auth() {
 
   function onSignInSubmit(data: SignInData) {
     setIsLoading(true)
-    console.log("Sign In Data:", data)
+    console.log("Demo Sign In - bypassing authentication:", data)
     
     setTimeout(() => {
       setIsLoading(false)
       navigate("/")
-    }, 1000)
+    }, 1500)
   }
 
   function onOrgRegistrationSubmit(data: OrgRegistrationData) {
     setIsLoading(true)
-    console.log("Organization Registration Data:", data)
+    console.log("Demo Organization Registration:", data)
     
     if (orgRegistrationStep === "email") {
-      // Send verification code
-      console.log("Sending verification code to:", data.email)
+      console.log("Demo: Verification code sent to", data.email)
       setTimeout(() => {
         setIsLoading(false)
         setOrgRegistrationStep("verify")
-      }, 1000)
+      }, 1500)
     } else if (orgRegistrationStep === "verify") {
-      // Verify code
-      console.log("Verifying code:", data.verificationCode)
+      console.log("Demo: Code verified successfully")
       setTimeout(() => {
         setIsLoading(false)
         setOrgRegistrationStep("orgname")
-      }, 1000)
+      }, 1500)
     } else if (orgRegistrationStep === "orgname") {
-      // Set organization name
-      console.log("Setting organization name:", data.organizationName)
+      console.log("Demo: Organization name set to", data.organizationName)
       setTimeout(() => {
         setIsLoading(false)
         setOrgRegistrationStep("password")
-      }, 1000)
+      }, 1500)
     } else if (orgRegistrationStep === "password") {
-      // Complete registration
-      console.log("Completing organization registration")
+      console.log("Demo: Organization registration completed")
       setTimeout(() => {
         setIsLoading(false)
         navigate("/")
-      }, 1000)
+      }, 1500)
     }
   }
 
   function onUserRegistrationSubmit(data: UserRegistrationData) {
     setIsLoading(true)
-    console.log("User Registration Data:", data)
+    console.log("Demo User Registration:", data)
     
     setTimeout(() => {
       setIsLoading(false)
       navigate("/")
-    }, 1000)
+    }, 1500)
   }
 
   const getTitle = () => {
     if (authMode === "signin") return "Welcome Back"
     if (authMode === "org-register") {
       switch (orgRegistrationStep) {
-        case "email": return "Create Organization"
-        case "verify": return "Verify Email"
-        case "orgname": return "Organization Details"
-        case "password": return "Set Password"
+        case "email": return "Create Your Organization"
+        case "verify": return "Check Your Email"
+        case "orgname": return "Name Your Organization"
+        case "password": return "Secure Your Account"
         default: return "Create Organization"
       }
     }
-    return "Join Team"
+    return "Join a Team"
   }
 
   const getSubTitle = () => {
     if (authMode === "signin") {
       return (
         <>
-          New to enplify.ai?{" "}
+          Don't have an account?{" "}
           <button
             type="button"
             onClick={() => setAuthMode("org-register")}
             className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all underline-offset-2 hover:underline"
           >
-            Create organization
+            Start your organization
           </button>{" "}
           or{" "}
           <button
@@ -171,7 +167,7 @@ export default function Auth() {
             onClick={() => setAuthMode("user-register")}
             className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all underline-offset-2 hover:underline"
           >
-            join team
+            join existing team
           </button>
         </>
       )
@@ -187,10 +183,26 @@ export default function Auth() {
           }}
           className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all underline-offset-2 hover:underline"
         >
-          Sign in
+          Sign in here
         </button>
       </>
     )
+  }
+
+  const getStepDescription = () => {
+    if (authMode === "signin") {
+      return "Enter your credentials to access your account"
+    }
+    if (authMode === "org-register") {
+      switch (orgRegistrationStep) {
+        case "email": return "Enter your work email to get started"
+        case "verify": return "We sent a 6-digit code to your email"
+        case "orgname": return "What should we call your organization?"
+        case "password": return "Create a strong password for your account"
+        default: return ""
+      }
+    }
+    return "Join your team with your email and a secure password"
   }
 
   return (
@@ -269,9 +281,14 @@ export default function Auth() {
             <CardTitle className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
               {getTitle()}
             </CardTitle>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              {getSubTitle()}
-            </p>
+            <div className="space-y-2">
+              <p className="text-gray-600 text-sm leading-relaxed">
+                {getSubTitle()}
+              </p>
+              <p className="text-gray-500 text-xs">
+                {getStepDescription()}
+              </p>
+            </div>
           </CardHeader>
 
           <CardContent className="px-12 pb-12">
@@ -280,14 +297,14 @@ export default function Auth() {
               <form onSubmit={signInForm.handleSubmit(onSignInSubmit)} className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-semibold text-gray-700">
-                    Email Address
+                    Work Email
                   </Label>
                   <div className="relative">
                     <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <Input
                       id="email"
                       type="email"
-                      placeholder="Enter your email"
+                      placeholder="you@company.com"
                       className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
                       {...signInForm.register("email")}
                     />
@@ -299,14 +316,14 @@ export default function Auth() {
 
                 <div className="space-y-2">
                   <Label htmlFor="organizationId" className="text-sm font-semibold text-gray-700">
-                    Organization (Optional)
+                    Organization <span className="text-gray-400 font-normal">(Optional)</span>
                   </Label>
                   <div className="relative">
                     <Building2 className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <Input
                       id="organizationId"
                       type="text"
-                      placeholder="Organization ID or name"
+                      placeholder="Your organization name"
                       className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
                       {...signInForm.register("organizationId")}
                     />
@@ -345,7 +362,7 @@ export default function Auth() {
                     onClick={() => setShowForgotPassword(true)}
                     className="text-xs text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 font-semibold transition-all underline-offset-2 hover:underline"
                   >
-                    Forgot password?
+                    Forgot your password?
                   </button>
                 </div>
 
@@ -354,7 +371,7 @@ export default function Auth() {
                   className="w-full h-12 font-semibold text-sm rounded-xl mt-8"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Signing In..." : "Sign In"}
+                  {isLoading ? "Signing you in..." : "Sign In"}
                 </Button>
               </form>
             )}
@@ -365,14 +382,14 @@ export default function Auth() {
                 {orgRegistrationStep === "email" && (
                   <div className="space-y-2">
                     <Label htmlFor="org-email" className="text-sm font-semibold text-gray-700">
-                      Organization Email
+                      Work Email Address
                     </Label>
                     <div className="relative">
                       <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <Input
                         id="org-email"
                         type="email"
-                        placeholder="Enter organization email"
+                        placeholder="admin@yourcompany.com"
                         className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
                         {...orgRegistrationForm.register("email")}
                       />
@@ -393,14 +410,18 @@ export default function Auth() {
                       <Input
                         id="verification-code"
                         type="text"
-                        placeholder="Enter 6-digit code"
-                        className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
+                        placeholder="000000"
+                        className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white tracking-widest text-center"
+                        maxLength={6}
                         {...orgRegistrationForm.register("verificationCode")}
                       />
                     </div>
                     {orgRegistrationForm.formState.errors.verificationCode && (
                       <p className="text-xs text-red-500 mt-1">{orgRegistrationForm.formState.errors.verificationCode.message}</p>
                     )}
+                    <p className="text-xs text-gray-500 mt-2">
+                      Didn't receive the code? <button type="button" className="text-indigo-600 hover:text-indigo-700 font-medium">Resend</button>
+                    </p>
                   </div>
                 )}
 
@@ -414,7 +435,7 @@ export default function Auth() {
                       <Input
                         id="organization-name"
                         type="text"
-                        placeholder="Enter organization name"
+                        placeholder="Acme Corporation"
                         className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
                         {...orgRegistrationForm.register("organizationName")}
                       />
@@ -428,14 +449,14 @@ export default function Auth() {
                 {orgRegistrationStep === "password" && (
                   <div className="space-y-2">
                     <Label htmlFor="org-password" className="text-sm font-semibold text-gray-700">
-                      Set Password
+                      Create Password
                     </Label>
                     <div className="relative">
                       <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <Input
                         id="org-password"
                         type={showPassword ? "text" : "password"}
-                        placeholder="Create password"
+                        placeholder="At least 8 characters"
                         className="w-full h-12 pl-12 pr-12 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
                         {...orgRegistrationForm.register("password")}
                       />
@@ -460,9 +481,9 @@ export default function Auth() {
                 >
                   {isLoading ? "Processing..." : 
                    orgRegistrationStep === "email" ? "Send Verification Code" :
-                   orgRegistrationStep === "verify" ? "Verify Code" :
-                   orgRegistrationStep === "orgname" ? "Continue" :
-                   "Create Organization"}
+                   orgRegistrationStep === "verify" ? "Verify Email" :
+                   orgRegistrationStep === "orgname" ? "Continue Setup" :
+                   "Complete Registration"}
                 </Button>
               </form>
             )}
@@ -472,14 +493,14 @@ export default function Auth() {
               <form onSubmit={userRegistrationForm.handleSubmit(onUserRegistrationSubmit)} className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="user-email" className="text-sm font-semibold text-gray-700">
-                    Email Address
+                    Work Email Address
                   </Label>
                   <div className="relative">
                     <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <Input
                       id="user-email"
                       type="email"
-                      placeholder="Enter your email"
+                      placeholder="you@company.com"
                       className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
                       {...userRegistrationForm.register("email")}
                     />
@@ -491,14 +512,14 @@ export default function Auth() {
 
                 <div className="space-y-2">
                   <Label htmlFor="user-password" className="text-sm font-semibold text-gray-700">
-                    Password
+                    Create Password
                   </Label>
                   <div className="relative">
                     <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <Input
                       id="user-password"
                       type={showPassword ? "text" : "password"}
-                      placeholder="Create password"
+                      placeholder="At least 8 characters"
                       className="w-full h-12 pl-12 pr-12 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
                       {...userRegistrationForm.register("password")}
                     />
@@ -520,7 +541,7 @@ export default function Auth() {
                   className="w-full h-12 font-semibold text-sm rounded-xl mt-8"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Creating Account..." : "Register"}
+                  {isLoading ? "Creating your account..." : "Join Team"}
                 </Button>
               </form>
             )}
