@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -51,7 +50,7 @@ type OrgRegistrationData = z.infer<typeof orgRegistrationSchema>
 type UserRegistrationData = z.infer<typeof userRegistrationSchema>
 
 export default function Auth() {
-  const [authMode, setAuthMode] = useState<"signin" | "org-register" | "user-register">("signin")
+  const [authMode, setAuthMode] = useState<"signin" | "org-register" | "user-register" | "admin-signin">("signin")
   const [orgRegistrationStep, setOrgRegistrationStep] = useState<"email" | "verify" | "orgname" | "password">("email")
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -92,6 +91,16 @@ export default function Auth() {
     setTimeout(() => {
       setIsLoading(false)
       navigate("/")
+    }, 1500)
+  }
+
+  function onAdminSignIn(data: SignInData) {
+    setIsLoading(true)
+    console.log("Demo Admin Sign In - bypassing authentication:", data)
+    
+    setTimeout(() => {
+      setIsLoading(false)
+      navigate("/admin")
     }, 1500)
   }
 
@@ -138,6 +147,7 @@ export default function Auth() {
 
   const getTitle = () => {
     if (authMode === "signin") return "Welcome Back"
+    if (authMode === "admin-signin") return "Admin Portal"
     if (authMode === "org-register") {
       switch (orgRegistrationStep) {
         case "email": return "Create Your Organization"
@@ -173,6 +183,20 @@ export default function Auth() {
         </>
       )
     }
+    if (authMode === "admin-signin") {
+      return (
+        <>
+          Regular user?{" "}
+          <button
+            type="button"
+            onClick={() => setAuthMode("signin")}
+            className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all underline-offset-2 hover:underline"
+          >
+            Sign in here
+          </button>
+        </>
+      )
+    }
     return (
       <>
         Already have an account?{" "}
@@ -193,6 +217,9 @@ export default function Auth() {
   const getStepDescription = () => {
     if (authMode === "signin") {
       return "Enter your credentials to access your account"
+    }
+    if (authMode === "admin-signin") {
+      return "Access the admin dashboard to manage users and permissions"
     }
     if (authMode === "org-register") {
       switch (orgRegistrationStep) {
@@ -293,6 +320,64 @@ export default function Auth() {
           </CardHeader>
 
           <CardContent className="px-12 pb-12">
+            {/* Admin Sign In Form */}
+            {authMode === "admin-signin" && (
+              <form onSubmit={signInForm.handleSubmit(onAdminSignIn)} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="admin-email" className="text-sm font-semibold text-gray-700">
+                    Admin Email
+                  </Label>
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <Input
+                      id="admin-email"
+                      type="email"
+                      placeholder="admin@company.com"
+                      className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
+                      {...signInForm.register("email")}
+                    />
+                  </div>
+                  {signInForm.formState.errors.email && (
+                    <p className="text-xs text-red-500 mt-1">{signInForm.formState.errors.email.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="admin-password" className="text-sm font-semibold text-gray-700">
+                    Admin Password
+                  </Label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <Input
+                      id="admin-password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter admin password"
+                      className="w-full h-12 pl-12 pr-12 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
+                      {...signInForm.register("password")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                  {signInForm.formState.errors.password && (
+                    <p className="text-xs text-red-500 mt-1">{signInForm.formState.errors.password.message}</p>
+                  )}
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full h-12 font-semibold text-sm rounded-xl mt-8"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Accessing admin portal..." : "Access Admin Portal"}
+                </Button>
+              </form>
+            )}
+
             {/* Sign In Form */}
             {authMode === "signin" && (
               <form onSubmit={signInForm.handleSubmit(onSignInSubmit)} className="space-y-6">
@@ -571,6 +656,19 @@ export default function Auth() {
                 <span className="text-gray-700">Continue with Google</span>
               </Button>
             </div>
+
+            {/* Add Admin Access Link */}
+            {authMode === "signin" && (
+              <div className="text-center mt-4">
+                <button
+                  type="button"
+                  onClick={() => setAuthMode("admin-signin")}
+                  className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
+                >
+                  Admin? Access admin portal →
+                </button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
