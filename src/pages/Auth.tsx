@@ -8,44 +8,107 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
-import { Eye, EyeOff, Lock, Mail } from "lucide-react"
+import { Eye, EyeOff, Lock, Mail, Building2, Users, User } from "lucide-react"
 import ForgotPasswordDialog from "@/components/ForgotPasswordDialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-const formSchema = z.object({
+const signInSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
   password: z.string().min(8, {
     message: "Password must be at least 8 characters.",
   }),
+  organizationId: z.string().optional(),
 })
 
-type FormData = z.infer<typeof formSchema>
+const signUpSchema = z.object({
+  email: z.string().email({
+    message: "Please enter a valid email address.",
+  }),
+  password: z.string().min(8, {
+    message: "Password must be at least 8 characters.",
+  }),
+  confirmPassword: z.string(),
+  firstName: z.string().min(2, {
+    message: "First name must be at least 2 characters.",
+  }),
+  lastName: z.string().min(2, {
+    message: "Last name must be at least 2 characters.",
+  }),
+  organizationName: z.string().optional(),
+  userRole: z.enum(["organization_admin", "user"], {
+    required_error: "Please select a user type.",
+  }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+}).refine((data) => {
+  if (data.userRole === "organization_admin") {
+    return data.organizationName && data.organizationName.length >= 2;
+  }
+  return true;
+}, {
+  message: "Organization name is required for organization admins",
+  path: ["organizationName"],
+});
+
+type SignInData = z.infer<typeof signInSchema>
+type SignUpData = z.infer<typeof signUpSchema>
 
 export default function Auth() {
   const [isSignIn, setIsSignIn] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [showForgotPassword, setShowForgotPassword] = useState(false)
+  const [userRole, setUserRole] = useState<"organization_admin" | "user">("user")
   const navigate = useNavigate()
   
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+  const signInForm = useForm<SignInData>({
+    resolver: zodResolver(signInSchema),
     defaultValues: {
       email: "",
       password: "",
+      organizationId: "",
     },
   })
 
-  function onSubmit(data: FormData) {
+  const signUpForm = useForm<SignUpData>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+      firstName: "",
+      lastName: "",
+      organizationName: "",
+      userRole: "user",
+    },
+  })
+
+  function onSignInSubmit(data: SignInData) {
     setIsLoading(true)
-    console.log(data)
+    console.log("Sign In Data:", data)
     
     setTimeout(() => {
       setIsLoading(false)
       navigate("/")
     }, 1000)
   }
+
+  function onSignUpSubmit(data: SignUpData) {
+    setIsLoading(true)
+    console.log("Sign Up Data:", data)
+    
+    setTimeout(() => {
+      setIsLoading(false)
+      navigate("/")
+    }, 1000)
+  }
+
+  const currentForm = isSignIn ? signInForm : signUpForm
+  const onSubmit = isSignIn ? onSignInSubmit : onSignUpSubmit
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex">
@@ -151,7 +214,110 @@ export default function Auth() {
           </CardHeader>
 
           <CardContent className="px-12 pb-12">
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={currentForm.handleSubmit(onSubmit)} className="space-y-6">
+              {!isSignIn && (
+                <>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="firstName" className="text-sm font-semibold text-gray-700">
+                        First Name
+                      </Label>
+                      <div className="relative">
+                        <User className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <Input
+                          id="firstName"
+                          type="text"
+                          placeholder="First name"
+                          className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
+                          {...signUpForm.register("firstName")}
+                        />
+                      </div>
+                      {signUpForm.formState.errors.firstName && (
+                        <p className="text-xs text-red-500 mt-1">{signUpForm.formState.errors.firstName.message}</p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="lastName" className="text-sm font-semibold text-gray-700">
+                        Last Name
+                      </Label>
+                      <div className="relative">
+                        <User className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <Input
+                          id="lastName"
+                          type="text"
+                          placeholder="Last name"
+                          className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
+                          {...signUpForm.register("lastName")}
+                        />
+                      </div>
+                      {signUpForm.formState.errors.lastName && (
+                        <p className="text-xs text-red-500 mt-1">{signUpForm.formState.errors.lastName.message}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-gray-700">
+                      Account Type
+                    </Label>
+                    <Select onValueChange={(value: "organization_admin" | "user") => {
+                      setUserRole(value);
+                      signUpForm.setValue("userRole", value);
+                    }}>
+                      <SelectTrigger className="w-full h-12 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white">
+                        <div className="flex items-center gap-3">
+                          {userRole === "organization_admin" ? (
+                            <Building2 className="h-5 w-5 text-gray-400" />
+                          ) : (
+                            <Users className="h-5 w-5 text-gray-400" />
+                          )}
+                          <SelectValue placeholder="Select account type" />
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="organization_admin">
+                          <div className="flex items-center gap-2">
+                            <Building2 className="h-4 w-4" />
+                            Organization Admin
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="user">
+                          <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4" />
+                            Team Member
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {signUpForm.formState.errors.userRole && (
+                      <p className="text-xs text-red-500 mt-1">{signUpForm.formState.errors.userRole.message}</p>
+                    )}
+                  </div>
+
+                  {userRole === "organization_admin" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="organizationName" className="text-sm font-semibold text-gray-700">
+                        Organization Name
+                      </Label>
+                      <div className="relative">
+                        <Building2 className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <Input
+                          id="organizationName"
+                          type="text"
+                          placeholder="Enter organization name"
+                          className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
+                          {...signUpForm.register("organizationName")}
+                        />
+                      </div>
+                      {signUpForm.formState.errors.organizationName && (
+                        <p className="text-xs text-red-500 mt-1">{signUpForm.formState.errors.organizationName.message}</p>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
+
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-semibold text-gray-700">
                   Email Address
@@ -163,13 +329,31 @@ export default function Auth() {
                     type="email"
                     placeholder="Enter your email"
                     className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
-                    {...form.register("email")}
+                    {...currentForm.register("email")}
                   />
                 </div>
-                {form.formState.errors.email && (
-                  <p className="text-xs text-red-500 mt-1">{form.formState.errors.email.message}</p>
+                {currentForm.formState.errors.email && (
+                  <p className="text-xs text-red-500 mt-1">{currentForm.formState.errors.email.message}</p>
                 )}
               </div>
+
+              {isSignIn && (
+                <div className="space-y-2">
+                  <Label htmlFor="organizationId" className="text-sm font-semibold text-gray-700">
+                    Organization (Optional)
+                  </Label>
+                  <div className="relative">
+                    <Building2 className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <Input
+                      id="organizationId"
+                      type="text"
+                      placeholder="Organization ID or name"
+                      className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
+                      {...signInForm.register("organizationId")}
+                    />
+                  </div>
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-sm font-semibold text-gray-700">
@@ -182,7 +366,7 @@ export default function Auth() {
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     className="w-full h-12 pl-12 pr-12 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
-                    {...form.register("password")}
+                    {...currentForm.register("password")}
                   />
                   <button
                     type="button"
@@ -192,21 +376,50 @@ export default function Auth() {
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
-                {form.formState.errors.password && (
-                  <p className="text-xs text-red-500 mt-1">{form.formState.errors.password.message}</p>
-                )}
-                {isSignIn && (
-                  <div className="flex justify-end mt-2">
-                    <button
-                      type="button"
-                      onClick={() => setShowForgotPassword(true)}
-                      className="text-xs text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 font-semibold transition-all underline-offset-2 hover:underline"
-                    >
-                      Forgot password?
-                    </button>
-                  </div>
+                {currentForm.formState.errors.password && (
+                  <p className="text-xs text-red-500 mt-1">{currentForm.formState.errors.password.message}</p>
                 )}
               </div>
+
+              {!isSignIn && (
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-700">
+                    Confirm Password
+                  </Label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <Input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirm your password"
+                      className="w-full h-12 pl-12 pr-12 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
+                      {...signUpForm.register("confirmPassword")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                  {signUpForm.formState.errors.confirmPassword && (
+                    <p className="text-xs text-red-500 mt-1">{signUpForm.formState.errors.confirmPassword.message}</p>
+                  )}
+                </div>
+              )}
+
+              {isSignIn && (
+                <div className="flex justify-end mt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowForgotPassword(true)}
+                    className="text-xs text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 font-semibold transition-all underline-offset-2 hover:underline"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+              )}
 
               <Button
                 type="submit"
