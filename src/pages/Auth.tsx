@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -7,9 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
-import { Eye, EyeOff, Lock, Mail, Building2, Users, User } from "lucide-react"
+import { Eye, EyeOff, Lock, Mail, Building2 } from "lucide-react"
 import ForgotPasswordDialog from "@/components/ForgotPasswordDialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const signInSchema = z.object({
   email: z.string().email({
@@ -21,37 +21,10 @@ const signInSchema = z.object({
   organizationId: z.string().optional(),
 })
 
-const orgRegistrationSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  verificationCode: z.string().min(6, {
-    message: "Verification code must be 6 digits.",
-  }).optional(),
-  organizationName: z.string().min(2, {
-    message: "Organization name must be at least 2 characters.",
-  }).optional(),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
-  }).optional(),
-})
-
-const userRegistrationSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
-  }),
-})
-
 type SignInData = z.infer<typeof signInSchema>
-type OrgRegistrationData = z.infer<typeof orgRegistrationSchema>
-type UserRegistrationData = z.infer<typeof userRegistrationSchema>
 
 export default function Auth() {
-  const [authMode, setAuthMode] = useState<"signin" | "org-register" | "user-register" | "admin-signin">("signin")
-  const [orgRegistrationStep, setOrgRegistrationStep] = useState<"email" | "verify" | "orgname" | "password">("email")
+  const [authMode, setAuthMode] = useState<"signin" | "signin-with-org" | "admin-signin">("signin")
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showForgotPassword, setShowForgotPassword] = useState(false)
@@ -63,24 +36,6 @@ export default function Auth() {
       email: "",
       password: "",
       organizationId: "",
-    },
-  })
-
-  const orgRegistrationForm = useForm<OrgRegistrationData>({
-    resolver: zodResolver(orgRegistrationSchema),
-    defaultValues: {
-      email: "",
-      verificationCode: "",
-      organizationName: "",
-      password: "",
-    },
-  })
-
-  const userRegistrationForm = useForm<UserRegistrationData>({
-    resolver: zodResolver(userRegistrationSchema),
-    defaultValues: {
-      email: "",
-      password: "",
     },
   })
 
@@ -104,85 +59,13 @@ export default function Auth() {
     }, 1500)
   }
 
-  function onOrgRegistrationSubmit(data: OrgRegistrationData) {
-    setIsLoading(true)
-    console.log("Demo Organization Registration:", data)
-    
-    if (orgRegistrationStep === "email") {
-      console.log("Demo: Verification code sent to", data.email)
-      setTimeout(() => {
-        setIsLoading(false)
-        setOrgRegistrationStep("verify")
-      }, 1000)
-    } else if (orgRegistrationStep === "verify") {
-      console.log("Demo: Code verified successfully")
-      setTimeout(() => {
-        setIsLoading(false)
-        setOrgRegistrationStep("orgname")
-      }, 1000)
-    } else if (orgRegistrationStep === "orgname") {
-      console.log("Demo: Organization name set to", data.organizationName)
-      setTimeout(() => {
-        setIsLoading(false)
-        setOrgRegistrationStep("password")
-      }, 1000)
-    } else if (orgRegistrationStep === "password") {
-      console.log("Demo: Organization registration completed")
-      setTimeout(() => {
-        setIsLoading(false)
-        navigate("/")
-      }, 1000)
-    }
-  }
-
-  function onUserRegistrationSubmit(data: UserRegistrationData) {
-    setIsLoading(true)
-    console.log("Demo User Registration:", data)
-    
-    setTimeout(() => {
-      setIsLoading(false)
-      navigate("/")
-    }, 1500)
-  }
-
   const getTitle = () => {
-    if (authMode === "signin") return "Welcome Back"
     if (authMode === "admin-signin") return "Admin Portal"
-    if (authMode === "org-register") {
-      switch (orgRegistrationStep) {
-        case "email": return "Create Your Organization"
-        case "verify": return "Check Your Email"
-        case "orgname": return "Name Your Organization"
-        case "password": return "Secure Your Account"
-        default: return "Create Organization"
-      }
-    }
-    return "Join a Team"
+    if (authMode === "signin-with-org") return "Welcome Back"
+    return "Welcome Back"
   }
 
   const getSubTitle = () => {
-    if (authMode === "signin") {
-      return (
-        <>
-          Don't have an account?{" "}
-          <button
-            type="button"
-            onClick={() => setAuthMode("org-register")}
-            className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all underline-offset-2 hover:underline"
-          >
-            Start your organization
-          </button>{" "}
-          or{" "}
-          <button
-            type="button"
-            onClick={() => setAuthMode("user-register")}
-            className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all underline-offset-2 hover:underline"
-          >
-            join existing team
-          </button>
-        </>
-      )
-    }
     if (authMode === "admin-signin") {
       return (
         <>
@@ -199,38 +82,26 @@ export default function Auth() {
     }
     return (
       <>
-        Already have an account?{" "}
+        Need help?{" "}
         <button
           type="button"
-          onClick={() => {
-            setAuthMode("signin")
-            setOrgRegistrationStep("email")
-          }}
+          onClick={() => setShowForgotPassword(true)}
           className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all underline-offset-2 hover:underline"
         >
-          Sign in here
+          Contact support
         </button>
       </>
     )
   }
 
   const getStepDescription = () => {
-    if (authMode === "signin") {
-      return "Enter your credentials to access your account"
-    }
     if (authMode === "admin-signin") {
       return "Access the admin dashboard to manage users and permissions"
     }
-    if (authMode === "org-register") {
-      switch (orgRegistrationStep) {
-        case "email": return "Enter your work email to get started"
-        case "verify": return "We sent a 6-digit code to your email"
-        case "orgname": return "What should we call your organization?"
-        case "password": return "Create a strong password for your account"
-        default: return ""
-      }
+    if (authMode === "signin-with-org") {
+      return "Enter your organization details and credentials"
     }
-    return "Join your team with your email and a secure password"
+    return "Enter your credentials to access your account"
   }
 
   return (
@@ -320,6 +191,26 @@ export default function Auth() {
           </CardHeader>
 
           <CardContent className="px-12 pb-12">
+            {/* Login Type Selection */}
+            <div className="space-y-3 mb-8">
+              <Button
+                type="button"
+                variant={authMode === "signin-with-org" ? "default" : "outline"}
+                onClick={() => setAuthMode("signin-with-org")}
+                className="w-full h-12 font-semibold text-sm rounded-xl transition-all"
+              >
+                Login with Organization
+              </Button>
+              <Button
+                type="button"
+                variant={authMode === "signin" ? "default" : "outline"}
+                onClick={() => setAuthMode("signin")}
+                className="w-full h-12 font-semibold text-sm rounded-xl transition-all"
+              >
+                Standard Login
+              </Button>
+            </div>
+
             {/* Admin Sign In Form */}
             {authMode === "admin-signin" && (
               <form onSubmit={signInForm.handleSubmit(onAdminSignIn)} className="space-y-6">
@@ -378,12 +269,12 @@ export default function Auth() {
               </form>
             )}
 
-            {/* Sign In Form */}
-            {authMode === "signin" && (
+            {/* Standard Login Forms */}
+            {(authMode === "signin" || authMode === "signin-with-org") && (
               <form onSubmit={signInForm.handleSubmit(onSignInSubmit)} className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-semibold text-gray-700">
-                    Work Email
+                    Email Address
                   </Label>
                   <div className="relative">
                     <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -400,21 +291,23 @@ export default function Auth() {
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="organizationId" className="text-sm font-semibold text-gray-700">
-                    Organization <span className="text-gray-400 font-normal">(Optional)</span>
-                  </Label>
-                  <div className="relative">
-                    <Building2 className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <Input
-                      id="organizationId"
-                      type="text"
-                      placeholder="Your organization name"
-                      className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
-                      {...signInForm.register("organizationId")}
-                    />
+                {authMode === "signin-with-org" && (
+                  <div className="space-y-2">
+                    <Label htmlFor="organizationId" className="text-sm font-semibold text-gray-700">
+                      Organization
+                    </Label>
+                    <div className="relative">
+                      <Building2 className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <Input
+                        id="organizationId"
+                        type="text"
+                        placeholder="Your organization name"
+                        className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
+                        {...signInForm.register("organizationId")}
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-sm font-semibold text-gray-700">
@@ -442,192 +335,12 @@ export default function Auth() {
                   )}
                 </div>
 
-                <div className="flex justify-end mt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowForgotPassword(true)}
-                    className="text-xs text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 font-semibold transition-all underline-offset-2 hover:underline"
-                  >
-                    Forgot your password?
-                  </button>
-                </div>
-
                 <Button
                   type="submit"
                   className="w-full h-12 font-semibold text-sm rounded-xl mt-8"
                   disabled={isLoading}
                 >
                   {isLoading ? "Signing you in..." : "Sign In"}
-                </Button>
-              </form>
-            )}
-
-            {/* Organization Registration Form */}
-            {authMode === "org-register" && (
-              <form onSubmit={orgRegistrationForm.handleSubmit(onOrgRegistrationSubmit)} className="space-y-6">
-                {orgRegistrationStep === "email" && (
-                  <div className="space-y-2">
-                    <Label htmlFor="org-email" className="text-sm font-semibold text-gray-700">
-                      Work Email Address
-                    </Label>
-                    <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <Input
-                        id="org-email"
-                        type="email"
-                        placeholder="admin@yourcompany.com"
-                        className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
-                        {...orgRegistrationForm.register("email")}
-                      />
-                    </div>
-                    {orgRegistrationForm.formState.errors.email && (
-                      <p className="text-xs text-red-500 mt-1">{orgRegistrationForm.formState.errors.email.message}</p>
-                    )}
-                  </div>
-                )}
-
-                {orgRegistrationStep === "verify" && (
-                  <div className="space-y-2">
-                    <Label htmlFor="verification-code" className="text-sm font-semibold text-gray-700">
-                      Verification Code
-                    </Label>
-                    <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <Input
-                        id="verification-code"
-                        type="text"
-                        placeholder="000000"
-                        className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white tracking-widest text-center"
-                        maxLength={6}
-                        {...orgRegistrationForm.register("verificationCode")}
-                      />
-                    </div>
-                    {orgRegistrationForm.formState.errors.verificationCode && (
-                      <p className="text-xs text-red-500 mt-1">{orgRegistrationForm.formState.errors.verificationCode.message}</p>
-                    )}
-                    <p className="text-xs text-gray-500 mt-2">
-                      Didn't receive the code? <button type="button" className="text-indigo-600 hover:text-indigo-700 font-medium">Resend</button>
-                    </p>
-                  </div>
-                )}
-
-                {orgRegistrationStep === "orgname" && (
-                  <div className="space-y-2">
-                    <Label htmlFor="organization-name" className="text-sm font-semibold text-gray-700">
-                      Organization Name
-                    </Label>
-                    <div className="relative">
-                      <Building2 className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <Input
-                        id="organization-name"
-                        type="text"
-                        placeholder="Acme Corporation"
-                        className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
-                        {...orgRegistrationForm.register("organizationName")}
-                      />
-                    </div>
-                    {orgRegistrationForm.formState.errors.organizationName && (
-                      <p className="text-xs text-red-500 mt-1">{orgRegistrationForm.formState.errors.organizationName.message}</p>
-                    )}
-                  </div>
-                )}
-
-                {orgRegistrationStep === "password" && (
-                  <div className="space-y-2">
-                    <Label htmlFor="org-password" className="text-sm font-semibold text-gray-700">
-                      Create Password
-                    </Label>
-                    <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <Input
-                        id="org-password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="At least 8 characters"
-                        className="w-full h-12 pl-12 pr-12 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
-                        {...orgRegistrationForm.register("password")}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                      >
-                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                      </button>
-                    </div>
-                    {orgRegistrationForm.formState.errors.password && (
-                      <p className="text-xs text-red-500 mt-1">{orgRegistrationForm.formState.errors.password.message}</p>
-                    )}
-                  </div>
-                )}
-
-                <Button
-                  type="submit"
-                  className="w-full h-12 font-semibold text-sm rounded-xl mt-8"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Processing..." : 
-                   orgRegistrationStep === "email" ? "Send Verification Code" :
-                   orgRegistrationStep === "verify" ? "Verify Email" :
-                   orgRegistrationStep === "orgname" ? "Continue Setup" :
-                   "Complete Registration"}
-                </Button>
-              </form>
-            )}
-
-            {/* User Registration Form */}
-            {authMode === "user-register" && (
-              <form onSubmit={userRegistrationForm.handleSubmit(onUserRegistrationSubmit)} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="user-email" className="text-sm font-semibold text-gray-700">
-                    Work Email Address
-                  </Label>
-                  <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <Input
-                      id="user-email"
-                      type="email"
-                      placeholder="you@company.com"
-                      className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
-                      {...userRegistrationForm.register("email")}
-                    />
-                  </div>
-                  {userRegistrationForm.formState.errors.email && (
-                    <p className="text-xs text-red-500 mt-1">{userRegistrationForm.formState.errors.email.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="user-password" className="text-sm font-semibold text-gray-700">
-                    Create Password
-                  </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <Input
-                      id="user-password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="At least 8 characters"
-                      className="w-full h-12 pl-12 pr-12 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
-                      {...userRegistrationForm.register("password")}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                    </button>
-                  </div>
-                  {userRegistrationForm.formState.errors.password && (
-                    <p className="text-xs text-red-500 mt-1">{userRegistrationForm.formState.errors.password.message}</p>
-                  )}
-                </div>
-
-                <Button
-                  type="submit"
-                  className="w-full h-12 font-semibold text-sm rounded-xl mt-8"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Creating your account..." : "Join Team"}
                 </Button>
               </form>
             )}
@@ -655,10 +368,24 @@ export default function Auth() {
                 </svg>
                 <span className="text-gray-700">Continue with Google</span>
               </Button>
+              
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full flex items-center justify-center gap-3 h-12 border-gray-200 hover:bg-gray-50 hover:border-indigo-200 rounded-xl font-semibold transition-all text-sm"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <path fill="#00A4EF" d="M0 0h11.377v11.372H0z"/>
+                  <path fill="#FFB900" d="M12.623 0H24v11.372H12.623z"/>
+                  <path fill="#00A4EF" d="M0 12.628h11.377V24H0z"/>
+                  <path fill="#FFB900" d="M12.623 12.628H24V24H12.623z"/>
+                </svg>
+                <span className="text-gray-700">Continue with Microsoft</span>
+              </Button>
             </div>
 
             {/* Add Admin Access Link */}
-            {authMode === "signin" && (
+            {authMode !== "admin-signin" && (
               <div className="text-center mt-4">
                 <button
                   type="button"
