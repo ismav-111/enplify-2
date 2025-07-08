@@ -1,3 +1,4 @@
+
 import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -7,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
-import { Eye, EyeOff, Lock, Mail } from "lucide-react"
+import { Eye, EyeOff, Lock, Mail, Building } from "lucide-react"
 import ForgotPasswordDialog from "@/components/ForgotPasswordDialog"
 
 const signInSchema = z.object({
@@ -137,23 +138,8 @@ export default function Auth() {
         <Card className="w-full max-w-md bg-white/95 backdrop-blur-sm shadow-2xl border-0 rounded-3xl overflow-hidden relative z-10 transition-shadow duration-300 hover:shadow-3xl">
           <CardHeader className="pb-6 pt-12 px-12 text-left">
             <CardTitle className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
-              Welcome Back
+              Sign In
             </CardTitle>
-            <div className="space-y-2">
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Need help?{" "}
-                <button
-                  type="button"
-                  onClick={() => setShowForgotPassword(true)}
-                  className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all underline-offset-2 hover:underline"
-                >
-                  Contact support
-                </button>
-              </p>
-              <p className="text-gray-500 text-xs">
-                Enter your credentials to access your account
-              </p>
-            </div>
           </CardHeader>
 
           <CardContent className="px-12 pb-12">
@@ -175,12 +161,25 @@ export default function Auth() {
                 {signInForm.formState.errors.email && (
                   <p className="text-xs text-red-500 mt-1">{signInForm.formState.errors.email.message}</p>
                 )}
-                {detectedOrg && (
-                  <p className="text-xs text-indigo-600 mt-1 font-medium">
-                    Organization: {detectedOrg}
-                  </p>
-                )}
               </div>
+
+              {detectedOrg && (
+                <div className="space-y-2">
+                  <Label htmlFor="organization" className="text-sm font-semibold text-gray-700">
+                    Organization
+                  </Label>
+                  <div className="relative">
+                    <Building className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <Input
+                      id="organization"
+                      type="text"
+                      value={detectedOrg}
+                      readOnly
+                      className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 rounded-xl bg-gray-100 text-gray-600"
+                    />
+                  </div>
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-sm font-semibold text-gray-700">
@@ -264,6 +263,19 @@ export default function Auth() {
                 </svg>
                 <span className="text-gray-700">Sign in with Microsoft</span>
               </Button>
+            </div>
+
+            <div className="text-center mt-6">
+              <p className="text-sm text-gray-600">
+                Don't have an account?{" "}
+                <button
+                  type="button"
+                  className="text-indigo-600 hover:text-indigo-500 font-semibold transition-colors"
+                  onClick={() => navigate("/signup")}
+                >
+                  Sign up
+                </button>
+              </p>
             </div>
           </CardContent>
         </Card>
