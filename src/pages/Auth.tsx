@@ -1,4 +1,3 @@
-
 import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -8,7 +7,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
 import { useNavigate, useLocation } from "react-router-dom"
 import { Eye, EyeOff, Lock, Mail, Building, User } from "lucide-react"
 import ForgotPasswordDialog from "@/components/ForgotPasswordDialog"
@@ -25,9 +23,6 @@ const signInSchema = z.object({
 const signUpSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
-  }),
-  verificationCode: z.string().min(6, {
-    message: "Verification code must be 6 digits.",
   }),
   accountType: z.enum(["individual", "organization"]),
   organizationName: z.string().optional(),
@@ -47,9 +42,9 @@ export default function Auth() {
   const [showPasswordField, setShowPasswordField] = useState(false)
   
   // Sign up specific states
-  const [signUpStep, setSignUpStep] = useState(1) // 1: email, 2: verification, 3: account type, 4: password
+  const [signUpStep, setSignUpStep] = useState(1) // 1: email, 2: verification, 3: all fields
   const [signUpEmail, setSignUpEmail] = useState("")
-  const [verificationCode, setVerificationCode] = useState("")
+  const [isVerified, setIsVerified] = useState(false)
   const [accountType, setAccountType] = useState<"individual" | "organization" | "">("")
   const [organizationName, setOrganizationName] = useState("")
   
@@ -69,7 +64,6 @@ export default function Auth() {
     resolver: zodResolver(signUpSchema),
     defaultValues: {
       email: "",
-      verificationCode: "",
       accountType: "individual",
       organizationName: "",
       password: "",
@@ -108,7 +102,7 @@ export default function Auth() {
   function handleSignUpEmailSubmit() {
     if (signUpEmail && signUpEmail.includes("@")) {
       setIsLoading(true)
-      console.log("Sending verification code to:", signUpEmail)
+      console.log("Sending verification link to:", signUpEmail)
       
       setTimeout(() => {
         setIsLoading(false)
@@ -117,33 +111,15 @@ export default function Auth() {
     }
   }
 
-  function handleVerificationSubmit() {
-    if (verificationCode.length === 6) {
-      setIsLoading(true)
-      console.log("Verifying code:", verificationCode)
-      
-      setTimeout(() => {
-        setIsLoading(false)
-        setSignUpStep(3)
-      }, 1000)
-    }
-  }
-
-  function handleAccountTypeSubmit() {
-    if (accountType) {
-      if (accountType === "individual") {
-        setSignUpStep(4)
-      } else {
-        setSignUpStep(4) // Will show org name field in step 4
-      }
-    }
+  function handleVerificationComplete() {
+    setIsVerified(true)
+    setSignUpStep(3)
   }
 
   function handleSignUpSubmit() {
     setIsLoading(true)
     const signUpData = {
       email: signUpEmail,
-      verificationCode,
       accountType,
       organizationName: accountType === "organization" ? organizationName : undefined,
       password: signUpForm.getValues("password")
@@ -255,13 +231,12 @@ export default function Auth() {
 
                 {detectedOrg && (
                   <div className="space-y-2">
-                    <Label htmlFor="organization" className="text-sm font-semibold text-gray-700">
+                    <Label className="text-sm font-semibold text-gray-700">
                       Organization
                     </Label>
                     <div className="relative">
                       <Building className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <Input
-                        id="organization"
                         type="text"
                         value={detectedOrg}
                         readOnly
@@ -354,37 +329,28 @@ export default function Auth() {
                   <div className="space-y-6">
                     <div className="text-center mb-4">
                       <p className="text-sm text-gray-600">
-                        We've sent a verification code to <span className="font-medium">{signUpEmail}</span>
+                        We've sent a verification link to <span className="font-medium">{signUpEmail}</span>
+                      </p>
+                      <p className="text-xs text-gray-500 mt-2">
+                        Please check your email and click the verification link to continue.
                       </p>
                     </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm font-semibold text-gray-700">
-                        Verification Code
-                      </Label>
-                      <div className="flex justify-center">
-                        <InputOTP
-                          maxLength={6}
-                          value={verificationCode}
-                          onChange={(value) => setVerificationCode(value)}
-                        >
-                          <InputOTPGroup>
-                            <InputOTPSlot index={0} />
-                            <InputOTPSlot index={1} />
-                            <InputOTPSlot index={2} />
-                            <InputOTPSlot index={3} />
-                            <InputOTPSlot index={4} />
-                            <InputOTPSlot index={5} />
-                          </InputOTPGroup>
-                        </InputOTP>
-                      </div>
-                    </div>
                     <Button
-                      onClick={handleVerificationSubmit}
+                      onClick={handleVerificationComplete}
                       className="w-full h-12 font-semibold text-sm rounded-xl"
-                      disabled={isLoading || verificationCode.length !== 6}
+                      disabled={isLoading}
                     >
-                      {isLoading ? "Verifying..." : "Verify"}
+                      {isLoading ? "Verifying..." : "I've verified my email"}
                     </Button>
+                    <div className="text-center">
+                      <button
+                        type="button"
+                        onClick={handleSignUpEmailSubmit}
+                        className="text-sm text-indigo-600 hover:text-indigo-500 font-semibold transition-colors"
+                      >
+                        Resend verification link
+                      </button>
+                    </div>
                   </div>
                 )}
 
@@ -414,18 +380,7 @@ export default function Auth() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <Button
-                      onClick={handleAccountTypeSubmit}
-                      className="w-full h-12 font-semibold text-sm rounded-xl"
-                      disabled={!accountType}
-                    >
-                      Continue
-                    </Button>
-                  </div>
-                )}
 
-                {signUpStep === 4 && (
-                  <div className="space-y-6">
                     {accountType === "organization" && (
                       <div className="space-y-2">
                         <Label htmlFor="org-name" className="text-sm font-semibold text-gray-700">
@@ -474,7 +429,7 @@ export default function Auth() {
                     <Button
                       onClick={handleSignUpSubmit}
                       className="w-full h-12 font-semibold text-sm rounded-xl"
-                      disabled={isLoading || (accountType === "organization" && !organizationName)}
+                      disabled={isLoading || !accountType || (accountType === "organization" && !organizationName)}
                     >
                       {isLoading ? "Creating Account..." : "Create Account"}
                     </Button>
