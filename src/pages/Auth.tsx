@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
-import { Eye, EyeOff, Lock, Mail, Building2 } from "lucide-react"
+import { Eye, EyeOff, Lock, Mail } from "lucide-react"
 import ForgotPasswordDialog from "@/components/ForgotPasswordDialog"
 
 const signInSchema = z.object({
@@ -18,16 +18,15 @@ const signInSchema = z.object({
   password: z.string().min(8, {
     message: "Password must be at least 8 characters.",
   }),
-  organizationId: z.string().optional(),
 })
 
 type SignInData = z.infer<typeof signInSchema>
 
 export default function Auth() {
-  const [authMode, setAuthMode] = useState<"signin" | "signin-with-org" | "admin-signin">("signin")
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showForgotPassword, setShowForgotPassword] = useState(false)
+  const [detectedOrg, setDetectedOrg] = useState("")
   const navigate = useNavigate()
   
   const signInForm = useForm<SignInData>({
@@ -35,9 +34,25 @@ export default function Auth() {
     defaultValues: {
       email: "",
       password: "",
-      organizationId: "",
     },
   })
+
+  const watchEmail = signInForm.watch("email")
+
+  // Detect organization from email domain
+  React.useEffect(() => {
+    if (watchEmail && watchEmail.includes("@")) {
+      const domain = watchEmail.split("@")[1]
+      if (domain && domain !== "gmail.com" && domain !== "yahoo.com" && domain !== "hotmail.com" && domain !== "outlook.com") {
+        const orgName = domain.split(".")[0]
+        setDetectedOrg(orgName.charAt(0).toUpperCase() + orgName.slice(1))
+      } else {
+        setDetectedOrg("")
+      }
+    } else {
+      setDetectedOrg("")
+    }
+  }, [watchEmail])
 
   function onSignInSubmit(data: SignInData) {
     setIsLoading(true)
@@ -47,61 +62,6 @@ export default function Auth() {
       setIsLoading(false)
       navigate("/")
     }, 1500)
-  }
-
-  function onAdminSignIn(data: SignInData) {
-    setIsLoading(true)
-    console.log("Demo Admin Sign In - bypassing authentication:", data)
-    
-    setTimeout(() => {
-      setIsLoading(false)
-      navigate("/admin")
-    }, 1500)
-  }
-
-  const getTitle = () => {
-    if (authMode === "admin-signin") return "Admin Portal"
-    if (authMode === "signin-with-org") return "Welcome Back"
-    return "Welcome Back"
-  }
-
-  const getSubTitle = () => {
-    if (authMode === "admin-signin") {
-      return (
-        <>
-          Regular user?{" "}
-          <button
-            type="button"
-            onClick={() => setAuthMode("signin")}
-            className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all underline-offset-2 hover:underline"
-          >
-            Sign in here
-          </button>
-        </>
-      )
-    }
-    return (
-      <>
-        Need help?{" "}
-        <button
-          type="button"
-          onClick={() => setShowForgotPassword(true)}
-          className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all underline-offset-2 hover:underline"
-        >
-          Contact support
-        </button>
-      </>
-    )
-  }
-
-  const getStepDescription = () => {
-    if (authMode === "admin-signin") {
-      return "Access the admin dashboard to manage users and permissions"
-    }
-    if (authMode === "signin-with-org") {
-      return "Enter your organization details and credentials"
-    }
-    return "Enter your credentials to access your account"
   }
 
   return (
@@ -178,172 +138,95 @@ export default function Auth() {
         <Card className="w-full max-w-md bg-white/95 backdrop-blur-sm shadow-2xl border-0 rounded-3xl overflow-hidden relative z-10 transition-shadow duration-300 hover:shadow-3xl">
           <CardHeader className="pb-6 pt-12 px-12 text-left">
             <CardTitle className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
-              {getTitle()}
+              Welcome Back
             </CardTitle>
             <div className="space-y-2">
               <p className="text-gray-600 text-sm leading-relaxed">
-                {getSubTitle()}
+                Need help?{" "}
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all underline-offset-2 hover:underline"
+                >
+                  Contact support
+                </button>
               </p>
               <p className="text-gray-500 text-xs">
-                {getStepDescription()}
+                Enter your credentials to access your account
               </p>
             </div>
           </CardHeader>
 
           <CardContent className="px-12 pb-12">
-            {/* Login Type Selection */}
-            <div className="space-y-3 mb-8">
-              <Button
-                type="button"
-                variant={authMode === "signin-with-org" ? "default" : "outline"}
-                onClick={() => setAuthMode("signin-with-org")}
-                className="w-full h-12 font-semibold text-sm rounded-xl transition-all"
-              >
-                Login with Organization
-              </Button>
-              <Button
-                type="button"
-                variant={authMode === "signin" ? "default" : "outline"}
-                onClick={() => setAuthMode("signin")}
-                className="w-full h-12 font-semibold text-sm rounded-xl transition-all"
-              >
-                Standard Login
-              </Button>
-            </div>
-
-            {/* Admin Sign In Form */}
-            {authMode === "admin-signin" && (
-              <form onSubmit={signInForm.handleSubmit(onAdminSignIn)} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="admin-email" className="text-sm font-semibold text-gray-700">
-                    Admin Email
-                  </Label>
-                  <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <Input
-                      id="admin-email"
-                      type="email"
-                      placeholder="admin@company.com"
-                      className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
-                      {...signInForm.register("email")}
-                    />
-                  </div>
-                  {signInForm.formState.errors.email && (
-                    <p className="text-xs text-red-500 mt-1">{signInForm.formState.errors.email.message}</p>
-                  )}
+            <form onSubmit={signInForm.handleSubmit(onSignInSubmit)} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-semibold text-gray-700">
+                  Email Address
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@company.com"
+                    className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
+                    {...signInForm.register("email")}
+                  />
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="admin-password" className="text-sm font-semibold text-gray-700">
-                    Admin Password
-                  </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <Input
-                      id="admin-password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter admin password"
-                      className="w-full h-12 pl-12 pr-12 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
-                      {...signInForm.register("password")}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                    </button>
-                  </div>
-                  {signInForm.formState.errors.password && (
-                    <p className="text-xs text-red-500 mt-1">{signInForm.formState.errors.password.message}</p>
-                  )}
-                </div>
-
-                <Button
-                  type="submit"
-                  className="w-full h-12 font-semibold text-sm rounded-xl mt-8"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Accessing admin portal..." : "Access Admin Portal"}
-                </Button>
-              </form>
-            )}
-
-            {/* Standard Login Forms */}
-            {(authMode === "signin" || authMode === "signin-with-org") && (
-              <form onSubmit={signInForm.handleSubmit(onSignInSubmit)} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-semibold text-gray-700">
-                    Email Address
-                  </Label>
-                  <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="you@company.com"
-                      className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
-                      {...signInForm.register("email")}
-                    />
-                  </div>
-                  {signInForm.formState.errors.email && (
-                    <p className="text-xs text-red-500 mt-1">{signInForm.formState.errors.email.message}</p>
-                  )}
-                </div>
-
-                {authMode === "signin-with-org" && (
-                  <div className="space-y-2">
-                    <Label htmlFor="organizationId" className="text-sm font-semibold text-gray-700">
-                      Organization
-                    </Label>
-                    <div className="relative">
-                      <Building2 className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <Input
-                        id="organizationId"
-                        type="text"
-                        placeholder="Your organization name"
-                        className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
-                        {...signInForm.register("organizationId")}
-                      />
-                    </div>
-                  </div>
+                {signInForm.formState.errors.email && (
+                  <p className="text-xs text-red-500 mt-1">{signInForm.formState.errors.email.message}</p>
                 )}
+                {detectedOrg && (
+                  <p className="text-xs text-indigo-600 mt-1 font-medium">
+                    Organization: {detectedOrg}
+                  </p>
+                )}
+              </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-sm font-semibold text-gray-700">
-                    Password
-                  </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
-                      className="w-full h-12 pl-12 pr-12 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
-                      {...signInForm.register("password")}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                    </button>
-                  </div>
-                  {signInForm.formState.errors.password && (
-                    <p className="text-xs text-red-500 mt-1">{signInForm.formState.errors.password.message}</p>
-                  )}
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-semibold text-gray-700">
+                  Password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    className="w-full h-12 pl-12 pr-12 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
+                    {...signInForm.register("password")}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
                 </div>
+                {signInForm.formState.errors.password && (
+                  <p className="text-xs text-red-500 mt-1">{signInForm.formState.errors.password.message}</p>
+                )}
+              </div>
 
-                <Button
-                  type="submit"
-                  className="w-full h-12 font-semibold text-sm rounded-xl mt-8"
-                  disabled={isLoading}
+              <div className="text-right">
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-sm text-indigo-600 hover:text-indigo-500 font-semibold transition-colors"
                 >
-                  {isLoading ? "Signing you in..." : "Sign In"}
-                </Button>
-              </form>
-            )}
+                  Forgot password?
+                </button>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full h-12 font-semibold text-sm rounded-xl mt-8"
+                disabled={isLoading}
+              >
+                {isLoading ? "Signing you in..." : "Sign In"}
+              </Button>
+            </form>
 
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
@@ -366,7 +249,7 @@ export default function Auth() {
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                 </svg>
-                <span className="text-gray-700">Continue with Google</span>
+                <span className="text-gray-700">Sign in with Google</span>
               </Button>
               
               <Button
@@ -380,22 +263,9 @@ export default function Auth() {
                   <path fill="#00A4EF" d="M0 12.628h11.377V24H0z"/>
                   <path fill="#FFB900" d="M12.623 12.628H24V24H12.623z"/>
                 </svg>
-                <span className="text-gray-700">Continue with Microsoft</span>
+                <span className="text-gray-700">Sign in with Microsoft</span>
               </Button>
             </div>
-
-            {/* Add Admin Access Link */}
-            {authMode !== "admin-signin" && (
-              <div className="text-center mt-4">
-                <button
-                  type="button"
-                  onClick={() => setAuthMode("admin-signin")}
-                  className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
-                >
-                  Admin? Access admin portal →
-                </button>
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>
