@@ -535,77 +535,16 @@ const Index = () => {
                         <span className="text-gray-700 font-bold text-sm font-comfortaa">e</span>
                       </div>
                       <div className="ml-3 flex-1">
-                        <div className="relative overflow-hidden max-w-md">
-                          {/* Compact gradient wave animation */}
-                          <div className="relative h-3 bg-gray-100 rounded-full overflow-hidden">
-                            <div 
-                              className="absolute inset-0 bg-gradient-to-r from-transparent via-[#595fb7] via-[#4e50a8] via-[#6366f1] to-transparent opacity-90"
-                              style={{
-                                animation: 'compactWave 2s ease-in-out infinite',
-                                background: 'linear-gradient(90deg, transparent 0%, #595fb7 25%, #4e50a8 50%, #6366f1 75%, transparent 100%)',
-                                transform: 'translateX(-100%)',
-                                width: '150%'
-                              }}
-                            />
-                            {/* Shimmer effect */}
-                            <div 
-                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white via-transparent to-transparent opacity-40"
-                              style={{
-                                animation: 'compactShimmer 1.5s ease-in-out infinite 0.3s',
-                                background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.9) 50%, transparent 100%)',
-                                transform: 'translateX(-100%)',
-                                width: '120%'
-                              }}
-                            />
-                          </div>
-
-                          {/* Floating micro orbs */}
-                          <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-                            <div 
-                              className="absolute w-1 h-1 bg-gradient-to-r from-[#595fb7] to-[#4e50a8] rounded-full opacity-70"
-                              style={{
-                                animation: 'microOrb1 3s ease-in-out infinite',
-                                left: '15%',
-                                top: '25%'
-                              }}
-                            />
-                            <div 
-                              className="absolute w-0.5 h-0.5 bg-gradient-to-r from-[#4e50a8] to-[#6366f1] rounded-full opacity-60"
-                              style={{
-                                animation: 'microOrb2 2.5s ease-in-out infinite',
-                                left: '65%',
-                                top: '75%'
-                              }}
-                            />
-                            <div 
-                              className="absolute w-0.5 h-0.5 bg-gradient-to-r from-[#6366f1] to-[#595fb7] rounded-full opacity-50"
-                              style={{
-                                animation: 'microOrb3 3.5s ease-in-out infinite',
-                                left: '80%',
-                                top: '20%'
-                              }}
-                            />
-                          </div>
-
-                          {/* Compact status text */}
-                          <div className="mt-3 flex items-center gap-2">
-                            <div className="relative">
-                              <div className="w-2 h-2 rounded-full bg-gradient-to-r from-[#595fb7] to-[#4e50a8] animate-pulse"></div>
-                              <div 
-                                className="absolute inset-0 w-2 h-2 rounded-full bg-gradient-to-r from-[#595fb7] to-[#4e50a8] opacity-30"
-                                style={{ animation: 'compactPing 1.5s cubic-bezier(0, 0, 0.2, 1) infinite' }}
-                              />
-                            </div>
-                            <div className="text-xs text-gray-600 font-medium">
-                              <span className="bg-gradient-to-r from-[#595fb7] to-[#4e50a8] bg-clip-text text-transparent animate-pulse">
-                                Thinking
-                              </span>
-                              <span 
-                                className="inline-block ml-1 text-[#4e50a8]"
-                                style={{ animation: 'compactDots 1.2s steps(4, end) infinite' }}
-                              >
-                                ...</span>
-                            </div>
+                        <div className="flex items-center gap-2">
+                          <div className="text-sm text-gray-600 font-medium">
+                            <span className="bg-gradient-to-r from-[#595fb7] to-[#4e50a8] bg-clip-text text-transparent">
+                              Thinking
+                            </span>
+                            <span className="inline-block ml-1 text-[#4e50a8]">
+                              <span className="animate-pulse">.</span>
+                              <span className="animate-pulse" style={{ animationDelay: '0.2s' }}>.</span>
+                              <span className="animate-pulse" style={{ animationDelay: '0.4s' }}>.</span>
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -642,46 +581,6 @@ const Index = () => {
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes compactWave {
-          0% { transform: translateX(-100%); }
-          50% { transform: translateX(30%); }
-          100% { transform: translateX(150%); }
-        }
-        
-        @keyframes compactShimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(150%); }
-        }
-        
-        @keyframes microOrb1 {
-          0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.7; }
-          33% { transform: translateY(-4px) translateX(6px) scale(1.3); opacity: 0.9; }
-          66% { transform: translateY(-2px) translateX(8px) scale(0.8); opacity: 0.4; }
-        }
-        
-        @keyframes microOrb2 {
-          0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.6; }
-          40% { transform: translateY(-3px) translateX(-5px) scale(1.2); opacity: 0.8; }
-          80% { transform: translateY(-1px) translateX(-3px) scale(0.9); opacity: 0.3; }
-        }
-        
-        @keyframes microOrb3 {
-          0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.5; }
-          50% { transform: translateY(-2px) translateX(-4px) scale(1.1); opacity: 0.7; }
-        }
-        
-        @keyframes compactPing {
-          75%, 100% { transform: scale(2); opacity: 0; }
-        }
-        
-        @keyframes compactDots {
-          0%, 20% { content: '.'; }
-          40% { content: '..'; }
-          60%, 100% { content: '...'; }
-        }
-      `}</style>
     </div>
   );
 };
