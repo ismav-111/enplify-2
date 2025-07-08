@@ -27,6 +27,7 @@ export default function Auth() {
   const [showPassword, setShowPassword] = useState(false)
   const [showForgotPassword, setShowForgotPassword] = useState(false)
   const [detectedOrg, setDetectedOrg] = useState("")
+  const [showPasswordField, setShowPasswordField] = useState(false)
   const navigate = useNavigate()
   
   const signInForm = useForm<SignInData>({
@@ -39,7 +40,7 @@ export default function Auth() {
 
   const watchEmail = signInForm.watch("email")
 
-  // Detect organization from email domain
+  // Detect organization from email domain and show password field
   React.useEffect(() => {
     if (watchEmail && watchEmail.includes("@")) {
       const domain = watchEmail.split("@")[1]
@@ -49,8 +50,10 @@ export default function Auth() {
       } else {
         setDetectedOrg("")
       }
+      setShowPasswordField(true)
     } else {
       setDetectedOrg("")
+      setShowPasswordField(false)
     }
   }, [watchEmail])
 
@@ -181,49 +184,53 @@ export default function Auth() {
                 </div>
               )}
 
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-semibold text-gray-700">
-                  Password
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    className="w-full h-12 pl-12 pr-12 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
-                    {...signInForm.register("password")}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              {showPasswordField && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-sm font-semibold text-gray-700">
+                      Password
+                    </Label>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter your password"
+                        className="w-full h-12 pl-12 pr-12 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
+                        {...signInForm.register("password")}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      </button>
+                    </div>
+                    {signInForm.formState.errors.password && (
+                      <p className="text-xs text-red-500 mt-1">{signInForm.formState.errors.password.message}</p>
+                    )}
+                  </div>
+
+                  <div className="text-right">
+                    <button
+                      type="button"
+                      onClick={() => setShowForgotPassword(true)}
+                      className="text-sm text-indigo-600 hover:text-indigo-500 font-semibold transition-colors"
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full h-12 font-semibold text-sm rounded-xl mt-8"
+                    disabled={isLoading}
                   >
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                  </button>
-                </div>
-                {signInForm.formState.errors.password && (
-                  <p className="text-xs text-red-500 mt-1">{signInForm.formState.errors.password.message}</p>
-                )}
-              </div>
-
-              <div className="text-right">
-                <button
-                  type="button"
-                  onClick={() => setShowForgotPassword(true)}
-                  className="text-sm text-indigo-600 hover:text-indigo-500 font-semibold transition-colors"
-                >
-                  Forgot password?
-                </button>
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full h-12 font-semibold text-sm rounded-xl mt-8"
-                disabled={isLoading}
-              >
-                {isLoading ? "Signing you in..." : "Sign In"}
-              </Button>
+                    {isLoading ? "Signing you in..." : "Sign In"}
+                  </Button>
+                </>
+              )}
             </form>
 
             <div className="relative my-6">
