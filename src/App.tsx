@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import AdminDashboard from "./pages/AdminDashboard";
+import Welcome from "./pages/Welcome";
 
 // Add Comfortaa font
 import "./styles/fonts.css";
@@ -23,6 +24,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/welcome" element={<Welcome />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/signin" element={<Auth />} />
           <Route path="/signup" element={<Auth />} />
