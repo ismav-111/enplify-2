@@ -1,14 +1,15 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Server, Cloud, ChevronDown } from 'lucide-react';
+import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Server, Cloud, ChevronDown, Rocket, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 interface DataSourceType {
   id: string;
@@ -154,6 +155,15 @@ const DataSourceSettings = () => {
   const [expandedSource, setExpandedSource] = useState<string | null>(null);
   const [connectingSource, setConnectingSource] = useState<string | null>(null);
   const [connectionProgress, setConnectionProgress] = useState(0);
+  const [showWelcomeDialog, setShowWelcomeDialog] = useState(true);
+
+  // Auto-expand first data source for quick setup
+  useEffect(() => {
+    const firstUnconnectedSource = dataSources.find(source => !connectedSources[source.id]);
+    if (firstUnconnectedSource && showWelcomeDialog) {
+      setExpandedSource(firstUnconnectedSource.id);
+    }
+  }, [connectedSources, showWelcomeDialog]);
 
   // Filter data sources based on search query and category
   const getFilteredDataSources = () => {
@@ -213,7 +223,46 @@ const DataSourceSettings = () => {
   };
 
   return (
-    <div className="space-y-8">
+    <>
+      {/* Welcome Dialog */}
+      <Dialog open={showWelcomeDialog} onOpenChange={setShowWelcomeDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="text-center space-y-4">
+            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center animate-pulse">
+              <Rocket className="w-8 h-8 text-white" />
+            </div>
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Let's Get You Connected!
+            </DialogTitle>
+            <DialogDescription className="text-base text-gray-600 leading-relaxed">
+              Welcome to your AI assistant! To unlock the full potential and get the most accurate responses, let's connect your data sources. 
+              <br /><br />
+              <span className="inline-flex items-center gap-1 text-blue-600 font-medium">
+                <Sparkles className="w-4 h-4" />
+                Start by connecting your first data source below!
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-3 mt-6">
+            <Button 
+              onClick={() => setShowWelcomeDialog(false)}
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3"
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              Let's Start Connecting!
+            </Button>
+            <Button 
+              variant="ghost" 
+              onClick={() => setShowWelcomeDialog(false)}
+              className="w-full text-gray-500 hover:text-gray-700"
+            >
+              I'll do this later
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+    <div className="space-y-8 animate-fade-in">
       {/* Header Section */}
       <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm">
         <div className="flex items-center justify-between mb-4">
@@ -446,6 +495,7 @@ const DataSourceSettings = () => {
         ))}
       </div>
     </div>
+    </>
   );
 };
 
