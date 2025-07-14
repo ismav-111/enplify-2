@@ -1,16 +1,26 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProfileSettings from '@/components/settings/ProfileSettings';
 import DataSourceSettings from '@/components/settings/DataSourceSettings';
 import { ChevronLeft, LogOut } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 const Settings = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState("profile");
+
+  // Check URL parameters for tab selection
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const tab = searchParams.get('tab');
+    if (tab === 'data-sources') {
+      setActiveTab('data-sources');
+    }
+  }, [location.search]);
 
   const handleLogout = () => {
     toast.success('Logged out successfully');

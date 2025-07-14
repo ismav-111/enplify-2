@@ -95,7 +95,7 @@ export default function Auth() {
     
     setTimeout(() => {
       setIsLoading(false)
-      navigate("/welcome")
+      navigate("/settings?tab=data-sources")
     }, 1500)
   }
 
@@ -128,7 +128,7 @@ export default function Auth() {
     
     setTimeout(() => {
       setIsLoading(false)
-      navigate("/welcome")
+      navigate("/settings?tab=data-sources")
     }, 1500)
   }
 
