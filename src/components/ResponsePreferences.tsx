@@ -9,8 +9,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { BarChart3, Table, FileText, Database, Brain, FileSpreadsheet, ChevronDown, ChevronUp } from 'lucide-react';
+import { 
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { BarChart3, Table, FileText, Database, Brain, FileSpreadsheet, Settings, Sparkles } from 'lucide-react';
 
 export interface ResponsePreferences {
   format: 'table' | 'graph' | 'text';
@@ -37,86 +43,78 @@ const dataSourceOptions = [
 ] as const;
 
 const ResponsePreferences = ({ preferences, onPreferencesChange, className = '' }: ResponsePreferencesProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const selectedFormat = formatOptions.find(opt => opt.value === preferences.format);
   const selectedDataSource = dataSourceOptions.find(opt => opt.value === preferences.dataSource);
 
   return (
-    <Card className={`border-2 border-dashed border-gray-200 bg-gradient-to-r from-gray-50/50 to-blue-50/30 hover:border-blue-300 transition-all duration-200 ${className}`}>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-            <h3 className="text-sm font-semibold text-gray-700">Response Preferences</h3>
-          </div>
+    <div className={`fixed bottom-6 right-6 z-50 ${className}`}>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTrigger asChild>
           <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="text-xs text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+            size="icon"
+            className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 btn-primary group relative overflow-hidden"
           >
-            {isExpanded ? (
-              <>
-                <ChevronUp size={14} className="mr-1" />
-                Collapse
-              </>
-            ) : (
-              <>
-                <ChevronDown size={14} className="mr-1" />
-                Customize
-              </>
-            )}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 animate-pulse rounded-full"></div>
+            <Sparkles className="h-6 w-6 text-white relative z-10 group-hover:rotate-12 transition-transform duration-300" />
           </Button>
-        </div>
+        </DialogTrigger>
+        
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-lg">
+              <Settings className="h-5 w-5 text-primary" />
+              Response Preferences
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            {/* Current Selection Summary */}
+            <div className="flex flex-wrap items-center gap-2 p-3 bg-gray-50 rounded-lg">
+              <Badge 
+                variant="secondary" 
+                className={`flex items-center gap-1.5 px-3 py-1 ${selectedFormat?.color} border font-medium`}
+              >
+                {selectedFormat?.icon && <selectedFormat.icon size={14} />}
+                {selectedFormat?.label}
+              </Badge>
+              <Badge 
+                variant="outline" 
+                className={`flex items-center gap-1.5 px-3 py-1 ${selectedDataSource?.color} border font-medium`}
+              >
+                {selectedDataSource?.icon && <selectedDataSource.icon size={14} />}
+                {selectedDataSource?.label}
+              </Badge>
+            </div>
 
-        {/* Current Selection Summary */}
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge 
-            variant="secondary" 
-            className={`flex items-center gap-1.5 px-3 py-1 ${selectedFormat?.color} border font-medium`}
-          >
-            {selectedFormat?.icon && <selectedFormat.icon size={14} />}
-            {selectedFormat?.label}
-          </Badge>
-          <Badge 
-            variant="outline" 
-            className={`flex items-center gap-1.5 px-3 py-1 ${selectedDataSource?.color} border font-medium`}
-          >
-            {selectedDataSource?.icon && <selectedDataSource.icon size={14} />}
-            {selectedDataSource?.label}
-          </Badge>
-        </div>
-      </CardHeader>
-
-      {isExpanded && (
-        <CardContent className="pt-0 animate-fade-in">
-          <div className="space-y-6">
             {/* Response Format Selection */}
             <div>
               <label className="text-sm font-semibold text-gray-700 mb-3 block">Response Format</label>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 gap-2">
                 {formatOptions.map((option) => (
                   <button
                     key={option.value}
                     onClick={() => onPreferencesChange({ ...preferences, format: option.value })}
-                    className={`p-4 rounded-xl border-2 text-left transition-all duration-200 hover:shadow-md group ${
+                    className={`p-3 rounded-lg border-2 text-left transition-all duration-200 hover:shadow-sm ${
                       preferences.format === option.value
-                        ? `${option.color} border-current shadow-sm scale-105`
+                        ? `${option.color} border-current shadow-sm`
                         : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50'
                     }`}
                   >
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-center gap-3">
                       <div className={`p-2 rounded-lg ${
                         preferences.format === option.value 
                           ? 'bg-white/80' 
-                          : 'bg-gray-100 group-hover:bg-gray-200'
-                      } transition-colors`}>
-                        <option.icon size={18} />
+                          : 'bg-gray-100'
+                      }`}>
+                        <option.icon size={16} />
                       </div>
-                      <span className="text-sm font-semibold">{option.label}</span>
+                      <div>
+                        <div className="text-sm font-semibold">{option.label}</div>
+                        <div className="text-xs opacity-80">{option.description}</div>
+                      </div>
                     </div>
-                    <p className="text-xs opacity-80 leading-relaxed">{option.description}</p>
                   </button>
                 ))}
               </div>
@@ -131,14 +129,14 @@ const ResponsePreferences = ({ preferences, onPreferencesChange, className = '' 
                   onPreferencesChange({ ...preferences, dataSource: value })
                 }
               >
-                <SelectTrigger className="w-full h-12 bg-white border-2 border-gray-200 hover:border-gray-300 focus:border-blue-500 transition-colors">
+                <SelectTrigger className="w-full h-12 bg-white border-2 border-gray-200 hover:border-gray-300 focus:border-blue-500">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-white border-2 border-gray-200 shadow-lg">
                   {dataSourceOptions.map((option) => (
                     <SelectItem key={option.value} value={option.value} className="p-3 hover:bg-gray-50 cursor-pointer">
                       <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${option.color} transition-colors`}>
+                        <div className={`p-2 rounded-lg ${option.color}`}>
                           <option.icon size={16} />
                         </div>
                         <div>
@@ -152,9 +150,9 @@ const ResponsePreferences = ({ preferences, onPreferencesChange, className = '' 
               </Select>
             </div>
           </div>
-        </CardContent>
-      )}
-    </Card>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 
