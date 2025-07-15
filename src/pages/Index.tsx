@@ -216,6 +216,12 @@ const Index = () => {
       <div className="flex-1 flex flex-col h-screen bg-white">
         {/* Fixed Top Bar with Files and User Icons */}
         <div className="absolute top-4 right-4 z-30 flex gap-2">
+          {/* Response Preferences */}
+          <ResponsePreferences
+            preferences={responsePreferences}
+            onPreferencesChange={setResponsePreferences}
+          />
+          
           {/* Files Icon with Popover */}
           <Popover>
             <PopoverTrigger asChild>
@@ -528,17 +534,6 @@ const Index = () => {
           </Dialog>
         )}
 
-        {/* Response Preferences Bar */}
-        {hasMessages && (
-          <div className="flex-shrink-0 w-full bg-white border-b border-gray-100 py-3">
-            <div className="max-w-5xl mx-auto px-6">
-              <ResponsePreferences
-                preferences={responsePreferences}
-                onPreferencesChange={setResponsePreferences}
-              />
-            </div>
-          </div>
-        )}
 
         {/* Scrollable Chat Content - Increased width */}
         <div className="flex-1 overflow-hidden">
@@ -583,13 +578,6 @@ const Index = () => {
                     </p>
                   </div>
                   
-                  {/* Response Preferences for New Chat */}
-                  <div className="w-full max-w-lg mb-8">
-                    <ResponsePreferences
-                      preferences={responsePreferences}
-                      onPreferencesChange={setResponsePreferences}
-                    />
-                  </div>
                 </div>
               </div>
             )}

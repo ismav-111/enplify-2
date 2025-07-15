@@ -6,7 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { BarChart3, Table, FileText, Database, Brain, FileSpreadsheet, Layout, Check } from 'lucide-react';
+import { BarChart3, Table, FileText, Database, Brain, FileSpreadsheet, Filter, Check } from 'lucide-react';
 
 export interface ResponsePreferences {
   format: 'table' | 'graph' | 'text';
@@ -72,10 +72,10 @@ const ResponsePreferences = ({ preferences, onPreferencesChange, className = '' 
         <PopoverTrigger asChild>
           <Button 
             variant="ghost" 
-            size="sm"
-            className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md"
+            size="icon"
+            className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow hover:bg-blue-50 transition-colors"
           >
-            <Layout className="h-4 w-4" />
+            <Filter size={18} className="text-[#4E50A8] hover:text-blue-700 transition-colors" />
           </Button>
         </PopoverTrigger>
         
