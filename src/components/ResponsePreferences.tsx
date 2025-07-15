@@ -6,7 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { BarChart3, Table, FileText, Database, Brain, FileSpreadsheet, Filter, Check } from 'lucide-react';
+import { BarChart3, Table, FileText, Database, Brain, FileSpreadsheet, LayoutGrid, Check } from 'lucide-react';
 
 export interface ResponsePreferences {
   format: 'table' | 'graph' | 'text';
@@ -75,54 +75,68 @@ const ResponsePreferences = ({ preferences, onPreferencesChange, className = '',
           <Button 
             variant="ghost" 
             size="icon"
-            className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow hover:bg-blue-50 transition-colors"
+            className="h-10 w-10 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200/80 shadow-sm hover:shadow-md hover:from-slate-100 hover:to-slate-200 transition-all duration-200 group"
           >
-            <Filter size={18} className="text-[#4E50A8] hover:text-blue-700 transition-colors" />
+            <LayoutGrid size={18} className="text-slate-600 group-hover:text-slate-700 transition-colors" />
           </Button>
         </PopoverTrigger>
         
-        <PopoverContent className="w-64 p-3" align="end">
-          <div className="space-y-3">
-            <h4 className="text-sm font-medium text-foreground">Output Format</h4>
+        <PopoverContent className="w-80 p-0 shadow-xl border-0 bg-white/95 backdrop-blur-sm" align="end">
+          <div className="p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                <LayoutGrid size={20} className="text-white" />
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold text-slate-800">Output Preferences</h4>
+                <p className="text-sm text-slate-500">Customize your response format</p>
+              </div>
+            </div>
             
             {/* Data Source selection - only for encore mode */}
             {mode === 'encore' && (
-              <div className="space-y-2">
-                <label className="text-xs text-muted-foreground">Data Source</label>
-                <div className="grid grid-cols-2 gap-1">
+              <div className="mb-6">
+                <label className="text-sm font-medium text-slate-700 mb-3 block">Data Source</label>
+                <div className="grid grid-cols-1 gap-2">
                   {dataSourceOptions.map((option) => (
                     <button
                       key={option.value}
                       onClick={() => handleDataSourceChange(option.value)}
-                      className={`flex items-center gap-2 p-2 rounded-md text-xs transition-colors ${
+                      className={`flex items-center gap-3 p-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                         preferences.dataSource === option.value
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted hover:bg-muted/80 text-muted-foreground'
+                          ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/25'
+                          : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200'
                       }`}
                     >
-                      <option.icon className="h-3 w-3" />
-                      {option.label}
+                      <option.icon className="h-4 w-4 flex-shrink-0" />
+                      <span>{option.label}</span>
+                      {preferences.dataSource === option.value && (
+                        <Check className="h-4 w-4 ml-auto" />
+                      )}
                     </button>
                   ))}
                 </div>
               </div>
             )}
 
-            <div className="space-y-2">
-              <label className="text-xs text-muted-foreground">Format</label>
-              <div className={`grid gap-1 ${availableFormats.length === 3 ? 'grid-cols-3' : availableFormats.length === 2 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-3 block">Output Format</label>
+              <div className={`grid gap-2 ${availableFormats.length === 3 ? 'grid-cols-3' : availableFormats.length === 2 ? 'grid-cols-2' : 'grid-cols-1'}`}>
                 {availableFormats.map((option) => (
                   <button
                     key={option.value}
                     onClick={() => onPreferencesChange({ ...preferences, format: option.value })}
-                    className={`flex flex-col items-center gap-1 p-2 rounded-md text-xs transition-colors ${
+                    className={`flex flex-col items-center gap-2 p-4 rounded-lg text-sm font-medium transition-all duration-200 ${
                       preferences.format === option.value
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted hover:bg-muted/80 text-muted-foreground'
+                        ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/25'
+                        : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-300'
                     }`}
                   >
-                    <option.icon className="h-3 w-3" />
-                    {option.label}
+                    <option.icon className="h-5 w-5" />
+                    <span>{option.label}</span>
+                    {preferences.format === option.value && (
+                      <Check className="h-3 w-3" />
+                    )}
                   </button>
                 ))}
               </div>
