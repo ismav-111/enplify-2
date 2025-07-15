@@ -10,7 +10,7 @@ import { BarChart3, Table, FileText, Database, Brain, FileSpreadsheet, Filter, C
 
 export interface ResponsePreferences {
   format: 'table' | 'graph' | 'text';
-  dataSource: 'sql' | 'vector' | 'documents' | 'spreadsheets';
+  dataSource: 'sql' | 'vector' | 'snowflake';
 }
 
 interface ResponsePreferencesProps {
@@ -27,9 +27,8 @@ const allFormatOptions = [
 
 const dataSourceOptions = [
   { value: 'sql', label: 'SQL', icon: Database },
-  { value: 'vector', label: 'Vector', icon: Brain },
-  { value: 'documents', label: 'Docs', icon: FileText },
-  { value: 'spreadsheets', label: 'Snowflake', icon: FileSpreadsheet },
+  { value: 'vector', label: 'Vector DB', icon: Brain },
+  { value: 'snowflake', label: 'Snowflake', icon: FileSpreadsheet },
 ] as const;
 
 const ResponsePreferences = ({ preferences, onPreferencesChange, className = '' }: ResponsePreferencesProps) => {
@@ -40,10 +39,8 @@ const ResponsePreferences = ({ preferences, onPreferencesChange, className = '' 
     switch (preferences.dataSource) {
       case 'vector':
         return allFormatOptions.filter(opt => opt.value === 'text');
-      case 'documents':
-        return allFormatOptions.filter(opt => opt.value === 'table');
       case 'sql':
-      case 'spreadsheets':
+      case 'snowflake':
       default:
         return allFormatOptions;
     }
@@ -59,8 +56,6 @@ const ResponsePreferences = ({ preferences, onPreferencesChange, className = '' 
     
     if (newDataSource === 'vector' && preferences.format !== 'text') {
       newFormat = 'text';
-    } else if (newDataSource === 'documents' && preferences.format !== 'table') {
-      newFormat = 'table';
     }
     
     onPreferencesChange({ dataSource: newDataSource, format: newFormat });
