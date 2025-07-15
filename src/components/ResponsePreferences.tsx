@@ -37,12 +37,9 @@ const ResponsePreferences = ({ preferences, onPreferencesChange, className = '',
 
   // Filter format options based on data source and mode
   const getAvailableFormats = () => {
-    // For endocs and ensights, show only relevant formats based on their nature
-    if (mode === 'endocs') {
-      return allFormatOptions.filter(opt => opt.value === 'table');
-    }
-    if (mode === 'ensights') {
-      return allFormatOptions.filter(opt => opt.value !== 'text'); // table and graph
+    // For endocs and ensights, show all format options
+    if (mode === 'endocs' || mode === 'ensights') {
+      return allFormatOptions; // table, graph, text
     }
     
     // For encore mode, filter based on data source
