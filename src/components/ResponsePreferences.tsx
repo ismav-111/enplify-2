@@ -17,6 +17,7 @@ interface ResponsePreferencesProps {
   preferences: ResponsePreferences;
   onPreferencesChange: (preferences: ResponsePreferences) => void;
   className?: string;
+  mode?: 'encore' | 'endocs' | 'ensights';
 }
 
 const allFormatOptions = [
@@ -31,11 +32,20 @@ const dataSourceOptions = [
   { value: 'snowflake', label: 'Snowflake', icon: FileSpreadsheet },
 ] as const;
 
-const ResponsePreferences = ({ preferences, onPreferencesChange, className = '' }: ResponsePreferencesProps) => {
+const ResponsePreferences = ({ preferences, onPreferencesChange, className = '', mode = 'encore' }: ResponsePreferencesProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Filter format options based on data source
+  // Filter format options based on data source and mode
   const getAvailableFormats = () => {
+    // For endocs and ensights, show only relevant formats based on their nature
+    if (mode === 'endocs') {
+      return allFormatOptions.filter(opt => opt.value === 'table');
+    }
+    if (mode === 'ensights') {
+      return allFormatOptions.filter(opt => opt.value !== 'text'); // table and graph
+    }
+    
+    // For encore mode, filter based on data source
     switch (preferences.dataSource) {
       case 'vector':
         return allFormatOptions.filter(opt => opt.value === 'text');
@@ -78,25 +88,28 @@ const ResponsePreferences = ({ preferences, onPreferencesChange, className = '' 
           <div className="space-y-3">
             <h4 className="text-sm font-medium text-foreground">Output Format</h4>
             
-            <div className="space-y-2">
-              <label className="text-xs text-muted-foreground">Data Source</label>
-              <div className="grid grid-cols-2 gap-1">
-                {dataSourceOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => handleDataSourceChange(option.value)}
-                    className={`flex items-center gap-2 p-2 rounded-md text-xs transition-colors ${
-                      preferences.dataSource === option.value
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted hover:bg-muted/80 text-muted-foreground'
-                    }`}
-                  >
-                    <option.icon className="h-3 w-3" />
-                    {option.label}
-                  </button>
-                ))}
+            {/* Data Source selection - only for encore mode */}
+            {mode === 'encore' && (
+              <div className="space-y-2">
+                <label className="text-xs text-muted-foreground">Data Source</label>
+                <div className="grid grid-cols-2 gap-1">
+                  {dataSourceOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => handleDataSourceChange(option.value)}
+                      className={`flex items-center gap-2 p-2 rounded-md text-xs transition-colors ${
+                        preferences.dataSource === option.value
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted hover:bg-muted/80 text-muted-foreground'
+                      }`}
+                    >
+                      <option.icon className="h-3 w-3" />
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="space-y-2">
               <label className="text-xs text-muted-foreground">Format</label>
