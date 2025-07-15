@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import type { ResponsePreferences } from '@/components/ResponsePreferences';
 
 interface Message {
   id: string;
@@ -378,7 +379,7 @@ Would you like me to provide more specific guidance on any aspect of this topic?
     }
   };
 
-  const sendMessage = useCallback(async (content: string, mode: ResponseMode = 'encore', file?: File) => {
+  const sendMessage = useCallback(async (content: string, mode: ResponseMode = 'encore', file?: File, preferences?: ResponsePreferences) => {
     // Ensure mode is a valid enum value
     const safeMode: ResponseMode = 
       mode === 'encore' || mode === 'endocs' || mode === 'ensights' ? mode : 'encore';
@@ -420,37 +421,51 @@ Would you like me to provide more specific guidance on any aspect of this topic?
     setIsLoading(true);
     setCurrentMode(safeMode);
 
-    // Simulate AI response based on mode with enterprise context
+    // Simulate AI response based on mode with enterprise context and preferences
     setTimeout(() => {
       let aiMessage: Message;
+      
+      // Generate response content based on preferences
+      let responseContent = getEnterpriseResponse(content, safeMode);
+      
+      if (preferences) {
+        // Add preference-aware response modifications
+        if (preferences.format === 'table' && safeMode === 'endocs') {
+          responseContent += `\n\n*Response formatted as table view based on your preferences, sourced from ${preferences.dataSource}.*`;
+        } else if (preferences.format === 'graph' && safeMode === 'ensights') {
+          responseContent += `\n\n*Response includes interactive charts based on your preferences, using ${preferences.dataSource} data.*`;
+        } else if (preferences.format === 'text') {
+          responseContent += `\n\n*Response provided in detailed text format as requested, analyzed from ${preferences.dataSource}.*`;
+        }
+      }
       
       switch(safeMode) {
         case 'endocs':
           aiMessage = {
             id: (Date.now() + 1).toString(),
-            content: getEnterpriseResponse(content, 'endocs'),
+            content: responseContent,
             isUser: false,
             timestamp: new Date(),
             mode: 'endocs',
-            tableData: generateTableData()
+            tableData: preferences?.format === 'table' ? generateTableData() : undefined
           };
           break;
           
         case 'ensights':
           aiMessage = {
             id: (Date.now() + 1).toString(),
-            content: getEnterpriseResponse(content, 'ensights'),
+            content: responseContent,
             isUser: false,
             timestamp: new Date(),
             mode: 'ensights',
-            chartData: generateChartData()
+            chartData: preferences?.format === 'graph' ? generateChartData() : undefined
           };
           break;
           
         default: // encore
           aiMessage = {
             id: (Date.now() + 1).toString(),
-            content: getEnterpriseResponse(content, 'encore'),
+            content: responseContent,
             isUser: false,
             timestamp: new Date(),
             mode: 'encore'

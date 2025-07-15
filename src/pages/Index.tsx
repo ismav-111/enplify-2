@@ -2,6 +2,7 @@ import { useChat } from '@/hooks/useChat';
 import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
 import MessageInput from '@/components/MessageInput';
+import ResponsePreferences, { ResponsePreferences as ResponsePreferencesType } from '@/components/ResponsePreferences';
 import { useEffect, useState } from 'react';
 import { Files, Settings, User, Search, Eye, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -59,6 +60,12 @@ const Index = () => {
     renameConversation
   } = useChat();
 
+  // Response preferences state
+  const [responsePreferences, setResponsePreferences] = useState<ResponsePreferencesType>({
+    format: 'text',
+    dataSource: 'vector'
+  });
+
   // Updated to make chatSessionId required for all files
   const [uploadedFiles, setUploadedFiles] = useState<FileItem[]>([
     { id: '1', name: 'quarterly_report.pdf', type: 'application/pdf', size: 2500000, date: new Date(2023, 4, 15), url: '/placeholder.svg', chatSessionId: '1' },
@@ -108,7 +115,8 @@ const Index = () => {
       setUploadedFiles(prev => [...prev, ...newFiles]);
     }
     
-    sendMessage(message, mode, files?.[0]); // Keep single file for backward compatibility
+    // Include response preferences in the message
+    sendMessage(message, mode, files?.[0], responsePreferences);
   };
 
   const handleStopGeneration = () => {
@@ -520,6 +528,18 @@ const Index = () => {
           </Dialog>
         )}
 
+        {/* Response Preferences Bar */}
+        {hasMessages && (
+          <div className="flex-shrink-0 w-full bg-white border-b border-gray-100 py-3">
+            <div className="max-w-5xl mx-auto px-6">
+              <ResponsePreferences
+                preferences={responsePreferences}
+                onPreferencesChange={setResponsePreferences}
+              />
+            </div>
+          </div>
+        )}
+
         {/* Scrollable Chat Content - Increased width */}
         <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full">
@@ -561,6 +581,14 @@ const Index = () => {
                       Your intelligent AI assistant. Ask me anything and I'll provide 
                       helpful insights, answers, and information.
                     </p>
+                  </div>
+                  
+                  {/* Response Preferences for New Chat */}
+                  <div className="w-full max-w-lg mb-8">
+                    <ResponsePreferences
+                      preferences={responsePreferences}
+                      onPreferencesChange={setResponsePreferences}
+                    />
                   </div>
                 </div>
               </div>
