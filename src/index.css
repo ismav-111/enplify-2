@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -204,4 +203,50 @@ em, i {
 /* Override any heading size classes */
 .text-sm, .text-lg, .text-xl, .text-2xl, .text-3xl, .text-4xl, .text-5xl, .text-6xl, .text-7xl, .text-8xl, .text-9xl {
   font-size: 16px !important;
+}
+
+/* Unified Icon Hover State - applies to all icons across the application */
+svg, 
+[data-lucide], 
+.lucide,
+[class*="lucide-"],
+button svg,
+a svg {
+  transition: all 0.2s ease-in-out !important;
+}
+
+svg:hover, 
+[data-lucide]:hover, 
+.lucide:hover,
+[class*="lucide-"]:hover,
+button:hover svg,
+a:hover svg,
+button[data-state="open"] svg,
+[aria-expanded="true"] svg {
+  color: hsl(var(--primary)) !important;
+  transform: scale(1.1) !important;
+}
+
+/* Ensure clickable elements with icons have proper cursor */
+button:has(svg),
+[role="button"]:has(svg),
+a:has(svg) {
+  cursor: pointer;
+}
+
+/* Override specific hover states to use unified approach */
+button[data-testid="settings-button"]:hover svg,
+.settings-button:hover svg,
+button:has(svg[data-lucide="settings"]):hover svg {
+  color: hsl(var(--primary)) !important;
+  transform: scale(1.1) !important;
+  background-color: transparent !important;
+}
+
+/* Remove conflicting hover styles */
+button[data-testid="settings-button"]:hover,
+.settings-button:hover,
+button:has(svg[data-lucide="settings"]):hover {
+  background-color: transparent !important;
+  color: inherit !important;
 }
