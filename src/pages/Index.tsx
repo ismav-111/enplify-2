@@ -216,11 +216,13 @@ const Index = () => {
       <div className="flex-1 flex flex-col h-screen bg-white">
         {/* Fixed Top Bar with Files and User Icons */}
         <div className="absolute top-4 right-4 z-30 flex gap-2">
-          {/* Response Preferences */}
-          <ResponsePreferences
-            preferences={responsePreferences}
-            onPreferencesChange={setResponsePreferences}
-          />
+          {/* Response Preferences - Only show for encore mode */}
+          {currentConversation?.mode === 'encore' && (
+            <ResponsePreferences
+              preferences={responsePreferences}
+              onPreferencesChange={setResponsePreferences}
+            />
+          )}
           
           {/* Files Icon with Popover */}
           <Popover>

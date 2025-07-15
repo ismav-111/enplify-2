@@ -388,9 +388,16 @@ Would you like me to provide more specific guidance on any aspect of this topic?
     const currentConversation = conversations.find(conv => conv.id === activeConversation);
     let activeConvId = activeConversation;
     
-    // Create a new conversation if the mode has changed or if there's no active conversation
-    if (!currentConversation || currentConversation.mode !== safeMode) {
+    // Only create a new conversation if there's no active conversation, not for mode changes
+    if (!currentConversation) {
       activeConvId = createNewChat(safeMode);
+    } else {
+      // Update the current conversation's mode without creating a new one
+      setConversations(prev => prev.map(conv => 
+        conv.id === activeConversation 
+          ? { ...conv, mode: safeMode }
+          : conv
+      ));
     }
 
     const userMessage: Message = {
