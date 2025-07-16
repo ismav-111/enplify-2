@@ -197,50 +197,70 @@ em, i {
   font-size: 16px !important;
 }
 
-/* Unified Icon Hover State - applies to all icons across the application */
-svg, 
-[data-lucide], 
-.lucide,
-[class*="lucide-"],
-button svg,
-a svg {
-  transition: all 0.2s ease-in-out !important;
+/* Button Hover States - Proper button interactions */
+button {
+  transition: all 0.2s ease-in-out;
 }
 
-/* Single unified hover state for ALL icons */
-svg:hover,
-[data-lucide]:hover,
-.lucide:hover,
-[class*="lucide-"]:hover,
-button:hover svg,
-a:hover svg,
-button[data-state="open"] svg,
-[aria-expanded="true"] svg {
+/* Default button hover - subtle background change */
+button:hover {
+  background-color: hsl(var(--muted)) !important;
+}
+
+/* Primary buttons - maintain their gradient hover */
+button[data-variant="default"]:hover,
+.btn-primary:hover {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%) !important;
+  box-shadow: 0 8px 25px 0 rgba(99, 102, 241, 0.4) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Secondary buttons */
+button[data-variant="secondary"]:hover {
+  background-color: hsl(var(--secondary)) !important;
+  color: hsl(var(--secondary-foreground)) !important;
+}
+
+/* Outline buttons */
+button[data-variant="outline"]:hover {
+  background-color: hsl(var(--accent)) !important;
+  color: hsl(var(--accent-foreground)) !important;
+}
+
+/* Ghost buttons */
+button[data-variant="ghost"]:hover {
+  background-color: hsl(var(--accent)) !important;
+  color: hsl(var(--accent-foreground)) !important;
+}
+
+/* Button pressed states */
+button:active,
+button[data-state="pressed"] {
+  transform: scale(0.98);
+}
+
+/* Icon Hover States - Only for standalone icons, not inside buttons */
+svg:not(button svg):not(button * svg),
+[data-lucide]:not(button [data-lucide]):not(button * [data-lucide]),
+.lucide:not(button .lucide):not(button * .lucide),
+[class*="lucide-"]:not(button [class*="lucide-"]):not(button * [class*="lucide-"]) {
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+svg:not(button svg):not(button * svg):hover,
+[data-lucide]:not(button [data-lucide]):not(button * [data-lucide]):hover,
+.lucide:not(button .lucide):not(button * .lucide):hover,
+[class*="lucide-"]:not(button [class*="lucide-"]):not(button * [class*="lucide-"]):hover {
   color: hsl(var(--primary)) !important;
   transform: scale(1.1) !important;
 }
 
-/* Ensure clickable elements with icons have proper cursor */
-button:has(svg),
-[role="button"]:has(svg),
-a:has(svg) {
-  cursor: pointer;
-}
-
-/* Remove ALL other conflicting hover styles for buttons/icons */
-button:hover,
-.settings-button:hover,
-button[data-testid="settings-button"]:hover {
-  background-color: transparent !important;
+/* Icons inside buttons - subtle hover effect only when button is hovered */
+button:hover svg,
+button:hover [data-lucide],
+button:hover .lucide,
+button:hover [class*="lucide-"] {
   color: inherit !important;
-}
-
-/* Clean button hover states - only scale the icon, not the button */
-button {
-  transition: none !important;
-}
-
-button:hover {
-  background-color: transparent !important;
   transform: none !important;
 }
