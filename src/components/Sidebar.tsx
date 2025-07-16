@@ -40,6 +40,12 @@ const Sidebar = ({
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
 
+  // Function to truncate title with ellipsis
+  const truncateTitle = (title: string, maxLength: number = 25) => {
+    if (title.length <= maxLength) return title;
+    return title.substring(0, maxLength) + '...';
+  };
+
   const handleRenameClick = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     const conversation = conversations.find(conv => conv.id === id);
@@ -156,7 +162,7 @@ const Sidebar = ({
                     activeConversation === conv.id ? 'bg-[#F1F1F9]' : ''
                   }`}
                 >
-                  <div className="flex items-center">
+                  <div className="flex items-center justify-between">
                     {editingConversation === conv.id ? (
                       <div className="flex items-center gap-2 w-full">
                         <input
@@ -195,9 +201,11 @@ const Sidebar = ({
                       </div>
                     ) : (
                       <>
-                        <p className="text-sm font-medium text-gray-800 truncate">{conv.title}</p>
+                        <p className="text-sm font-medium text-gray-800 flex-1 pr-2" title={conv.title}>
+                          {truncateTitle(conv.title)}
+                        </p>
                         {hoveredConversation === conv.id && (
-                          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-1">
+                          <div className="flex gap-1 flex-shrink-0">
                             <Button 
                               variant="ghost" 
                               size="icon" 
