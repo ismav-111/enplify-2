@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -128,15 +129,6 @@
   margin-bottom: 5px !important;
 }
 
-/* Fix settings hover issue - proper hover state */
-button[data-testid="settings-button"]:hover,
-.settings-button:hover,
-button:has(svg[data-lucide="settings"]):hover {
-  background-color: rgba(99, 102, 241, 0.1) !important;
-  color: rgb(99, 102, 241) !important;
-  transition: all 0.2s ease-in-out !important;
-}
-
 /* Updated chat loader with gradient */
 .chat-loader,
 .loader,
@@ -215,8 +207,9 @@ a svg {
   transition: all 0.2s ease-in-out !important;
 }
 
-svg:hover, 
-[data-lucide]:hover, 
+/* Single unified hover state for ALL icons */
+svg:hover,
+[data-lucide]:hover,
 .lucide:hover,
 [class*="lucide-"]:hover,
 button:hover svg,
@@ -234,19 +227,20 @@ a:has(svg) {
   cursor: pointer;
 }
 
-/* Override specific hover states to use unified approach */
-button[data-testid="settings-button"]:hover svg,
-.settings-button:hover svg,
-button:has(svg[data-lucide="settings"]):hover svg {
-  color: hsl(var(--primary)) !important;
-  transform: scale(1.1) !important;
-  background-color: transparent !important;
-}
-
-/* Remove conflicting hover styles */
-button[data-testid="settings-button"]:hover,
+/* Remove ALL other conflicting hover styles for buttons/icons */
+button:hover,
 .settings-button:hover,
-button:has(svg[data-lucide="settings"]):hover {
+button[data-testid="settings-button"]:hover {
   background-color: transparent !important;
   color: inherit !important;
+}
+
+/* Clean button hover states - only scale the icon, not the button */
+button {
+  transition: none !important;
+}
+
+button:hover {
+  background-color: transparent !important;
+  transform: none !important;
 }

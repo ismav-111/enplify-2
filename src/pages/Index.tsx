@@ -230,8 +230,8 @@ const Index = () => {
           {showFilesIcon && (
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow relative hover:bg-blue-50 transition-colors">
-                  <Files size={18} className="text-[#4E50A8] hover:text-blue-700 transition-colors" />
+                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow relative transition-colors">
+                  <Files size={18} className="text-[#4E50A8] transition-colors" />
                   {sessionFiles.length > 0 && (
                     <span className="absolute -top-1 -right-1 bg-[#4E50A8] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
                       {sessionFiles.length}
@@ -476,7 +476,7 @@ const Index = () => {
           {/* User avatar */}
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow hover:bg-blue-50 transition-colors">
+              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow transition-colors">
                 <Avatar className="h-10 w-10">
                   <AvatarFallback className="bg-white text-gray-700">
                     <User size={18} />
@@ -484,24 +484,24 @@ const Index = () => {
                 </Avatar>
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-60 p-4 shadow-lg" align="end">
+            <PopoverContent className="w-64 p-4 shadow-lg" align="end">
               <div className="space-y-4">
                 <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
-                  <Avatar className="h-12 w-12">
+                  <Avatar className="h-12 w-12 flex-shrink-0">
                     <AvatarFallback className="bg-white text-[#4E50A8]">
                       <User size={20} />
                     </AvatarFallback>
                   </Avatar>
-                  <div>
-                    <p className="text-sm font-medium text-gray-800">Andrew Neilson</p>
-                    <p className="text-xs text-gray-500">andrew@example.com</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-gray-800 truncate">Andrew Neilson</p>
+                    <p className="text-xs text-gray-500 truncate">andrew@example.com</p>
                   </div>
                 </div>
                 <Link to="/settings" className="block w-full">
                   <Button 
                     variant="ghost" 
                     size="sm"
-                    className="w-full justify-start text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                    className="w-full justify-start text-gray-700 transition-colors"
                   >
                     <Settings size={16} className="mr-2" />
                     Settings
@@ -539,7 +539,6 @@ const Index = () => {
             </DialogContent>
           </Dialog>
         )}
-
 
         {/* Scrollable Chat Content - Increased width */}
         <div className="flex-1 overflow-hidden">
