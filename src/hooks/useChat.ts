@@ -104,15 +104,9 @@ export const useChat = () => {
     const safeMode: ResponseMode = typeof mode === 'string' ? 
       (mode as ResponseMode) : 'encore';
       
-    // Create mode-specific title with proper capitalization
-    let modeName = '';
-    if (safeMode === 'encore') modeName = 'Encore';
-    else if (safeMode === 'endocs') modeName = 'Endocs';
-    else if (safeMode === 'ensights') modeName = 'Ensights';
-    
     const newConversation: Conversation = {
       id: Date.now().toString(),
-      title: `New ${modeName} Conversation`,
+      title: 'Untitled Conversation',
       preview: 'Start a new conversation...',
       mode: safeMode,
       messages: []
