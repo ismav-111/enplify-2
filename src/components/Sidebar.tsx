@@ -41,7 +41,7 @@ const Sidebar = ({
   const [editTitle, setEditTitle] = useState('');
 
   // Function to truncate title with ellipsis
-  const truncateTitle = (title: string, maxLength: number = 25) => {
+  const truncateTitle = (title: string, maxLength: number = 20) => {
     if (title.length <= maxLength) return title;
     return title.substring(0, maxLength) + '...';
   };
@@ -201,7 +201,7 @@ const Sidebar = ({
                       </div>
                     ) : (
                       <>
-                        <p className="text-sm font-medium text-gray-800 flex-1 pr-2" title={conv.title}>
+                        <p className="text-sm font-medium text-gray-800 flex-1 pr-2 whitespace-nowrap overflow-hidden" title={conv.title}>
                           {truncateTitle(conv.title)}
                         </p>
                         {hoveredConversation === conv.id && (
