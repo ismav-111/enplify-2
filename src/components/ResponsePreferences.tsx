@@ -35,37 +35,14 @@ const dataSourceOptions = [
 const ResponsePreferences = ({ preferences, onPreferencesChange, className = '', mode = 'encore' }: ResponsePreferencesProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Filter format options based on data source and mode
-  const getAvailableFormats = () => {
-    // For endocs and ensights, show all format options
-    if (mode === 'endocs' || mode === 'ensights') {
-      return allFormatOptions; // table, graph, text
-    }
-    
-    // For encore mode, filter based on data source
-    switch (preferences.dataSource) {
-      case 'vector':
-        return allFormatOptions.filter(opt => opt.value === 'text');
-      case 'sql':
-      case 'snowflake':
-      default:
-        return allFormatOptions;
-    }
-  };
-
-  const availableFormats = getAvailableFormats();
+  // Show all format options for all modes
+  const availableFormats = allFormatOptions;
   const selectedFormat = allFormatOptions.find(opt => opt.value === preferences.format);
   const selectedDataSource = dataSourceOptions.find(opt => opt.value === preferences.dataSource);
 
-  // Auto-adjust format when data source changes
+  // Handle data source changes without format restrictions
   const handleDataSourceChange = (newDataSource: ResponsePreferences['dataSource']) => {
-    let newFormat = preferences.format;
-    
-    if (newDataSource === 'vector' && preferences.format !== 'text') {
-      newFormat = 'text';
-    }
-    
-    onPreferencesChange({ dataSource: newDataSource, format: newFormat });
+    onPreferencesChange({ ...preferences, dataSource: newDataSource });
   };
 
   return (
