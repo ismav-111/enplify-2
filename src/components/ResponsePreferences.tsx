@@ -62,31 +62,29 @@ const ResponsePreferences = ({ preferences, onPreferencesChange, className = '',
           <div className="p-4">
             <h4 className="text-sm font-medium text-gray-800 mb-4">Output Format</h4>
             
-            {/* Data Source selection - only for encore mode */}
-            {mode === 'encore' && (
-              <div className="mb-4">
-                <label className="text-xs text-gray-500 mb-2 block">Data Source</label>
-                <div className="space-y-1">
-                  {dataSourceOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => handleDataSourceChange(option.value)}
-                      className={`w-full flex items-center gap-2 p-2 rounded-md text-sm transition-colors ${
-                        preferences.dataSource === option.value
-                          ? 'bg-gray-100 text-gray-900'
-                          : 'text-gray-600 hover:bg-gray-50'
-                      }`}
-                    >
-                      <option.icon className="h-4 w-4" />
-                      <span className="flex-1 text-left">{option.label}</span>
-                      {preferences.dataSource === option.value && (
-                        <Check className="h-3 w-3" />
-                      )}
-                    </button>
-                  ))}
-                </div>
+            {/* Data Source selection - now available for all modes */}
+            <div className="mb-4">
+              <label className="text-xs text-gray-500 mb-2 block">Data Source</label>
+              <div className="space-y-1">
+                {dataSourceOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => handleDataSourceChange(option.value)}
+                    className={`w-full flex items-center gap-2 p-2 rounded-md text-sm transition-colors ${
+                      preferences.dataSource === option.value
+                        ? 'bg-gray-100 text-gray-900'
+                        : 'text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    <option.icon className="h-4 w-4" />
+                    <span className="flex-1 text-left">{option.label}</span>
+                    {preferences.dataSource === option.value && (
+                      <Check className="h-3 w-3" />
+                    )}
+                  </button>
+                ))}
               </div>
-            )}
+            </div>
 
             <div>
               <label className="text-xs text-gray-500 mb-2 block">Format</label>
