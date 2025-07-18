@@ -2,7 +2,6 @@ import { useChat } from '@/hooks/useChat';
 import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
 import MessageInput from '@/components/MessageInput';
-import ResponsePreferences, { ResponsePreferences as ResponsePreferencesType } from '@/components/ResponsePreferences';
 import { useEffect, useState } from 'react';
 import { Files, Settings, User, Search, Eye, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -60,11 +59,6 @@ const Index = () => {
     renameConversation
   } = useChat();
 
-  // Response preferences state
-  const [responsePreferences, setResponsePreferences] = useState<ResponsePreferencesType>({
-    format: 'text',
-    dataSource: 'vector'
-  });
 
   // Updated to make chatSessionId required for all files
   const [uploadedFiles, setUploadedFiles] = useState<FileItem[]>([
@@ -115,8 +109,8 @@ const Index = () => {
       setUploadedFiles(prev => [...prev, ...newFiles]);
     }
     
-    // Include response preferences in the message
-    sendMessage(message, mode, files?.[0], responsePreferences);
+    // Send message without response preferences
+    sendMessage(message, mode, files?.[0]);
   };
 
   const handleStopGeneration = () => {
@@ -219,12 +213,6 @@ const Index = () => {
       <div className="flex-1 flex flex-col h-screen bg-white">
         {/* Fixed Top Bar with Files and User Icons */}
         <div className="absolute top-4 right-4 z-30 flex gap-2">
-          {/* Response Preferences */}
-          <ResponsePreferences
-            preferences={responsePreferences}
-            onPreferencesChange={setResponsePreferences}
-            mode={currentConversation?.mode || 'encore'}
-          />
           
           {/* Files Icon with Popover - Only show if not encore mode */}
           {showFilesIcon && (
