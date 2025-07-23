@@ -4,12 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Server, Cloud, ChevronDown, Rocket, Sparkles, Warehouse, HardDrive, FolderOpen, Share2, MessageSquare } from 'lucide-react';
+import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Server, Cloud, ChevronDown, Rocket, Sparkles, Warehouse, HardDrive, FolderOpen, Share2, MessageSquare, Plus, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface DataSourceType {
   id: string;
@@ -224,15 +225,11 @@ const dataSourceCategories = {
   websources: [
     {
       id: 'socialmedia',
-      name: 'Social media channels (Facebook, Twitter, LinkedIn, Instagram)',
-      description: 'Connect to your social media channels',
+      name: 'Social media channels',
+      description: 'Connect to your social media platforms',
       icon: MessageSquare,
       isConnected: false,
-      fields: [
-        { id: 'platform', label: 'Platform', type: 'text', placeholder: 'Facebook, Twitter, LinkedIn, Instagram', required: true },
-        { id: 'api_key', label: 'API Key', type: 'password', placeholder: '••••••••', required: true },
-        { id: 'access_token', label: 'Access Token', type: 'password', placeholder: '••••••••', required: true },
-      ]
+      fields: []
     },
     {
       id: 'website',
@@ -302,6 +299,20 @@ const dataSources: DataSourceType[] = [
   ...dataSourceCategories.enterprise
 ];
 
+// Social media platforms
+const socialMediaPlatforms = [
+  { id: 'facebook', name: 'Facebook', icon: MessageSquare },
+  { id: 'twitter', name: 'Twitter', icon: MessageSquare },
+  { id: 'linkedin', name: 'LinkedIn', icon: MessageSquare },
+  { id: 'instagram', name: 'Instagram', icon: MessageSquare },
+  { id: 'youtube', name: 'YouTube', icon: Youtube },
+  { id: 'tiktok', name: 'TikTok', icon: MessageSquare },
+  { id: 'snapchat', name: 'Snapchat', icon: MessageSquare },
+  { id: 'pinterest', name: 'Pinterest', icon: MessageSquare },
+  { id: 'reddit', name: 'Reddit', icon: MessageSquare },
+  { id: 'telegram', name: 'Telegram', icon: MessageSquare }
+];
+
 const DataSourceSettings = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -315,6 +326,8 @@ const DataSourceSettings = () => {
   const [connectingSource, setConnectingSource] = useState<string | null>(null);
   const [connectionProgress, setConnectionProgress] = useState(0);
   const [showWelcomeDialog, setShowWelcomeDialog] = useState(true);
+  const [connectedSocialPlatforms, setConnectedSocialPlatforms] = useState<string[]>([]);
+  const [selectedSocialPlatform, setSelectedSocialPlatform] = useState<string>('');
 
   // Auto-expand first data source for quick setup
   useEffect(() => {
@@ -379,6 +392,19 @@ const DataSourceSettings = () => {
 
   const toggleExpanded = (sourceId: string) => {
     setExpandedSource(expandedSource === sourceId ? null : sourceId);
+  };
+
+  const addSocialPlatform = () => {
+    if (selectedSocialPlatform && !connectedSocialPlatforms.includes(selectedSocialPlatform)) {
+      setConnectedSocialPlatforms(prev => [...prev, selectedSocialPlatform]);
+      setSelectedSocialPlatform('');
+      toast.success(`Added ${socialMediaPlatforms.find(p => p.id === selectedSocialPlatform)?.name}`);
+    }
+  };
+
+  const removeSocialPlatform = (platformId: string) => {
+    setConnectedSocialPlatforms(prev => prev.filter(id => id !== platformId));
+    toast.success(`Removed ${socialMediaPlatforms.find(p => p.id === platformId)?.name}`);
   };
 
   return (
@@ -633,34 +659,110 @@ const DataSourceSettings = () => {
                         </Button>
                       </div>
                     </div>
-                  ) : (
+                   ) : (
                     <div className="bg-white rounded-lg border border-gray-200 p-5">
-                      <form className="space-y-4">
-                        {source.fields.map((field) => (
-                          <div key={field.id} className="space-y-2">
-                            <label htmlFor={`${source.id}-${field.id}`} className="block text-sm font-medium text-gray-700">
-                              {field.label} {field.required && <span className="text-red-500">*</span>}
-                            </label>
-                            <Input 
-                              id={`${source.id}-${field.id}`} 
-                              type={field.type}
-                              placeholder={field.placeholder}
-                              required={field.required}
-                              className="h-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                            />
+                      {source.id === 'socialmedia' ? (
+                        <div className="space-y-4">
+                          <div>
+                            <h4 className="font-medium text-gray-900 mb-3">Connected Social Media Platforms</h4>
+                            {connectedSocialPlatforms.length > 0 ? (
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                                {connectedSocialPlatforms.map((platformId) => {
+                                  const platform = socialMediaPlatforms.find(p => p.id === platformId);
+                                  return (
+                                    <div key={platformId} className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                                      <div className="flex items-center gap-2">
+                                        <platform.icon className="h-4 w-4 text-green-600" />
+                                        <span className="text-sm font-medium text-green-900">{platform.name}</span>
+                                      </div>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => removeSocialPlatform(platformId)}
+                                        className="h-6 w-6 p-0 text-green-600 hover:text-red-600 hover:bg-red-50"
+                                      >
+                                        <X className="h-3 w-3" />
+                                      </Button>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            ) : (
+                              <p className="text-sm text-gray-500 mb-4">No social media platforms connected yet.</p>
+                            )}
                           </div>
-                        ))}
-                        <div className="pt-3 border-t border-gray-100">
-                          <Button 
-                            type="button" 
-                            onClick={() => handleConnect(source.id)}
-                            disabled={connectingSource !== null}
-                            variant="secondary"
-                          >
-                            Connect to {source.name}
-                          </Button>
+                          
+                          <div className="space-y-3">
+                            <label className="block text-sm font-medium text-gray-700">Add Social Media Platform</label>
+                            <div className="flex gap-2">
+                              <Select value={selectedSocialPlatform} onValueChange={setSelectedSocialPlatform}>
+                                <SelectTrigger className="flex-1">
+                                  <SelectValue placeholder="Select a platform" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {socialMediaPlatforms
+                                    .filter(platform => !connectedSocialPlatforms.includes(platform.id))
+                                    .map((platform) => (
+                                      <SelectItem key={platform.id} value={platform.id}>
+                                        <div className="flex items-center gap-2">
+                                          <platform.icon className="h-4 w-4" />
+                                          {platform.name}
+                                        </div>
+                                      </SelectItem>
+                                    ))}
+                                </SelectContent>
+                              </Select>
+                              <Button
+                                type="button"
+                                onClick={addSocialPlatform}
+                                disabled={!selectedSocialPlatform}
+                                size="sm"
+                                className="px-3"
+                              >
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          
+                          <div className="pt-3 border-t border-gray-100">
+                            <Button 
+                              type="button" 
+                              onClick={() => handleConnect(source.id)}
+                              disabled={connectingSource !== null || connectedSocialPlatforms.length === 0}
+                              variant="secondary"
+                            >
+                              Connect
+                            </Button>
+                          </div>
                         </div>
-                      </form>
+                      ) : (
+                        <form className="space-y-4">
+                          {source.fields.map((field) => (
+                            <div key={field.id} className="space-y-2">
+                              <label htmlFor={`${source.id}-${field.id}`} className="block text-sm font-medium text-gray-700">
+                                {field.label} {field.required && <span className="text-red-500">*</span>}
+                              </label>
+                              <Input 
+                                id={`${source.id}-${field.id}`} 
+                                type={field.type}
+                                placeholder={field.placeholder}
+                                required={field.required}
+                                className="h-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                              />
+                            </div>
+                          ))}
+                          <div className="pt-3 border-t border-gray-100">
+                            <Button 
+                              type="button" 
+                              onClick={() => handleConnect(source.id)}
+                              disabled={connectingSource !== null}
+                              variant="secondary"
+                            >
+                              Connect
+                            </Button>
+                          </div>
+                        </form>
+                      )}
                     </div>
                   )}
                 </div>
