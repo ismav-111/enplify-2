@@ -3,23 +3,35 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Plus, Trash2, Globe, Youtube, Database } from 'lucide-react';
+import { Plus, Trash2, Globe, Youtube, Facebook, Twitter, Instagram, Linkedin, Database, ExternalLink } from 'lucide-react';
 
 const DataSourceSettings = () => {
   const [connectedSources, setConnectedSources] = useState([
     { id: 1, type: 'website', name: 'company-website.com', status: 'connected' },
     { id: 2, type: 'youtube', name: 'Company Channel', status: 'connected' },
+    { id: 3, type: 'facebook', name: 'Company Facebook', status: 'connected' },
   ]);
   
   const [newWebsite, setNewWebsite] = useState('');
   const [selectedSocialMedia, setSelectedSocialMedia] = useState('');
   const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [youtubeType, setYoutubeType] = useState('');
 
   const socialMediaPlatforms = [
-    'Facebook', 'Twitter', 'Instagram', 'LinkedIn', 'TikTok', 'YouTube', 'Pinterest'
+    { value: 'facebook', label: 'Facebook', icon: Facebook },
+    { value: 'twitter', label: 'Twitter', icon: Twitter },
+    { value: 'instagram', label: 'Instagram', icon: Instagram },
+    { value: 'linkedin', label: 'LinkedIn', icon: Linkedin },
+    { value: 'tiktok', label: 'TikTok', icon: Database },
+    { value: 'pinterest', label: 'Pinterest', icon: Database },
+  ];
+
+  const youtubeTypes = [
+    { value: 'channel', label: 'Channel' },
+    { value: 'playlist', label: 'Playlist' },
+    { value: 'video', label: 'Specific Video' },
   ];
 
   const handleAddWebsite = () => {
@@ -38,28 +50,30 @@ const DataSourceSettings = () => {
 
   const handleAddSocialMedia = () => {
     if (selectedSocialMedia) {
+      const platform = socialMediaPlatforms.find(p => p.value === selectedSocialMedia);
       const newSource = {
         id: Date.now(),
-        type: 'social',
-        name: selectedSocialMedia,
+        type: selectedSocialMedia,
+        name: platform?.label || selectedSocialMedia,
         status: 'connected'
       };
       setConnectedSources([...connectedSources, newSource]);
       setSelectedSocialMedia('');
-      toast.success(`${selectedSocialMedia} connected successfully`);
+      toast.success(`${platform?.label} connected successfully`);
     }
   };
 
   const handleAddYoutube = () => {
-    if (youtubeUrl.trim()) {
+    if (youtubeUrl.trim() && youtubeType) {
       const newSource = {
         id: Date.now(),
         type: 'youtube',
-        name: youtubeUrl,
+        name: `${youtubeType}: ${youtubeUrl}`,
         status: 'connected'
       };
       setConnectedSources([...connectedSources, newSource]);
       setYoutubeUrl('');
+      setYoutubeType('');
       toast.success('YouTube source connected successfully');
     }
   };
@@ -70,125 +84,145 @@ const DataSourceSettings = () => {
   };
 
   const getSourceIcon = (type: string) => {
-    switch (type) {
-      case 'website': return <Globe className="h-4 w-4" />;
-      case 'youtube': return <Youtube className="h-4 w-4" />;
-      default: return <Database className="h-4 w-4" />;
-    }
+    const iconMap: { [key: string]: React.ComponentType<any> } = {
+      website: Globe,
+      youtube: Youtube,
+      facebook: Facebook,
+      twitter: Twitter,
+      instagram: Instagram,
+      linkedin: Linkedin,
+    };
+    const IconComponent = iconMap[type] || Database;
+    return <IconComponent className="h-4 w-4" />;
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Connected Sources */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Connected Data Sources</CardTitle>
-          <CardDescription>Manage your connected websites and social media accounts</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {connectedSources.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">No data sources connected yet</p>
-          ) : (
-            <div className="space-y-3">
-              {connectedSources.map((source) => (
-                <div key={source.id} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex items-center gap-3">
-                    {getSourceIcon(source.type)}
-                    <div>
-                      <p className="font-medium">{source.name}</p>
-                      <p className="text-sm text-muted-foreground capitalize">{source.type}</p>
-                    </div>
+      <div>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-lg font-medium">Connected Sources</h3>
+            <p className="text-sm text-muted-foreground">Manage your data sources</p>
+          </div>
+          <div className="text-sm text-muted-foreground">
+            {connectedSources.length} source{connectedSources.length !== 1 ? 's' : ''} connected
+          </div>
+        </div>
+
+        {connectedSources.length === 0 ? (
+          <div className="text-center py-12 text-muted-foreground">
+            <Database className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p>No data sources connected yet</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {connectedSources.map((source) => (
+              <div key={source.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                <div className="flex items-center gap-3">
+                  {getSourceIcon(source.type)}
+                  <div>
+                    <p className="font-medium">{source.name}</p>
+                    <p className="text-sm text-muted-foreground capitalize">{source.type}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 text-sm text-green-600">
+                    <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                    Connected
                   </div>
                   <Button 
                     variant="ghost" 
                     size="sm"
                     onClick={() => handleRemoveSource(source.id)}
-                    className="text-destructive hover:text-destructive"
+                    className="text-muted-foreground hover:text-destructive"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
-      {/* Add Website */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Add Website</CardTitle>
-          <CardDescription>Connect a website to extract data from</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-3">
-            <div className="flex-1">
-              <Input
-                placeholder="https://example.com"
-                value={newWebsite}
-                onChange={(e) => setNewWebsite(e.target.value)}
-              />
-            </div>
-            <Button onClick={handleAddWebsite}>
+      {/* Add New Sources */}
+      <div className="space-y-6">
+        <h3 className="text-lg font-medium">Add New Source</h3>
+        
+        {/* Website */}
+        <div className="space-y-3">
+          <Label htmlFor="website">Website URL</Label>
+          <div className="flex gap-2">
+            <Input
+              id="website"
+              placeholder="https://example.com"
+              value={newWebsite}
+              onChange={(e) => setNewWebsite(e.target.value)}
+              className="flex-1"
+            />
+            <Button onClick={handleAddWebsite} disabled={!newWebsite.trim()}>
               <Plus className="h-4 w-4 mr-2" />
               Connect
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Add Social Media */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Add Social Media</CardTitle>
-          <CardDescription>Connect your social media accounts</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-3">
-            <div className="flex-1">
-              <Select value={selectedSocialMedia} onValueChange={setSelectedSocialMedia}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select platform" />
-                </SelectTrigger>
-                <SelectContent>
-                  {socialMediaPlatforms.map((platform) => (
-                    <SelectItem key={platform} value={platform}>
-                      {platform}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+        {/* Social Media */}
+        <div className="space-y-3">
+          <Label htmlFor="social">Social Media Platform</Label>
+          <div className="flex gap-2">
+            <Select value={selectedSocialMedia} onValueChange={setSelectedSocialMedia}>
+              <SelectTrigger className="flex-1">
+                <SelectValue placeholder="Select platform" />
+              </SelectTrigger>
+              <SelectContent>
+                {socialMediaPlatforms.map((platform) => (
+                  <SelectItem key={platform.value} value={platform.value}>
+                    <div className="flex items-center gap-2">
+                      <platform.icon className="h-4 w-4" />
+                      {platform.label}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Button onClick={handleAddSocialMedia} disabled={!selectedSocialMedia}>
               <Plus className="h-4 w-4 mr-2" />
               Connect
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Add YouTube */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Add YouTube</CardTitle>
-          <CardDescription>Connect YouTube channels or playlists</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-3">
-            <div className="flex-1">
-              <Input
-                placeholder="YouTube channel or playlist URL"
-                value={youtubeUrl}
-                onChange={(e) => setYoutubeUrl(e.target.value)}
-              />
-            </div>
-            <Button onClick={handleAddYoutube}>
+        {/* YouTube */}
+        <div className="space-y-3">
+          <Label htmlFor="youtube">YouTube Source</Label>
+          <div className="flex gap-2">
+            <Select value={youtubeType} onValueChange={setYoutubeType}>
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Type" />
+              </SelectTrigger>
+              <SelectContent>
+                {youtubeTypes.map((type) => (
+                  <SelectItem key={type.value} value={type.value}>
+                    {type.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Input
+              placeholder="YouTube URL"
+              value={youtubeUrl}
+              onChange={(e) => setYoutubeUrl(e.target.value)}
+              className="flex-1"
+            />
+            <Button onClick={handleAddYoutube} disabled={!youtubeUrl.trim() || !youtubeType}>
               <Plus className="h-4 w-4 mr-2" />
               Connect
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };
