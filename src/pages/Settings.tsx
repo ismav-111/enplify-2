@@ -2,9 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
-import { ChevronLeft, LogOut, User, Database, Settings2 } from 'lucide-react';
+import { ChevronLeft, LogOut, User, Database } from 'lucide-react';
 import ProfileSettings from '@/components/settings/ProfileSettings';
 import DataSourceSettings from '@/components/settings/DataSourceSettings';
 
@@ -26,78 +25,67 @@ const Settings = () => {
     navigate('/signin');
   };
 
-  const navigationItems = [
+  const tabs = [
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'data-sources', label: 'Data Sources', icon: Database },
   ];
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Top Navigation */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-16 items-center justify-between px-6">
-          <div className="flex items-center gap-3">
+      {/* Header */}
+      <div className="border-b border-border/50">
+        <div className="flex h-16 items-center justify-between px-6 max-w-7xl mx-auto">
+          <div className="flex items-center gap-4">
             <Button 
               variant="ghost" 
               size="sm"
               onClick={() => navigate('/')}
-              className="h-9 w-9 p-0"
+              className="h-8 w-8 p-0"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <div className="flex items-center gap-2">
-              <Settings2 className="h-5 w-5 text-muted-foreground" />
-              <span className="font-semibold text-lg">Settings</span>
-            </div>
+            <h1 className="text-xl font-medium">Settings</h1>
           </div>
           
           <Button 
-            variant="outline" 
+            variant="ghost" 
             size="sm"
             onClick={handleLogout}
-            className="h-9 gap-2"
+            className="text-muted-foreground hover:text-foreground"
           >
-            <LogOut className="h-4 w-4" />
+            <LogOut className="h-4 w-4 mr-2" />
             Sign Out
           </Button>
         </div>
-      </header>
+      </div>
 
-      <div className="flex">
-        {/* Sidebar Navigation */}
-        <aside className="w-64 border-r bg-muted/10 min-h-[calc(100vh-4rem)]">
-          <div className="p-6">
-            <nav className="space-y-2">
-              {navigationItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = activeTab === item.id;
-                
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setActiveTab(item.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
-                      isActive 
-                        ? 'bg-primary text-primary-foreground' 
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                    }`}
-                  >
-                    <Icon className="h-4 w-4" />
-                    {item.label}
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
-        </aside>
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Tab Navigation */}
+        <div className="flex gap-1 mb-8 p-1 bg-muted rounded-lg w-fit">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                  activeTab === tab.id
+                    ? 'bg-background text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
 
-        {/* Main Content */}
-        <main className="flex-1 max-w-4xl">
-          <div className="p-8">
-            {activeTab === 'profile' && <ProfileSettings />}
-            {activeTab === 'data-sources' && <DataSourceSettings />}
-          </div>
-        </main>
+        {/* Content */}
+        <div className="max-w-4xl">
+          {activeTab === 'profile' && <ProfileSettings />}
+          {activeTab === 'data-sources' && <DataSourceSettings />}
+        </div>
       </div>
     </div>
   );
