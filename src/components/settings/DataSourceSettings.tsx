@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Plus, Trash2, Globe, Youtube, Facebook, Twitter, Instagram, Linkedin, Database, ExternalLink } from 'lucide-react';
+import { Plus, Trash2, Globe, Youtube, Facebook, Twitter, Instagram, Linkedin, Database, ExternalLink, Cloud, Server, FolderOpen, Building2 } from 'lucide-react';
 
 const DataSourceSettings = () => {
   const [connectedSources, setConnectedSources] = useState([
@@ -16,6 +16,11 @@ const DataSourceSettings = () => {
   
   const [newWebsite, setNewWebsite] = useState('');
   const [selectedSocialMedia, setSelectedSocialMedia] = useState('');
+  const [selectedDataWarehouse, setSelectedDataWarehouse] = useState('');
+  const [selectedDatabase, setSelectedDatabase] = useState('');
+  const [selectedDataLake, setSelectedDataLake] = useState('');
+  const [selectedRepository, setSelectedRepository] = useState('');
+  const [selectedEnterprise, setSelectedEnterprise] = useState('');
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [youtubeType, setYoutubeType] = useState('');
 
@@ -24,8 +29,39 @@ const DataSourceSettings = () => {
     { value: 'twitter', label: 'Twitter', icon: Twitter },
     { value: 'instagram', label: 'Instagram', icon: Instagram },
     { value: 'linkedin', label: 'LinkedIn', icon: Linkedin },
-    { value: 'tiktok', label: 'TikTok', icon: Database },
-    { value: 'pinterest', label: 'Pinterest', icon: Database },
+  ];
+
+  const dataWarehouses = [
+    { value: 'snowflake', label: 'Snowflake', icon: Database },
+    { value: 'databricks', label: 'Databricks', icon: Database },
+    { value: 'redshift', label: 'Amazon Redshift', icon: Database },
+  ];
+
+  const databases = [
+    { value: 'postgresql', label: 'PostgreSQL', icon: Server },
+    { value: 'mysql', label: 'MySQL', icon: Server },
+    { value: 'sqlserver', label: 'SQL Server', icon: Server },
+    { value: 'mongodb', label: 'MongoDB', icon: Server },
+  ];
+
+  const dataLakes = [
+    { value: 'adls', label: 'Azure Data Lake Storage', icon: Cloud },
+    { value: 's3', label: 'Amazon S3', icon: Cloud },
+    { value: 'gcs', label: 'Google Cloud Storage', icon: Cloud },
+  ];
+
+  const repositories = [
+    { value: 'sharepoint', label: 'SharePoint', icon: FolderOpen },
+    { value: 'onedrive', label: 'One Drive', icon: FolderOpen },
+    { value: 'googledrive', label: 'Google Drive', icon: FolderOpen },
+    { value: 'dropbox', label: 'Dropbox', icon: FolderOpen },
+    { value: 'local', label: 'Document Library (Local files)', icon: FolderOpen },
+  ];
+
+  const enterpriseSystems = [
+    { value: 'salesforce', label: 'Salesforce', icon: Building2 },
+    { value: 'sap', label: 'SAP', icon: Building2 },
+    { value: 'servicenow', label: 'ServiceNow', icon: Building2 },
   ];
 
   const youtubeTypes = [
@@ -63,6 +99,81 @@ const DataSourceSettings = () => {
     }
   };
 
+  const handleAddDataWarehouse = () => {
+    if (selectedDataWarehouse) {
+      const warehouse = dataWarehouses.find(w => w.value === selectedDataWarehouse);
+      const newSource = {
+        id: Date.now(),
+        type: selectedDataWarehouse,
+        name: warehouse?.label || selectedDataWarehouse,
+        status: 'connected'
+      };
+      setConnectedSources([...connectedSources, newSource]);
+      setSelectedDataWarehouse('');
+      toast.success(`${warehouse?.label} connected successfully`);
+    }
+  };
+
+  const handleAddDatabase = () => {
+    if (selectedDatabase) {
+      const database = databases.find(d => d.value === selectedDatabase);
+      const newSource = {
+        id: Date.now(),
+        type: selectedDatabase,
+        name: database?.label || selectedDatabase,
+        status: 'connected'
+      };
+      setConnectedSources([...connectedSources, newSource]);
+      setSelectedDatabase('');
+      toast.success(`${database?.label} connected successfully`);
+    }
+  };
+
+  const handleAddDataLake = () => {
+    if (selectedDataLake) {
+      const lake = dataLakes.find(l => l.value === selectedDataLake);
+      const newSource = {
+        id: Date.now(),
+        type: selectedDataLake,
+        name: lake?.label || selectedDataLake,
+        status: 'connected'
+      };
+      setConnectedSources([...connectedSources, newSource]);
+      setSelectedDataLake('');
+      toast.success(`${lake?.label} connected successfully`);
+    }
+  };
+
+  const handleAddRepository = () => {
+    if (selectedRepository) {
+      const repo = repositories.find(r => r.value === selectedRepository);
+      const newSource = {
+        id: Date.now(),
+        type: selectedRepository,
+        name: repo?.label || selectedRepository,
+        status: 'connected'
+      };
+      setConnectedSources([...connectedSources, newSource]);
+      setSelectedRepository('');
+      toast.success(`${repo?.label} connected successfully`);
+    }
+  };
+
+  const handleAddEnterprise = () => {
+    if (selectedEnterprise) {
+      const enterprise = enterpriseSystems.find(e => e.value === selectedEnterprise);
+      const newSource = {
+        id: Date.now(),
+        type: selectedEnterprise,
+        name: enterprise?.label || selectedEnterprise,
+        status: 'connected'
+      };
+      setConnectedSources([...connectedSources, newSource]);
+      setSelectedEnterprise('');
+      toast.success(`${enterprise?.label} connected successfully`);
+    }
+  };
+
   const handleAddYoutube = () => {
     if (youtubeUrl.trim() && youtubeType) {
       const newSource = {
@@ -91,6 +202,24 @@ const DataSourceSettings = () => {
       twitter: Twitter,
       instagram: Instagram,
       linkedin: Linkedin,
+      snowflake: Database,
+      databricks: Database,
+      redshift: Database,
+      postgresql: Server,
+      mysql: Server,
+      sqlserver: Server,
+      mongodb: Server,
+      adls: Cloud,
+      s3: Cloud,
+      gcs: Cloud,
+      sharepoint: FolderOpen,
+      onedrive: FolderOpen,
+      googledrive: FolderOpen,
+      dropbox: FolderOpen,
+      local: FolderOpen,
+      salesforce: Building2,
+      sap: Building2,
+      servicenow: Building2,
     };
     const IconComponent = iconMap[type] || Database;
     return <IconComponent className="h-4 w-4" />;
@@ -217,6 +346,136 @@ const DataSourceSettings = () => {
               className="flex-1"
             />
             <Button onClick={handleAddYoutube} disabled={!youtubeUrl.trim() || !youtubeType}>
+              <Plus className="h-4 w-4 mr-2" />
+              Connect
+            </Button>
+          </div>
+        </div>
+
+        {/* Data Warehouses */}
+        <div className="space-y-3">
+          <Label htmlFor="warehouse">Data Warehouse</Label>
+          <div className="flex gap-2">
+            <Select value={selectedDataWarehouse} onValueChange={setSelectedDataWarehouse}>
+              <SelectTrigger className="flex-1">
+                <SelectValue placeholder="Select data warehouse" />
+              </SelectTrigger>
+              <SelectContent>
+                {dataWarehouses.map((warehouse) => (
+                  <SelectItem key={warehouse.value} value={warehouse.value}>
+                    <div className="flex items-center gap-2">
+                      <warehouse.icon className="h-4 w-4" />
+                      {warehouse.label}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button onClick={handleAddDataWarehouse} disabled={!selectedDataWarehouse}>
+              <Plus className="h-4 w-4 mr-2" />
+              Connect
+            </Button>
+          </div>
+        </div>
+
+        {/* Databases */}
+        <div className="space-y-3">
+          <Label htmlFor="database">Database</Label>
+          <div className="flex gap-2">
+            <Select value={selectedDatabase} onValueChange={setSelectedDatabase}>
+              <SelectTrigger className="flex-1">
+                <SelectValue placeholder="Select database" />
+              </SelectTrigger>
+              <SelectContent>
+                {databases.map((database) => (
+                  <SelectItem key={database.value} value={database.value}>
+                    <div className="flex items-center gap-2">
+                      <database.icon className="h-4 w-4" />
+                      {database.label}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button onClick={handleAddDatabase} disabled={!selectedDatabase}>
+              <Plus className="h-4 w-4 mr-2" />
+              Connect
+            </Button>
+          </div>
+        </div>
+
+        {/* Data Lakes */}
+        <div className="space-y-3">
+          <Label htmlFor="lake">Data Lake</Label>
+          <div className="flex gap-2">
+            <Select value={selectedDataLake} onValueChange={setSelectedDataLake}>
+              <SelectTrigger className="flex-1">
+                <SelectValue placeholder="Select data lake" />
+              </SelectTrigger>
+              <SelectContent>
+                {dataLakes.map((lake) => (
+                  <SelectItem key={lake.value} value={lake.value}>
+                    <div className="flex items-center gap-2">
+                      <lake.icon className="h-4 w-4" />
+                      {lake.label}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button onClick={handleAddDataLake} disabled={!selectedDataLake}>
+              <Plus className="h-4 w-4 mr-2" />
+              Connect
+            </Button>
+          </div>
+        </div>
+
+        {/* Repositories */}
+        <div className="space-y-3">
+          <Label htmlFor="repository">Repository</Label>
+          <div className="flex gap-2">
+            <Select value={selectedRepository} onValueChange={setSelectedRepository}>
+              <SelectTrigger className="flex-1">
+                <SelectValue placeholder="Select repository" />
+              </SelectTrigger>
+              <SelectContent>
+                {repositories.map((repo) => (
+                  <SelectItem key={repo.value} value={repo.value}>
+                    <div className="flex items-center gap-2">
+                      <repo.icon className="h-4 w-4" />
+                      {repo.label}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button onClick={handleAddRepository} disabled={!selectedRepository}>
+              <Plus className="h-4 w-4 mr-2" />
+              Connect
+            </Button>
+          </div>
+        </div>
+
+        {/* Enterprise Systems */}
+        <div className="space-y-3">
+          <Label htmlFor="enterprise">Enterprise System</Label>
+          <div className="flex gap-2">
+            <Select value={selectedEnterprise} onValueChange={setSelectedEnterprise}>
+              <SelectTrigger className="flex-1">
+                <SelectValue placeholder="Select enterprise system" />
+              </SelectTrigger>
+              <SelectContent>
+                {enterpriseSystems.map((system) => (
+                  <SelectItem key={system.value} value={system.value}>
+                    <div className="flex items-center gap-2">
+                      <system.icon className="h-4 w-4" />
+                      {system.label}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button onClick={handleAddEnterprise} disabled={!selectedEnterprise}>
               <Plus className="h-4 w-4 mr-2" />
               Connect
             </Button>
