@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Server, Cloud, ChevronDown, Rocket, Sparkles } from 'lucide-react';
+import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Server, Cloud, ChevronDown, Rocket, Sparkles, Warehouse, HardDrive, FolderOpen, Share2, MessageSquare } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -22,7 +22,7 @@ interface DataSourceType {
 
 // Group data sources by category
 const dataSourceCategories = {
-  databases: [
+  warehouses: [
     {
       id: 'snowflake',
       name: 'Snowflake',
@@ -38,22 +38,129 @@ const dataSourceCategories = {
       ]
     },
     {
-      id: 'sql',
-      name: 'SQL Database',
-      description: 'Connect to your SQL Server, MySQL, or PostgreSQL database',
+      id: 'databricks',
+      name: 'Databricks',
+      description: 'Connect to your Databricks workspace',
+      icon: Warehouse,
+      isConnected: false,
+      fields: [
+        { id: 'workspace_url', label: 'Workspace URL', type: 'text', placeholder: 'https://your-workspace.cloud.databricks.com', required: true },
+        { id: 'token', label: 'Personal Access Token', type: 'password', placeholder: '••••••••', required: true },
+        { id: 'cluster_id', label: 'Cluster ID', type: 'text', placeholder: 'Enter cluster ID', required: true },
+      ]
+    },
+    {
+      id: 'redshift',
+      name: 'Amazon Redshift',
+      description: 'Connect to your Amazon Redshift cluster',
       icon: Database,
       isConnected: false,
       fields: [
-        { id: 'db_type', label: 'Database Type', type: 'text', placeholder: 'PostgreSQL, MySQL, SQL Server', required: true },
-        { id: 'host', label: 'Host', type: 'text', placeholder: 'localhost or db.example.com', required: true },
-        { id: 'port', label: 'Port', type: 'text', placeholder: '5432', required: true },
+        { id: 'host', label: 'Host', type: 'text', placeholder: 'your-cluster.redshift.amazonaws.com', required: true },
+        { id: 'port', label: 'Port', type: 'text', placeholder: '5439', required: true },
+        { id: 'database', label: 'Database', type: 'text', placeholder: 'Enter database name', required: true },
         { id: 'username', label: 'Username', type: 'text', placeholder: 'Enter your username', required: true },
         { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
-        { id: 'database', label: 'Database Name', type: 'text', placeholder: 'Enter database name', required: true }
       ]
     }
   ],
-  documents: [
+  databases: [
+    {
+      id: 'postgresql',
+      name: 'PostgreSQL',
+      description: 'Connect to your PostgreSQL database',
+      icon: Database,
+      isConnected: false,
+      fields: [
+        { id: 'host', label: 'Host', type: 'text', placeholder: 'localhost or db.example.com', required: true },
+        { id: 'port', label: 'Port', type: 'text', placeholder: '5432', required: true },
+        { id: 'database', label: 'Database Name', type: 'text', placeholder: 'Enter database name', required: true },
+        { id: 'username', label: 'Username', type: 'text', placeholder: 'Enter your username', required: true },
+        { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
+      ]
+    },
+    {
+      id: 'mysql',
+      name: 'MySQL',
+      description: 'Connect to your MySQL database',
+      icon: Database,
+      isConnected: false,
+      fields: [
+        { id: 'host', label: 'Host', type: 'text', placeholder: 'localhost or db.example.com', required: true },
+        { id: 'port', label: 'Port', type: 'text', placeholder: '3306', required: true },
+        { id: 'database', label: 'Database Name', type: 'text', placeholder: 'Enter database name', required: true },
+        { id: 'username', label: 'Username', type: 'text', placeholder: 'Enter your username', required: true },
+        { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
+      ]
+    },
+    {
+      id: 'sqlserver',
+      name: 'SQL Server',
+      description: 'Connect to your SQL Server database',
+      icon: Database,
+      isConnected: false,
+      fields: [
+        { id: 'server', label: 'Server', type: 'text', placeholder: 'server.example.com', required: true },
+        { id: 'port', label: 'Port', type: 'text', placeholder: '1433', required: true },
+        { id: 'database', label: 'Database Name', type: 'text', placeholder: 'Enter database name', required: true },
+        { id: 'username', label: 'Username', type: 'text', placeholder: 'Enter your username', required: true },
+        { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
+      ]
+    },
+    {
+      id: 'mongodb',
+      name: 'MongoDB',
+      description: 'Connect to your MongoDB database',
+      icon: Database,
+      isConnected: false,
+      fields: [
+        { id: 'connection_string', label: 'Connection String', type: 'text', placeholder: 'mongodb://localhost:27017/mydb', required: true },
+        { id: 'database', label: 'Database Name', type: 'text', placeholder: 'Enter database name', required: true },
+        { id: 'username', label: 'Username', type: 'text', placeholder: 'Enter your username', required: false },
+        { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: false },
+      ]
+    }
+  ],
+  datalakes: [
+    {
+      id: 'adls',
+      name: 'Azure Data Lake Storage (ADLS)',
+      description: 'Connect to your Azure Data Lake Storage',
+      icon: HardDrive,
+      isConnected: false,
+      fields: [
+        { id: 'account_name', label: 'Storage Account Name', type: 'text', placeholder: 'your-storage-account', required: true },
+        { id: 'container', label: 'Container Name', type: 'text', placeholder: 'your-container', required: true },
+        { id: 'access_key', label: 'Access Key', type: 'password', placeholder: '••••••••', required: true },
+      ]
+    },
+    {
+      id: 'amazons3',
+      name: 'Amazon S3',
+      description: 'Connect to your Amazon S3 bucket',
+      icon: HardDrive,
+      isConnected: false,
+      fields: [
+        { id: 'bucket_name', label: 'Bucket Name', type: 'text', placeholder: 'your-bucket-name', required: true },
+        { id: 'region', label: 'Region', type: 'text', placeholder: 'us-east-1', required: true },
+        { id: 'access_key', label: 'Access Key ID', type: 'text', placeholder: 'Enter access key ID', required: true },
+        { id: 'secret_key', label: 'Secret Access Key', type: 'password', placeholder: '••••••••', required: true },
+      ]
+    },
+    {
+      id: 'gcs',
+      name: 'Google Cloud Storage',
+      description: 'Connect to your Google Cloud Storage bucket',
+      icon: HardDrive,
+      isConnected: false,
+      fields: [
+        { id: 'bucket_name', label: 'Bucket Name', type: 'text', placeholder: 'your-bucket-name', required: true },
+        { id: 'project_id', label: 'Project ID', type: 'text', placeholder: 'your-project-id', required: true },
+        { id: 'service_account_key', label: 'Service Account Key (JSON)', type: 'password', placeholder: 'Paste your service account key', required: true },
+      ]
+    }
+  ],
+  repositories: [
     {
       id: 'sharepoint',
       name: 'SharePoint',
@@ -65,46 +172,83 @@ const dataSourceCategories = {
         { id: 'client_id', label: 'Client ID', type: 'text', placeholder: 'Enter your client ID', required: true },
         { id: 'client_secret', label: 'Client Secret', type: 'password', placeholder: '••••••••', required: true },
       ]
+    },
+    {
+      id: 'documentlibrary',
+      name: 'Document Library (Local files)',
+      description: 'Connect to your local document library',
+      icon: FolderOpen,
+      isConnected: false,
+      fields: [
+        { id: 'folder_path', label: 'Folder Path', type: 'text', placeholder: '/path/to/your/documents', required: true },
+        { id: 'file_types', label: 'File Types', type: 'text', placeholder: 'pdf,docx,txt,xlsx', required: false },
+      ]
+    },
+    {
+      id: 'onedrive',
+      name: 'One Drive',
+      description: 'Connect to your Microsoft OneDrive',
+      icon: FolderOpen,
+      isConnected: false,
+      fields: [
+        { id: 'client_id', label: 'Client ID', type: 'text', placeholder: 'Enter your client ID', required: true },
+        { id: 'client_secret', label: 'Client Secret', type: 'password', placeholder: '••••••••', required: true },
+        { id: 'tenant_id', label: 'Tenant ID', type: 'text', placeholder: 'Enter your tenant ID', required: true },
+      ]
+    },
+    {
+      id: 'googledrive',
+      name: 'Google Drive',
+      description: 'Connect to your Google Drive',
+      icon: FolderOpen,
+      isConnected: false,
+      fields: [
+        { id: 'client_id', label: 'Client ID', type: 'text', placeholder: 'Enter your client ID', required: true },
+        { id: 'client_secret', label: 'Client Secret', type: 'password', placeholder: '••••••••', required: true },
+        { id: 'refresh_token', label: 'Refresh Token', type: 'password', placeholder: '••••••••', required: true },
+      ]
+    },
+    {
+      id: 'dropbox',
+      name: 'Dropbox',
+      description: 'Connect to your Dropbox account',
+      icon: FolderOpen,
+      isConnected: false,
+      fields: [
+        { id: 'access_token', label: 'Access Token', type: 'password', placeholder: '••••••••', required: true },
+        { id: 'app_key', label: 'App Key', type: 'text', placeholder: 'Enter your app key', required: true },
+        { id: 'app_secret', label: 'App Secret', type: 'password', placeholder: '••••••••', required: true },
+      ]
     }
   ],
-  web: [
+  websources: [
+    {
+      id: 'socialmedia',
+      name: 'Social media channels (Facebook, Twitter, LinkedIn, Instagram)',
+      description: 'Connect to your social media channels',
+      icon: MessageSquare,
+      isConnected: false,
+      fields: [
+        { id: 'platform', label: 'Platform', type: 'text', placeholder: 'Facebook, Twitter, LinkedIn, Instagram', required: true },
+        { id: 'api_key', label: 'API Key', type: 'password', placeholder: '••••••••', required: true },
+        { id: 'access_token', label: 'Access Token', type: 'password', placeholder: '••••••••', required: true },
+      ]
+    },
     {
       id: 'website',
-      name: 'Website',
-      description: 'Connect to website content via URL',
+      name: 'Website (APIs, web scraping)',
+      description: 'Connect to website content via URL or API',
       icon: Globe,
       isConnected: false,
       fields: [
         { id: 'url', label: 'Website URL', type: 'text', placeholder: 'https://www.example.com', required: true },
+        { id: 'api_endpoint', label: 'API Endpoint (Optional)', type: 'text', placeholder: 'https://api.example.com', required: false },
+        { id: 'api_key', label: 'API Key (Optional)', type: 'password', placeholder: '••••••••', required: false },
         { id: 'crawl_depth', label: 'Crawl Depth', type: 'text', placeholder: '1, 2, or 3', required: false },
-      ]
-    },
-    {
-      id: 'youtube',
-      name: 'YouTube',
-      description: 'Connect to YouTube channels and videos',
-      icon: Youtube,
-      isConnected: false,
-      fields: [
-        { id: 'api_key', label: 'API Key', type: 'text', placeholder: 'Enter your YouTube API key', required: true },
-        { id: 'channel_id', label: 'Channel ID (Optional)', type: 'text', placeholder: 'Enter channel ID', required: false },
       ]
     }
   ],
   enterprise: [
-    {
-      id: 'sap',
-      name: 'SAP',
-      description: 'Connect to your SAP instance',
-      icon: BarChart,
-      isConnected: false,
-      fields: [
-        { id: 'host', label: 'SAP Host', type: 'text', placeholder: 'sap.example.com', required: true },
-        { id: 'client', label: 'Client', type: 'text', placeholder: '100', required: true },
-        { id: 'username', label: 'Username', type: 'text', placeholder: 'Enter your username', required: true },
-        { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
-      ]
-    },
     {
       id: 'salesforce',
       name: 'Salesforce',
@@ -116,6 +260,19 @@ const dataSourceCategories = {
         { id: 'client_id', label: 'Client ID', type: 'text', placeholder: 'Enter your client ID', required: true },
         { id: 'client_secret', label: 'Client Secret', type: 'password', placeholder: '••••••••', required: true },
         { id: 'username', label: 'Username', type: 'text', placeholder: 'user@example.com', required: true },
+        { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
+      ]
+    },
+    {
+      id: 'sap',
+      name: 'SAP',
+      description: 'Connect to your SAP instance',
+      icon: BarChart,
+      isConnected: false,
+      fields: [
+        { id: 'host', label: 'SAP Host', type: 'text', placeholder: 'sap.example.com', required: true },
+        { id: 'client', label: 'Client', type: 'text', placeholder: '100', required: true },
+        { id: 'username', label: 'Username', type: 'text', placeholder: 'Enter your username', required: true },
         { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
       ]
     },
@@ -137,9 +294,11 @@ const dataSourceCategories = {
 
 // Flatten all data sources for backward compatibility
 const dataSources: DataSourceType[] = [
+  ...dataSourceCategories.warehouses,
   ...dataSourceCategories.databases,
-  ...dataSourceCategories.documents,
-  ...dataSourceCategories.web,
+  ...dataSourceCategories.datalakes,
+  ...dataSourceCategories.repositories,
+  ...dataSourceCategories.websources,
   ...dataSourceCategories.enterprise
 ];
 
@@ -292,6 +451,14 @@ const DataSourceSettings = () => {
                 All Sources
               </Button>
               <Button 
+                variant={selectedCategory === 'warehouses' ? 'default' : 'outline'} 
+                size="sm" 
+                className={selectedCategory === 'warehouses' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
+                onClick={() => setSelectedCategory('warehouses')}
+              >
+                Warehouses
+              </Button>
+              <Button 
                 variant={selectedCategory === 'databases' ? 'default' : 'outline'} 
                 size="sm" 
                 className={selectedCategory === 'databases' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
@@ -300,18 +467,26 @@ const DataSourceSettings = () => {
                 Databases
               </Button>
               <Button 
-                variant={selectedCategory === 'documents' ? 'default' : 'outline'} 
+                variant={selectedCategory === 'datalakes' ? 'default' : 'outline'} 
                 size="sm" 
-                className={selectedCategory === 'documents' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
-                onClick={() => setSelectedCategory('documents')}
+                className={selectedCategory === 'datalakes' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
+                onClick={() => setSelectedCategory('datalakes')}
               >
-                Documents
+                Data Lakes
               </Button>
               <Button 
-                variant={selectedCategory === 'web' ? 'default' : 'outline'} 
+                variant={selectedCategory === 'repositories' ? 'default' : 'outline'} 
                 size="sm" 
-                className={selectedCategory === 'web' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
-                onClick={() => setSelectedCategory('web')}
+                className={selectedCategory === 'repositories' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
+                onClick={() => setSelectedCategory('repositories')}
+              >
+                Repositories
+              </Button>
+              <Button 
+                variant={selectedCategory === 'websources' ? 'default' : 'outline'} 
+                size="sm" 
+                className={selectedCategory === 'websources' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
+                onClick={() => setSelectedCategory('websources')}
               >
                 Web Sources
               </Button>
