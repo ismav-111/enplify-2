@@ -2,9 +2,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Plus, Trash2, Globe, Youtube, Facebook, Twitter, Instagram, Linkedin, Database, Cloud, Server, FolderOpen, Building2, Search, Filter, CheckCircle2 } from 'lucide-react';
 
@@ -20,12 +19,6 @@ const DataSourceSettings = () => {
   
   // Form states
   const [newWebsite, setNewWebsite] = useState('');
-  const [selectedSocialMedia, setSelectedSocialMedia] = useState('');
-  const [selectedDataWarehouse, setSelectedDataWarehouse] = useState('');
-  const [selectedDatabase, setSelectedDatabase] = useState('');
-  const [selectedDataLake, setSelectedDataLake] = useState('');
-  const [selectedRepository, setSelectedRepository] = useState('');
-  const [selectedEnterprise, setSelectedEnterprise] = useState('');
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [youtubeType, setYoutubeType] = useState('');
 
@@ -35,7 +28,7 @@ const DataSourceSettings = () => {
       title: 'Social Media',
       description: 'Connect your social media accounts',
       icon: Instagram,
-      color: 'from-pink-500 to-rose-500',
+      color: 'bg-gradient-to-br from-pink-500 to-rose-500',
       sources: [
         { value: 'facebook', label: 'Facebook', icon: Facebook },
         { value: 'twitter', label: 'Twitter', icon: Twitter },
@@ -48,7 +41,7 @@ const DataSourceSettings = () => {
       title: 'Data Warehouses',
       description: 'Connect to your data warehouse',
       icon: Database,
-      color: 'from-blue-500 to-cyan-500',
+      color: 'bg-gradient-to-br from-blue-500 to-cyan-500',
       sources: [
         { value: 'snowflake', label: 'Snowflake', icon: Database },
         { value: 'databricks', label: 'Databricks', icon: Database },
@@ -60,7 +53,7 @@ const DataSourceSettings = () => {
       title: 'Databases',
       description: 'Connect to your databases',
       icon: Server,
-      color: 'from-green-500 to-emerald-500',
+      color: 'bg-gradient-to-br from-green-500 to-emerald-500',
       sources: [
         { value: 'postgresql', label: 'PostgreSQL', icon: Server },
         { value: 'mysql', label: 'MySQL', icon: Server },
@@ -73,7 +66,7 @@ const DataSourceSettings = () => {
       title: 'Data Lakes',
       description: 'Connect to cloud storage',
       icon: Cloud,
-      color: 'from-purple-500 to-violet-500',
+      color: 'bg-gradient-to-br from-purple-500 to-violet-500',
       sources: [
         { value: 'adls', label: 'Azure Data Lake Storage', icon: Cloud },
         { value: 's3', label: 'Amazon S3', icon: Cloud },
@@ -85,7 +78,7 @@ const DataSourceSettings = () => {
       title: 'Repositories',
       description: 'Connect to document repositories',
       icon: FolderOpen,
-      color: 'from-orange-500 to-amber-500',
+      color: 'bg-gradient-to-br from-orange-500 to-amber-500',
       sources: [
         { value: 'sharepoint', label: 'SharePoint', icon: FolderOpen },
         { value: 'onedrive', label: 'OneDrive', icon: FolderOpen },
@@ -99,7 +92,7 @@ const DataSourceSettings = () => {
       title: 'Enterprise Systems',
       description: 'Connect to enterprise platforms',
       icon: Building2,
-      color: 'from-indigo-500 to-blue-500',
+      color: 'bg-gradient-to-br from-indigo-500 to-blue-500',
       sources: [
         { value: 'salesforce', label: 'Salesforce', icon: Building2 },
         { value: 'sap', label: 'SAP', icon: Building2 },
@@ -174,7 +167,7 @@ const DataSourceSettings = () => {
       servicenow: Building2,
     };
     const IconComponent = iconMap[type] || Database;
-    return <IconComponent className="h-4 w-4" />;
+    return <IconComponent className="h-5 w-5" />;
   };
 
   const filteredSources = connectedSources.filter(source => {
@@ -184,24 +177,22 @@ const DataSourceSettings = () => {
   });
 
   return (
-    <div className="space-y-8">
+    <div className="w-full max-w-6xl mx-auto space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Data Sources</h2>
-          <p className="text-muted-foreground">Connect and manage your data sources</p>
-        </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">Data Sources</h1>
+        <p className="text-muted-foreground text-lg">Connect and manage your data sources</p>
+        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
           <CheckCircle2 className="h-4 w-4 text-green-500" />
-          {connectedSources.length} connected
+          <span>{connectedSources.length} sources connected</span>
         </div>
       </div>
 
-      {/* Connected Sources */}
-      <div className="space-y-4">
+      {/* Connected Sources Section */}
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Connected Sources</h3>
-          <div className="flex items-center gap-2">
+          <h2 className="text-xl font-semibold">Connected Sources</h2>
+          <div className="flex items-center gap-3">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -228,7 +219,7 @@ const DataSourceSettings = () => {
         </div>
 
         {filteredSources.length === 0 ? (
-          <Card className="border-dashed border-2 border-muted-foreground/25">
+          <Card className="border-dashed border-2">
             <CardContent className="flex flex-col items-center justify-center py-16">
               <Database className="h-12 w-12 text-muted-foreground/50 mb-4" />
               <p className="text-lg font-medium text-muted-foreground">No sources found</p>
@@ -236,17 +227,17 @@ const DataSourceSettings = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-3">
+          <div className="grid gap-4">
             {filteredSources.map((source) => (
-              <Card key={source.id} className="group hover:shadow-md transition-all duration-200 border-border/50">
-                <CardContent className="p-4">
+              <Card key={source.id} className="group hover:shadow-lg transition-all duration-200">
+                <CardContent className="p-6">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-muted rounded-lg">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-muted rounded-xl">
                         {getSourceIcon(source.type)}
                       </div>
                       <div>
-                        <p className="font-medium">{source.name}</p>
+                        <h3 className="font-semibold text-lg">{source.name}</h3>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <span className="capitalize">{source.type}</span>
                           <span>•</span>
@@ -254,16 +245,16 @@ const DataSourceSettings = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-2 text-sm">
-                        <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 bg-green-500 rounded-full"></div>
                         <span className="text-green-600 font-medium">Connected</span>
                       </div>
                       <Button 
                         variant="ghost" 
                         size="sm"
                         onClick={() => handleRemoveSource(source.id)}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -276,23 +267,25 @@ const DataSourceSettings = () => {
         )}
       </div>
 
-      {/* Add New Sources */}
+      {/* Add New Sources Section */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold">Add New Sources</h3>
+        <h2 className="text-xl font-semibold text-center">Add New Data Sources</h2>
         
-        {/* Website & YouTube - Special Cases */}
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card className="group hover:shadow-md transition-all duration-200">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3 mb-4">
+        {/* Quick Add Section */}
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-3">
                 <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg">
                   <Globe className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h4 className="font-semibold">Website</h4>
-                  <p className="text-sm text-muted-foreground">Connect any website URL</p>
+                  <h3 className="text-lg">Website</h3>
+                  <p className="text-sm text-muted-foreground font-normal">Connect any website URL</p>
                 </div>
-              </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
               <div className="flex gap-2">
                 <Input
                   placeholder="https://example.com"
@@ -307,41 +300,41 @@ const DataSourceSettings = () => {
             </CardContent>
           </Card>
 
-          <Card className="group hover:shadow-md transition-all duration-200">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3 mb-4">
+          <Card className="hover:shadow-lg transition-all duration-200">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-3">
                 <div className="p-2 bg-gradient-to-r from-red-500 to-pink-500 rounded-lg">
                   <Youtube className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h4 className="font-semibold">YouTube</h4>
-                  <p className="text-sm text-muted-foreground">Connect channels, playlists, or videos</p>
+                  <h3 className="text-lg">YouTube</h3>
+                  <p className="text-sm text-muted-foreground font-normal">Connect channels, playlists, or videos</p>
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Select value={youtubeType} onValueChange={setYoutubeType}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {youtubeTypes.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="YouTube URL"
-                    value={youtubeUrl}
-                    onChange={(e) => setYoutubeUrl(e.target.value)}
-                    className="flex-1"
-                  />
-                  <Button onClick={handleAddYoutube} disabled={!youtubeUrl.trim() || !youtubeType}>
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0 space-y-3">
+              <Select value={youtubeType} onValueChange={setYoutubeType}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {youtubeTypes.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>
+                      {type.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="YouTube URL"
+                  value={youtubeUrl}
+                  onChange={(e) => setYoutubeUrl(e.target.value)}
+                  className="flex-1"
+                />
+                <Button onClick={handleAddYoutube} disabled={!youtubeUrl.trim() || !youtubeType}>
+                  <Plus className="h-4 w-4" />
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -352,28 +345,29 @@ const DataSourceSettings = () => {
           {dataSourceCategories.map((category) => {
             const Icon = category.icon;
             return (
-              <Card key={category.id} className="group hover:shadow-lg transition-all duration-200 border-border/50">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className={`p-3 bg-gradient-to-r ${category.color} rounded-lg`}>
+              <Card key={category.id} className="hover:shadow-lg transition-all duration-200">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-3">
+                    <div className={`p-3 ${category.color} rounded-xl`}>
                       <Icon className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <h4 className="font-semibold">{category.title}</h4>
-                      <p className="text-sm text-muted-foreground">{category.description}</p>
+                      <h3 className="text-lg">{category.title}</h3>
+                      <p className="text-sm text-muted-foreground font-normal">{category.description}</p>
                     </div>
-                  </div>
-                  
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
                   <div className="space-y-2">
                     {category.sources.map((source) => (
                       <button
                         key={source.value}
                         onClick={() => handleAddSource(source.value, source.label, category.title)}
-                        className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors text-left"
+                        className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors text-left group"
                       >
-                        <source.icon className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm font-medium">{source.label}</span>
-                        <Plus className="h-4 w-4 ml-auto text-muted-foreground" />
+                        <source.icon className="h-5 w-5 text-muted-foreground" />
+                        <span className="font-medium flex-1">{source.label}</span>
+                        <Plus className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                       </button>
                     ))}
                   </div>
