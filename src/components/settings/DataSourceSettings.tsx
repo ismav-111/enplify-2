@@ -1,498 +1,501 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { 
-  Search, 
-  Database, 
-  FolderOpen, 
-  Globe, 
-  Youtube, 
-  Building2,
-  Server,
-  Cloud,
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-  CheckCircle
-} from 'lucide-react';
+import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Server, Cloud, ChevronDown, Rocket, Sparkles } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
-const DataSourceSettings = () => {
-  const [connectedSources, setConnectedSources] = useState([
-    { id: 1, type: 'snowflake', name: 'Snowflake', status: 'connected' },
-    { id: 2, type: 'salesforce', name: 'Salesforce', status: 'connected' },
-  ]);
-  
-  const [searchTerm, setSearchTerm] = useState('');
+interface DataSourceType {
+  id: string;
+  name: string;
+  description: string;
+  icon: LucideIcon;
+  isConnected: boolean;
+  fields: { id: string; label: string; type: string; placeholder: string; required: boolean }[];
+}
 
-  const dataSourceGroups = [
+// Group data sources by category
+const dataSourceCategories = {
+  databases: [
     {
-      id: 'warehouses',
-      name: 'Data Warehouses',
-      icon: Database,
-      sources: [
-        {
-          id: 'snowflake',
-          name: 'Snowflake',
-          description: 'Connect to your Snowflake data warehouse',
-          icon: Database,
-          configFields: [
-            { name: 'account', label: 'Account', type: 'text', required: true },
-            { name: 'username', label: 'Username', type: 'text', required: true },
-            { name: 'password', label: 'Password', type: 'password', required: true },
-            { name: 'warehouse', label: 'Warehouse', type: 'text', required: true },
-            { name: 'database', label: 'Database', type: 'text', required: true },
-            { name: 'schema', label: 'Schema', type: 'text', required: true },
-          ]
-        },
-        {
-          id: 'databricks',
-          name: 'Databricks',
-          description: 'Connect to your Databricks workspace',
-          icon: Database,
-          configFields: [
-            { name: 'server_hostname', label: 'Server Hostname', type: 'text', required: true },
-            { name: 'http_path', label: 'HTTP Path', type: 'text', required: true },
-            { name: 'access_token', label: 'Access Token', type: 'password', required: true },
-          ]
-        },
-        {
-          id: 'redshift',
-          name: 'Amazon Redshift',
-          description: 'Connect to your Amazon Redshift cluster',
-          icon: Database,
-          configFields: [
-            { name: 'host', label: 'Host', type: 'text', required: true },
-            { name: 'port', label: 'Port', type: 'number', required: true },
-            { name: 'database', label: 'Database', type: 'text', required: true },
-            { name: 'username', label: 'Username', type: 'text', required: true },
-            { name: 'password', label: 'Password', type: 'password', required: true },
-          ]
-        }
-      ]
-    },
-    {
-      id: 'databases',
-      name: 'Databases',
-      icon: Server,
-      sources: [
-        {
-          id: 'postgresql',
-          name: 'PostgreSQL',
-          description: 'Connect to your PostgreSQL database',
-          icon: Server,
-          configFields: [
-            { name: 'host', label: 'Host', type: 'text', required: true },
-            { name: 'port', label: 'Port', type: 'number', required: true },
-            { name: 'database', label: 'Database', type: 'text', required: true },
-            { name: 'username', label: 'Username', type: 'text', required: true },
-            { name: 'password', label: 'Password', type: 'password', required: true },
-          ]
-        },
-        {
-          id: 'mysql',
-          name: 'MySQL',
-          description: 'Connect to your MySQL database',
-          icon: Server,
-          configFields: [
-            { name: 'host', label: 'Host', type: 'text', required: true },
-            { name: 'port', label: 'Port', type: 'number', required: true },
-            { name: 'database', label: 'Database', type: 'text', required: true },
-            { name: 'username', label: 'Username', type: 'text', required: true },
-            { name: 'password', label: 'Password', type: 'password', required: true },
-          ]
-        },
-        {
-          id: 'sql-server',
-          name: 'SQL Server',
-          description: 'Connect to your SQL Server database',
-          icon: Server,
-          configFields: [
-            { name: 'server', label: 'Server', type: 'text', required: true },
-            { name: 'database', label: 'Database', type: 'text', required: true },
-            { name: 'username', label: 'Username', type: 'text', required: true },
-            { name: 'password', label: 'Password', type: 'password', required: true },
-          ]
-        },
-        {
-          id: 'mongodb',
-          name: 'MongoDB',
-          description: 'Connect to your MongoDB database',
-          icon: Server,
-          configFields: [
-            { name: 'connection_string', label: 'Connection String', type: 'text', required: true },
-            { name: 'database', label: 'Database', type: 'text', required: true },
-          ]
-        }
-      ]
-    },
-    {
-      id: 'lakes',
-      name: 'Data Lakes',
+      id: 'snowflake',
+      name: 'Snowflake',
+      description: 'Connect to your Snowflake data warehouse',
       icon: Cloud,
-      sources: [
-        {
-          id: 'adls',
-          name: 'Azure Data Lake Storage (ADLS)',
-          description: 'Connect to your Azure Data Lake Storage',
-          icon: Cloud,
-          configFields: [
-            { name: 'account_name', label: 'Account Name', type: 'text', required: true },
-            { name: 'account_key', label: 'Account Key', type: 'password', required: true },
-            { name: 'container', label: 'Container', type: 'text', required: true },
-          ]
-        },
-        {
-          id: 's3',
-          name: 'Amazon S3',
-          description: 'Connect to your Amazon S3 bucket',
-          icon: Cloud,
-          configFields: [
-            { name: 'access_key_id', label: 'Access Key ID', type: 'text', required: true },
-            { name: 'secret_access_key', label: 'Secret Access Key', type: 'password', required: true },
-            { name: 'bucket', label: 'Bucket', type: 'text', required: true },
-            { name: 'region', label: 'Region', type: 'text', required: true },
-          ]
-        },
-        {
-          id: 'gcs',
-          name: 'Google Cloud Storage',
-          description: 'Connect to your Google Cloud Storage',
-          icon: Cloud,
-          configFields: [
-            { name: 'project_id', label: 'Project ID', type: 'text', required: true },
-            { name: 'credentials', label: 'Service Account JSON', type: 'textarea', required: true },
-            { name: 'bucket', label: 'Bucket', type: 'text', required: true },
-          ]
-        }
+      isConnected: true,
+      fields: [
+        { id: 'account', label: 'Account Identifier', type: 'text', placeholder: 'your-account', required: true },
+        { id: 'username', label: 'Username', type: 'text', placeholder: 'Enter your username', required: true },
+        { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
+        { id: 'warehouse', label: 'Warehouse', type: 'text', placeholder: 'COMPUTE_WH', required: true },
+        { id: 'database', label: 'Database', type: 'text', placeholder: 'Enter database name', required: true },
       ]
     },
     {
-      id: 'repositories',
-      name: 'Repositories',
-      icon: FolderOpen,
-      sources: [
-        {
-          id: 'sharepoint',
-          name: 'SharePoint',
-          description: 'Connect to your SharePoint sites and documents',
-          icon: FolderOpen,
-          configFields: [
-            { name: 'site_url', label: 'Site URL', type: 'text', required: true },
-            { name: 'username', label: 'Username', type: 'text', required: true },
-            { name: 'password', label: 'Password', type: 'password', required: true },
-          ]
-        },
-        {
-          id: 'local',
-          name: 'Document Library (Local files)',
-          description: 'Upload and manage local files',
-          icon: FolderOpen,
-          configFields: [
-            { name: 'name', label: 'Library Name', type: 'text', required: true },
-            { name: 'description', label: 'Description', type: 'textarea', required: false },
-          ]
-        },
-        {
-          id: 'onedrive',
-          name: 'One Drive',
-          description: 'Connect to your OneDrive files',
-          icon: FolderOpen,
-          configFields: [
-            { name: 'client_id', label: 'Client ID', type: 'text', required: true },
-            { name: 'client_secret', label: 'Client Secret', type: 'password', required: true },
-          ]
-        },
-        {
-          id: 'googledrive',
-          name: 'Google Drive',
-          description: 'Connect to your Google Drive files',
-          icon: FolderOpen,
-          configFields: [
-            { name: 'credentials', label: 'Service Account JSON', type: 'textarea', required: true },
-            { name: 'folder_id', label: 'Folder ID (optional)', type: 'text', required: false },
-          ]
-        },
-        {
-          id: 'dropbox',
-          name: 'Dropbox',
-          description: 'Connect to your Dropbox files',
-          icon: FolderOpen,
-          configFields: [
-            { name: 'access_token', label: 'Access Token', type: 'password', required: true },
-            { name: 'folder_path', label: 'Folder Path', type: 'text', required: false },
-          ]
-        }
-      ]
-    },
-    {
-      id: 'web',
-      name: 'Web Sources',
-      icon: Globe,
-      sources: [
-        {
-          id: 'facebook',
-          name: 'Facebook',
-          description: 'Connect to your Facebook pages and posts',
-          icon: Facebook,
-          configFields: [
-            { name: 'access_token', label: 'Access Token', type: 'password', required: true },
-            { name: 'page_id', label: 'Page ID', type: 'text', required: true },
-          ]
-        },
-        {
-          id: 'twitter',
-          name: 'Twitter',
-          description: 'Connect to your Twitter account',
-          icon: Twitter,
-          configFields: [
-            { name: 'api_key', label: 'API Key', type: 'text', required: true },
-            { name: 'api_secret', label: 'API Secret', type: 'password', required: true },
-            { name: 'access_token', label: 'Access Token', type: 'password', required: true },
-            { name: 'access_token_secret', label: 'Access Token Secret', type: 'password', required: true },
-          ]
-        },
-        {
-          id: 'linkedin',
-          name: 'LinkedIn',
-          description: 'Connect to your LinkedIn profile and company',
-          icon: Linkedin,
-          configFields: [
-            { name: 'client_id', label: 'Client ID', type: 'text', required: true },
-            { name: 'client_secret', label: 'Client Secret', type: 'password', required: true },
-          ]
-        },
-        {
-          id: 'instagram',
-          name: 'Instagram',
-          description: 'Connect to your Instagram account',
-          icon: Instagram,
-          configFields: [
-            { name: 'access_token', label: 'Access Token', type: 'password', required: true },
-            { name: 'user_id', label: 'User ID', type: 'text', required: true },
-          ]
-        },
-        {
-          id: 'website',
-          name: 'Website (APIs, web scraping)',
-          description: 'Connect to website content via URL',
-          icon: Globe,
-          configFields: [
-            { name: 'url', label: 'Website URL', type: 'text', required: true },
-            { name: 'scraping_method', label: 'Scraping Method', type: 'select', required: true, options: ['API', 'Web Scraping'] },
-            { name: 'api_key', label: 'API Key (if applicable)', type: 'password', required: false },
-          ]
-        }
-      ]
-    },
-    {
-      id: 'enterprise',
-      name: 'Enterprise',
-      icon: Building2,
-      sources: [
-        {
-          id: 'salesforce',
-          name: 'Salesforce',
-          description: 'Connect to your Salesforce organization',
-          icon: Building2,
-          configFields: [
-            { name: 'username', label: 'Username', type: 'text', required: true },
-            { name: 'password', label: 'Password', type: 'password', required: true },
-            { name: 'security_token', label: 'Security Token', type: 'password', required: true },
-            { name: 'instance_url', label: 'Instance URL', type: 'text', required: true },
-          ]
-        },
-        {
-          id: 'sap',
-          name: 'SAP',
-          description: 'Connect to your SAP instance',
-          icon: Building2,
-          configFields: [
-            { name: 'server', label: 'Server', type: 'text', required: true },
-            { name: 'system_number', label: 'System Number', type: 'text', required: true },
-            { name: 'client', label: 'Client', type: 'text', required: true },
-            { name: 'username', label: 'Username', type: 'text', required: true },
-            { name: 'password', label: 'Password', type: 'password', required: true },
-          ]
-        },
-        {
-          id: 'servicenow',
-          name: 'ServiceNow',
-          description: 'Connect to your ServiceNow instance',
-          icon: Building2,
-          configFields: [
-            { name: 'instance_url', label: 'Instance URL', type: 'text', required: true },
-            { name: 'username', label: 'Username', type: 'text', required: true },
-            { name: 'password', label: 'Password', type: 'password', required: true },
-          ]
-        }
+      id: 'sql',
+      name: 'SQL Database',
+      description: 'Connect to your SQL Server, MySQL, or PostgreSQL database',
+      icon: Database,
+      isConnected: false,
+      fields: [
+        { id: 'db_type', label: 'Database Type', type: 'text', placeholder: 'PostgreSQL, MySQL, SQL Server', required: true },
+        { id: 'host', label: 'Host', type: 'text', placeholder: 'localhost or db.example.com', required: true },
+        { id: 'port', label: 'Port', type: 'text', placeholder: '5432', required: true },
+        { id: 'username', label: 'Username', type: 'text', placeholder: 'Enter your username', required: true },
+        { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
+        { id: 'database', label: 'Database Name', type: 'text', placeholder: 'Enter database name', required: true }
       ]
     }
-  ];
+  ],
+  documents: [
+    {
+      id: 'sharepoint',
+      name: 'SharePoint',
+      description: 'Connect to your SharePoint sites and documents',
+      icon: FileSpreadsheet,
+      isConnected: false,
+      fields: [
+        { id: 'site_url', label: 'SharePoint Site URL', type: 'text', placeholder: 'https://company.sharepoint.com/sites/yoursite', required: true },
+        { id: 'client_id', label: 'Client ID', type: 'text', placeholder: 'Enter your client ID', required: true },
+        { id: 'client_secret', label: 'Client Secret', type: 'password', placeholder: '••••••••', required: true },
+      ]
+    }
+  ],
+  web: [
+    {
+      id: 'website',
+      name: 'Website',
+      description: 'Connect to website content via URL',
+      icon: Globe,
+      isConnected: false,
+      fields: [
+        { id: 'url', label: 'Website URL', type: 'text', placeholder: 'https://www.example.com', required: true },
+        { id: 'crawl_depth', label: 'Crawl Depth', type: 'text', placeholder: '1, 2, or 3', required: false },
+      ]
+    },
+    {
+      id: 'youtube',
+      name: 'YouTube',
+      description: 'Connect to YouTube channels and videos',
+      icon: Youtube,
+      isConnected: false,
+      fields: [
+        { id: 'api_key', label: 'API Key', type: 'text', placeholder: 'Enter your YouTube API key', required: true },
+        { id: 'channel_id', label: 'Channel ID (Optional)', type: 'text', placeholder: 'Enter channel ID', required: false },
+      ]
+    }
+  ],
+  enterprise: [
+    {
+      id: 'sap',
+      name: 'SAP',
+      description: 'Connect to your SAP instance',
+      icon: BarChart,
+      isConnected: false,
+      fields: [
+        { id: 'host', label: 'SAP Host', type: 'text', placeholder: 'sap.example.com', required: true },
+        { id: 'client', label: 'Client', type: 'text', placeholder: '100', required: true },
+        { id: 'username', label: 'Username', type: 'text', placeholder: 'Enter your username', required: true },
+        { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
+      ]
+    },
+    {
+      id: 'salesforce',
+      name: 'Salesforce',
+      description: 'Connect to your Salesforce organization',
+      icon: Briefcase,
+      isConnected: true,
+      fields: [
+        { id: 'instance_url', label: 'Instance URL', type: 'text', placeholder: 'https://yourinstance.salesforce.com', required: true },
+        { id: 'client_id', label: 'Client ID', type: 'text', placeholder: 'Enter your client ID', required: true },
+        { id: 'client_secret', label: 'Client Secret', type: 'password', placeholder: '••••••••', required: true },
+        { id: 'username', label: 'Username', type: 'text', placeholder: 'user@example.com', required: true },
+        { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
+      ]
+    },
+    {
+      id: 'servicenow',
+      name: 'ServiceNow',
+      description: 'Connect to your ServiceNow instance and incidents',
+      icon: Server,
+      isConnected: false,
+      fields: [
+        { id: 'instance_url', label: 'ServiceNow Instance URL', type: 'text', placeholder: 'https://your-instance.service-now.com', required: true },
+        { id: 'username', label: 'Username', type: 'text', placeholder: 'Enter your username', required: true },
+        { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
+        { id: 'table', label: 'Table Name (Optional)', type: 'text', placeholder: 'incident, change_request, etc.', required: false },
+      ]
+    }
+  ]
+};
 
-  const isConnected = (sourceId: string) => {
-    return connectedSources.some(source => source.type === sourceId);
+// Flatten all data sources for backward compatibility
+const dataSources: DataSourceType[] = [
+  ...dataSourceCategories.databases,
+  ...dataSourceCategories.documents,
+  ...dataSourceCategories.web,
+  ...dataSourceCategories.enterprise
+];
+
+const DataSourceSettings = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [connectedSources, setConnectedSources] = useState<Record<string, boolean>>(
+    dataSources.reduce((acc, source) => ({
+      ...acc,
+      [source.id]: source.isConnected
+    }), {})
+  );
+  const [expandedSource, setExpandedSource] = useState<string | null>(null);
+  const [connectingSource, setConnectingSource] = useState<string | null>(null);
+  const [connectionProgress, setConnectionProgress] = useState(0);
+  const [showWelcomeDialog, setShowWelcomeDialog] = useState(true);
+
+  // Auto-expand first data source for quick setup
+  useEffect(() => {
+    const firstUnconnectedSource = dataSources.find(source => !connectedSources[source.id]);
+    if (firstUnconnectedSource && showWelcomeDialog) {
+      setExpandedSource(firstUnconnectedSource.id);
+    }
+  }, [connectedSources, showWelcomeDialog]);
+
+  // Filter data sources based on search query and category
+  const getFilteredDataSources = () => {
+    let sources = dataSources;
+    
+    // Filter by category
+    if (selectedCategory !== 'all') {
+      sources = dataSourceCategories[selectedCategory as keyof typeof dataSourceCategories] || [];
+    }
+    
+    // Filter by search query
+    if (searchQuery.trim()) {
+      sources = sources.filter(source =>
+        source.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        source.description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    return sources;
   };
 
-  const handleConnect = (sourceId: string, sourceName: string) => {
-    const newSource = {
-      id: Date.now(),
-      type: sourceId,
-      name: sourceName,
-      status: 'connected'
-    };
-    setConnectedSources([...connectedSources, newSource]);
-    toast.success(`${sourceName} connected successfully`);
+  const filteredDataSources = getFilteredDataSources();
+
+  const handleConnect = async (sourceId: string) => {
+    setConnectingSource(sourceId);
+    setConnectionProgress(0);
+    
+    // Simulate connection progress
+    const progressInterval = setInterval(() => {
+      setConnectionProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          return 100;
+        }
+        return prev + 10;
+      });
+    }, 200);
+
+    // Simulate connection time (2 seconds)
+    setTimeout(() => {
+      clearInterval(progressInterval);
+      setConnectedSources(prev => ({...prev, [sourceId]: true}));
+      toast.success(`Connected to ${dataSources.find(s => s.id === sourceId)?.name}`);
+      setExpandedSource(null);
+      setConnectingSource(null);
+      setConnectionProgress(0);
+    }, 2000);
   };
 
-  const connectedCount = connectedSources.length;
+  const handleDisconnect = (sourceId: string) => {
+    setConnectedSources(prev => ({...prev, [sourceId]: false}));
+    toast.success(`Disconnected from ${dataSources.find(s => s.id === sourceId)?.name}`);
+  };
 
-  const filteredGroups = dataSourceGroups.map(group => ({
-    ...group,
-    sources: group.sources.filter(source =>
-      source.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      source.description.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  })).filter(group => group.sources.length > 0);
+  const toggleExpanded = (sourceId: string) => {
+    setExpandedSource(expandedSource === sourceId ? null : sourceId);
+  };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center">
-      <div className="w-full max-w-4xl px-6 py-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Data Sources</h1>
-          <p className="text-muted-foreground text-lg mb-4">
-            Connect your external data sources to enhance your queries with relevant information.
-          </p>
-          <Badge variant="secondary" className="text-sm">
-            {connectedCount} Connected
+    <>
+      {/* Welcome Dialog */}
+      <Dialog open={showWelcomeDialog} onOpenChange={setShowWelcomeDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="text-center space-y-4">
+            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center animate-pulse">
+              <Rocket className="w-8 h-8 text-white" />
+            </div>
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Let's Get You Connected!
+            </DialogTitle>
+            <DialogDescription className="text-base text-gray-600 leading-relaxed">
+              Welcome to your AI assistant! To unlock the full potential and get the most accurate responses, let's connect your data sources. 
+              <br /><br />
+              <span className="inline-flex items-center gap-1 text-blue-600 font-medium">
+                <Sparkles className="w-4 h-4" />
+                Start by connecting your first data source below!
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-3 mt-6">
+            <Button 
+              onClick={() => setShowWelcomeDialog(false)}
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3"
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              Let's Start Connecting!
+            </Button>
+            <Button 
+              variant="ghost" 
+              onClick={() => setShowWelcomeDialog(false)}
+              className="w-full text-gray-500 hover:text-gray-700"
+            >
+              I'll do this later
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+    <div className="space-y-8 animate-fade-in">
+      {/* Header Section */}
+      <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-gray-900">Data Sources</h2>
+          <Badge variant="outline" className="px-4 py-2 text-base bg-blue-50 text-blue-700 border-blue-200 font-medium">
+            {Object.values(connectedSources).filter(Boolean).length} Connected
           </Badge>
         </div>
+        <p className="text-gray-600 text-base leading-relaxed">
+          Connect your external data sources to enhance your queries with relevant information from your organization's systems.
+        </p>
+      </div>
 
-        {/* Search */}
-        <div className="relative mb-8">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search data sources..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 h-12"
-          />
-        </div>
-
-        {/* Data Sources Groups */}
+      {/* Filters Section */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
         <div className="space-y-6">
-          {filteredGroups.map((group) => {
-            const GroupIcon = group.icon;
-            return (
-              <Card key={group.id} className="shadow-sm">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center gap-3 text-xl">
-                    <GroupIcon className="h-6 w-6 text-primary" />
-                    {group.name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Accordion type="single" collapsible className="w-full">
-                    {group.sources.map((source) => {
-                      const SourceIcon = source.icon;
-                      const connected = isConnected(source.id);
-
-                      return (
-                        <AccordionItem key={source.id} value={source.id}>
-                          <AccordionTrigger className="hover:no-underline">
-                            <div className="flex items-center justify-between w-full pr-4">
-                              <div className="flex items-center gap-3">
-                                <div className="p-2 bg-muted rounded-lg">
-                                  <SourceIcon className="h-5 w-5 text-muted-foreground" />
-                                </div>
-                                <div className="text-left">
-                                  <h3 className="font-medium text-foreground">{source.name}</h3>
-                                  <p className="text-sm text-muted-foreground">{source.description}</p>
-                                </div>
-                              </div>
-                              {connected && (
-                                <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
-                                  <CheckCircle className="h-3 w-3 mr-1" />
-                                  Connected
-                                </Badge>
-                              )}
-                            </div>
-                          </AccordionTrigger>
-                          <AccordionContent>
-                            <div className="pt-4 pl-12 space-y-4">
-                              {!connected && (
-                                <>
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {source.configFields.map((field: any) => (
-                                      <div key={field.name} className="space-y-2">
-                                        <label className="text-sm font-medium text-foreground">
-                                          {field.label}
-                                          {field.required && <span className="text-red-500 ml-1">*</span>}
-                                        </label>
-                                        {field.type === 'textarea' ? (
-                                          <textarea 
-                                            className="w-full p-3 border border-input rounded-md bg-background text-foreground"
-                                            placeholder={`Enter ${field.label.toLowerCase()}`}
-                                            rows={3}
-                                          />
-                                        ) : field.type === 'select' ? (
-                                          <select className="w-full p-3 border border-input rounded-md bg-background text-foreground">
-                                            <option value="">Select {field.label.toLowerCase()}</option>
-                                            {field.options?.map((option: string) => (
-                                              <option key={option} value={option}>{option}</option>
-                                            ))}
-                                          </select>
-                                        ) : (
-                                          <Input
-                                            type={field.type}
-                                            placeholder={`Enter ${field.label.toLowerCase()}`}
-                                            className="w-full"
-                                          />
-                                        )}
-                                      </div>
-                                    ))}
-                                  </div>
-                                  <div className="flex justify-end pt-4">
-                                    <Button
-                                      onClick={() => handleConnect(source.id, source.name)}
-                                      className="px-6"
-                                    >
-                                      Connect
-                                    </Button>
-                                  </div>
-                                </>
-                              )}
-                              {connected && (
-                                <div className="text-sm text-muted-foreground">
-                                  This data source is connected and ready to use.
-                                </div>
-                              )}
-                            </div>
-                          </AccordionContent>
-                        </AccordionItem>
-                      );
-                    })}
-                  </Accordion>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-
-        {filteredGroups.length === 0 && (
-          <div className="text-center py-12">
-            <Search className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
-            <p className="text-muted-foreground">No data sources found matching your search.</p>
+          {/* Category Filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3">Filter by Category</label>
+            <div className="flex flex-wrap gap-2">
+              <Button 
+                variant={selectedCategory === 'all' ? 'default' : 'outline'} 
+                size="sm" 
+                className={selectedCategory === 'all' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
+                onClick={() => setSelectedCategory('all')}
+              >
+                All Sources
+              </Button>
+              <Button 
+                variant={selectedCategory === 'databases' ? 'default' : 'outline'} 
+                size="sm" 
+                className={selectedCategory === 'databases' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
+                onClick={() => setSelectedCategory('databases')}
+              >
+                Databases
+              </Button>
+              <Button 
+                variant={selectedCategory === 'documents' ? 'default' : 'outline'} 
+                size="sm" 
+                className={selectedCategory === 'documents' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
+                onClick={() => setSelectedCategory('documents')}
+              >
+                Documents
+              </Button>
+              <Button 
+                variant={selectedCategory === 'web' ? 'default' : 'outline'} 
+                size="sm" 
+                className={selectedCategory === 'web' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
+                onClick={() => setSelectedCategory('web')}
+              >
+                Web Sources
+              </Button>
+              <Button 
+                variant={selectedCategory === 'enterprise' ? 'default' : 'outline'} 
+                size="sm" 
+                className={selectedCategory === 'enterprise' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
+                onClick={() => setSelectedCategory('enterprise')}
+              >
+                Enterprise
+              </Button>
+            </div>
           </div>
-        )}
+
+          {/* Search Field */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3">Search Data Sources</label>
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Input
+                type="text"
+                placeholder="Search by name or description..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-12 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-base"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* No Results Message */}
+      {(searchQuery || selectedCategory !== 'all') && filteredDataSources.length === 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 p-16 shadow-sm">
+          <div className="text-center text-gray-500">
+            <Search className="h-12 w-12 mx-auto mb-6 text-gray-300" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No data sources found</h3>
+            <p className="text-base">
+              {searchQuery 
+                ? `No data sources match "${searchQuery}" in the ${selectedCategory === 'all' ? 'all categories' : selectedCategory + ' category'}.`
+                : `No data sources available in the ${selectedCategory} category.`
+              }
+            </p>
+          </div>
+        </div>
+      )}
+      
+      {/* Data Sources List */}
+      <div className="space-y-6">
+        {filteredDataSources.map((source) => (
+          <div key={source.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+            {/* Main Row */}
+            <div 
+              className="flex items-center justify-between p-8 cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={() => !connectedSources[source.id] && toggleExpanded(source.id)}
+            >
+              <div className="flex items-center gap-6">
+                <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                  <source.icon className="h-6 w-6 text-gray-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-900 text-lg mb-2">
+                    {source.name}
+                  </h3>
+                  <p className="text-gray-600 text-base leading-relaxed">
+                    {source.description}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-6">
+                {connectedSources[source.id] ? (
+                  <div className="flex items-center gap-4">
+                    <Badge className="bg-green-50 text-green-700 border-green-200 hover:bg-green-50 text-base px-4 py-2 font-medium">
+                      Connected
+                    </Badge>
+                    <ChevronDown 
+                      className={`h-5 w-5 text-gray-400 cursor-pointer transition-transform hover:text-gray-600 ${
+                        expandedSource === source.id ? 'rotate-180' : ''
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleExpanded(source.id);
+                      }}
+                    />
+                  </div>
+                ) : connectingSource === source.id ? (
+                  <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-base px-4 py-2 font-medium">
+                    Connecting...
+                  </Badge>
+                ) : (
+                  <div className="flex items-center gap-4">
+                    <Badge variant="outline" className="text-gray-500 text-base px-4 py-2 border-gray-300 font-medium">
+                      Not Connected
+                    </Badge>
+                    <ChevronDown 
+                      className={`h-5 w-5 text-gray-400 transition-transform hover:text-gray-600 ${
+                        expandedSource === source.id ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Expanded Content */}
+            {expandedSource === source.id && (
+              <div className="border-t border-gray-100 bg-gray-50">
+                <div className="p-5">
+                  {connectingSource === source.id ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+                        <span className="font-medium text-gray-900 text-sm">Connecting to {source.name}...</span>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm text-gray-600">
+                          <span>Establishing secure connection</span>
+                          <span>{connectionProgress}%</span>
+                        </div>
+                        <Progress value={connectionProgress} className="w-full h-2" />
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        Please wait while we establish a secure connection to your data source.
+                      </p>
+                    </div>
+                  ) : connectedSources[source.id] ? (
+                    <div className="space-y-4">
+                      <div className="flex items-start justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                        <div>
+                          <h4 className="font-semibold text-green-900 text-sm mb-1">Connection Active</h4>
+                          <p className="text-sm text-green-700">Data source is currently connected and active</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Label htmlFor={`${source.id}-active`} className="text-sm text-green-700">Active</Label>
+                          <Switch id={`${source.id}-active`} defaultChecked />
+                        </div>
+                      </div>
+                      <div>
+                        <Button 
+                          variant="secondary" 
+                          onClick={() => handleDisconnect(source.id)}
+                        >
+                          Disconnect
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-white rounded-lg border border-gray-200 p-5">
+                      <form className="space-y-4">
+                        {source.fields.map((field) => (
+                          <div key={field.id} className="space-y-2">
+                            <label htmlFor={`${source.id}-${field.id}`} className="block text-sm font-medium text-gray-700">
+                              {field.label} {field.required && <span className="text-red-500">*</span>}
+                            </label>
+                            <Input 
+                              id={`${source.id}-${field.id}`} 
+                              type={field.type}
+                              placeholder={field.placeholder}
+                              required={field.required}
+                              className="h-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                            />
+                          </div>
+                        ))}
+                        <div className="pt-3 border-t border-gray-100">
+                          <Button 
+                            type="button" 
+                            onClick={() => handleConnect(source.id)}
+                            disabled={connectingSource !== null}
+                            variant="secondary"
+                          >
+                            Connect to {source.name}
+                          </Button>
+                        </div>
+                      </form>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
+    </>
   );
 };
 
