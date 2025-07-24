@@ -3,9 +3,8 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { 
   Search, 
@@ -20,7 +19,6 @@ import {
   Twitter,
   Instagram,
   Linkedin,
-  Settings,
   CheckCircle
 } from 'lucide-react';
 
@@ -31,8 +29,6 @@ const DataSourceSettings = () => {
   ]);
   
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSource, setSelectedSource] = useState(null);
-  const [configDialog, setConfigDialog] = useState(false);
 
   const dataSourceGroups = [
     {
@@ -142,7 +138,7 @@ const DataSourceSettings = () => {
       sources: [
         {
           id: 'adls',
-          name: 'Azure Data Lake Storage',
+          name: 'Azure Data Lake Storage (ADLS)',
           description: 'Connect to your Azure Data Lake Storage',
           icon: Cloud,
           configFields: [
@@ -194,7 +190,7 @@ const DataSourceSettings = () => {
         },
         {
           id: 'local',
-          name: 'Document Library',
+          name: 'Document Library (Local files)',
           description: 'Upload and manage local files',
           icon: FolderOpen,
           configFields: [
@@ -204,7 +200,7 @@ const DataSourceSettings = () => {
         },
         {
           id: 'onedrive',
-          name: 'OneDrive',
+          name: 'One Drive',
           description: 'Connect to your OneDrive files',
           icon: FolderOpen,
           configFields: [
@@ -283,7 +279,7 @@ const DataSourceSettings = () => {
         },
         {
           id: 'website',
-          name: 'Website',
+          name: 'Website (APIs, web scraping)',
           description: 'Connect to website content via URL',
           icon: Globe,
           configFields: [
@@ -354,19 +350,6 @@ const DataSourceSettings = () => {
     toast.success(`${sourceName} connected successfully`);
   };
 
-  const handleConfigure = (source: any) => {
-    setSelectedSource(source);
-    setConfigDialog(true);
-  };
-
-  const handleSaveConfig = () => {
-    if (selectedSource) {
-      handleConnect(selectedSource.id, selectedSource.name);
-      setConfigDialog(false);
-      setSelectedSource(null);
-    }
-  };
-
   const connectedCount = connectedSources.length;
 
   const filteredGroups = dataSourceGroups.map(group => ({
@@ -378,8 +361,8 @@ const DataSourceSettings = () => {
   })).filter(group => group.sources.length > 0);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-6 py-8">
+    <div className="min-h-screen bg-background flex flex-col items-center">
+      <div className="w-full max-w-4xl px-6 py-8">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Data Sources</h1>
@@ -442,21 +425,54 @@ const DataSourceSettings = () => {
                             </div>
                           </AccordionTrigger>
                           <AccordionContent>
-                            <div className="pt-4 pl-12">
-                              <div className="flex items-center justify-between">
+                            <div className="pt-4 pl-12 space-y-4">
+                              {!connected && (
+                                <>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {source.configFields.map((field: any) => (
+                                      <div key={field.name} className="space-y-2">
+                                        <label className="text-sm font-medium text-foreground">
+                                          {field.label}
+                                          {field.required && <span className="text-red-500 ml-1">*</span>}
+                                        </label>
+                                        {field.type === 'textarea' ? (
+                                          <textarea 
+                                            className="w-full p-3 border border-input rounded-md bg-background text-foreground"
+                                            placeholder={`Enter ${field.label.toLowerCase()}`}
+                                            rows={3}
+                                          />
+                                        ) : field.type === 'select' ? (
+                                          <select className="w-full p-3 border border-input rounded-md bg-background text-foreground">
+                                            <option value="">Select {field.label.toLowerCase()}</option>
+                                            {field.options?.map((option: string) => (
+                                              <option key={option} value={option}>{option}</option>
+                                            ))}
+                                          </select>
+                                        ) : (
+                                          <Input
+                                            type={field.type}
+                                            placeholder={`Enter ${field.label.toLowerCase()}`}
+                                            className="w-full"
+                                          />
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                  <div className="flex justify-end pt-4">
+                                    <Button
+                                      onClick={() => handleConnect(source.id, source.name)}
+                                      className="px-6"
+                                    >
+                                      Connect
+                                    </Button>
+                                  </div>
+                                </>
+                              )}
+                              {connected && (
                                 <div className="text-sm text-muted-foreground">
-                                  {connected ? 'This data source is connected and ready to use.' : 'Configure this data source to get started.'}
+                                  This data source is connected and ready to use.
                                 </div>
-                                <Button
-                                  size="sm"
-                                  onClick={() => handleConfigure(source)}
-                                  disabled={connected}
-                                  className="ml-4"
-                                >
-                                  <Settings className="h-4 w-4 mr-2" />
-                                  {connected ? 'Connected' : 'Configure'}
-                                </Button>
-                              </div>
+                              )}
                             </div>
                           </AccordionContent>
                         </AccordionItem>
@@ -476,63 +492,6 @@ const DataSourceSettings = () => {
           </div>
         )}
       </div>
-
-      {/* Configuration Dialog */}
-      <Dialog open={configDialog} onOpenChange={setConfigDialog}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Configure {selectedSource?.name}</DialogTitle>
-            <DialogDescription>
-              Enter your connection details to set up this data source.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            {selectedSource?.configFields.map((field: any) => (
-              <div key={field.name} className="space-y-2">
-                <label className="text-sm font-medium text-foreground">
-                  {field.label}
-                  {field.required && <span className="text-red-500 ml-1">*</span>}
-                </label>
-                {field.type === 'textarea' ? (
-                  <textarea 
-                    className="w-full p-3 border border-input rounded-md bg-background text-foreground"
-                    placeholder={`Enter ${field.label.toLowerCase()}`}
-                    rows={3}
-                  />
-                ) : field.type === 'select' ? (
-                  <select className="w-full p-3 border border-input rounded-md bg-background text-foreground">
-                    <option value="">Select {field.label.toLowerCase()}</option>
-                    {field.options?.map((option: string) => (
-                      <option key={option} value={option}>{option}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <Input
-                    type={field.type}
-                    placeholder={`Enter ${field.label.toLowerCase()}`}
-                    className="w-full"
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-          <div className="flex gap-2 pt-4">
-            <Button 
-              variant="outline" 
-              onClick={() => setConfigDialog(false)}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-            <Button 
-              onClick={handleSaveConfig}
-              className="flex-1"
-            >
-              Save & Connect
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
