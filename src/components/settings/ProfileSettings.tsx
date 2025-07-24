@@ -2,8 +2,14 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,7 +22,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
-import { Download, Trash2 } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 
 const ProfileSettings = () => {
   const [fullName, setFullName] = useState('Andrew Neilson');
@@ -47,123 +53,149 @@ const ProfileSettings = () => {
   return (
     <div className="space-y-6">
       {/* Profile Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Profile Information</CardTitle>
-          <CardDescription>Update your personal details</CardDescription>
+      <Card className="shadow-sm border-gray-200">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-semibold text-gray-900">Profile Information</CardTitle>
+          <CardDescription className="text-gray-600">
+            Update your account details
+          </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleProfileSave} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
-                <Input
-                  id="fullName"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-            </div>
-            <Button type="submit">Save Changes</Button>
-          </form>
-        </CardContent>
-      </Card>
-
-      {/* Password */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Change Password</CardTitle>
-          <CardDescription>Update your account password</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handlePasswordSave} className="space-y-4">
+        <form onSubmit={handleProfileSave}>
+          <CardContent className="space-y-4 pt-0">
             <div className="space-y-2">
-              <Label htmlFor="currentPassword">Current Password</Label>
-              <Input id="currentPassword" type="password" />
+              <label htmlFor="fullName" className="text-sm font-medium text-gray-700">
+                Full Name
+              </label>
+              <Input
+                id="fullName"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="h-10"
+              />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="newPassword">New Password</Label>
-                <Input id="newPassword" type="password" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input id="confirmPassword" type="password" />
-              </div>
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-sm font-medium text-gray-700">
+                Email
+              </label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-10"
+              />
             </div>
-            <Button type="submit">Update Password</Button>
-          </form>
-        </CardContent>
+          </CardContent>
+          <CardFooter className="pt-4 border-t border-gray-100">
+            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+              Save Changes
+            </Button>
+          </CardFooter>
+        </form>
       </Card>
-
-      {/* Data Management */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Data Management</CardTitle>
-          <CardDescription>Export, clear, or delete your data</CardDescription>
+      
+      {/* Password Update */}
+      <Card className="shadow-sm border-gray-200">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-semibold text-gray-900">Password</CardTitle>
+          <CardDescription className="text-gray-600">
+            Update your password
+          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div>
-              <p className="font-medium">Export Data</p>
-              <p className="text-sm text-muted-foreground">Download all your account data</p>
+        <form onSubmit={handlePasswordSave}>
+          <CardContent className="space-y-4 pt-0">
+            <div className="space-y-2">
+              <label htmlFor="currentPassword" className="text-sm font-medium text-gray-700">
+                Current Password
+              </label>
+              <Input id="currentPassword" type="password" className="h-10" />
             </div>
-            <Button variant="outline" onClick={handleDownloadData}>
-              <Download className="h-4 w-4 mr-2" />
-              Download
+            <div className="space-y-2">
+              <label htmlFor="newPassword" className="text-sm font-medium text-gray-700">
+                New Password
+              </label>
+              <Input id="newPassword" type="password" className="h-10" />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
+                Confirm New Password
+              </label>
+              <Input id="confirmPassword" type="password" className="h-10" />
+            </div>
+          </CardContent>
+          <CardFooter className="pt-4 border-t border-gray-100">
+            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+              Update Password
+            </Button>
+          </CardFooter>
+        </form>
+      </Card>
+      
+      {/* Data Management */}
+      <Card className="shadow-sm border-gray-200">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-semibold text-gray-900">Data Management</CardTitle>
+          <CardDescription className="text-gray-600">
+            Manage your data and account
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6 pt-0">
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900 mb-2">Export Your Data</h3>
+            <p className="text-sm text-gray-600 mb-3">
+              Download a copy of your data
+            </p>
+            <Button 
+              variant="outline" 
+              onClick={handleDownloadData}
+              className="border-gray-300 hover:bg-gray-50"
+            >
+              Download Data
             </Button>
           </div>
           
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div>
-              <p className="font-medium">Clear Conversations</p>
-              <p className="text-sm text-muted-foreground">Remove all conversation history</p>
-            </div>
+          <Separator className="bg-gray-200" />
+          
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900 mb-2">Clear Conversations</h3>
+            <p className="text-sm text-gray-600 mb-3">
+              Remove all your conversation history
+            </p>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="outline">Clear All</Button>
+                <Button variant="outline" className="border-gray-300 hover:bg-gray-50">
+                  Clear All Conversations
+                </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Clear all conversations?</AlertDialogTitle>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will permanently delete all your conversation history. This action cannot be undone.
+                    This action will permanently delete all your conversations and cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleClearConversations}>
-                    Clear All
-                  </AlertDialogAction>
+                  <AlertDialogAction onClick={handleClearConversations}>Continue</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
           </div>
           
-          <div className="flex items-center justify-between p-4 border-destructive/20 border rounded-lg bg-destructive/5">
-            <div>
-              <p className="font-medium text-destructive">Delete Account</p>
-              <p className="text-sm text-muted-foreground">Permanently delete your account and all data</p>
-            </div>
+          <Separator className="bg-gray-200" />
+          
+          <div>
+            <h3 className="text-sm font-semibold text-red-600 mb-2">Danger Zone</h3>
+            <p className="text-sm text-gray-600 mb-3">
+              Permanently delete your account and all of your data
+            </p>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="destructive">
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete
-                </Button>
+                <Button variant="destructive">Delete Account</Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Delete your account?</AlertDialogTitle>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                   <AlertDialogDescription>
                     This action cannot be undone. This will permanently delete your account and remove all of your data from our servers.
                   </AlertDialogDescription>
@@ -172,7 +204,7 @@ const ProfileSettings = () => {
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction 
                     onClick={handleDeleteAccount}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    className="bg-red-500 hover:bg-red-600"
                   >
                     Delete Account
                   </AlertDialogAction>

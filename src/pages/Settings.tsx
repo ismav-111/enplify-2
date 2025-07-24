@@ -1,91 +1,78 @@
 
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import { ChevronLeft, LogOut, User, Database } from 'lucide-react';
+import { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProfileSettings from '@/components/settings/ProfileSettings';
 import DataSourceSettings from '@/components/settings/DataSourceSettings';
+import { ChevronLeft, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 const Settings = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [activeTab, setActiveTab] = useState("profile");
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const tab = searchParams.get('tab');
-    if (tab === 'data-sources') {
-      setActiveTab('data-sources');
-    }
-  }, [location.search]);
 
   const handleLogout = () => {
     toast.success('Logged out successfully');
     navigate('/signin');
   };
 
-  const tabs = [
-    { id: 'profile', label: 'Profile', icon: User },
-    { id: 'data-sources', label: 'Data Sources', icon: Database },
-  ];
-
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b border-border/50">
-        <div className="flex h-16 items-center justify-between px-6 max-w-7xl mx-auto">
-          <div className="flex items-center gap-4">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-5xl mx-auto px-4 py-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center">
             <Button 
               variant="ghost" 
-              size="sm"
+              size="icon" 
               onClick={() => navigate('/')}
-              className="h-8 w-8 p-0"
+              className="mr-3 hover:bg-gray-100"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-xl font-medium">Settings</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
           </div>
           
           <Button 
-            variant="ghost" 
-            size="sm"
+            variant="outline" 
             onClick={handleLogout}
-            className="text-muted-foreground hover:text-foreground"
+            className="flex items-center gap-2 hover:bg-gray-100"
           >
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
+            <LogOut className="h-4 w-4" />
+            Logout
           </Button>
         </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Tab Navigation */}
-        <div className="flex gap-1 mb-8 p-1 bg-muted rounded-lg w-fit">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-background text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Content */}
-        <div className="max-w-4xl">
-          {activeTab === 'profile' && <ProfileSettings />}
-          {activeTab === 'data-sources' && <DataSourceSettings />}
-        </div>
+        
+        {/* Tabs */}
+        <Tabs 
+          value={activeTab} 
+          onValueChange={setActiveTab}
+          className="w-full"
+        >
+          <TabsList className="grid w-full grid-cols-2 mb-6 bg-white border border-gray-200 h-12">
+            <TabsTrigger 
+              value="profile" 
+              className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 h-10 text-sm font-medium"
+            >
+              Profile
+            </TabsTrigger>
+            <TabsTrigger 
+              value="data-sources" 
+              className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 h-10 text-sm font-medium"
+            >
+              Data Sources
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="profile" className="mt-0">
+            <ProfileSettings />
+          </TabsContent>
+          
+          <TabsContent value="data-sources" className="mt-0">
+            <DataSourceSettings />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

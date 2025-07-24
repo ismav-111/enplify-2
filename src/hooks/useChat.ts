@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import type { ResponsePreferences } from '@/components/ResponsePreferences';
 
 interface Message {
   id: string;
@@ -104,9 +103,15 @@ export const useChat = () => {
     const safeMode: ResponseMode = typeof mode === 'string' ? 
       (mode as ResponseMode) : 'encore';
       
+    // Create mode-specific title with proper capitalization
+    let modeName = '';
+    if (safeMode === 'encore') modeName = 'Encore';
+    else if (safeMode === 'endocs') modeName = 'Endocs';
+    else if (safeMode === 'ensights') modeName = 'Ensights';
+    
     const newConversation: Conversation = {
       id: Date.now().toString(),
-      title: 'Untitled Conversation',
+      title: `New ${modeName} Conversation`,
       preview: 'Start a new conversation...',
       mode: safeMode,
       messages: []
@@ -373,7 +378,7 @@ Would you like me to provide more specific guidance on any aspect of this topic?
     }
   };
 
-  const sendMessage = useCallback(async (content: string, mode: ResponseMode = 'encore', file?: File, preferences?: ResponsePreferences) => {
+  const sendMessage = useCallback(async (content: string, mode: ResponseMode = 'encore', file?: File) => {
     // Ensure mode is a valid enum value
     const safeMode: ResponseMode = 
       mode === 'encore' || mode === 'endocs' || mode === 'ensights' ? mode : 'encore';
@@ -382,16 +387,9 @@ Would you like me to provide more specific guidance on any aspect of this topic?
     const currentConversation = conversations.find(conv => conv.id === activeConversation);
     let activeConvId = activeConversation;
     
-    // Only create a new conversation if there's no active conversation, not for mode changes
-    if (!currentConversation) {
+    // Create a new conversation if the mode has changed or if there's no active conversation
+    if (!currentConversation || currentConversation.mode !== safeMode) {
       activeConvId = createNewChat(safeMode);
-    } else {
-      // Update the current conversation's mode without creating a new one
-      setConversations(prev => prev.map(conv => 
-        conv.id === activeConversation 
-          ? { ...conv, mode: safeMode }
-          : conv
-      ));
     }
 
     const userMessage: Message = {
@@ -422,51 +420,37 @@ Would you like me to provide more specific guidance on any aspect of this topic?
     setIsLoading(true);
     setCurrentMode(safeMode);
 
-    // Simulate AI response based on mode with enterprise context and preferences
+    // Simulate AI response based on mode with enterprise context
     setTimeout(() => {
       let aiMessage: Message;
-      
-      // Generate response content based on preferences
-      let responseContent = getEnterpriseResponse(content, safeMode);
-      
-      if (preferences) {
-        // Add preference-aware response modifications
-        if (preferences.format === 'table' && safeMode === 'endocs') {
-          responseContent += `\n\n*Response formatted as table view based on your preferences, sourced from ${preferences.dataSource}.*`;
-        } else if (preferences.format === 'graph' && safeMode === 'ensights') {
-          responseContent += `\n\n*Response includes interactive charts based on your preferences, using ${preferences.dataSource} data.*`;
-        } else if (preferences.format === 'text') {
-          responseContent += `\n\n*Response provided in detailed text format as requested, analyzed from ${preferences.dataSource}.*`;
-        }
-      }
       
       switch(safeMode) {
         case 'endocs':
           aiMessage = {
             id: (Date.now() + 1).toString(),
-            content: responseContent,
+            content: getEnterpriseResponse(content, 'endocs'),
             isUser: false,
             timestamp: new Date(),
             mode: 'endocs',
-            tableData: preferences?.format === 'table' ? generateTableData() : undefined
+            tableData: generateTableData()
           };
           break;
           
         case 'ensights':
           aiMessage = {
             id: (Date.now() + 1).toString(),
-            content: responseContent,
+            content: getEnterpriseResponse(content, 'ensights'),
             isUser: false,
             timestamp: new Date(),
             mode: 'ensights',
-            chartData: preferences?.format === 'graph' ? generateChartData() : undefined
+            chartData: generateChartData()
           };
           break;
           
         default: // encore
           aiMessage = {
             id: (Date.now() + 1).toString(),
-            content: responseContent,
+            content: getEnterpriseResponse(content, 'encore'),
             isUser: false,
             timestamp: new Date(),
             mode: 'encore'

@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -129,6 +128,15 @@
   margin-bottom: 5px !important;
 }
 
+/* Fix settings hover issue - proper hover state */
+button[data-testid="settings-button"]:hover,
+.settings-button:hover,
+button:has(svg[data-lucide="settings"]):hover {
+  background-color: rgba(99, 102, 241, 0.1) !important;
+  color: rgb(99, 102, 241) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
 /* Updated chat loader with gradient */
 .chat-loader,
 .loader,
@@ -143,15 +151,6 @@
 [class*="loader"]::after,
 [class*="spinner"]::after {
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%) !important;
-}
-
-/* Product Logo Class - Overrides global font size for branding */
-.product-logo {
-  font-size: 4rem !important; /* 64px - much larger than the global 16px */
-  font-weight: 700 !important;
-  line-height: 1.1 !important;
-  font-family: 'Comfortaa', sans-serif !important;
-  letter-spacing: -0.02em !important;
 }
 
 /* ULTIMATE font size override for ALL AI responses - using highest specificity */
@@ -195,72 +194,4 @@ em, i {
 /* Override any heading size classes */
 .text-sm, .text-lg, .text-xl, .text-2xl, .text-3xl, .text-4xl, .text-5xl, .text-6xl, .text-7xl, .text-8xl, .text-9xl {
   font-size: 16px !important;
-}
-
-/* Button Hover States - Proper button interactions */
-button {
-  transition: all 0.2s ease-in-out;
-}
-
-/* Default button hover - subtle background change */
-button:hover {
-  background-color: hsl(var(--muted)) !important;
-}
-
-/* Primary buttons - maintain their gradient hover */
-button[data-variant="default"]:hover,
-.btn-primary:hover {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%) !important;
-  box-shadow: 0 8px 25px 0 rgba(99, 102, 241, 0.4) !important;
-  transform: translateY(-2px) !important;
-}
-
-/* Secondary buttons */
-button[data-variant="secondary"]:hover {
-  background-color: hsl(var(--secondary)) !important;
-  color: hsl(var(--secondary-foreground)) !important;
-}
-
-/* Outline buttons */
-button[data-variant="outline"]:hover {
-  background-color: hsl(var(--accent)) !important;
-  color: hsl(var(--accent-foreground)) !important;
-}
-
-/* Ghost buttons */
-button[data-variant="ghost"]:hover {
-  background-color: hsl(var(--accent)) !important;
-  color: hsl(var(--accent-foreground)) !important;
-}
-
-/* Button pressed states */
-button:active,
-button[data-state="pressed"] {
-  transform: scale(0.98);
-}
-
-/* Icon Hover States - Only for standalone icons, not inside buttons */
-svg:not(button svg):not(button * svg),
-[data-lucide]:not(button [data-lucide]):not(button * [data-lucide]),
-.lucide:not(button .lucide):not(button * .lucide),
-[class*="lucide-"]:not(button [class*="lucide-"]):not(button * [class*="lucide-"]) {
-  transition: all 0.2s ease-in-out;
-  cursor: pointer;
-}
-
-svg:not(button svg):not(button * svg):hover,
-[data-lucide]:not(button [data-lucide]):not(button * [data-lucide]):hover,
-.lucide:not(button .lucide):not(button * .lucide):hover,
-[class*="lucide-"]:not(button [class*="lucide-"]):not(button * [class*="lucide-"]):hover {
-  color: hsl(var(--primary)) !important;
-  transform: scale(1.1) !important;
-}
-
-/* Icons inside buttons - subtle hover effect only when button is hovered */
-button:hover svg,
-button:hover [data-lucide],
-button:hover .lucide,
-button:hover [class*="lucide-"] {
-  color: inherit !important;
-  transform: none !important;
 }
