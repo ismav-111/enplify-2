@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -5,7 +6,6 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { toast } from 'sonner';
-import DataSourceConnectionModal from './DataSourceConnectionModal';
 import { 
   Search, 
   Database, 
@@ -19,9 +19,7 @@ import {
   Twitter,
   Instagram,
   Linkedin,
-  CheckCircle,
-  Plus,
-  Loader2
+  CheckCircle
 } from 'lucide-react';
 
 const DataSourceSettings = () => {
@@ -31,8 +29,6 @@ const DataSourceSettings = () => {
   ]);
   
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSource, setSelectedSource] = useState<any>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const dataSourceGroups = [
     {
@@ -354,11 +350,6 @@ const DataSourceSettings = () => {
     toast.success(`${sourceName} connected successfully`);
   };
 
-  const handleOpenModal = (source: any) => {
-    setSelectedSource(source);
-    setIsModalOpen(true);
-  };
-
   const connectedCount = connectedSources.length;
 
   const filteredGroups = dataSourceGroups.map(group => ({
@@ -370,135 +361,137 @@ const DataSourceSettings = () => {
   })).filter(group => group.sources.length > 0);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
-      {/* Header */}
-      <div className="text-center space-y-4">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary/80 mb-4">
-          <Database className="w-8 h-8 text-primary-foreground" />
-        </div>
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
-          Data Sources
-        </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Connect your external data sources to enhance your queries with relevant information.
-        </p>
-        <div className="flex items-center justify-center gap-4">
-          <Badge variant="secondary" className="text-sm px-3 py-1">
-            <CheckCircle className="w-3 h-3 mr-1" />
+    <div className="min-h-screen bg-background flex flex-col items-center">
+      <div className="w-full max-w-4xl px-6 py-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Data Sources</h1>
+          <p className="text-muted-foreground text-lg mb-4">
+            Connect your external data sources to enhance your queries with relevant information.
+          </p>
+          <Badge variant="secondary" className="text-sm">
             {connectedCount} Connected
           </Badge>
-          <Badge variant="outline" className="text-sm px-3 py-1">
-            <Plus className="w-3 h-3 mr-1" />
-            {dataSourceGroups.reduce((acc, group) => acc + group.sources.length, 0)} Available
-          </Badge>
         </div>
-      </div>
 
-      {/* Search */}
-      <div className="relative max-w-xl mx-auto">
-        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-        <Input
-          placeholder="Search data sources..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-12 h-12 text-base border-2 bg-background/50 backdrop-blur-sm"
-        />
-      </div>
+        {/* Search */}
+        <div className="relative mb-8">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search data sources..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 h-12"
+          />
+        </div>
 
-      {/* Data Sources Groups */}
-      <div className="space-y-8">
-        {filteredGroups.map((group) => {
-          const GroupIcon = group.icon;
-          return (
-            <Card key={group.id} className="border-0 shadow-lg bg-gradient-to-br from-background to-muted/10">
-              <CardHeader className="pb-6">
-                <CardTitle className="flex items-center gap-4 text-2xl">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+        {/* Data Sources Groups */}
+        <div className="space-y-6">
+          {filteredGroups.map((group) => {
+            const GroupIcon = group.icon;
+            return (
+              <Card key={group.id} className="shadow-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-3 text-xl">
                     <GroupIcon className="h-6 w-6 text-primary" />
-                  </div>
-                  {group.name}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {group.sources.map((source) => {
-                    const SourceIcon = source.icon;
-                    const connected = isConnected(source.id);
+                    {group.name}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Accordion type="single" collapsible className="w-full">
+                    {group.sources.map((source) => {
+                      const SourceIcon = source.icon;
+                      const connected = isConnected(source.id);
 
-                    return (
-                      <div
-                        key={source.id}
-                        className={`p-6 rounded-xl border-2 transition-all duration-300 hover:shadow-lg cursor-pointer ${
-                          connected
-                            ? 'border-green-500/30 bg-gradient-to-br from-green-500/5 to-green-600/5'
-                            : 'border-border hover:border-primary/30 bg-gradient-to-br from-background to-muted/20'
-                        }`}
-                      >
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-center gap-3">
-                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                              connected ? 'bg-green-500/10' : 'bg-muted'
-                            }`}>
-                              <SourceIcon className={`h-5 w-5 ${
-                                connected ? 'text-green-600' : 'text-muted-foreground'
-                              }`} />
+                      return (
+                        <AccordionItem key={source.id} value={source.id}>
+                          <AccordionTrigger className="hover:no-underline">
+                            <div className="flex items-center justify-between w-full pr-4">
+                              <div className="flex items-center gap-3">
+                                <div className="p-2 bg-muted rounded-lg">
+                                  <SourceIcon className="h-5 w-5 text-muted-foreground" />
+                                </div>
+                                <div className="text-left">
+                                  <h3 className="font-medium text-foreground">{source.name}</h3>
+                                  <p className="text-sm text-muted-foreground">{source.description}</p>
+                                </div>
+                              </div>
+                              {connected && (
+                                <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
+                                  <CheckCircle className="h-3 w-3 mr-1" />
+                                  Connected
+                                </Badge>
+                              )}
                             </div>
-                            <div>
-                              <h3 className="font-semibold text-foreground">{source.name}</h3>
-                              <p className="text-sm text-muted-foreground">{source.description}</p>
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <div className="pt-4 pl-12 space-y-4">
+                              {!connected && (
+                                <>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {source.configFields.map((field: any) => (
+                                      <div key={field.name} className="space-y-2">
+                                        <label className="text-sm font-medium text-foreground">
+                                          {field.label}
+                                          {field.required && <span className="text-red-500 ml-1">*</span>}
+                                        </label>
+                                        {field.type === 'textarea' ? (
+                                          <textarea 
+                                            className="w-full p-3 border border-input rounded-md bg-background text-foreground"
+                                            placeholder={`Enter ${field.label.toLowerCase()}`}
+                                            rows={3}
+                                          />
+                                        ) : field.type === 'select' ? (
+                                          <select className="w-full p-3 border border-input rounded-md bg-background text-foreground">
+                                            <option value="">Select {field.label.toLowerCase()}</option>
+                                            {field.options?.map((option: string) => (
+                                              <option key={option} value={option}>{option}</option>
+                                            ))}
+                                          </select>
+                                        ) : (
+                                          <Input
+                                            type={field.type}
+                                            placeholder={`Enter ${field.label.toLowerCase()}`}
+                                            className="w-full"
+                                          />
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                  <div className="flex justify-end pt-4">
+                                    <Button
+                                      onClick={() => handleConnect(source.id, source.name)}
+                                      className="px-6"
+                                    >
+                                      Connect
+                                    </Button>
+                                  </div>
+                                </>
+                              )}
+                              {connected && (
+                                <div className="text-sm text-muted-foreground">
+                                  This data source is connected and ready to use.
+                                </div>
+                              )}
                             </div>
-                          </div>
-                          {connected && (
-                            <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              Connected
-                            </Badge>
-                          )}
-                        </div>
-                        
-                        {!connected && (
-                          <Button
-                            onClick={() => handleOpenModal(source)}
-                            className="w-full"
-                            size="sm"
-                          >
-                            <Plus className="w-4 h-4 mr-2" />
-                            Connect
-                          </Button>
-                        )}
-                        
-                        {connected && (
-                          <div className="text-sm text-green-600 font-medium">
-                            Ready to use
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      {filteredGroups.length === 0 && (
-        <div className="text-center py-16">
-          <Search className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-muted-foreground mb-2">No data sources found</h3>
-          <p className="text-muted-foreground">Try adjusting your search terms</p>
+                          </AccordionContent>
+                        </AccordionItem>
+                      );
+                    })}
+                  </Accordion>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
-      )}
 
-      {/* Connection Modal */}
-      {selectedSource && (
-        <DataSourceConnectionModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          source={selectedSource}
-          onConnect={handleConnect}
-        />
-      )}
+        {filteredGroups.length === 0 && (
+          <div className="text-center py-12">
+            <Search className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+            <p className="text-muted-foreground">No data sources found matching your search.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
