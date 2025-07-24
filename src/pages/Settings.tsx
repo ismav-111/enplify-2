@@ -59,32 +59,37 @@ const Settings = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Tab Navigation */}
-        <div className="flex gap-1 mb-8 p-1 bg-muted rounded-lg w-fit">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-background text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
+      {/* Main Content - Centered */}
+      <div className="flex justify-center px-6 py-8">
+        <div className="w-full max-w-4xl">
+          {/* Tab Navigation - Centered */}
+          <div className="flex justify-center mb-8">
+            <div className="flex gap-1 p-1 bg-muted rounded-lg">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                      activeTab === tab.id
+                        ? 'bg-background text-foreground shadow-sm'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-        {/* Content */}
-        <div className="max-w-4xl">
-          {activeTab === 'profile' && <ProfileSettings />}
-          {activeTab === 'data-sources' && <DataSourceSettings />}
+          {/* Content */}
+          <div className="w-full">
+            {activeTab === 'profile' && <ProfileSettings />}
+            {activeTab === 'data-sources' && <DataSourceSettings />}
+          </div>
         </div>
       </div>
     </div>
