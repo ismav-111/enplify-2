@@ -35,14 +35,37 @@ const dataSourceOptions = [
 const ResponsePreferences = ({ preferences, onPreferencesChange, className = '', mode = 'encore' }: ResponsePreferencesProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Show all format options for all modes
-  const availableFormats = allFormatOptions;
+  // Filter format options based on data source and mode
+  const getAvailableFormats = () => {
+    // For endocs and ensights, show all format options
+    if (mode === 'endocs' || mode === 'ensights') {
+      return allFormatOptions; // table, graph, text
+    }
+    
+    // For encore mode, filter based on data source
+    switch (preferences.dataSource) {
+      case 'vector':
+        return allFormatOptions.filter(opt => opt.value === 'text');
+      case 'sql':
+      case 'snowflake':
+      default:
+        return allFormatOptions;
+    }
+  };
+
+  const availableFormats = getAvailableFormats();
   const selectedFormat = allFormatOptions.find(opt => opt.value === preferences.format);
   const selectedDataSource = dataSourceOptions.find(opt => opt.value === preferences.dataSource);
 
-  // Handle data source changes without format restrictions
+  // Auto-adjust format when data source changes
   const handleDataSourceChange = (newDataSource: ResponsePreferences['dataSource']) => {
-    onPreferencesChange({ ...preferences, dataSource: newDataSource });
+    let newFormat = preferences.format;
+    
+    if (newDataSource === 'vector' && preferences.format !== 'text') {
+      newFormat = 'text';
+    }
+    
+    onPreferencesChange({ dataSource: newDataSource, format: newFormat });
   };
 
   return (
@@ -62,29 +85,31 @@ const ResponsePreferences = ({ preferences, onPreferencesChange, className = '',
           <div className="p-4">
             <h4 className="text-sm font-medium text-gray-800 mb-4">Output Format</h4>
             
-            {/* Data Source selection - now available for all modes */}
-            <div className="mb-4">
-              <label className="text-xs text-gray-500 mb-2 block">Data Source</label>
-              <div className="space-y-1">
-                {dataSourceOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => handleDataSourceChange(option.value)}
-                    className={`w-full flex items-center gap-2 p-2 rounded-md text-sm transition-colors ${
-                      preferences.dataSource === option.value
-                        ? 'bg-gray-100 text-gray-900'
-                        : 'text-gray-600 hover:bg-gray-50'
-                    }`}
-                  >
-                    <option.icon className="h-4 w-4" />
-                    <span className="flex-1 text-left">{option.label}</span>
-                    {preferences.dataSource === option.value && (
-                      <Check className="h-3 w-3" />
-                    )}
-                  </button>
-                ))}
+            {/* Data Source selection - only for encore mode */}
+            {mode === 'encore' && (
+              <div className="mb-4">
+                <label className="text-xs text-gray-500 mb-2 block">Data Source</label>
+                <div className="space-y-1">
+                  {dataSourceOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => handleDataSourceChange(option.value)}
+                      className={`w-full flex items-center gap-2 p-2 rounded-md text-sm transition-colors ${
+                        preferences.dataSource === option.value
+                          ? 'bg-gray-100 text-gray-900'
+                          : 'text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      <option.icon className="h-4 w-4" />
+                      <span className="flex-1 text-left">{option.label}</span>
+                      {preferences.dataSource === option.value && (
+                        <Check className="h-3 w-3" />
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             <div>
               <label className="text-xs text-gray-500 mb-2 block">Format</label>
