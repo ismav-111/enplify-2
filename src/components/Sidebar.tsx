@@ -40,6 +40,12 @@ const Sidebar = ({
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
 
+  // Function to truncate title with ellipsis
+  const truncateTitle = (title: string, maxLength: number = 20) => {
+    if (title.length <= maxLength) return title;
+    return title.substring(0, maxLength) + '...';
+  };
+
   const handleRenameClick = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     const conversation = conversations.find(conv => conv.id === id);
@@ -82,7 +88,7 @@ const Sidebar = ({
       {!isOpen && (
         <div className="fixed top-4 left-4 z-30 flex items-center gap-3">
           <div className="bg-white px-6 py-3 rounded-full">
-            <span className="text-2xl font-bold text-[#4E50A8] font-comfortaa">
+            <span className="text-4xl font-bold text-[#4E50A8] font-comfortaa">
               enplify.ai
             </span>
           </div>
@@ -103,7 +109,7 @@ const Sidebar = ({
       >
         {/* Header with close button */}
         <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-[#4E50A8] font-comfortaa">
+          <h1 className="text-4xl font-bold text-[#4E50A8] font-comfortaa">
             enplify.ai
           </h1>
           <Button 
@@ -156,7 +162,7 @@ const Sidebar = ({
                     activeConversation === conv.id ? 'bg-[#F1F1F9]' : ''
                   }`}
                 >
-                  <div className="flex items-center">
+                  <div className="flex items-center justify-between">
                     {editingConversation === conv.id ? (
                       <div className="flex items-center gap-2 w-full">
                         <input
@@ -195,9 +201,11 @@ const Sidebar = ({
                       </div>
                     ) : (
                       <>
-                        <p className="text-sm font-medium text-gray-800 truncate">{conv.title}</p>
+                        <p className="text-sm font-medium text-gray-800 flex-1 pr-2 whitespace-nowrap overflow-hidden" title={conv.title}>
+                          {truncateTitle(conv.title)}
+                        </p>
                         {hoveredConversation === conv.id && (
-                          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-1">
+                          <div className="flex gap-1 flex-shrink-0">
                             <Button 
                               variant="ghost" 
                               size="icon" 

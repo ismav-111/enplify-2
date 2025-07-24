@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
+import AdminDashboard from "./pages/AdminDashboard";
 
 // Add Comfortaa font
 import "./styles/fonts.css";
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/settings" element={<Settings />} />
           <Route path="/signin" element={<Auth />} />
           <Route path="/signup" element={<Auth />} />
+          <Route path="/admin" element={<AdminDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

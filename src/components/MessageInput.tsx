@@ -1,5 +1,6 @@
+
 import { useState, useRef, useEffect } from 'react';
-import { ArrowUp, Paperclip, Square } from 'lucide-react';
+import { ArrowUp, Paperclip, Square, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -14,7 +15,7 @@ import { useToast } from '@/components/ui/use-toast';
 export type ResponseMode = 'encore' | 'endocs' | 'ensights';
 
 interface MessageInputProps {
-  onSendMessage: (message: string, mode: ResponseMode, file?: File) => void;
+  onSendMessage: (message: string, mode: ResponseMode, files?: File[]) => void;
   disabled?: boolean;
   centered?: boolean;
   isLoading?: boolean;
@@ -30,7 +31,7 @@ const MessageInput = ({
 }: MessageInputProps) => {
   const [message, setMessage] = useState('');
   const [responseMode, setResponseMode] = useState<ResponseMode>('encore');
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -40,14 +41,14 @@ const MessageInput = ({
   
   // Store valid file extensions per mode
   const validFileExtensions = {
-    endocs: ['.pdf', '.jpg', '.jpeg', '.png', '.gif', '.svg'],
+    endocs: ['.pdf', '.jpg', '.jpeg', '.png', '.gif', '.svg', '.doc', '.docx'],
     ensights: ['.xlsx', '.xls', '.csv']
   };
   
   useEffect(() => {
-    // Clear selected file when changing modes
+    // Clear selected files when changing modes
     if (prevModRef.current !== responseMode) {
-      setSelectedFile(null);
+      setSelectedFiles([]);
       prevModRef.current = responseMode;
     }
   }, [responseMode]);
@@ -55,9 +56,9 @@ const MessageInput = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim() && !disabled && !isLoading) {
-      onSendMessage(message.trim(), responseMode, selectedFile || undefined);
+      onSendMessage(message.trim(), responseMode, selectedFiles.length > 0 ? selectedFiles : undefined);
       setMessage('');
-      setSelectedFile(null);
+      setSelectedFiles([]);
     }
   };
 
@@ -84,7 +85,7 @@ const MessageInput = ({
     if (mode === 'endocs' && !validFileExtensions.endocs.includes(fileExt)) {
       toast({
         title: "Invalid file type",
-        description: "Endocs only supports PDF and image files.",
+        description: "Endocs supports PDF, image files, and documents.",
         variant: "destructive"
       });
       return false;
@@ -103,18 +104,37 @@ const MessageInput = ({
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      if (validateFileType(file, responseMode)) {
-        setSelectedFile(file);
-      } else {
-        e.target.value = '';
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files);
+      const validFiles: File[] = [];
+      
+      for (const file of newFiles) {
+        if (validateFileType(file, responseMode)) {
+          // Check for duplicates
+          const isDuplicate = selectedFiles.some(existingFile => 
+            existingFile.name === file.name && existingFile.size === file.size
+          );
+          
+          if (!isDuplicate) {
+            validFiles.push(file);
+          }
+        }
       }
+      
+      if (validFiles.length > 0) {
+        setSelectedFiles(prev => [...prev, ...validFiles]);
+      }
+      
+      e.target.value = '';
     }
   };
 
   const handleFileClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleRemoveFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleStopClick = () => {
@@ -130,6 +150,32 @@ const MessageInput = ({
       <div className="max-w-5xl mx-auto">
         <form ref={formRef} onSubmit={handleSubmit} className="relative" onClick={handleFormClick}>
           <div className="flex flex-col w-full rounded-2xl border border-gray-200 shadow-sm bg-white overflow-hidden">
+            {/* Selected files display */}
+            {selectedFiles.length > 0 && (
+              <div className="px-4 pt-3 pb-2 border-b border-gray-100">
+                <div className="flex flex-wrap gap-2">
+                  {selectedFiles.map((file, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2 text-sm"
+                    >
+                      <Paperclip size={14} className="text-gray-500" />
+                      <span className="text-gray-700 truncate max-w-[150px]">
+                        {file.name}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveFile(index)}
+                        className="text-gray-400 hover:text-red-500 transition-colors"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             {/* Textarea area */}
             <div className="flex items-start w-full px-4 pt-4 pb-2">
               <Textarea
@@ -161,8 +207,9 @@ const MessageInput = ({
                       ref={fileInputRef}
                       onChange={handleFileChange}
                       className="hidden"
+                      multiple
                       accept={responseMode === 'endocs' 
-                        ? '.pdf,.jpg,.jpeg,.png,.gif,.svg' 
+                        ? '.pdf,.jpg,.jpeg,.png,.gif,.svg,.doc,.docx' 
                         : '.xlsx,.xls,.csv'}
                     />
                   </button>
@@ -174,7 +221,7 @@ const MessageInput = ({
                   onValueChange={(value) => {
                     setResponseMode(value as ResponseMode);
                     if (value === 'encore') {
-                      setSelectedFile(null);
+                      setSelectedFiles([]);
                     }
                   }}
                 >
@@ -189,13 +236,13 @@ const MessageInput = ({
                 </Select>
               </div>
               
-              {/* Right side: File info and Send/Stop button */}
+              {/* Right side: File count and Send/Stop button */}
               <div className="flex items-center gap-3">
-                {/* Show selected file name if any */}
-                {selectedFile && (
+                {/* Show selected file count if any */}
+                {selectedFiles.length > 0 && (
                   <div className="flex items-center text-xs text-gray-500">
                     <Paperclip size={12} className="mr-1" />
-                    <span className="truncate max-w-[150px]">{selectedFile.name}</span>
+                    <span>{selectedFiles.length} file{selectedFiles.length > 1 ? 's' : ''}</span>
                   </div>
                 )}
 
