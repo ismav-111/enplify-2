@@ -2,381 +2,327 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Plus, Trash2, Globe, Youtube, Facebook, Twitter, Instagram, Linkedin, Database, Cloud, Server, FolderOpen, Building2, Search, Filter, CheckCircle2 } from 'lucide-react';
+import { 
+  Search, 
+  ChevronDown, 
+  Database, 
+  FolderOpen, 
+  Globe, 
+  Youtube, 
+  Building2,
+  Server,
+  Cloud,
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin
+} from 'lucide-react';
 
 const DataSourceSettings = () => {
   const [connectedSources, setConnectedSources] = useState([
-    { id: 1, type: 'website', name: 'company-website.com', status: 'connected', category: 'Web' },
-    { id: 2, type: 'youtube', name: 'Company Channel', status: 'connected', category: 'Social' },
-    { id: 3, type: 'facebook', name: 'Company Facebook', status: 'connected', category: 'Social' },
+    { id: 1, type: 'snowflake', name: 'Snowflake', status: 'connected' },
+    { id: 2, type: 'salesforce', name: 'Salesforce', status: 'connected' },
   ]);
   
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  
-  // Form states
-  const [newWebsite, setNewWebsite] = useState('');
-  const [youtubeUrl, setYoutubeUrl] = useState('');
-  const [youtubeType, setYoutubeType] = useState('');
+  const [expandedSources, setExpandedSources] = useState<string[]>([]);
 
-  const dataSourceCategories = [
+  const dataSources = [
     {
-      id: 'social',
-      title: 'Social Media',
-      description: 'Connect your social media accounts',
-      icon: Instagram,
-      color: 'bg-gradient-to-br from-pink-500 to-rose-500',
-      sources: [
-        { value: 'facebook', label: 'Facebook', icon: Facebook },
-        { value: 'twitter', label: 'Twitter', icon: Twitter },
-        { value: 'instagram', label: 'Instagram', icon: Instagram },
-        { value: 'linkedin', label: 'LinkedIn', icon: Linkedin },
-      ]
-    },
-    {
-      id: 'warehouse',
-      title: 'Data Warehouses',
-      description: 'Connect to your data warehouse',
-      icon: Database,
-      color: 'bg-gradient-to-br from-blue-500 to-cyan-500',
-      sources: [
-        { value: 'snowflake', label: 'Snowflake', icon: Database },
-        { value: 'databricks', label: 'Databricks', icon: Database },
-        { value: 'redshift', label: 'Amazon Redshift', icon: Database },
-      ]
-    },
-    {
-      id: 'database',
-      title: 'Databases',
-      description: 'Connect to your databases',
-      icon: Server,
-      color: 'bg-gradient-to-br from-green-500 to-emerald-500',
-      sources: [
-        { value: 'postgresql', label: 'PostgreSQL', icon: Server },
-        { value: 'mysql', label: 'MySQL', icon: Server },
-        { value: 'sqlserver', label: 'SQL Server', icon: Server },
-        { value: 'mongodb', label: 'MongoDB', icon: Server },
-      ]
-    },
-    {
-      id: 'lake',
-      title: 'Data Lakes',
-      description: 'Connect to cloud storage',
-      icon: Cloud,
-      color: 'bg-gradient-to-br from-purple-500 to-violet-500',
-      sources: [
-        { value: 'adls', label: 'Azure Data Lake Storage', icon: Cloud },
-        { value: 's3', label: 'Amazon S3', icon: Cloud },
-        { value: 'gcs', label: 'Google Cloud Storage', icon: Cloud },
-      ]
-    },
-    {
-      id: 'repository',
-      title: 'Repositories',
-      description: 'Connect to document repositories',
+      id: 'sharepoint',
+      name: 'SharePoint',
+      description: 'Connect to your SharePoint sites and documents',
       icon: FolderOpen,
-      color: 'bg-gradient-to-br from-orange-500 to-amber-500',
-      sources: [
-        { value: 'sharepoint', label: 'SharePoint', icon: FolderOpen },
-        { value: 'onedrive', label: 'OneDrive', icon: FolderOpen },
-        { value: 'googledrive', label: 'Google Drive', icon: FolderOpen },
-        { value: 'dropbox', label: 'Dropbox', icon: FolderOpen },
-        { value: 'local', label: 'Document Library (Local)', icon: FolderOpen },
-      ]
+      category: 'repositories'
     },
     {
-      id: 'enterprise',
-      title: 'Enterprise Systems',
-      description: 'Connect to enterprise platforms',
+      id: 'snowflake',
+      name: 'Snowflake',
+      description: 'Connect to your Snowflake data warehouse',
+      icon: Database,
+      category: 'warehouses'
+    },
+    {
+      id: 'sql-database',
+      name: 'SQL Database',
+      description: 'Connect to your SQL Server, MySQL, or PostgreSQL database',
+      icon: Server,
+      category: 'databases'
+    },
+    {
+      id: 'website',
+      name: 'Website',
+      description: 'Connect to website content via URL',
+      icon: Globe,
+      category: 'web'
+    },
+    {
+      id: 'youtube',
+      name: 'YouTube',
+      description: 'Connect to YouTube channels and videos',
+      icon: Youtube,
+      category: 'social'
+    },
+    {
+      id: 'sap',
+      name: 'SAP',
+      description: 'Connect to your SAP instance',
       icon: Building2,
-      color: 'bg-gradient-to-br from-indigo-500 to-blue-500',
-      sources: [
-        { value: 'salesforce', label: 'Salesforce', icon: Building2 },
-        { value: 'sap', label: 'SAP', icon: Building2 },
-        { value: 'servicenow', label: 'ServiceNow', icon: Building2 },
-      ]
+      category: 'enterprise'
+    },
+    {
+      id: 'salesforce',
+      name: 'Salesforce',
+      description: 'Connect to your Salesforce organization',
+      icon: Building2,
+      category: 'enterprise'
+    },
+    {
+      id: 'databricks',
+      name: 'Databricks',
+      description: 'Connect to your Databricks workspace',
+      icon: Database,
+      category: 'warehouses'
+    },
+    {
+      id: 'redshift',
+      name: 'Amazon Redshift',
+      description: 'Connect to your Amazon Redshift cluster',
+      icon: Database,
+      category: 'warehouses'
+    },
+    {
+      id: 'postgresql',
+      name: 'PostgreSQL',
+      description: 'Connect to your PostgreSQL database',
+      icon: Server,
+      category: 'databases'
+    },
+    {
+      id: 'mysql',
+      name: 'MySQL',
+      description: 'Connect to your MySQL database',
+      icon: Server,
+      category: 'databases'
+    },
+    {
+      id: 'mongodb',
+      name: 'MongoDB',
+      description: 'Connect to your MongoDB database',
+      icon: Server,
+      category: 'databases'
+    },
+    {
+      id: 'adls',
+      name: 'Azure Data Lake Storage',
+      description: 'Connect to your Azure Data Lake Storage',
+      icon: Cloud,
+      category: 'lakes'
+    },
+    {
+      id: 's3',
+      name: 'Amazon S3',
+      description: 'Connect to your Amazon S3 bucket',
+      icon: Cloud,
+      category: 'lakes'
+    },
+    {
+      id: 'gcs',
+      name: 'Google Cloud Storage',
+      description: 'Connect to your Google Cloud Storage',
+      icon: Cloud,
+      category: 'lakes'
+    },
+    {
+      id: 'onedrive',
+      name: 'OneDrive',
+      description: 'Connect to your OneDrive files',
+      icon: FolderOpen,
+      category: 'repositories'
+    },
+    {
+      id: 'googledrive',
+      name: 'Google Drive',
+      description: 'Connect to your Google Drive files',
+      icon: FolderOpen,
+      category: 'repositories'
+    },
+    {
+      id: 'dropbox',
+      name: 'Dropbox',
+      description: 'Connect to your Dropbox files',
+      icon: FolderOpen,
+      category: 'repositories'
+    },
+    {
+      id: 'local',
+      name: 'Document Library',
+      description: 'Upload and manage local files',
+      icon: FolderOpen,
+      category: 'repositories'
+    },
+    {
+      id: 'facebook',
+      name: 'Facebook',
+      description: 'Connect to your Facebook pages and posts',
+      icon: Facebook,
+      category: 'social'
+    },
+    {
+      id: 'twitter',
+      name: 'Twitter',
+      description: 'Connect to your Twitter account',
+      icon: Twitter,
+      category: 'social'
+    },
+    {
+      id: 'linkedin',
+      name: 'LinkedIn',
+      description: 'Connect to your LinkedIn profile and company',
+      icon: Linkedin,
+      category: 'social'
+    },
+    {
+      id: 'instagram',
+      name: 'Instagram',
+      description: 'Connect to your Instagram account',
+      icon: Instagram,
+      category: 'social'
+    },
+    {
+      id: 'servicenow',
+      name: 'ServiceNow',
+      description: 'Connect to your ServiceNow instance',
+      icon: Building2,
+      category: 'enterprise'
     }
   ];
 
-  const youtubeTypes = [
-    { value: 'channel', label: 'Channel' },
-    { value: 'playlist', label: 'Playlist' },
-    { value: 'video', label: 'Video' },
-  ];
+  const toggleExpanded = (sourceId: string) => {
+    setExpandedSources(prev => 
+      prev.includes(sourceId) 
+        ? prev.filter(id => id !== sourceId)
+        : [...prev, sourceId]
+    );
+  };
 
-  const handleAddSource = (type: string, name: string, category: string) => {
+  const isConnected = (sourceId: string) => {
+    return connectedSources.some(source => source.type === sourceId);
+  };
+
+  const handleConnect = (sourceId: string, sourceName: string) => {
     const newSource = {
       id: Date.now(),
-      type,
-      name,
-      status: 'connected',
-      category
+      type: sourceId,
+      name: sourceName,
+      status: 'connected'
     };
     setConnectedSources([...connectedSources, newSource]);
-    toast.success(`${name} connected successfully`);
+    toast.success(`${sourceName} connected successfully`);
   };
 
-  const handleAddWebsite = () => {
-    if (newWebsite.trim()) {
-      handleAddSource('website', newWebsite, 'Web');
-      setNewWebsite('');
-    }
-  };
+  const connectedCount = connectedSources.length;
 
-  const handleAddYoutube = () => {
-    if (youtubeUrl.trim() && youtubeType) {
-      handleAddSource('youtube', `${youtubeType}: ${youtubeUrl}`, 'Social');
-      setYoutubeUrl('');
-      setYoutubeType('');
-    }
-  };
-
-  const handleRemoveSource = (id: number) => {
-    setConnectedSources(connectedSources.filter(source => source.id !== id));
-    toast.success('Data source removed');
-  };
-
-  const getSourceIcon = (type: string) => {
-    const iconMap: { [key: string]: React.ComponentType<any> } = {
-      website: Globe,
-      youtube: Youtube,
-      facebook: Facebook,
-      twitter: Twitter,
-      instagram: Instagram,
-      linkedin: Linkedin,
-      snowflake: Database,
-      databricks: Database,
-      redshift: Database,
-      postgresql: Server,
-      mysql: Server,
-      sqlserver: Server,
-      mongodb: Server,
-      adls: Cloud,
-      s3: Cloud,
-      gcs: Cloud,
-      sharepoint: FolderOpen,
-      onedrive: FolderOpen,
-      googledrive: FolderOpen,
-      dropbox: FolderOpen,
-      local: FolderOpen,
-      salesforce: Building2,
-      sap: Building2,
-      servicenow: Building2,
-    };
-    const IconComponent = iconMap[type] || Database;
-    return <IconComponent className="h-5 w-5" />;
-  };
-
-  const filteredSources = connectedSources.filter(source => {
-    const matchesSearch = source.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || source.category.toLowerCase() === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredSources = dataSources.filter(source =>
+    source.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    source.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-8">
+    <div className="w-full max-w-4xl mx-auto space-y-8">
       {/* Header */}
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Data Sources</h1>
-        <p className="text-muted-foreground text-lg">Connect and manage your data sources</p>
-        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-          <CheckCircle2 className="h-4 w-4 text-green-500" />
-          <span>{connectedSources.length} sources connected</span>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-foreground">Data Sources</h1>
+          <p className="text-muted-foreground mt-1">
+            Connect your external data sources to enhance your queries with relevant information.
+          </p>
         </div>
+        <Badge variant="secondary" className="text-sm">
+          {connectedCount} Connected
+        </Badge>
       </div>
 
-      {/* Connected Sources Section */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Connected Sources</h2>
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search sources..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-64"
-              />
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search data sources..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10 h-11"
+        />
+      </div>
+
+      {/* Data Sources List */}
+      <div className="space-y-2">
+        {filteredSources.map((source) => {
+          const Icon = source.icon;
+          const connected = isConnected(source.id);
+          const expanded = expandedSources.includes(source.id);
+
+          return (
+            <div
+              key={source.id}
+              className="border border-border rounded-lg bg-card hover:bg-accent/50 transition-colors"
+            >
+              <div
+                className="flex items-center justify-between p-4 cursor-pointer"
+                onClick={() => toggleExpanded(source.id)}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-muted rounded-lg">
+                    <Icon className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-foreground">{source.name}</h3>
+                    <p className="text-sm text-muted-foreground">{source.description}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  {connected && (
+                    <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
+                      Connected
+                    </Badge>
+                  )}
+                  <ChevronDown
+                    className={`h-4 w-4 text-muted-foreground transition-transform ${
+                      expanded ? 'rotate-180' : ''
+                    }`}
+                  />
+                </div>
+              </div>
+
+              {expanded && (
+                <div className="px-4 pb-4 border-t border-border">
+                  <div className="pt-4 flex items-center justify-between">
+                    <div className="text-sm text-muted-foreground">
+                      {connected ? 'This data source is connected and ready to use.' : 'Click connect to set up this data source.'}
+                    </div>
+                    <Button
+                      size="sm"
+                      onClick={() => handleConnect(source.id, source.name)}
+                      disabled={connected}
+                      className="ml-4"
+                    >
+                      {connected ? 'Connected' : 'Connect'}
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-32">
-                <Filter className="h-4 w-4 mr-2" />
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="web">Web</SelectItem>
-                <SelectItem value="social">Social</SelectItem>
-                <SelectItem value="database">Database</SelectItem>
-                <SelectItem value="cloud">Cloud</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        {filteredSources.length === 0 ? (
-          <Card className="border-dashed border-2">
-            <CardContent className="flex flex-col items-center justify-center py-16">
-              <Database className="h-12 w-12 text-muted-foreground/50 mb-4" />
-              <p className="text-lg font-medium text-muted-foreground">No sources found</p>
-              <p className="text-sm text-muted-foreground/75">Try adjusting your search or filter</p>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid gap-4">
-            {filteredSources.map((source) => (
-              <Card key={source.id} className="group hover:shadow-lg transition-all duration-200">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-muted rounded-xl">
-                        {getSourceIcon(source.type)}
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-lg">{source.name}</h3>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <span className="capitalize">{source.type}</span>
-                          <span>•</span>
-                          <span>{source.category}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-                        <span className="text-green-600 font-medium">Connected</span>
-                      </div>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => handleRemoveSource(source.id)}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+          );
+        })}
       </div>
 
-      {/* Add New Sources Section */}
-      <div className="space-y-6">
-        <h2 className="text-xl font-semibold text-center">Add New Data Sources</h2>
-        
-        {/* Quick Add Section */}
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card className="hover:shadow-lg transition-all duration-200">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg">
-                  <Globe className="h-5 w-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg">Website</h3>
-                  <p className="text-sm text-muted-foreground font-normal">Connect any website URL</p>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="https://example.com"
-                  value={newWebsite}
-                  onChange={(e) => setNewWebsite(e.target.value)}
-                  className="flex-1"
-                />
-                <Button onClick={handleAddWebsite} disabled={!newWebsite.trim()}>
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-all duration-200">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-r from-red-500 to-pink-500 rounded-lg">
-                  <Youtube className="h-5 w-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg">YouTube</h3>
-                  <p className="text-sm text-muted-foreground font-normal">Connect channels, playlists, or videos</p>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0 space-y-3">
-              <Select value={youtubeType} onValueChange={setYoutubeType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {youtubeTypes.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="YouTube URL"
-                  value={youtubeUrl}
-                  onChange={(e) => setYoutubeUrl(e.target.value)}
-                  className="flex-1"
-                />
-                <Button onClick={handleAddYoutube} disabled={!youtubeUrl.trim() || !youtubeType}>
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+      {filteredSources.length === 0 && (
+        <div className="text-center py-12">
+          <Search className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+          <p className="text-muted-foreground">No data sources found matching your search.</p>
         </div>
-
-        {/* Data Source Categories */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {dataSourceCategories.map((category) => {
-            const Icon = category.icon;
-            return (
-              <Card key={category.id} className="hover:shadow-lg transition-all duration-200">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center gap-3">
-                    <div className={`p-3 ${category.color} rounded-xl`}>
-                      <Icon className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg">{category.title}</h3>
-                      <p className="text-sm text-muted-foreground font-normal">{category.description}</p>
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="space-y-2">
-                    {category.sources.map((source) => (
-                      <button
-                        key={source.value}
-                        onClick={() => handleAddSource(source.value, source.label, category.title)}
-                        className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors text-left group"
-                      >
-                        <source.icon className="h-5 w-5 text-muted-foreground" />
-                        <span className="font-medium flex-1">{source.label}</span>
-                        <Plus className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                      </button>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      </div>
+      )}
     </div>
   );
 };
