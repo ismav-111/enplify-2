@@ -18,58 +18,46 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto px-4 py-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+    <div className="min-h-screen bg-white">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-8">
           <div className="flex items-center">
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => navigate('/')}
-              className="mr-3 hover:bg-gray-100"
+              className="mr-4"
             >
               <ChevronLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+            <h1 className="text-2xl font-bold text-gray-800">Settings</h1>
           </div>
           
           <Button 
             variant="outline" 
             onClick={handleLogout}
-            className="flex items-center gap-2 hover:bg-gray-100"
+            className="flex items-center gap-2"
           >
             <LogOut className="h-4 w-4" />
             Logout
           </Button>
         </div>
         
-        {/* Tabs */}
         <Tabs 
           value={activeTab} 
           onValueChange={setActiveTab}
           className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-2 mb-6 bg-white border border-gray-200 h-12">
-            <TabsTrigger 
-              value="profile" 
-              className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 h-10 text-sm font-medium"
-            >
-              Profile
-            </TabsTrigger>
-            <TabsTrigger 
-              value="data-sources" 
-              className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 h-10 text-sm font-medium"
-            >
-              Data Sources
-            </TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="data-sources">Data Sources</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="profile" className="mt-0">
+          <TabsContent value="profile" className="mt-4">
             <ProfileSettings />
           </TabsContent>
           
-          <TabsContent value="data-sources" className="mt-0">
+          <TabsContent value="data-sources" className="mt-4">
             <DataSourceSettings />
           </TabsContent>
         </Tabs>
