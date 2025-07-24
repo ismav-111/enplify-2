@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -75,22 +74,15 @@ export default function Auth() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex">
       {/* Left Side - Brand and Features */}
-      <div className="flex-1 flex flex-col justify-center px-20 py-16 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 relative overflow-hidden">
-        {/* Animated background elements for aura effect */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-1/3 right-1/4 w-48 h-48 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 right-1/3 w-32 h-32 bg-gradient-to-r from-pink-400 to-red-400 rounded-full blur-2xl animate-pulse delay-2000"></div>
-        </div>
-        
-        <div className="max-w-2xl relative z-10">
+      <div className="flex-1 flex flex-col justify-center px-20 py-16 bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700">
+        <div className="max-w-2xl">
           <div className="mb-12">
             <h1 className="text-7xl font-bold text-white mb-8 font-comfortaa leading-tight">
               enplify<span className="text-white">.ai</span>
             </h1>
-            <div className="w-24 h-1 bg-gradient-to-r from-pink-400 to-purple-400 rounded-full mb-12"></div>
+            <div className="w-24 h-1 bg-blue-200 rounded-full mb-12"></div>
             
             <p className="text-xl text-blue-100 leading-relaxed font-light mb-12">
               Experience seamless enterprise information integration and achieve unparalleled user experience with our innovative Gen AI solution
@@ -100,11 +92,11 @@ export default function Auth() {
           <div className="space-y-6">
             {features.map((feature, index) => (
               <div key={index} className="flex items-center space-x-4 group">
-                <div className="flex-shrink-0 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
-                  <feature.icon className="w-5 h-5 text-white" />
+                <div className="flex-shrink-0 w-10 h-10 bg-blue-200/20 rounded-lg flex items-center justify-center group-hover:bg-blue-200/30 transition-all duration-300">
+                  <feature.icon className="w-5 h-5 text-blue-200" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-white font-semibold text-lg group-hover:text-pink-100 transition-colors duration-300">{feature.title}</h3>
+                  <h3 className="text-white font-semibold text-lg">{feature.title}</h3>
                 </div>
               </div>
             ))}
@@ -113,13 +105,10 @@ export default function Auth() {
       </div>
       
       {/* Right Side - Authentication Form */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-white relative">
-        {/* Subtle aura glow on the right side */}
-        <div className="absolute inset-0 bg-gradient-to-l from-purple-50/50 to-transparent"></div>
-        
-        <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-2xl border-0 rounded-3xl overflow-hidden relative z-10 transition-shadow duration-300 hover:shadow-3xl">
+      <div className="flex-1 flex items-center justify-center p-8 bg-white">
+        <Card className="w-full max-w-md bg-white shadow-2xl border-0 rounded-3xl overflow-hidden">
           <CardHeader className="pb-6 pt-12 px-12 text-left">
-            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
+            <CardTitle className="text-3xl font-bold text-gray-900 mb-2">
               {isSignIn ? "Sign In" : "Sign Up"}
             </CardTitle>
             <p className="text-gray-600 text-sm leading-relaxed">
@@ -129,7 +118,7 @@ export default function Auth() {
                   <button
                     type="button"
                     onClick={() => setIsSignIn(false)}
-                    className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all underline-offset-2 hover:underline"
+                    className="text-indigo-600 font-semibold hover:text-indigo-500 transition-colors underline-offset-2 hover:underline"
                   >
                     Sign up
                   </button>
@@ -140,7 +129,7 @@ export default function Auth() {
                   <button
                     type="button"
                     onClick={() => setIsSignIn(true)}
-                    className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all underline-offset-2 hover:underline"
+                    className="text-indigo-600 font-semibold hover:text-indigo-500 transition-colors underline-offset-2 hover:underline"
                   >
                     Sign in
                   </button>
@@ -161,7 +150,7 @@ export default function Auth() {
                     id="email"
                     type="email"
                     placeholder="Enter your email"
-                    className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
+                    className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all"
                     {...form.register("email")}
                   />
                 </div>
@@ -180,7 +169,7 @@ export default function Auth() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    className="w-full h-12 pl-12 pr-12 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
+                    className="w-full h-12 pl-12 pr-12 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all"
                     {...form.register("password")}
                   />
                   <button
@@ -199,7 +188,7 @@ export default function Auth() {
                     <button
                       type="button"
                       onClick={() => setShowForgotPassword(true)}
-                      className="text-xs text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 font-semibold transition-all underline-offset-2 hover:underline"
+                      className="text-xs text-indigo-600 hover:text-indigo-500 font-semibold transition-colors underline-offset-2 hover:underline"
                     >
                       Forgot password?
                     </button>
@@ -209,7 +198,7 @@ export default function Auth() {
 
               <Button
                 type="submit"
-                className="w-full h-12 font-semibold text-sm rounded-xl mt-8"
+                className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white h-12 font-semibold text-sm rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 mt-8"
                 disabled={isLoading}
               >
                 {isLoading ? "Processing..." : (isSignIn ? "Sign In" : "Sign Up")}
@@ -229,7 +218,7 @@ export default function Auth() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full flex items-center justify-center gap-3 h-12 border-gray-200 hover:bg-gray-50 hover:border-indigo-200 rounded-xl font-semibold transition-all text-sm"
+                className="w-full flex items-center justify-center gap-3 h-12 border-gray-200 hover:bg-gray-50 rounded-xl font-semibold transition-all text-sm hover:shadow-md"
               >
                 <svg className="w-5 h-5" viewBox="0 0 23 23">
                   <path fill="#f35325" d="M1 1h10v10H1z"/>
@@ -243,7 +232,7 @@ export default function Auth() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full flex items-center justify-center gap-3 h-12 border-gray-200 hover:bg-gray-50 hover:border-indigo-200 rounded-xl font-semibold transition-all text-sm"
+                className="w-full flex items-center justify-center gap-3 h-12 border-gray-200 hover:bg-gray-50 rounded-xl font-semibold transition-all text-sm hover:shadow-md"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

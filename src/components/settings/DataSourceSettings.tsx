@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,7 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Settings, Server, Cloud } from 'lucide-react';
+import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -49,7 +48,7 @@ const dataSources: DataSourceType[] = [
     id: 'snowflake',
     name: 'Snowflake',
     description: 'Connect to your Snowflake data warehouse',
-    icon: Cloud,
+    icon: Database,
     isConnected: true,
     fields: [
       { id: 'account', label: 'Account Identifier', type: 'text', placeholder: 'your-account', required: true },
@@ -121,19 +120,6 @@ const dataSources: DataSourceType[] = [
       { id: 'client_secret', label: 'Client Secret', type: 'password', placeholder: '••••••••', required: true },
       { id: 'username', label: 'Username', type: 'text', placeholder: 'user@example.com', required: true },
       { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
-    ]
-  },
-  {
-    id: 'servicenow',
-    name: 'ServiceNow',
-    description: 'Connect to your ServiceNow instance and incidents',
-    icon: Server,
-    isConnected: false,
-    fields: [
-      { id: 'instance_url', label: 'ServiceNow Instance URL', type: 'text', placeholder: 'https://your-instance.service-now.com', required: true },
-      { id: 'username', label: 'Username', type: 'text', placeholder: 'Enter your username', required: true },
-      { id: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
-      { id: 'table', label: 'Table Name (Optional)', type: 'text', placeholder: 'incident, change_request, etc.', required: false },
     ]
   },
 ];
@@ -208,7 +194,7 @@ const DataSourceSettings = () => {
           placeholder="Search data sources..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 hover:border-indigo-300 focus:border-indigo-500 transition-colors"
+          className="pl-10"
         />
       </div>
 
@@ -224,108 +210,100 @@ const DataSourceSettings = () => {
         collapsible 
         value={expandedSource || undefined}
         onValueChange={(value) => setExpandedSource(value)}
-        className="w-full space-y-2"
+        className="w-full"
       >
         {filteredDataSources.map((source) => (
-          <AccordionItem key={source.id} value={source.id} className="border rounded-lg hover:shadow-sm transition-shadow">
-            <AccordionTrigger className="px-4 py-4 hover:no-underline">
-              <div className="flex items-center justify-between w-full">
+          <AccordionItem key={source.id} value={source.id}>
+            <AccordionTrigger className="py-4">
+              <div className="flex items-center w-full justify-between pr-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg border border-indigo-100">
-                    <source.icon className="h-5 w-5 text-indigo-600" />
+                  <div className="p-2 bg-gray-100 rounded-lg">
+                    <source.icon className="h-5 w-5 text-gray-700" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-sm font-medium text-gray-900">{source.name}</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">{source.description}</p>
+                    <h3 className="text-sm font-medium">{source.name}</h3>
+                    <p className="text-xs text-gray-500">{source.description}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 ml-4">
-                  {connectedSources[source.id] ? (
-                    <Badge className="bg-green-500 text-white hover:bg-green-600 text-xs px-2 py-1">
-                      Connected
-                    </Badge>
-                  ) : connectingSource === source.id ? (
-                    <Badge className="bg-blue-500 text-white text-xs px-2 py-1">
-                      Connecting...
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline" className="text-xs px-2 py-1 text-gray-500">
-                      Not Connected
-                    </Badge>
-                  )}
-                </div>
+                {connectedSources[source.id] ? (
+                  <Badge className="bg-green-500 text-white hover:bg-green-600">
+                    Connected
+                  </Badge>
+                ) : connectingSource === source.id ? (
+                  <Badge className="bg-blue-500 text-white">
+                    Connecting...
+                  </Badge>
+                ) : null}
               </div>
             </AccordionTrigger>
-            <AccordionContent className="px-4 pb-4">
-              <div className="pt-2">
-                {connectingSource === source.id ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <Loader2 className="h-4 w-4 animate-spin text-indigo-600" />
-                      <span className="text-sm font-medium">Connecting to {source.name}...</span>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-xs text-gray-500">
-                        <span>Establishing connection</span>
-                        <span>{connectionProgress}%</span>
+            <AccordionContent>
+              <Card className="border-0 shadow-none">
+                <CardContent className="pt-4">
+                  {connectingSource === source.id ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span className="text-sm font-medium">Connecting to {source.name}...</span>
                       </div>
-                      <Progress value={connectionProgress} className="w-full" />
-                    </div>
-                    <p className="text-xs text-gray-500">
-                      Please wait while we establish a secure connection to your data source.
-                    </p>
-                  </div>
-                ) : connectedSources[source.id] ? (
-                  <div className="space-y-4">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h4 className="text-sm font-medium">Connection Status</h4>
-                        <p className="text-xs text-gray-500">Data source is currently active</p>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-xs text-gray-500">
+                          <span>Establishing connection</span>
+                          <span>{connectionProgress}%</span>
+                        </div>
+                        <Progress value={connectionProgress} className="w-full" />
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Label htmlFor={`${source.id}-active`} className="text-sm">Active</Label>
-                        <Switch id={`${source.id}-active`} defaultChecked />
+                      <p className="text-xs text-gray-500">
+                        Please wait while we establish a secure connection to your data source.
+                      </p>
+                    </div>
+                  ) : connectedSources[source.id] ? (
+                    <div className="space-y-4">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="text-sm font-medium">Connection Status</h4>
+                          <p className="text-xs text-gray-500">Data source is currently active</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Label htmlFor={`${source.id}-active`}>Active</Label>
+                          <Switch id={`${source.id}-active`} defaultChecked />
+                        </div>
+                      </div>
+                      <div className="pt-2">
+                        <Button 
+                          variant="outline" 
+                          onClick={() => handleDisconnect(source.id)}
+                          className="text-red-500 hover:text-red-600"
+                        >
+                          Disconnect
+                        </Button>
                       </div>
                     </div>
-                    <div className="pt-2">
-                      <Button 
-                        variant="outline" 
-                        onClick={() => handleDisconnect(source.id)}
-                        className="text-red-500 hover:text-red-600 hover:border-red-300"
-                      >
-                        Disconnect
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <form className="space-y-4">
-                    {source.fields.map((field) => (
-                      <div key={field.id} className="space-y-2">
-                        <label htmlFor={`${source.id}-${field.id}`} className="text-sm font-medium block">
-                          {field.label} {field.required && <span className="text-red-500">*</span>}
-                        </label>
-                        <Input 
-                          id={`${source.id}-${field.id}`} 
-                          type={field.type}
-                          placeholder={field.placeholder}
-                          required={field.required}
-                          className="hover:border-indigo-300 focus:border-indigo-500 transition-colors"
-                        />
-                      </div>
-                    ))}
-                    <div className="pt-2">
+                  ) : (
+                    <form className="space-y-4">
+                      {source.fields.map((field) => (
+                        <div key={field.id} className="space-y-2">
+                          <label htmlFor={`${source.id}-${field.id}`} className="text-sm font-medium">
+                            {field.label} {field.required && <span className="text-red-500">*</span>}
+                          </label>
+                          <Input 
+                            id={`${source.id}-${field.id}`} 
+                            type={field.type}
+                            placeholder={field.placeholder}
+                            required={field.required}
+                          />
+                        </div>
+                      ))}
                       <Button 
                         type="button" 
                         onClick={() => handleConnect(source.id)}
                         disabled={connectingSource !== null}
-                        className="hover:scale-105 transition-transform"
                       >
                         Connect
                       </Button>
-                    </div>
-                  </form>
-                )}
-              </div>
+                    </form>
+                  )}
+                </CardContent>
+              </Card>
             </AccordionContent>
           </AccordionItem>
         ))}

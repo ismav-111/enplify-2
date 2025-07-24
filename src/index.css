@@ -14,35 +14,42 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 250 84% 54%;
+    --primary: 240 47% 55%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 283 39% 53%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 283 39% 53%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 250 84% 54%;
+    --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
+
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 250 84% 54%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 283 39% 53%;
-    --sidebar-accent-foreground: 0 0% 100%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 250 84% 54%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
@@ -55,16 +62,16 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 250 84% 60%;
+    --primary: 240 47% 55%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
-    --secondary: 283 39% 60%;
+    --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 283 39% 60%;
+    --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -72,15 +79,15 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 250 84% 60%;
+    --ring: 212.7 26.8% 83.9%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 250 84% 60%;
+    --sidebar-primary: 224.3 76.3% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 283 39% 60%;
+    --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 250 84% 60%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -94,22 +101,19 @@
   }
 }
 
-/* Custom primary button styles with aura effect */
+/* Custom primary button styles */
 .btn-primary {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  background-color: #595fb7;
   color: white;
-  box-shadow: 0 4px 15px 0 rgba(99, 102, 241, 0.3);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%);
-  box-shadow: 0 8px 25px 0 rgba(99, 102, 241, 0.4);
-  transform: translateY(-2px);
+  background-color: #4e50a8;
 }
 
 .btn-primary:active,
 .btn-primary[data-state="pressed"] {
-  background: linear-gradient(135deg, #4338ca 0%, #6d28d9 50%, #7e22ce 100%);
+  background-color: #373995;
 }
 
 /* Fix for graph conversation tabs visibility */
