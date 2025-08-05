@@ -87,8 +87,8 @@ const Sidebar = ({
       {/* Toggle Button - Visible when sidebar is closed */}
       {!isOpen && (
         <div className="fixed top-4 left-4 z-30 flex items-center gap-3">
-          <div className="bg-white px-6 py-3 rounded-full">
-            <span className="text-4xl font-bold text-[#4E50A8] font-comfortaa">
+          <div className="bg-white px-8 py-4 rounded-full">
+            <span className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
               enplify.ai
             </span>
           </div>
@@ -107,9 +107,9 @@ const Sidebar = ({
       <div 
         className={`${isOpen ? 'w-80' : 'w-0 overflow-hidden'} bg-white border-r border-gray-100 flex flex-col h-screen transition-all duration-300 ease-in-out`}
       >
-        {/* Header with close button */}
-        <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-          <h1 className="text-4xl font-bold text-[#4E50A8] font-comfortaa">
+        {/* Header with close button - Match chat header height (h-16) */}
+        <div className="h-16 px-6 border-b border-gray-100 flex justify-between items-center">
+          <h1 className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
             enplify.ai
           </h1>
           <Button 
