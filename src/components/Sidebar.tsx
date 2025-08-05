@@ -87,10 +87,10 @@ const Sidebar = ({
       {/* Toggle Button - Visible when sidebar is closed */}
       {!isOpen && (
         <div className="fixed top-2 left-4 z-30 flex items-center gap-3">
-          <div className="bg-white px-8 py-4 rounded-full">
-            <span className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
-              enplify.a
-            </span>
+                  <div className="h-16 px-6 border-b border-gray-100 flex justify-between items-center">
+          <h1 className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
+              enplify.ai
+            </h1>
           </div>
           <Button 
             onClick={() => setIsOpen(true)} 
