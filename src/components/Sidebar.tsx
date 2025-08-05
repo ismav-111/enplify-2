@@ -86,9 +86,9 @@ const Sidebar = ({
     <>
       {/* Toggle Button - Visible when sidebar is closed */}
       {!isOpen && (
-        <div className="fixed top-2 left-6 z-30 flex items-center gap-3">
-          <div className="bg-white px-10 py-5 rounded-full shadow-lg">
-            <span className="text-6xl font-bold text-[#4E50A8] font-comfortaa">
+        <div className="fixed top-4 left-4 z-30 flex items-center gap-3">
+          <div className="bg-white px-8 py-4 rounded-full">
+            <span className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
               enplify.ai
             </span>
           </div>
@@ -96,9 +96,9 @@ const Sidebar = ({
             onClick={() => setIsOpen(true)} 
             variant="secondary" 
             size="icon"
-            className="h-12 w-12 rounded-full shadow-md"
+            className="h-10 w-10 rounded-full shadow-md"
           >
-            <PanelLeft size={24} />
+            <PanelLeft size={20} />
           </Button>
         </div>
       )}
@@ -109,7 +109,7 @@ const Sidebar = ({
       >
         {/* Header with close button - Match chat header height (h-16) */}
         <div className="h-16 px-6 border-b border-gray-100 flex justify-between items-center">
-          <h1 className="text-6xl font-bold text-[#4E50A8] font-comfortaa">
+          <h1 className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
             enplify.ai
           </h1>
           <Button 
