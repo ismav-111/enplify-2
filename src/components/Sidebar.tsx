@@ -13,6 +13,12 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface SidebarProps {
   conversations: Array<{ id: string; title: string; preview: string }>;
@@ -83,23 +89,30 @@ const Sidebar = ({
   };
 
   return (
-    <>
+    <TooltipProvider>
       {/* Toggle Button - Visible when sidebar is closed */}
       {!isOpen && (
         <div className="fixed z-20 flex items-center gap-3">
-                  <div className="h-16 px-6 border-b border-gray-100 flex justify-between items-center">
-          <h1 className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
+          <div className="h-16 px-6 border-b border-gray-100 flex justify-between items-center">
+            <h1 className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
               enplify.ai
             </h1>
           </div>
-          <Button 
-            onClick={() => setIsOpen(true)} 
-            variant="secondary" 
-            size="icon"
-            className="h-10 w-10 rounded-full shadow-md"
-          >
-            <PanelLeft size={20} />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                onClick={() => setIsOpen(true)} 
+                variant="secondary" 
+                size="icon"
+                className="h-10 w-10 rounded-full shadow-md"
+              >
+                <PanelLeft size={20} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Open sidebar</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       )}
 
@@ -112,25 +125,39 @@ const Sidebar = ({
           <h1 className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
             enplify.ai
           </h1>
-          <Button 
-            onClick={() => setIsOpen(false)}
-            variant="ghost" 
-            size="icon"
-            className="h-8 w-8 text-gray-500 hover:text-gray-700"
-          >
-            <PanelLeft size={18} />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                onClick={() => setIsOpen(false)}
+                variant="ghost" 
+                size="icon"
+                className="h-8 w-8 text-gray-500 hover:text-gray-700"
+              >
+                <PanelLeft size={18} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Close sidebar</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
 
         {/* New Chat Button */}
         <div className="p-4">
-          <Button 
-            onClick={onNewChat}
-            className="w-full bg-[#595fb7] hover:bg-[#4e50a8] active:bg-[#373995] text-white rounded-lg py-3 flex items-center justify-center gap-2 transition-all duration-200"
-          >
-            <Plus size={18} />
-            New chat
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                onClick={onNewChat}
+                className="w-full bg-[#595fb7] hover:bg-[#4e50a8] active:bg-[#373995] text-white rounded-lg py-3 flex items-center justify-center gap-2 transition-all duration-200"
+              >
+                <Plus size={18} />
+                New chat
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Start a new conversation</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
 
         {/* Conversations */}
@@ -139,15 +166,21 @@ const Sidebar = ({
             <div className="flex items-center justify-between my-4">
               <h3 className="text-sm font-medium text-gray-500">Your conversations</h3>
               {conversations.length > 0 && (
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={onClearAll}
-                  className="text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-50 p-1"
-                  title="Clear all conversations"
-                >
-                  <Trash size={16} />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={onClearAll}
+                      className="text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-50 p-1"
+                    >
+                      <Trash size={16} />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Clear all conversations</p>
+                  </TooltipContent>
+                </Tooltip>
               )}
             </div>
             
@@ -180,24 +213,36 @@ const Sidebar = ({
                           onFocus={(e) => e.target.select()}
                           onBlur={handleRenameConfirm}
                         />
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-6 w-6 text-green-600 hover:text-green-700 hover:bg-green-50 p-1"
-                          onClick={handleRenameConfirm}
-                          title="Save"
-                        >
-                          <Check size={14} />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-6 w-6 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1"
-                          onClick={handleRenameCancel}
-                          title="Cancel"
-                        >
-                          <X size={14} />
-                        </Button>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-6 w-6 text-green-600 hover:text-green-700 hover:bg-green-50 p-1"
+                              onClick={handleRenameConfirm}
+                            >
+                              <Check size={14} />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Save changes</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-6 w-6 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1"
+                              onClick={handleRenameCancel}
+                            >
+                              <X size={14} />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Cancel editing</p>
+                          </TooltipContent>
+                        </Tooltip>
                       </div>
                     ) : (
                       <>
@@ -206,24 +251,36 @@ const Sidebar = ({
                         </p>
                         {hoveredConversation === conv.id && (
                           <div className="flex gap-1 flex-shrink-0">
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-6 w-6 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1"
-                              onClick={(e) => handleRenameClick(e, conv.id)}
-                              title="Rename conversation"
-                            >
-                              <Edit size={14} />
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-6 w-6 text-gray-400 hover:text-red-600 hover:bg-red-50 p-1"
-                              onClick={(e) => handleDeleteClick(e, conv.id)}
-                              title="Delete conversation"
-                            >
-                              <Trash size={14} />
-                            </Button>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-6 w-6 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1"
+                                  onClick={(e) => handleRenameClick(e, conv.id)}
+                                >
+                                  <Edit size={14} />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Rename conversation</p>
+                              </TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-6 w-6 text-gray-400 hover:text-red-600 hover:bg-red-50 p-1"
+                                  onClick={(e) => handleDeleteClick(e, conv.id)}
+                                >
+                                  <Trash size={14} />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Delete conversation</p>
+                              </TooltipContent>
+                            </Tooltip>
                           </div>
                         )}
                       </>
@@ -261,10 +318,10 @@ const Sidebar = ({
             >
               Delete
             </AlertDialogAction>
-            </AlertDialogFooter>
+          </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </TooltipProvider>
   );
 };
 
