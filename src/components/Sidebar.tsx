@@ -86,7 +86,7 @@ const Sidebar = ({
     <>
       {/* Toggle Button - Visible when sidebar is closed */}
       {!isOpen && (
-        <div className="fixed top-4 left-4 z-30 flex items-center gap-3">
+        <div className="fixed top-2 left-4 z-30 flex items-center gap-3">
           <div className="bg-white px-8 py-4 rounded-full">
             <span className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
               enplify.ai
