@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Plus, PanelLeft, Trash, Edit, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Input } from '@/components/ui/input';
 
 interface SidebarProps {
   conversations: Array<{ id: string; title: string; preview: string }>;
@@ -88,7 +86,7 @@ const Sidebar = ({
       {!isOpen && (
         <div className="fixed top-4 left-4 z-30 flex items-center gap-3">
           <div className="bg-white px-6 py-3 rounded-full">
-            <span className="text-4xl font-bold text-[#4E50A8] font-comfortaa">
+            <span className="text-3xl font-bold text-[#4E50A8] font-comfortaa">
               enplify.ai
             </span>
           </div>
@@ -107,9 +105,9 @@ const Sidebar = ({
       <div 
         className={`${isOpen ? 'w-80' : 'w-0 overflow-hidden'} bg-white border-r border-gray-100 flex flex-col h-screen transition-all duration-300 ease-in-out`}
       >
-        {/* Header with close button */}
-        <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-          <h1 className="text-4xl font-bold text-[#4E50A8] font-comfortaa">
+        {/* Header with close button - matching chat header height */}
+        <div className="h-20 p-6 border-b border-gray-100 flex justify-between items-center">
+          <h1 className="text-3xl font-bold text-[#4E50A8] font-comfortaa">
             enplify.ai
           </h1>
           <Button 
