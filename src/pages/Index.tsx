@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
@@ -86,18 +85,17 @@ const Index = () => {
                   {messages.map((message) => (
                     <ChatMessage 
                       key={message.id} 
-                      content={message.content} 
-                      isUser={message.isUser}
-                      mode={message.mode}
-                      tableData={message.tableData}
-                      chartData={message.chartData}
-                      file={message.file}
+                      message={message}
                     />
                   ))}
                   {isLoading && (
                     <ChatMessage 
-                      content="Thinking..." 
-                      isUser={false} 
+                      message={{
+                        id: 'loading',
+                        content: 'Thinking...',
+                        isUser: false,
+                        timestamp: new Date()
+                      }}
                     />
                   )}
                 </div>
