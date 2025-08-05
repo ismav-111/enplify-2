@@ -238,11 +238,8 @@ const Index = () => {
       <div className="flex-1 flex flex-col h-screen bg-white">
         {/* Chat Area Header */}
         <div className="h-16 px-6 flex items-center justify-between border-b border-gray-100 bg-white">
-          {/* Left side - Conversation title */}
+          {/* Left side - Empty space */}
           <div className="flex items-center gap-3">
-            <h1 className="text-xl font-semibold text-gray-800">
-              {currentConversation?.title || 'New Conversation'}
-            </h1>
           </div>
           
           <div className="flex gap-2">
