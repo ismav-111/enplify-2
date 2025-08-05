@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '@/components/ui/input';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import type { ResponseMode } from '@/components/MessageInput';
+
 interface FileItem {
   id: string;
   name: string;
@@ -23,6 +24,7 @@ interface FileItem {
   url?: string;
   chatSessionId: string;
 }
+
 const Index = () => {
   const {
     conversations,
@@ -138,6 +140,7 @@ const Index = () => {
   }, [conversations.length, createNewChat]);
   const currentConversation = getCurrentConversation();
   const hasMessages = currentConversation && currentConversation.messages.length > 0;
+
   const handleSendMessage = (message: string, mode: ResponseMode, files?: File[]) => {
     // Add uploaded files to the current session
     if (files && files.length > 0 && currentConversation) {
@@ -156,6 +159,7 @@ const Index = () => {
     // Include response preferences in the message
     sendMessage(message, mode, files?.[0], responsePreferences);
   };
+
   const handleStopGeneration = () => {
     // TODO: Implement stop generation logic in useChat hook
     console.log('Stop generation requested');
@@ -223,6 +227,7 @@ const Index = () => {
 
   // Check if files icon should be shown (hide for encore mode)
   const showFilesIcon = currentConversation?.mode !== 'encore';
+
   return <div className="h-screen bg-white flex overflow-hidden">
       {/* Fixed Sidebar */}
       <div className="flex-shrink-0">
@@ -233,8 +238,12 @@ const Index = () => {
       <div className="flex-1 flex flex-col h-screen bg-white">
         {/* Chat Area Header */}
         <div className="h-16 px-6 flex items-center justify-between border-b border-gray-100 bg-white">
-          
-          {currentConversation}
+          {/* Left side - Conversation title */}
+          <div className="flex items-center gap-3">
+            <h1 className="text-xl font-semibold text-gray-800">
+              {currentConversation?.title || 'New Conversation'}
+            </h1>
+          </div>
           
           <div className="flex gap-2">
             {/* Response Preferences */}
@@ -519,4 +528,5 @@ const Index = () => {
       </div>
     </div>;
 };
+
 export default Index;
