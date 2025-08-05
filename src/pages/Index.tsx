@@ -217,299 +217,312 @@ const Index = () => {
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col h-screen bg-white">
-        {/* Fixed Top Bar with Files and User Icons */}
-        <div className="absolute top-4 right-4 z-30 flex gap-2">
-          {/* Response Preferences */}
-          <ResponsePreferences
-            preferences={responsePreferences}
-            onPreferencesChange={setResponsePreferences}
-            mode={currentConversation?.mode || 'encore'}
-          />
+        {/* Chat Area Header */}
+        <div className="h-16 px-6 flex items-center justify-between border-b border-gray-100 bg-white">
+          <div className="flex items-center gap-3">
+            <h1 className="text-xl font-bold text-gray-800 font-comfortaa">
+              enplify<span className="text-[#4E50A8]">.ai</span>
+            </h1>
+            {currentConversation && (
+              <div className="text-sm text-gray-500">
+                • {currentConversation.title}
+              </div>
+            )}
+          </div>
           
-          {/* Files Icon with Popover - Only show if not encore mode */}
-          {showFilesIcon && (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow relative transition-colors">
-                  <Files size={18} className="text-[#4E50A8] transition-colors" />
-                  {sessionFiles.length > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-[#4E50A8] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
-                      {sessionFiles.length}
-                    </span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 p-0" align="end">
-                <div className="p-4 border-b border-gray-100">
-                  <h3 className="text-sm font-medium">Session Files</h3>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Files from this conversation ({currentConversation?.title || 'Current Session'}) - {sessionFiles.length} file{sessionFiles.length !== 1 ? 's' : ''}
-                  </p>
-                  
-                  {/* Search input */}
-                  <div className="relative mt-3 mb-3">
-                    <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <Input
-                      placeholder="Search files..."
-                      value={fileSearchQuery}
-                      onChange={(e) => setFileSearchQuery(e.target.value)}
-                      className="pl-9 h-8 text-sm"
-                    />
-                  </div>
-                  
-                  {/* File type filter tabs - show only relevant modes */}
-                  <div className="flex gap-2">
-                    <Button 
-                      variant={fileFilter === 'all' ? 'default' : 'outline'} 
-                      size="sm" 
-                      className={fileFilter === 'all' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
-                      onClick={() => setFileFilter('all')}
-                    >
-                      All
-                    </Button>
-                    <Button 
-                      variant={fileFilter === 'endocs' ? 'default' : 'outline'} 
-                      size="sm" 
-                      className={fileFilter === 'endocs' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
-                      onClick={() => setFileFilter('endocs')}
-                    >
-                      Docs
-                    </Button>
-                    <Button 
-                      variant={fileFilter === 'ensights' ? 'default' : 'outline'} 
-                      size="sm" 
-                      className={fileFilter === 'ensights' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
-                      onClick={() => setFileFilter('ensights')}
-                    >
-                      Excel
-                    </Button>
-                  </div>
-                </div>
-                
-                <ScrollArea className="h-64">
-                  <div className="p-2">
-                    {filteredFiles.slice(0, 10).map((file) => (
-                      <div key={file.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-md group">
-                        <div className="w-8 h-8 bg-[#F1F1F9] rounded-md flex items-center justify-center flex-shrink-0">
-                          <span className="text-[#4E50A8] text-xs font-medium">{getFileTypeDisplay(file.type)}</span>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-800 truncate">{file.name}</p>
-                          <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
-                        </div>
-                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          {canViewFile(file) && (
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-6 w-6 hover:bg-blue-50 hover:text-blue-700 transition-colors"
-                              onClick={() => setViewingFile(file)}
-                            >
-                              <Eye size={12} />
-                            </Button>
-                          )}
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-red-50 hover:text-red-700 transition-colors">
-                                <Trash2 size={12} className="text-red-500" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Delete File</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to delete "{file.name}"? This action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction 
-                                  onClick={() => handleDeleteFile(file.id)}
-                                  className="bg-red-500 hover:bg-red-600"
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </div>
-                    ))}
-                    
-                    {filteredFiles.length === 0 && (
-                      <div className="p-4 text-center text-gray-500 text-sm">
-                        {fileSearchQuery 
-                          ? 'No files found matching your search' 
-                          : `No ${fileFilter === 'all' ? '' : fileFilter + ' '}files in this session`
-                        }
-                      </div>
+          <div className="flex gap-2">
+            {/* Response Preferences */}
+            <ResponsePreferences
+              preferences={responsePreferences}
+              onPreferencesChange={setResponsePreferences}
+              mode={currentConversation?.mode || 'encore'}
+            />
+            
+            {/* Files Icon with Popover - Only show if not encore mode */}
+            {showFilesIcon && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow relative transition-colors">
+                    <Files size={18} className="text-[#4E50A8] transition-colors" />
+                    {sessionFiles.length > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-[#4E50A8] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                        {sessionFiles.length}
+                      </span>
                     )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-0" align="end">
+                  <div className="p-4 border-b border-gray-100">
+                    <h3 className="text-sm font-medium">Session Files</h3>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Files from this conversation ({currentConversation?.title || 'Current Session'}) - {sessionFiles.length} file{sessionFiles.length !== 1 ? 's' : ''}
+                    </p>
+                    
+                    {/* Search input */}
+                    <div className="relative mt-3 mb-3">
+                      <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      <Input
+                        placeholder="Search files..."
+                        value={fileSearchQuery}
+                        onChange={(e) => setFileSearchQuery(e.target.value)}
+                        className="pl-9 h-8 text-sm"
+                      />
+                    </div>
+                    
+                    {/* File type filter tabs - show only relevant modes */}
+                    <div className="flex gap-2">
+                      <Button 
+                        variant={fileFilter === 'all' ? 'default' : 'outline'} 
+                        size="sm" 
+                        className={fileFilter === 'all' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
+                        onClick={() => setFileFilter('all')}
+                      >
+                        All
+                      </Button>
+                      <Button 
+                        variant={fileFilter === 'endocs' ? 'default' : 'outline'} 
+                        size="sm" 
+                        className={fileFilter === 'endocs' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
+                        onClick={() => setFileFilter('endocs')}
+                      >
+                        Docs
+                      </Button>
+                      <Button 
+                        variant={fileFilter === 'ensights' ? 'default' : 'outline'} 
+                        size="sm" 
+                        className={fileFilter === 'ensights' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
+                        onClick={() => setFileFilter('ensights')}
+                      >
+                        Excel
+                      </Button>
+                    </div>
                   </div>
-                </ScrollArea>
-                
-                {filteredFiles.length > 10 && (
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <div className="p-3 border-t border-gray-100">
-                        <Button variant="ghost" size="sm" className="w-full justify-center text-[#4E50A8]">
-                          View All Files
-                        </Button>
-                      </div>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[700px] max-h-[80vh] flex flex-col">
-                      <DialogHeader>
-                        <DialogTitle>All {fileFilter !== 'all' ? fileFilter + ' ' : ''}Session Files</DialogTitle>
-                        <DialogDescription>
-                          Browse all your uploaded {fileFilter !== 'all' ? fileFilter + ' ' : ''}files from this conversation
-                        </DialogDescription>
-                      </DialogHeader>
+                  
+                  <ScrollArea className="h-64">
+                    <div className="p-2">
+                      {filteredFiles.slice(0, 10).map((file) => (
+                        <div key={file.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-md group">
+                          <div className="w-8 h-8 bg-[#F1F1F9] rounded-md flex items-center justify-center flex-shrink-0">
+                            <span className="text-[#4E50A8] text-xs font-medium">{getFileTypeDisplay(file.type)}</span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-800 truncate">{file.name}</p>
+                            <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
+                          </div>
+                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {canViewFile(file) && (
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-6 w-6 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                                onClick={() => setViewingFile(file)}
+                              >
+                                <Eye size={12} />
+                              </Button>
+                            )}
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-red-50 hover:text-red-700 transition-colors">
+                                  <Trash2 size={12} className="text-red-500" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Delete File</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Are you sure you want to delete "{file.name}"? This action cannot be undone.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction 
+                                    onClick={() => handleDeleteFile(file.id)}
+                                    className="bg-red-500 hover:bg-red-600"
+                                  >
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </div>
+                      ))}
                       
-                      {/* Search input in dialog */}
-                      <div className="relative mb-4">
-                        <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                        <Input
-                          placeholder="Search files..."
-                          value={fileSearchQuery}
-                          onChange={(e) => setFileSearchQuery(e.target.value)}
-                          className="pl-9"
-                        />
-                      </div>
-                      
-                      {/* File type filter tabs in dialog */}
-                      <div className="flex gap-2 mb-4">
-                        <Button 
-                          variant={fileFilter === 'all' ? 'default' : 'outline'} 
-                          size="sm" 
-                          className={fileFilter === 'all' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
-                          onClick={() => setFileFilter('all')}
-                        >
-                          All
-                        </Button>
-                        <Button 
-                          variant={fileFilter === 'endocs' ? 'default' : 'outline'} 
-                          size="sm" 
-                          className={fileFilter === 'endocs' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
-                          onClick={() => setFileFilter('endocs')}
-                        >
-                          Docs
-                        </Button>
-                        <Button 
-                          variant={fileFilter === 'ensights' ? 'default' : 'outline'} 
-                          size="sm" 
-                          className={fileFilter === 'ensights' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
-                          onClick={() => setFileFilter('ensights')}
-                        >
-                          Excel
-                        </Button>
-                      </div>
-                      
-                      <ScrollArea className="flex-1 pr-4">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-1">
-                          {filteredFiles.map((file) => (
-                            <div key={file.id} className="flex items-center gap-3 p-3 border border-gray-100 rounded-md hover:bg-gray-50 group">
-                              <div className="w-10 h-10 bg-[#F1F1F9] rounded-md flex items-center justify-center flex-shrink-0">
-                                <span className="text-[#4E50A8] text-xs font-medium">{getFileTypeDisplay(file.type)}</span>
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-gray-800 truncate">{file.name}</p>
-                                <div className="flex justify-between items-center">
-                                  <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
-                                  <p className="text-xs text-gray-400">{file.date.toLocaleDateString()}</p>
+                      {filteredFiles.length === 0 && (
+                        <div className="p-4 text-center text-gray-500 text-sm">
+                          {fileSearchQuery 
+                            ? 'No files found matching your search' 
+                            : `No ${fileFilter === 'all' ? '' : fileFilter + ' '}files in this session`
+                          }
+                        </div>
+                      )}
+                    </div>
+                  </ScrollArea>
+                  
+                  {filteredFiles.length > 10 && (
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <div className="p-3 border-t border-gray-100">
+                          <Button variant="ghost" size="sm" className="w-full justify-center text-[#4E50A8]">
+                            View All Files
+                          </Button>
+                        </div>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[700px] max-h-[80vh] flex flex-col">
+                        <DialogHeader>
+                          <DialogTitle>All {fileFilter !== 'all' ? fileFilter + ' ' : ''}Session Files</DialogTitle>
+                          <DialogDescription>
+                            Browse all your uploaded {fileFilter !== 'all' ? fileFilter + ' ' : ''}files from this conversation
+                          </DialogDescription>
+                        </DialogHeader>
+                        
+                        {/* Search input in dialog */}
+                        <div className="relative mb-4">
+                          <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                          <Input
+                            placeholder="Search files..."
+                            value={fileSearchQuery}
+                            onChange={(e) => setFileSearchQuery(e.target.value)}
+                            className="pl-9"
+                          />
+                        </div>
+                        
+                        {/* File type filter tabs in dialog */}
+                        <div className="flex gap-2 mb-4">
+                          <Button 
+                            variant={fileFilter === 'all' ? 'default' : 'outline'} 
+                            size="sm" 
+                            className={fileFilter === 'all' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
+                            onClick={() => setFileFilter('all')}
+                          >
+                            All
+                          </Button>
+                          <Button 
+                            variant={fileFilter === 'endocs' ? 'default' : 'outline'} 
+                            size="sm" 
+                            className={fileFilter === 'endocs' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
+                            onClick={() => setFileFilter('endocs')}
+                          >
+                            Docs
+                          </Button>
+                          <Button 
+                            variant={fileFilter === 'ensights' ? 'default' : 'outline'} 
+                            size="sm" 
+                            className={fileFilter === 'ensights' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
+                            onClick={() => setFileFilter('ensights')}
+                          >
+                            Excel
+                          </Button>
+                        </div>
+                        
+                        <ScrollArea className="flex-1 pr-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-1">
+                            {filteredFiles.map((file) => (
+                              <div key={file.id} className="flex items-center gap-3 p-3 border border-gray-100 rounded-md hover:bg-gray-50 group">
+                                <div className="w-10 h-10 bg-[#F1F1F9] rounded-md flex items-center justify-center flex-shrink-0">
+                                  <span className="text-[#4E50A8] text-xs font-medium">{getFileTypeDisplay(file.type)}</span>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-gray-800 truncate">{file.name}</p>
+                                  <div className="flex justify-between items-center">
+                                    <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
+                                    <p className="text-xs text-gray-400">{file.date.toLocaleDateString()}</p>
+                                  </div>
+                                </div>
+                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  {canViewFile(file) && (
+                                    <Button 
+                                      variant="ghost" 
+                                      size="icon" 
+                                      className="h-8 w-8"
+                                      onClick={() => setViewingFile(file)}
+                                    >
+                                      <Eye size={14} />
+                                    </Button>
+                                  )}
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-700">
+                                        <Trash2 size={14} />
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>Delete File</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          Are you sure you want to delete "{file.name}"? This action cannot be undone.
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction 
+                                          onClick={() => handleDeleteFile(file.id)}
+                                          className="bg-red-500 hover:bg-red-600"
+                                        >
+                                          Delete
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
                                 </div>
                               </div>
-                              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                {canViewFile(file) && (
-                                  <Button 
-                                    variant="ghost" 
-                                    size="icon" 
-                                    className="h-8 w-8"
-                                    onClick={() => setViewingFile(file)}
-                                  >
-                                    <Eye size={14} />
-                                  </Button>
-                                )}
-                                <AlertDialog>
-                                  <AlertDialogTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-700">
-                                      <Trash2 size={14} />
-                                    </Button>
-                                  </AlertDialogTrigger>
-                                  <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                      <AlertDialogTitle>Delete File</AlertDialogTitle>
-                                      <AlertDialogDescription>
-                                        Are you sure you want to delete "{file.name}"? This action cannot be undone.
-                                      </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                      <AlertDialogAction 
-                                        onClick={() => handleDeleteFile(file.id)}
-                                        className="bg-red-500 hover:bg-red-600"
-                                      >
-                                        Delete
-                                      </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialog>
+                            ))}
+                            
+                            {filteredFiles.length === 0 && (
+                              <div className="col-span-2 p-8 text-center text-gray-500">
+                                {fileSearchQuery 
+                                  ? 'No files found matching your search' 
+                                  : `No ${fileFilter === 'all' ? '' : fileFilter + ' '}files in this session`
+                                }
                               </div>
-                            </div>
-                          ))}
-                          
-                          {filteredFiles.length === 0 && (
-                            <div className="col-span-2 p-8 text-center text-gray-500">
-                              {fileSearchQuery 
-                                ? 'No files found matching your search' 
-                                : `No ${fileFilter === 'all' ? '' : fileFilter + ' '}files in this session`
-                              }
-                            </div>
-                          )}
-                        </div>
-                      </ScrollArea>
-                    </DialogContent>
-                  </Dialog>
-                )}
-              </PopoverContent>
-            </Popover>
-          )}
-          
-          {/* User avatar */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow transition-colors">
-                <Avatar className="h-10 w-10">
-                  <AvatarFallback className="bg-white text-gray-700">
-                    <User size={18} />
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-64 p-4 shadow-lg" align="end">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
-                  <Avatar className="h-12 w-12 flex-shrink-0">
-                    <AvatarFallback className="bg-white text-[#4E50A8]">
-                      <User size={20} />
+                            )}
+                          </div>
+                        </ScrollArea>
+                      </DialogContent>
+                    </Dialog>
+                  )}
+                </PopoverContent>
+              </Popover>
+            )}
+            
+            {/* User avatar */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow transition-colors">
+                  <Avatar className="h-10 w-10">
+                    <AvatarFallback className="bg-white text-gray-700">
+                      <User size={18} />
                     </AvatarFallback>
                   </Avatar>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-gray-800 truncate">Andrew Neilson</p>
-                    <p className="text-xs text-gray-500 truncate">andrew@example.com</p>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 p-4 shadow-lg" align="end">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
+                    <Avatar className="h-12 w-12 flex-shrink-0">
+                      <AvatarFallback className="bg-white text-[#4E50A8]">
+                        <User size={20} />
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-gray-800 truncate">Andrew Neilson</p>
+                      <p className="text-xs text-gray-500 truncate">andrew@example.com</p>
+                    </div>
                   </div>
+                  <Link to="/settings" className="block w-full">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      className="w-full justify-start text-gray-700 transition-colors"
+                    >
+                      <Settings size={16} className="mr-2" />
+                      Settings
+                    </Button>
+                  </Link>
                 </div>
-                <Link to="/settings" className="block w-full">
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    className="w-full justify-start text-gray-700 transition-colors"
-                  >
-                    <Settings size={16} className="mr-2" />
-                    Settings
-                  </Button>
-                </Link>
-              </div>
-            </PopoverContent>
-          </Popover>
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
 
         {/* File Viewer Dialog */}
