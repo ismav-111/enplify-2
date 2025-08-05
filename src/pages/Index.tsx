@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
@@ -18,19 +19,20 @@ import { useNavigate } from 'react-router-dom';
 const Index = () => {
   const {
     conversations,
-    activeConversationId,
-    currentMessages,
+    activeConversation,
     isLoading,
-    createNewConversation,
-    selectConversation,
+    createNewChat,
+    setActiveConversation,
     sendMessage,
     clearAllConversations,
     renameConversation,
-    deleteConversation
+    deleteConversation,
+    getCurrentConversation
   } = useChat();
   
   const [mode, setMode] = useState<'encore' | 'endocs' | 'ensights'>('encore');
   const [file, setFile] = useState<File | null>(null);
+  const [preferences, setPreferences] = useState({ format: 'text' as const, dataSource: 'sql' as const });
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -38,12 +40,15 @@ const Index = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const currentConversation = getCurrentConversation();
+  const currentMessages = currentConversation?.messages || [];
+
   useEffect(() => {
     scrollToBottom();
   }, [currentMessages]);
 
-  const handleSendMessage = async (message: string) => {
-    await sendMessage(message, mode, file);
+  const handleSendMessage = async (message: string, messageMode: 'encore' | 'endocs' | 'ensights', files?: File[]) => {
+    await sendMessage(message, messageMode, files?.[0], preferences);
     setFile(null);
   };
 
@@ -51,7 +56,6 @@ const Index = () => {
     if (action === 'settings') {
       navigate('/settings');
     } else if (action === 'logout') {
-      // Handle logout logic here
       navigate('/signin');
     }
   };
@@ -60,9 +64,9 @@ const Index = () => {
     <div className="flex h-screen bg-gray-50">
       <Sidebar
         conversations={conversations}
-        activeConversation={activeConversationId}
-        onNewChat={createNewConversation}
-        onSelectConversation={selectConversation}
+        activeConversation={activeConversation}
+        onNewChat={createNewChat}
+        onSelectConversation={setActiveConversation}
         onClearAll={clearAllConversations}
         onRenameConversation={renameConversation}
         onDeleteConversation={deleteConversation}
@@ -113,15 +117,8 @@ const Index = () => {
           ) : (
             currentMessages.map((message, index) => (
               <ChatMessage
-                key={index}
-                message={{
-                  content: message.content,
-                  isUser: message.isUser,
-                  mode: message.mode,
-                  tableData: message.tableData,
-                  chartData: message.chartData,
-                  file: message.file
-                }}
+                key={message.id || index}
+                message={message}
               />
             ))
           )}
@@ -132,17 +129,15 @@ const Index = () => {
         <div className="border-t border-gray-100 bg-white">
           <div className="p-4">
             <ResponsePreferences
+              preferences={preferences}
+              onPreferencesChange={setPreferences}
               mode={mode}
-              onModeChange={setMode}
-              file={file}
-              onFileChange={setFile}
             />
           </div>
           <div className="px-6 pb-6">
             <MessageInput
               onSendMessage={handleSendMessage}
               isLoading={isLoading}
-              mode={mode}
             />
           </div>
         </div>
