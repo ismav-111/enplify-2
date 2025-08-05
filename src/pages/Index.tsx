@@ -1,4 +1,3 @@
-
 import { useChat } from '@/hooks/useChat';
 import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
@@ -8,35 +7,13 @@ import { useEffect, useState } from 'react';
 import { Files, Settings, User, Search, Eye, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { 
-  Popover, 
-  PopoverContent, 
-  PopoverTrigger 
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Link } from 'react-router-dom';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import type { ResponseMode } from '@/components/MessageInput';
-
 interface FileItem {
   id: string;
   name: string;
@@ -46,7 +23,6 @@ interface FileItem {
   url?: string;
   chatSessionId: string;
 }
-
 const Index = () => {
   const {
     conversations,
@@ -68,25 +44,89 @@ const Index = () => {
   });
 
   // Updated to make chatSessionId required for all files
-  const [uploadedFiles, setUploadedFiles] = useState<FileItem[]>([
-    { id: '1', name: 'quarterly_report.pdf', type: 'application/pdf', size: 2500000, date: new Date(2023, 4, 15), url: '/placeholder.svg', chatSessionId: '1' },
-    { id: '2', name: 'sales_data.xlsx', type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size: 1800000, date: new Date(2023, 4, 10), chatSessionId: '1' },
-    { id: '3', name: 'employee_handbook.pdf', type: 'application/pdf', size: 850000, date: new Date(2023, 4, 5), url: '/placeholder.svg', chatSessionId: '2' },
-    { id: '4', name: 'financial_analysis.xlsx', type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size: 3200000, date: new Date(2023, 4, 1), chatSessionId: '3' },
-    { id: '5', name: 'policy_document.pdf', type: 'application/pdf', size: 1200000, date: new Date(2023, 3, 25), url: '/placeholder.svg', chatSessionId: '2' },
-    { id: '6', name: 'meeting_notes.docx', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', size: 780000, date: new Date(2023, 3, 15), chatSessionId: '1' },
-    { id: '7', name: 'revenue_tracking.xlsx', type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size: 920000, date: new Date(2023, 3, 10), chatSessionId: '3' },
-    { id: '8', name: 'compliance_guide.pdf', type: 'application/pdf', size: 1500000, date: new Date(2023, 3, 5), url: '/placeholder.svg', chatSessionId: '4' },
-    { id: '9', name: 'budget_forecast.xlsx', type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size: 2100000, date: new Date(2023, 3, 1), chatSessionId: '1' },
-    { id: '10', name: 'training_manual.pdf', type: 'application/pdf', size: 1800000, date: new Date(2023, 2, 25), url: '/placeholder.svg', chatSessionId: '2' }
-  ]);
-  
+  const [uploadedFiles, setUploadedFiles] = useState<FileItem[]>([{
+    id: '1',
+    name: 'quarterly_report.pdf',
+    type: 'application/pdf',
+    size: 2500000,
+    date: new Date(2023, 4, 15),
+    url: '/placeholder.svg',
+    chatSessionId: '1'
+  }, {
+    id: '2',
+    name: 'sales_data.xlsx',
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    size: 1800000,
+    date: new Date(2023, 4, 10),
+    chatSessionId: '1'
+  }, {
+    id: '3',
+    name: 'employee_handbook.pdf',
+    type: 'application/pdf',
+    size: 850000,
+    date: new Date(2023, 4, 5),
+    url: '/placeholder.svg',
+    chatSessionId: '2'
+  }, {
+    id: '4',
+    name: 'financial_analysis.xlsx',
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    size: 3200000,
+    date: new Date(2023, 4, 1),
+    chatSessionId: '3'
+  }, {
+    id: '5',
+    name: 'policy_document.pdf',
+    type: 'application/pdf',
+    size: 1200000,
+    date: new Date(2023, 3, 25),
+    url: '/placeholder.svg',
+    chatSessionId: '2'
+  }, {
+    id: '6',
+    name: 'meeting_notes.docx',
+    type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    size: 780000,
+    date: new Date(2023, 3, 15),
+    chatSessionId: '1'
+  }, {
+    id: '7',
+    name: 'revenue_tracking.xlsx',
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    size: 920000,
+    date: new Date(2023, 3, 10),
+    chatSessionId: '3'
+  }, {
+    id: '8',
+    name: 'compliance_guide.pdf',
+    type: 'application/pdf',
+    size: 1500000,
+    date: new Date(2023, 3, 5),
+    url: '/placeholder.svg',
+    chatSessionId: '4'
+  }, {
+    id: '9',
+    name: 'budget_forecast.xlsx',
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    size: 2100000,
+    date: new Date(2023, 3, 1),
+    chatSessionId: '1'
+  }, {
+    id: '10',
+    name: 'training_manual.pdf',
+    type: 'application/pdf',
+    size: 1800000,
+    date: new Date(2023, 2, 25),
+    url: '/placeholder.svg',
+    chatSessionId: '2'
+  }]);
+
   // Active file filter - 'all', 'endocs' or 'ensights'
   const [fileFilter, setFileFilter] = useState<'all' | 'endocs' | 'ensights'>('all');
-  
+
   // Search query for files
   const [fileSearchQuery, setFileSearchQuery] = useState('');
-  
+
   // File viewer state
   const [viewingFile, setViewingFile] = useState<FileItem | null>(null);
 
@@ -96,10 +136,8 @@ const Index = () => {
       createNewChat();
     }
   }, [conversations.length, createNewChat]);
-
   const currentConversation = getCurrentConversation();
   const hasMessages = currentConversation && currentConversation.messages.length > 0;
-
   const handleSendMessage = (message: string, mode: ResponseMode, files?: File[]) => {
     // Add uploaded files to the current session
     if (files && files.length > 0 && currentConversation) {
@@ -112,14 +150,12 @@ const Index = () => {
         chatSessionId: currentConversation.id,
         url: file.type === 'application/pdf' ? '/placeholder.svg' : undefined
       }));
-      
       setUploadedFiles(prev => [...prev, ...newFiles]);
     }
-    
+
     // Include response preferences in the message
     sendMessage(message, mode, files?.[0], responsePreferences);
   };
-
   const handleStopGeneration = () => {
     // TODO: Implement stop generation logic in useChat hook
     console.log('Stop generation requested');
@@ -127,55 +163,44 @@ const Index = () => {
 
   // Format file size
   const formatFileSize = (bytes: number): string => {
-    if (bytes < 1024) return bytes + ' B';
-    else if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    else if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-    else return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
+    if (bytes < 1024) return bytes + ' B';else if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';else if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';else return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
   };
 
   // Updated filter function to consider chat session and mode-specific file types
   const getFilteredFiles = (files: FileItem[], filter: 'all' | 'endocs' | 'ensights', searchQuery: string): FileItem[] => {
     let filteredFiles = files;
-    
+
     // First filter by current chat session
     if (currentConversation) {
-      filteredFiles = filteredFiles.filter(file => 
-        file.chatSessionId === currentConversation.id
-      );
+      filteredFiles = filteredFiles.filter(file => file.chatSessionId === currentConversation.id);
     }
-    
+
     // Then filter by type based on mode
     if (filter !== 'all') {
-      const endocsTypes = [
-        'application/pdf',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-      ];
-      
-      const ensightsTypes = [
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      ];
-      
+      const endocsTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      const ensightsTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
       const allowedTypes = filter === 'endocs' ? endocsTypes : ensightsTypes;
       filteredFiles = filteredFiles.filter(file => allowedTypes.includes(file.type));
     }
-    
+
     // Filter by search query
     if (searchQuery.trim()) {
-      filteredFiles = filteredFiles.filter(file => 
-        file.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      filteredFiles = filteredFiles.filter(file => file.name.toLowerCase().includes(searchQuery.toLowerCase()));
     }
-    
     return filteredFiles;
   };
 
   // Get file type display text
   const getFileTypeDisplay = (fileType: string): string => {
-    switch(fileType) {
-      case 'application/pdf': return 'PDF';
-      case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': return 'DOC';
-      case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': return 'XLS';
-      default: return fileType.split('/')[1]?.toUpperCase().slice(0, 3) || 'FILE';
+    switch (fileType) {
+      case 'application/pdf':
+        return 'PDF';
+      case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+        return 'DOC';
+      case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+        return 'XLS';
+      default:
+        return fileType.split('/')[1]?.toUpperCase().slice(0, 3) || 'FILE';
     }
   };
 
@@ -194,60 +219,35 @@ const Index = () => {
   const filteredFiles = getFilteredFiles(uploadedFiles, fileFilter, fileSearchQuery);
 
   // Get files for current session only - this is the key fix for the badge count
-  const sessionFiles = currentConversation 
-    ? uploadedFiles.filter(file => file.chatSessionId === currentConversation.id)
-    : [];
+  const sessionFiles = currentConversation ? uploadedFiles.filter(file => file.chatSessionId === currentConversation.id) : [];
 
   // Check if files icon should be shown (hide for encore mode)
   const showFilesIcon = currentConversation?.mode !== 'encore';
-
-  return (
-    <div className="h-screen bg-white flex overflow-hidden">
+  return <div className="h-screen bg-white flex overflow-hidden">
       {/* Fixed Sidebar */}
       <div className="flex-shrink-0">
-        <Sidebar
-          conversations={conversations}
-          activeConversation={activeConversation}
-          onNewChat={createNewChat}
-          onSelectConversation={setActiveConversation}
-          onClearAll={clearAllConversations}
-          onDeleteConversation={deleteConversation}
-          onRenameConversation={renameConversation}
-        />
+        <Sidebar conversations={conversations} activeConversation={activeConversation} onNewChat={createNewChat} onSelectConversation={setActiveConversation} onClearAll={clearAllConversations} onDeleteConversation={deleteConversation} onRenameConversation={renameConversation} />
       </div>
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col h-screen bg-white">
         {/* Chat Area Header */}
         <div className="h-16 px-6 flex items-center justify-between border-b border-gray-100 bg-white">
-          <h1 className="text-xl font-bold text-gray-800 font-comfortaa">
-            enplify<span className="text-[#4E50A8]">.ai</span>
-          </h1>
-          {currentConversation && (
-            <div className="text-sm text-gray-500">
-              • {currentConversation.title}
-            </div>
-          )}
+          
+          {currentConversation}
           
           <div className="flex gap-2">
             {/* Response Preferences */}
-            <ResponsePreferences
-              preferences={responsePreferences}
-              onPreferencesChange={setResponsePreferences}
-              mode={currentConversation?.mode || 'encore'}
-            />
+            <ResponsePreferences preferences={responsePreferences} onPreferencesChange={setResponsePreferences} mode={currentConversation?.mode || 'encore'} />
             
             {/* Files Icon with Popover - Only show if not encore mode */}
-            {showFilesIcon && (
-              <Popover>
+            {showFilesIcon && <Popover>
                 <PopoverTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white shadow-sm hover:shadow relative transition-colors">
                     <Files size={18} className="text-[#4E50A8] transition-colors" />
-                    {sessionFiles.length > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-[#4E50A8] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                    {sessionFiles.length > 0 && <span className="absolute -top-1 -right-1 bg-[#4E50A8] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
                         {sessionFiles.length}
-                      </span>
-                    )}
+                      </span>}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-80 p-0" align="end">
@@ -260,38 +260,18 @@ const Index = () => {
                     {/* Search input */}
                     <div className="relative mt-3 mb-3">
                       <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                      <Input
-                        placeholder="Search files..."
-                        value={fileSearchQuery}
-                        onChange={(e) => setFileSearchQuery(e.target.value)}
-                        className="pl-9 h-8 text-sm"
-                      />
+                      <Input placeholder="Search files..." value={fileSearchQuery} onChange={e => setFileSearchQuery(e.target.value)} className="pl-9 h-8 text-sm" />
                     </div>
                     
                     {/* File type filter tabs - show only relevant modes */}
                     <div className="flex gap-2">
-                      <Button 
-                        variant={fileFilter === 'all' ? 'default' : 'outline'} 
-                        size="sm" 
-                        className={fileFilter === 'all' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
-                        onClick={() => setFileFilter('all')}
-                      >
+                      <Button variant={fileFilter === 'all' ? 'default' : 'outline'} size="sm" className={fileFilter === 'all' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} onClick={() => setFileFilter('all')}>
                         All
                       </Button>
-                      <Button 
-                        variant={fileFilter === 'endocs' ? 'default' : 'outline'} 
-                        size="sm" 
-                        className={fileFilter === 'endocs' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
-                        onClick={() => setFileFilter('endocs')}
-                      >
+                      <Button variant={fileFilter === 'endocs' ? 'default' : 'outline'} size="sm" className={fileFilter === 'endocs' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} onClick={() => setFileFilter('endocs')}>
                         Docs
                       </Button>
-                      <Button 
-                        variant={fileFilter === 'ensights' ? 'default' : 'outline'} 
-                        size="sm" 
-                        className={fileFilter === 'ensights' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
-                        onClick={() => setFileFilter('ensights')}
-                      >
+                      <Button variant={fileFilter === 'ensights' ? 'default' : 'outline'} size="sm" className={fileFilter === 'ensights' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} onClick={() => setFileFilter('ensights')}>
                         Excel
                       </Button>
                     </div>
@@ -299,8 +279,7 @@ const Index = () => {
                   
                   <ScrollArea className="h-64">
                     <div className="p-2">
-                      {filteredFiles.slice(0, 10).map((file) => (
-                        <div key={file.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-md group">
+                      {filteredFiles.slice(0, 10).map(file => <div key={file.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-md group">
                           <div className="w-8 h-8 bg-[#F1F1F9] rounded-md flex items-center justify-center flex-shrink-0">
                             <span className="text-[#4E50A8] text-xs font-medium">{getFileTypeDisplay(file.type)}</span>
                           </div>
@@ -309,16 +288,9 @@ const Index = () => {
                             <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
                           </div>
                           <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            {canViewFile(file) && (
-                              <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                className="h-6 w-6 hover:bg-blue-50 hover:text-blue-700 transition-colors"
-                                onClick={() => setViewingFile(file)}
-                              >
+                            {canViewFile(file) && <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-blue-50 hover:text-blue-700 transition-colors" onClick={() => setViewingFile(file)}>
                                 <Eye size={12} />
-                              </Button>
-                            )}
+                              </Button>}
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
                                 <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-red-50 hover:text-red-700 transition-colors">
@@ -334,32 +306,22 @@ const Index = () => {
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
                                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction 
-                                    onClick={() => handleDeleteFile(file.id)}
-                                    className="bg-red-500 hover:bg-red-600"
-                                  >
+                                  <AlertDialogAction onClick={() => handleDeleteFile(file.id)} className="bg-red-500 hover:bg-red-600">
                                     Delete
                                   </AlertDialogAction>
                                 </AlertDialogFooter>
                               </AlertDialogContent>
                             </AlertDialog>
                           </div>
-                        </div>
-                      ))}
+                        </div>)}
                       
-                      {filteredFiles.length === 0 && (
-                        <div className="p-4 text-center text-gray-500 text-sm">
-                          {fileSearchQuery 
-                            ? 'No files found matching your search' 
-                            : `No ${fileFilter === 'all' ? '' : fileFilter + ' '}files in this session`
-                          }
-                        </div>
-                      )}
+                      {filteredFiles.length === 0 && <div className="p-4 text-center text-gray-500 text-sm">
+                          {fileSearchQuery ? 'No files found matching your search' : `No ${fileFilter === 'all' ? '' : fileFilter + ' '}files in this session`}
+                        </div>}
                     </div>
                   </ScrollArea>
                   
-                  {filteredFiles.length > 10 && (
-                    <Dialog>
+                  {filteredFiles.length > 10 && <Dialog>
                       <DialogTrigger asChild>
                         <div className="p-3 border-t border-gray-100">
                           <Button variant="ghost" size="sm" className="w-full justify-center text-[#4E50A8]">
@@ -378,46 +340,25 @@ const Index = () => {
                         {/* Search input in dialog */}
                         <div className="relative mb-4">
                           <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                          <Input
-                            placeholder="Search files..."
-                            value={fileSearchQuery}
-                            onChange={(e) => setFileSearchQuery(e.target.value)}
-                            className="pl-9"
-                          />
+                          <Input placeholder="Search files..." value={fileSearchQuery} onChange={e => setFileSearchQuery(e.target.value)} className="pl-9" />
                         </div>
                         
                         {/* File type filter tabs in dialog */}
                         <div className="flex gap-2 mb-4">
-                          <Button 
-                            variant={fileFilter === 'all' ? 'default' : 'outline'} 
-                            size="sm" 
-                            className={fileFilter === 'all' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
-                            onClick={() => setFileFilter('all')}
-                          >
+                          <Button variant={fileFilter === 'all' ? 'default' : 'outline'} size="sm" className={fileFilter === 'all' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} onClick={() => setFileFilter('all')}>
                             All
                           </Button>
-                          <Button 
-                            variant={fileFilter === 'endocs' ? 'default' : 'outline'} 
-                            size="sm" 
-                            className={fileFilter === 'endocs' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
-                            onClick={() => setFileFilter('endocs')}
-                          >
+                          <Button variant={fileFilter === 'endocs' ? 'default' : 'outline'} size="sm" className={fileFilter === 'endocs' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} onClick={() => setFileFilter('endocs')}>
                             Docs
                           </Button>
-                          <Button 
-                            variant={fileFilter === 'ensights' ? 'default' : 'outline'} 
-                            size="sm" 
-                            className={fileFilter === 'ensights' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} 
-                            onClick={() => setFileFilter('ensights')}
-                          >
+                          <Button variant={fileFilter === 'ensights' ? 'default' : 'outline'} size="sm" className={fileFilter === 'ensights' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} onClick={() => setFileFilter('ensights')}>
                             Excel
                           </Button>
                         </div>
                         
                         <ScrollArea className="flex-1 pr-4">
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-1">
-                            {filteredFiles.map((file) => (
-                              <div key={file.id} className="flex items-center gap-3 p-3 border border-gray-100 rounded-md hover:bg-gray-50 group">
+                            {filteredFiles.map(file => <div key={file.id} className="flex items-center gap-3 p-3 border border-gray-100 rounded-md hover:bg-gray-50 group">
                                 <div className="w-10 h-10 bg-[#F1F1F9] rounded-md flex items-center justify-center flex-shrink-0">
                                   <span className="text-[#4E50A8] text-xs font-medium">{getFileTypeDisplay(file.type)}</span>
                                 </div>
@@ -429,16 +370,9 @@ const Index = () => {
                                   </div>
                                 </div>
                                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  {canViewFile(file) && (
-                                    <Button 
-                                      variant="ghost" 
-                                      size="icon" 
-                                      className="h-8 w-8"
-                                      onClick={() => setViewingFile(file)}
-                                    >
+                                  {canViewFile(file) && <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setViewingFile(file)}>
                                       <Eye size={14} />
-                                    </Button>
-                                  )}
+                                    </Button>}
                                   <AlertDialog>
                                     <AlertDialogTrigger asChild>
                                       <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-700">
@@ -454,35 +388,24 @@ const Index = () => {
                                       </AlertDialogHeader>
                                       <AlertDialogFooter>
                                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction 
-                                          onClick={() => handleDeleteFile(file.id)}
-                                          className="bg-red-500 hover:bg-red-600"
-                                        >
+                                        <AlertDialogAction onClick={() => handleDeleteFile(file.id)} className="bg-red-500 hover:bg-red-600">
                                           Delete
                                         </AlertDialogAction>
                                       </AlertDialogFooter>
                                     </AlertDialogContent>
                                   </AlertDialog>
                                 </div>
-                              </div>
-                            ))}
+                              </div>)}
                             
-                            {filteredFiles.length === 0 && (
-                              <div className="col-span-2 p-8 text-center text-gray-500">
-                                {fileSearchQuery 
-                                  ? 'No files found matching your search' 
-                                  : `No ${fileFilter === 'all' ? '' : fileFilter + ' '}files in this session`
-                                }
-                              </div>
-                            )}
+                            {filteredFiles.length === 0 && <div className="col-span-2 p-8 text-center text-gray-500">
+                                {fileSearchQuery ? 'No files found matching your search' : `No ${fileFilter === 'all' ? '' : fileFilter + ' '}files in this session`}
+                              </div>}
                           </div>
                         </ScrollArea>
                       </DialogContent>
-                    </Dialog>
-                  )}
+                    </Dialog>}
                 </PopoverContent>
-              </Popover>
-            )}
+              </Popover>}
             
             {/* User avatar */}
             <Popover>
@@ -509,11 +432,7 @@ const Index = () => {
                     </div>
                   </div>
                   <Link to="/settings" className="block w-full">
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      className="w-full justify-start text-gray-700 transition-colors"
-                    >
+                    <Button variant="ghost" size="sm" className="w-full justify-start text-gray-700 transition-colors">
                       <Settings size={16} className="mr-2" />
                       Settings
                     </Button>
@@ -525,8 +444,7 @@ const Index = () => {
         </div>
 
         {/* File Viewer Dialog */}
-        {viewingFile && (
-          <Dialog open={!!viewingFile} onOpenChange={() => setViewingFile(null)}>
+        {viewingFile && <Dialog open={!!viewingFile} onOpenChange={() => setViewingFile(null)}>
             <DialogContent className="sm:max-w-[800px] max-h-[90vh]">
               <DialogHeader>
                 <DialogTitle>{viewingFile.name}</DialogTitle>
@@ -535,34 +453,25 @@ const Index = () => {
                 </DialogDescription>
               </DialogHeader>
               <div className="flex items-center justify-center p-4 bg-gray-50 rounded-md min-h-[400px]">
-                {viewingFile.type === 'application/pdf' ? (
-                  <div className="text-center text-gray-500">
+                {viewingFile.type === 'application/pdf' ? <div className="text-center text-gray-500">
                     <Files size={48} className="mx-auto mb-2" />
                     <p>PDF Preview</p>
                     <p className="text-sm">Click to download or view in browser</p>
-                  </div>
-                ) : (
-                  <div className="text-center text-gray-500">
+                  </div> : <div className="text-center text-gray-500">
                     <Files size={48} className="mx-auto mb-2" />
                     <p>File preview not available</p>
-                  </div>
-                )}
+                  </div>}
               </div>
             </DialogContent>
-          </Dialog>
-        )}
+          </Dialog>}
 
         {/* Scrollable Chat Content - Increased width */}
         <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full">
-            {hasMessages ? (
-              <div className="max-w-5xl mx-auto px-6 py-8 w-full min-h-full">
+            {hasMessages ? <div className="max-w-5xl mx-auto px-6 py-8 w-full min-h-full">
                 <div className="space-y-4">
-                  {currentConversation.messages.map((message) => (
-                    <ChatMessage key={message.id} message={message} />
-                  ))}
-                  {isLoading && (
-                    <div className="flex mb-8">
+                  {currentConversation.messages.map(message => <ChatMessage key={message.id} message={message} />)}
+                  {isLoading && <div className="flex mb-8">
                       <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center flex-shrink-0 mt-1 border border-gray-200">
                         <span className="text-gray-700 font-bold text-sm font-comfortaa">e</span>
                       </div>
@@ -574,18 +483,19 @@ const Index = () => {
                             </span>
                             <span className="inline-block ml-1 text-[#4e50a8]">
                               <span className="animate-pulse">.</span>
-                              <span className="animate-pulse" style={{ animationDelay: '0.2s' }}>.</span>
-                              <span className="animate-pulse" style={{ animationDelay: '0.4s' }}>.</span>
+                              <span className="animate-pulse" style={{
+                          animationDelay: '0.2s'
+                        }}>.</span>
+                              <span className="animate-pulse" style={{
+                          animationDelay: '0.4s'
+                        }}>.</span>
                             </span>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    </div>}
                 </div>
-              </div>
-            ) : (
-              <div className="h-full flex items-center justify-center">
+              </div> : <div className="h-full flex items-center justify-center">
                 <div className="max-w-2xl w-full px-6 flex flex-col items-center justify-center">
                   <div className="text-center mb-10">
                     <h1 className="text-5xl font-bold text-gray-800 mb-2 font-comfortaa">Welcome to enplify2.o</h1>
@@ -596,26 +506,17 @@ const Index = () => {
                   </div>
                   
                 </div>
-              </div>
-            )}
+              </div>}
           </ScrollArea>
         </div>
 
         {/* Fixed Message Input at Bottom - Increased width */}
         <div className="flex-shrink-0 w-full bg-white py-4">
           <div className="max-w-5xl mx-auto px-6">
-            <MessageInput 
-              onSendMessage={handleSendMessage} 
-              disabled={isLoading} 
-              centered={!hasMessages}
-              isLoading={isLoading}
-              onStopGeneration={handleStopGeneration}
-            />
+            <MessageInput onSendMessage={handleSendMessage} disabled={isLoading} centered={!hasMessages} isLoading={isLoading} onStopGeneration={handleStopGeneration} />
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
