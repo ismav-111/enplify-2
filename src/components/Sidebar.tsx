@@ -89,7 +89,7 @@ const Sidebar = ({
         <div className="fixed top-2 left-4 z-30 flex items-center gap-3">
           <div className="bg-white px-8 py-4 rounded-full">
             <span className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
-              enplify.ai
+              enplify.a
             </span>
           </div>
           <Button 
