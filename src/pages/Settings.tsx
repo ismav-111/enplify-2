@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProfileSettings from '@/components/settings/ProfileSettings';
 import DataSourceSettings from '@/components/settings/DataSourceSettings';
-import NavigationHeader from '@/components/NavigationHeader';
 import { ChevronLeft, LogOut } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -30,7 +29,6 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <NavigationHeader />
       <div className="max-w-6xl mx-auto px-6 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -40,7 +38,6 @@ const Settings = () => {
               size="icon" 
               onClick={() => navigate('/')}
               className="h-10 w-10 rounded-full hover:bg-gray-100 transition-colors"
-              title="Back to AI Assistant"
             >
               <ChevronLeft className="h-5 w-5" />
             </Button>
@@ -54,7 +51,6 @@ const Settings = () => {
             variant="outline" 
             onClick={handleLogout}
             className="flex items-center gap-2 hover:bg-gray-100"
-            title="Sign out of your account"
           >
             <LogOut className="h-4 w-4" />
             Logout

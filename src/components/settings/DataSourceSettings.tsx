@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -38,7 +39,6 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface DataSourceType {
   id: string;
@@ -464,20 +464,13 @@ const DataSourceSettings = () => {
   };
 
   return (
-    <TooltipProvider>
+    <>
       {/* Welcome Dialog */}
       <Dialog open={showWelcomeDialog} onOpenChange={setShowWelcomeDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="text-center space-y-4">
             <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center animate-pulse">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Rocket className="w-8 h-8 text-white" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Get started with data connections</p>
-                </TooltipContent>
-              </Tooltip>
+              <Rocket className="w-8 h-8 text-white" />
             </div>
             <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Let's Get You Connected!
@@ -486,14 +479,7 @@ const DataSourceSettings = () => {
               Welcome to your AI assistant! To unlock the full potential and get the most accurate responses, let's connect your data sources. 
               <br /><br />
               <span className="inline-flex items-center gap-1 text-blue-600 font-medium">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Sparkles className="w-4 h-4" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Enhanced AI capabilities</p>
-                  </TooltipContent>
-                </Tooltip>
+                <Sparkles className="w-4 h-4" />
                 Start by connecting your first data source below!
               </span>
             </DialogDescription>
@@ -503,14 +489,7 @@ const DataSourceSettings = () => {
               onClick={() => setShowWelcomeDialog(false)}
               className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3"
             >
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Sparkles className="w-4 h-4 mr-2" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Begin setup process</p>
-                </TooltipContent>
-              </Tooltip>
+              <Sparkles className="w-4 h-4 mr-2" />
               Let's Start Connecting!
             </Button>
             <Button 
@@ -550,7 +529,6 @@ const DataSourceSettings = () => {
                 size="sm" 
                 className={selectedCategory === 'all' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
                 onClick={() => setSelectedCategory('all')}
-                title="Show all data sources"
               >
                 All Sources
               </Button>
@@ -559,7 +537,6 @@ const DataSourceSettings = () => {
                 size="sm" 
                 className={selectedCategory === 'warehouses' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
                 onClick={() => setSelectedCategory('warehouses')}
-                title="Cloud data warehouses for analytics"
               >
                 Data Warehouses
               </Button>
@@ -568,7 +545,6 @@ const DataSourceSettings = () => {
                 size="sm" 
                 className={selectedCategory === 'databases' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
                 onClick={() => setSelectedCategory('databases')}
-                title="Traditional and NoSQL databases"
               >
                 Databases
               </Button>
@@ -577,7 +553,6 @@ const DataSourceSettings = () => {
                 size="sm" 
                 className={selectedCategory === 'lakes' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
                 onClick={() => setSelectedCategory('lakes')}
-                title="Object storage and data lakes"
               >
                 Data Lakes
               </Button>
@@ -586,7 +561,6 @@ const DataSourceSettings = () => {
                 size="sm" 
                 className={selectedCategory === 'repositories' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
                 onClick={() => setSelectedCategory('repositories')}
-                title="Document and file repositories"
               >
                 Repositories
               </Button>
@@ -595,7 +569,6 @@ const DataSourceSettings = () => {
                 size="sm" 
                 className={selectedCategory === 'web' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
                 onClick={() => setSelectedCategory('web')}
-                title="Web-based content and social media"
               >
                 Web Sources
               </Button>
@@ -604,7 +577,6 @@ const DataSourceSettings = () => {
                 size="sm" 
                 className={selectedCategory === 'enterprise' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} 
                 onClick={() => setSelectedCategory('enterprise')}
-                title="Enterprise business applications"
               >
                 Enterprise
               </Button>
@@ -615,14 +587,7 @@ const DataSourceSettings = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">Search Data Sources</label>
             <div className="relative">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Search by data source name or description</p>
-                </TooltipContent>
-              </Tooltip>
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <Input
                 type="text"
                 placeholder="Search by name or description..."
@@ -639,14 +604,7 @@ const DataSourceSettings = () => {
       {(searchQuery || selectedCategory !== 'all') && filteredDataSources.length === 0 && (
         <div className="bg-white rounded-xl border border-gray-200 p-16 shadow-sm">
           <div className="text-center text-gray-500">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Search className="h-12 w-12 mx-auto mb-6 text-gray-300" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>No matching results found</p>
-              </TooltipContent>
-            </Tooltip>
+            <Search className="h-12 w-12 mx-auto mb-6 text-gray-300" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No data sources found</h3>
             <p className="text-base">
               {searchQuery 
@@ -669,14 +627,7 @@ const DataSourceSettings = () => {
             >
               <div className="flex items-center gap-6">
                 <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <source.icon className="h-6 w-6 text-gray-600" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{source.name} - {source.description}</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  <source.icon className="h-6 w-6 text-gray-600" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900 text-lg mb-2">
@@ -693,33 +644,18 @@ const DataSourceSettings = () => {
                     <Badge className="bg-green-50 text-green-700 border-green-200 hover:bg-green-50 text-base px-4 py-2 font-medium">
                       Connected
                     </Badge>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <ChevronDown 
-                          className={`h-5 w-5 text-gray-400 cursor-pointer transition-transform hover:text-gray-600 ${
-                            expandedSource === source.id ? 'rotate-180' : ''
-                          }`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleExpanded(source.id);
-                          }}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{expandedSource === source.id ? 'Collapse' : 'Expand'} connection settings</p>
-                      </TooltipContent>
-                    </Tooltip>
+                    <ChevronDown 
+                      className={`h-5 w-5 text-gray-400 cursor-pointer transition-transform hover:text-gray-600 ${
+                        expandedSource === source.id ? 'rotate-180' : ''
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleExpanded(source.id);
+                      }}
+                    />
                   </div>
                 ) : connectingSource === source.id ? (
                   <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-base px-4 py-2 font-medium">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Establishing connection...</p>
-                      </TooltipContent>
-                    </Tooltip>
                     Connecting...
                   </Badge>
                 ) : (
@@ -727,18 +663,11 @@ const DataSourceSettings = () => {
                     <Badge variant="outline" className="text-gray-500 text-base px-4 py-2 border-gray-300 font-medium">
                       Not Connected
                     </Badge>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <ChevronDown 
-                          className={`h-5 w-5 text-gray-400 transition-transform hover:text-gray-600 ${
-                            expandedSource === source.id ? 'rotate-180' : ''
-                          }`}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Click to configure connection</p>
-                      </TooltipContent>
-                    </Tooltip>
+                    <ChevronDown 
+                      className={`h-5 w-5 text-gray-400 transition-transform hover:text-gray-600 ${
+                        expandedSource === source.id ? 'rotate-180' : ''
+                      }`}
+                    />
                   </div>
                 )}
               </div>
@@ -751,14 +680,7 @@ const DataSourceSettings = () => {
                   {connectingSource === source.id ? (
                     <div className="space-y-4">
                       <div className="flex items-center gap-3">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Connection in progress</p>
-                          </TooltipContent>
-                        </Tooltip>
+                        <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
                         <span className="font-medium text-gray-900 text-sm">Connecting to {source.name}...</span>
                       </div>
                       <div className="space-y-2">
@@ -781,21 +703,13 @@ const DataSourceSettings = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <Label htmlFor={`${source.id}-active`} className="text-sm text-green-700">Active</Label>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Switch id={`${source.id}-active`} defaultChecked />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Toggle data source connection</p>
-                            </TooltipContent>
-                          </Tooltip>
+                          <Switch id={`${source.id}-active`} defaultChecked />
                         </div>
                       </div>
                       <div>
                         <Button 
                           variant="secondary" 
                           onClick={() => handleDisconnect(source.id)}
-                          title={`Disconnect from ${source.name}`}
                         >
                           Disconnect
                         </Button>
@@ -815,7 +729,6 @@ const DataSourceSettings = () => {
                               placeholder={field.placeholder}
                               required={field.required}
                               className="h-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                              title={field.placeholder}
                             />
                           </div>
                         ))}
@@ -825,18 +738,10 @@ const DataSourceSettings = () => {
                             onClick={() => handleConnect(source.id)}
                             disabled={connectingSource !== null}
                             className="bg-blue-600 hover:bg-blue-700 text-white"
-                            title={`Connect to ${source.name}`}
                           >
                             {connectingSource === source.id ? (
                               <>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>Connection in progress</p>
-                                  </TooltipContent>
-                                </Tooltip>
+                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                                 Connecting...
                               </>
                             ) : (
@@ -854,7 +759,7 @@ const DataSourceSettings = () => {
         ))}
       </div>
     </div>
-    </TooltipProvider>
+    </>
   );
 };
 
