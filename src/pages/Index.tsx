@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
 import MessageInput from '@/components/MessageInput';
-import ResponsePreferences from '@/components/ResponsePreferences';
+import ResponsePreferences, { ResponsePreferences as ResponsePreferencesType } from '@/components/ResponsePreferences';
 import { useChat } from '@/hooks/useChat';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -32,7 +32,7 @@ const Index = () => {
   
   const [mode, setMode] = useState<'encore' | 'endocs' | 'ensights'>('encore');
   const [file, setFile] = useState<File | null>(null);
-  const [preferences, setPreferences] = useState({ format: 'text' as const, dataSource: 'sql' as const });
+  const [preferences, setPreferences] = useState<ResponsePreferencesType>({ format: 'text', dataSource: 'sql' });
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
