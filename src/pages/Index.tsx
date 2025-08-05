@@ -1,3 +1,4 @@
+
 import { useChat } from '@/hooks/useChat';
 import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
@@ -219,16 +220,14 @@ const Index = () => {
       <div className="flex-1 flex flex-col h-screen bg-white">
         {/* Chat Area Header */}
         <div className="h-16 px-6 flex items-center justify-between border-b border-gray-100 bg-white">
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold text-gray-800 font-comfortaa">
-              enplify<span className="text-[#4E50A8]">.ai</span>
-            </h1>
-            {currentConversation && (
-              <div className="text-sm text-gray-500">
-                • {currentConversation.title}
-              </div>
-            )}
-          </div>
+          <h1 className="text-xl font-bold text-gray-800 font-comfortaa">
+            enplify<span className="text-[#4E50A8]">.ai</span>
+          </h1>
+          {currentConversation && (
+            <div className="text-sm text-gray-500">
+              • {currentConversation.title}
+            </div>
+          )}
           
           <div className="flex gap-2">
             {/* Response Preferences */}
