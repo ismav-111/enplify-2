@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+
 interface DataSourceType {
   id: string;
   name: string;
@@ -83,8 +83,39 @@ const dataSourceCategories = {
       required: false
     }]
   }],
-  warehouses: [// ... keep existing code (warehouses data sources)
-  {
+  web: [{
+    id: 'website',
+    name: 'Website',
+    description: 'Connect to website content via URL or API',
+    icon: Globe,
+    isConnected: false,
+    fields: [{
+      id: 'url',
+      label: 'Website URL',
+      type: 'text',
+      placeholder: 'https://www.example.com',
+      required: true
+    }, {
+      id: 'api_endpoint',
+      label: 'API Endpoint',
+      type: 'text',
+      placeholder: 'https://api.example.com',
+      required: false
+    }, {
+      id: 'api_key',
+      label: 'API Key',
+      type: 'password',
+      placeholder: '••••••••',
+      required: false
+    }, {
+      id: 'crawl_depth',
+      label: 'Crawl Depth',
+      type: 'text',
+      placeholder: '1, 2, or 3',
+      required: false
+    }]
+  }],
+  warehouses: [{
     id: 'snowflake',
     name: 'Snowflake',
     description: 'Connect to your Snowflake data warehouse for scalable analytics',
@@ -202,8 +233,7 @@ const dataSourceCategories = {
       required: true
     }]
   }],
-  databases: [// ... keep existing code (databases data sources)
-  {
+  databases: [{
     id: 'postgresql',
     name: 'PostgreSQL',
     description: 'Connect to your PostgreSQL database',
@@ -346,8 +376,7 @@ const dataSourceCategories = {
       required: false
     }]
   }],
-  lakes: [// ... keep existing code (lakes data sources)
-  {
+  lakes: [{
     id: 'adls',
     name: 'Azure Data Lake Storage',
     description: 'Connect to your Azure Data Lake Storage for big data analytics',
@@ -447,8 +476,7 @@ const dataSourceCategories = {
       required: false
     }]
   }],
-  repositories: [// ... keep existing code (repositories data sources)
-  {
+  repositories: [{
     id: 'sharepoint',
     name: 'SharePoint',
     description: 'Connect to your SharePoint sites and document libraries',
@@ -568,147 +596,7 @@ const dataSourceCategories = {
       required: false
     }]
   }],
-  web: [{
-    id: 'website',
-    name: 'Website',
-    description: 'Connect to website content via URL or API',
-    icon: Globe,
-    isConnected: false,
-    fields: [{
-      id: 'url',
-      label: 'Website URL',
-      type: 'text',
-      placeholder: 'https://www.example.com',
-      required: true
-    }, {
-      id: 'api_endpoint',
-      label: 'API Endpoint',
-      type: 'text',
-      placeholder: 'https://api.example.com',
-      required: false
-    }, {
-      id: 'api_key',
-      label: 'API Key',
-      type: 'password',
-      placeholder: '••••••••',
-      required: false
-    }, {
-      id: 'crawl_depth',
-      label: 'Crawl Depth',
-      type: 'text',
-      placeholder: '1, 2, or 3',
-      required: false
-    }]
-  }, {
-    id: 'youtube',
-    name: 'YouTube',
-    description: 'Connect to YouTube channels and video content',
-    icon: Youtube,
-    isConnected: false,
-    fields: [{
-      id: 'api_key',
-      label: 'API Key',
-      type: 'password',
-      placeholder: '••••••••',
-      required: true
-    }, {
-      id: 'channel_id',
-      label: 'Channel ID',
-      type: 'text',
-      placeholder: 'Enter channel ID',
-      required: false
-    }, {
-      id: 'playlist_id',
-      label: 'Playlist ID',
-      type: 'text',
-      placeholder: 'Enter playlist ID',
-      required: false
-    }]
-  }, {
-    id: 'facebook',
-    name: 'Facebook',
-    description: 'Connect to Facebook pages and social media content',
-    icon: Facebook,
-    isConnected: false,
-    fields: [{
-      id: 'access_token',
-      label: 'Access Token',
-      type: 'password',
-      placeholder: '••••••••',
-      required: true
-    }, {
-      id: 'page_id',
-      label: 'Page ID',
-      type: 'text',
-      placeholder: 'Enter your page ID',
-      required: false
-    }]
-  }, {
-    id: 'twitter',
-    name: 'Twitter',
-    description: 'Connect to Twitter for social media analytics',
-    icon: Twitter,
-    isConnected: false,
-    fields: [{
-      id: 'api_key',
-      label: 'API Key',
-      type: 'text',
-      placeholder: 'Enter your API key',
-      required: true
-    }, {
-      id: 'api_secret',
-      label: 'API Secret',
-      type: 'password',
-      placeholder: '••••••••',
-      required: true
-    }, {
-      id: 'bearer_token',
-      label: 'Bearer Token',
-      type: 'password',
-      placeholder: '••••••••',
-      required: true
-    }]
-  }, {
-    id: 'linkedin',
-    name: 'LinkedIn',
-    description: 'Connect to LinkedIn for professional network data',
-    icon: Linkedin,
-    isConnected: false,
-    fields: [{
-      id: 'client_id',
-      label: 'Client ID',
-      type: 'text',
-      placeholder: 'Enter your client ID',
-      required: true
-    }, {
-      id: 'client_secret',
-      label: 'Client Secret',
-      type: 'password',
-      placeholder: '••••••••',
-      required: true
-    }]
-  }, {
-    id: 'instagram',
-    name: 'Instagram',
-    description: 'Connect to Instagram for social media content',
-    icon: Instagram,
-    isConnected: false,
-    fields: [{
-      id: 'access_token',
-      label: 'Access Token',
-      type: 'password',
-      placeholder: '••••••••',
-      required: true
-    }, {
-      id: 'user_id',
-      label: 'User ID',
-      type: 'text',
-      placeholder: 'Enter your user ID',
-      required: false
-    }]
-  }],
-  enterprise: [// ... keep existing code (enterprise data sources)
-  {
+  enterprise: [{
     id: 'salesforce',
     name: 'Salesforce',
     description: 'Connect to your Salesforce CRM for customer data',
@@ -823,7 +711,7 @@ const dataSourceCategories = {
 };
 
 // Flatten all data sources for backward compatibility
-const dataSources: DataSourceType[] = [...dataSourceCategories.api, ...dataSourceCategories.warehouses, ...dataSourceCategories.databases, ...dataSourceCategories.lakes, ...dataSourceCategories.repositories, ...dataSourceCategories.web, ...dataSourceCategories.enterprise];
+const dataSources: DataSourceType[] = [...dataSourceCategories.api, ...dataSourceCategories.web, ...dataSourceCategories.warehouses, ...dataSourceCategories.databases, ...dataSourceCategories.lakes, ...dataSourceCategories.repositories, ...dataSourceCategories.enterprise];
 const DataSourceSettings = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -931,6 +819,9 @@ const DataSourceSettings = () => {
               <Button variant={selectedCategory === 'api' ? 'default' : 'outline'} size="sm" className={selectedCategory === 'api' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} onClick={() => setSelectedCategory('api')}>
                 API Configuration
               </Button>
+              <Button variant={selectedCategory === 'web' ? 'default' : 'outline'} size="sm" className={selectedCategory === 'web' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} onClick={() => setSelectedCategory('web')}>
+                Web Sources
+              </Button>
               <Button variant={selectedCategory === 'warehouses' ? 'default' : 'outline'} size="sm" className={selectedCategory === 'warehouses' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} onClick={() => setSelectedCategory('warehouses')}>
                 Data Warehouses
               </Button>
@@ -942,9 +833,6 @@ const DataSourceSettings = () => {
               </Button>
               <Button variant={selectedCategory === 'repositories' ? 'default' : 'outline'} size="sm" className={selectedCategory === 'repositories' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} onClick={() => setSelectedCategory('repositories')}>
                 Repositories
-              </Button>
-              <Button variant={selectedCategory === 'web' ? 'default' : 'outline'} size="sm" className={selectedCategory === 'web' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} onClick={() => setSelectedCategory('web')}>
-                Web Sources
               </Button>
               <Button variant={selectedCategory === 'enterprise' ? 'default' : 'outline'} size="sm" className={selectedCategory === 'enterprise' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} onClick={() => setSelectedCategory('enterprise')}>
                 Enterprise
