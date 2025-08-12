@@ -1,3 +1,4 @@
+
 import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -48,6 +49,10 @@ export default function Auth() {
   const [accountType, setAccountType] = useState<"individual" | "organization" | "">("")
   const [organizationName, setOrganizationName] = useState("")
   
+  // Sign in specific states
+  const [signInStep, setSignInStep] = useState(1) // 1: email, 2: password and submit
+  const [signInEmail, setSignInEmail] = useState("")
+  
   const navigate = useNavigate()
   const location = useLocation()
   const isSignUp = location.pathname === "/signup"
@@ -70,24 +75,25 @@ export default function Auth() {
     },
   })
 
-  const watchEmail = signInForm.watch("email")
-
-  // Detect organization from email domain and show password field for sign in
+  // Detect organization from email domain for sign in step 2
   React.useEffect(() => {
-    if (!isSignUp && watchEmail && watchEmail.includes("@")) {
-      const domain = watchEmail.split("@")[1]
+    if (!isSignUp && signInStep === 2 && signInEmail && signInEmail.includes("@")) {
+      const domain = signInEmail.split("@")[1]
       if (domain && domain !== "gmail.com" && domain !== "yahoo.com" && domain !== "hotmail.com" && domain !== "outlook.com") {
         const orgName = domain.split(".")[0]
         setDetectedOrg(orgName.charAt(0).toUpperCase() + orgName.slice(1))
       } else {
         setDetectedOrg("")
       }
-      setShowPasswordField(true)
-    } else if (!isSignUp) {
-      setDetectedOrg("")
-      setShowPasswordField(false)
     }
-  }, [watchEmail, isSignUp])
+  }, [signInEmail, isSignUp, signInStep])
+
+  function handleSignInEmailSubmit() {
+    if (signInEmail && signInEmail.includes("@")) {
+      signInForm.setValue("email", signInEmail)
+      setSignInStep(2)
+    }
+  }
 
   function onSignInSubmit(data: SignInData) {
     setIsLoading(true)
@@ -200,8 +206,8 @@ export default function Auth() {
         <div className="absolute inset-0 bg-gradient-to-l from-purple-50/50 to-transparent"></div>
         
         <Card className="w-full max-w-md bg-white/95 backdrop-blur-sm shadow-2xl border-0 rounded-3xl overflow-hidden relative z-10 transition-shadow duration-300 hover:shadow-3xl">
-          <CardHeader className="pb-6 pt-12 px-12 text-left">
-            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
+          <CardHeader className="pb-4 pt-12 px-12 text-left">
+            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">
               {isSignUp ? "Sign Up" : "Sign In"}
             </CardTitle>
           </CardHeader>
@@ -209,45 +215,69 @@ export default function Auth() {
           <CardContent className="px-12 pb-12">
             {!isSignUp ? (
               // Sign In Form
-              <form onSubmit={signInForm.handleSubmit(onSignInSubmit)} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-semibold text-gray-700">
-                    Email Address
-                  </Label>
-                  <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="you@company.com"
-                      className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
-                      {...signInForm.register("email")}
-                    />
-                  </div>
-                  {signInForm.formState.errors.email && (
-                    <p className="text-xs text-red-500 mt-1">{signInForm.formState.errors.email.message}</p>
-                  )}
-                </div>
-
-                {detectedOrg && (
-                  <div className="space-y-2">
-                    <Label className="text-sm font-semibold text-gray-700">
-                      Organization
-                    </Label>
-                    <div className="relative">
-                      <Building className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <Input
-                        type="text"
-                        value={detectedOrg}
-                        readOnly
-                        className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 rounded-xl bg-gray-100 text-gray-600"
-                      />
+              <div className="space-y-6">
+                {signInStep === 1 && (
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="signin-email" className="text-sm font-semibold text-gray-700">
+                        Email Address
+                      </Label>
+                      <div className="relative">
+                        <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <Input
+                          id="signin-email"
+                          type="email"
+                          placeholder="you@company.com"
+                          value={signInEmail}
+                          onChange={(e) => setSignInEmail(e.target.value)}
+                          className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl bg-gray-50 focus:bg-white transition-all hover:bg-white"
+                        />
+                      </div>
                     </div>
+                    <Button
+                      onClick={handleSignInEmailSubmit}
+                      className="w-full h-12 font-semibold text-sm rounded-xl"
+                      disabled={isLoading || !signInEmail}
+                    >
+                      {isLoading ? "Continue..." : "Continue"}
+                    </Button>
                   </div>
                 )}
 
-                {showPasswordField && (
-                  <>
+                {signInStep === 2 && (
+                  <form onSubmit={signInForm.handleSubmit(onSignInSubmit)} className="space-y-6">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold text-gray-700">
+                        Email Address
+                      </Label>
+                      <div className="relative">
+                        <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <Input
+                          type="email"
+                          value={signInEmail}
+                          readOnly
+                          className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 rounded-xl bg-gray-100 text-gray-600"
+                        />
+                      </div>
+                    </div>
+
+                    {detectedOrg && (
+                      <div className="space-y-2">
+                        <Label className="text-sm font-semibold text-gray-700">
+                          Organization
+                        </Label>
+                        <div className="relative">
+                          <Building className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                          <Input
+                            type="text"
+                            value={detectedOrg}
+                            readOnly
+                            className="w-full h-12 pl-12 pr-4 text-sm border-gray-200 rounded-xl bg-gray-100 text-gray-600"
+                          />
+                        </div>
+                      </div>
+                    )}
+
                     <div className="space-y-2">
                       <Label htmlFor="password" className="text-sm font-semibold text-gray-700">
                         Password
@@ -291,9 +321,19 @@ export default function Auth() {
                     >
                       {isLoading ? "Signing you in..." : "Sign In"}
                     </Button>
-                  </>
+
+                    <div className="text-center">
+                      <button
+                        type="button"
+                        onClick={() => setSignInStep(1)}
+                        className="text-sm text-indigo-600 hover:text-indigo-500 font-semibold transition-colors"
+                      >
+                        Back to email
+                      </button>
+                    </div>
+                  </form>
                 )}
-              </form>
+              </div>
             ) : (
               // Sign Up Form
               <div className="space-y-6">
@@ -438,8 +478,8 @@ export default function Auth() {
               </div>
             )}
 
-            {/* Social Login Options - Show only on step 1 for signup or always for signin */}
-            {(!isSignUp || signUpStep === 1) && (
+            {/* Social Login Options - Show only on step 1 for both signup and signin */}
+            {((!isSignUp && signInStep === 1) || (isSignUp && signUpStep === 1)) && (
               <>
                 <div className="relative my-6">
                   <div className="absolute inset-0 flex items-center">
