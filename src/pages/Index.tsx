@@ -14,6 +14,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '@/components/ui/input';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import type { ResponseMode } from '@/components/MessageInput';
+import MinimalOnboardingWizard from "@/components/MinimalOnboardingWizard"
+import { useMinimalOnboarding } from "@/hooks/useMinimalOnboarding"
 
 interface FileItem {
   id: string;
@@ -38,6 +40,8 @@ const Index = () => {
     deleteConversation,
     renameConversation
   } = useChat();
+
+  const { showOnboarding, completeOnboarding, closeOnboarding } = useMinimalOnboarding()
 
   // Response preferences state
   const [responsePreferences, setResponsePreferences] = useState<ResponsePreferencesType>({
@@ -228,14 +232,13 @@ const Index = () => {
   // Check if files icon should be shown (hide for encore mode)
   const showFilesIcon = currentConversation?.mode !== 'encore';
 
-  return <div className="h-screen bg-white flex overflow-hidden">
+  return <div className="flex h-screen bg-background">
       {/* Fixed Sidebar */}
       <div className="flex-shrink-0">
         <Sidebar conversations={conversations} activeConversation={activeConversation} onNewChat={createNewChat} onSelectConversation={setActiveConversation} onClearAll={clearAllConversations} onDeleteConversation={deleteConversation} onRenameConversation={renameConversation} />
       </div>
 
-      {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col h-screen bg-white">
+      <div className="flex-1 flex flex-col">
         {/* Chat Area Header */}
         <div className="h-16 px-6 flex items-center justify-between border-b border-gray-100 bg-white">
           {/* Left side - Empty space */}
@@ -523,6 +526,13 @@ const Index = () => {
           </div>
         </div>
       </div>
+
+      {/* Minimal Onboarding Wizard */}
+      <MinimalOnboardingWizard
+        isOpen={showOnboarding}
+        onClose={closeOnboarding}
+        onComplete={completeOnboarding}
+      />
     </div>;
 };
 

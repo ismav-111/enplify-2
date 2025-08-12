@@ -1,4 +1,3 @@
-
 import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -99,9 +98,12 @@ export default function Auth() {
     setIsLoading(true)
     console.log("Demo Sign In - bypassing authentication:", data)
     
+    // Set flag for first-time user to trigger onboarding
+    localStorage.setItem('isFirstTimeUser', 'true')
+    
     setTimeout(() => {
       setIsLoading(false)
-      navigate("/settings?tab=data-sources")
+      navigate("/") // Navigate to chat interface instead of settings
     }, 1500)
   }
 
@@ -132,9 +134,12 @@ export default function Auth() {
     }
     console.log("Demo Sign Up - bypassing authentication:", signUpData)
     
+    // Set flag for first-time user to trigger onboarding
+    localStorage.setItem('isFirstTimeUser', 'true')
+    
     setTimeout(() => {
       setIsLoading(false)
-      navigate("/settings?tab=data-sources")
+      navigate("/") // Navigate to chat interface instead of settings
     }, 1500)
   }
 
