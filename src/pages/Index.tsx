@@ -3,6 +3,8 @@ import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
 import MessageInput from '@/components/MessageInput';
 import ResponsePreferences, { ResponsePreferences as ResponsePreferencesType } from '@/components/ResponsePreferences';
+import MinimalOnboardingWizard from '@/components/MinimalOnboardingWizard';
+import { useMinimalOnboarding } from '@/hooks/useMinimalOnboarding';
 import { useEffect, useState } from 'react';
 import { Files, Settings, User, Search, Eye, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -38,6 +40,15 @@ const Index = () => {
     deleteConversation,
     renameConversation
   } = useChat();
+
+  const {
+    isOnboardingComplete,
+    showOnboarding,
+    startOnboarding,
+    completeOnboarding,
+    skipOnboarding,
+    closeOnboarding
+  } = useMinimalOnboarding();
 
   // Response preferences state
   const [responsePreferences, setResponsePreferences] = useState<ResponsePreferencesType>({
@@ -138,6 +149,18 @@ const Index = () => {
       createNewChat();
     }
   }, [conversations.length, createNewChat]);
+
+  // Show onboarding for new users
+  useEffect(() => {
+    if (!isOnboardingComplete && conversations.length > 0) {
+      // Small delay to ensure the chat interface is loaded
+      const timer = setTimeout(() => {
+        startOnboarding();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isOnboardingComplete, conversations.length, startOnboarding]);
+
   const currentConversation = getCurrentConversation();
   const hasMessages = currentConversation && currentConversation.messages.length > 0;
 
@@ -231,7 +254,15 @@ const Index = () => {
   return <div className="h-screen bg-white flex overflow-hidden">
       {/* Fixed Sidebar */}
       <div className="flex-shrink-0">
-        <Sidebar conversations={conversations} activeConversation={activeConversation} onNewChat={createNewChat} onSelectConversation={setActiveConversation} onClearAll={clearAllConversations} onDeleteConversation={deleteConversation} onRenameConversation={renameConversation} />
+        <Sidebar 
+          conversations={conversations} 
+          activeConversation={activeConversation} 
+          onNewChat={createNewChat} 
+          onSelectConversation={setActiveConversation} 
+          onClearAll={clearAllConversations} 
+          onDeleteConversation={deleteConversation} 
+          onRenameConversation={renameConversation} 
+        />
       </div>
 
       {/* Main Chat Area */}
@@ -523,6 +554,14 @@ const Index = () => {
           </div>
         </div>
       </div>
+
+      {/* Minimal Onboarding Wizard */}
+      <MinimalOnboardingWizard
+        isOpen={showOnboarding}
+        onComplete={completeOnboarding}
+        onSkip={skipOnboarding}
+        onClose={closeOnboarding}
+      />
     </div>;
 };
 
