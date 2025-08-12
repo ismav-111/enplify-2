@@ -1,9 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Server, Cloud, ChevronDown, Rocket, Sparkles, HardDrive, Folder, FileText, Share2, Facebook, Twitter, Linkedin, Instagram, MonitorSpeaker, CloudSnow, Zap, Archive, FolderOpen, CloudDrizzle, Shield } from 'lucide-react';
+import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Server, Cloud, ChevronDown, Rocket, Sparkles, HardDrive, Folder, FileText, Share2, Facebook, Twitter, Linkedin, Instagram, MonitorSpeaker, CloudSnow, Zap, Archive, FolderOpen, CloudDrizzle, Shield, Settings } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -25,7 +26,65 @@ interface DataSourceType {
 
 // Group data sources by category
 const dataSourceCategories = {
-  warehouses: [{
+  api: [{
+    id: 'rest-api',
+    name: 'REST API',
+    description: 'Connect to any REST API endpoint',
+    icon: Settings,
+    isConnected: false,
+    fields: [{
+      id: 'endpoint',
+      label: 'API Endpoint',
+      type: 'url',
+      placeholder: 'https://api.example.com/data',
+      required: true
+    }, {
+      id: 'method',
+      label: 'HTTP Method',
+      type: 'text',
+      placeholder: 'GET, POST, PUT, DELETE',
+      required: true
+    }, {
+      id: 'api_key',
+      label: 'API Key',
+      type: 'password',
+      placeholder: '••••••••',
+      required: false
+    }, {
+      id: 'headers',
+      label: 'Custom Headers',
+      type: 'textarea',
+      placeholder: 'Authorization: Bearer token',
+      required: false
+    }]
+  }, {
+    id: 'graphql',
+    name: 'GraphQL API',
+    description: 'Connect to GraphQL endpoints',
+    icon: Database,
+    isConnected: false,
+    fields: [{
+      id: 'endpoint',
+      label: 'GraphQL Endpoint',
+      type: 'url',
+      placeholder: 'https://api.example.com/graphql',
+      required: true
+    }, {
+      id: 'query',
+      label: 'GraphQL Query',
+      type: 'textarea',
+      placeholder: 'query { users { id name email } }',
+      required: true
+    }, {
+      id: 'api_key',
+      label: 'API Key',
+      type: 'password',
+      placeholder: '••••••••',
+      required: false
+    }]
+  }],
+  warehouses: [// ... keep existing code (warehouses data sources)
+  {
     id: 'snowflake',
     name: 'Snowflake',
     description: 'Connect to your Snowflake data warehouse for scalable analytics',
@@ -143,7 +202,8 @@ const dataSourceCategories = {
       required: true
     }]
   }],
-  databases: [{
+  databases: [// ... keep existing code (databases data sources)
+  {
     id: 'postgresql',
     name: 'PostgreSQL',
     description: 'Connect to your PostgreSQL database',
@@ -286,7 +346,8 @@ const dataSourceCategories = {
       required: false
     }]
   }],
-  lakes: [{
+  lakes: [// ... keep existing code (lakes data sources)
+  {
     id: 'adls',
     name: 'Azure Data Lake Storage',
     description: 'Connect to your Azure Data Lake Storage for big data analytics',
@@ -386,7 +447,8 @@ const dataSourceCategories = {
       required: false
     }]
   }],
-  repositories: [{
+  repositories: [// ... keep existing code (repositories data sources)
+  {
     id: 'sharepoint',
     name: 'SharePoint',
     description: 'Connect to your SharePoint sites and document libraries',
@@ -507,6 +569,62 @@ const dataSourceCategories = {
     }]
   }],
   web: [{
+    id: 'website',
+    name: 'Website',
+    description: 'Connect to website content via URL or API',
+    icon: Globe,
+    isConnected: false,
+    fields: [{
+      id: 'url',
+      label: 'Website URL',
+      type: 'text',
+      placeholder: 'https://www.example.com',
+      required: true
+    }, {
+      id: 'api_endpoint',
+      label: 'API Endpoint',
+      type: 'text',
+      placeholder: 'https://api.example.com',
+      required: false
+    }, {
+      id: 'api_key',
+      label: 'API Key',
+      type: 'password',
+      placeholder: '••••••••',
+      required: false
+    }, {
+      id: 'crawl_depth',
+      label: 'Crawl Depth',
+      type: 'text',
+      placeholder: '1, 2, or 3',
+      required: false
+    }]
+  }, {
+    id: 'youtube',
+    name: 'YouTube',
+    description: 'Connect to YouTube channels and video content',
+    icon: Youtube,
+    isConnected: false,
+    fields: [{
+      id: 'api_key',
+      label: 'API Key',
+      type: 'password',
+      placeholder: '••••••••',
+      required: true
+    }, {
+      id: 'channel_id',
+      label: 'Channel ID',
+      type: 'text',
+      placeholder: 'Enter channel ID',
+      required: false
+    }, {
+      id: 'playlist_id',
+      label: 'Playlist ID',
+      type: 'text',
+      placeholder: 'Enter playlist ID',
+      required: false
+    }]
+  }, {
     id: 'facebook',
     name: 'Facebook',
     description: 'Connect to Facebook pages and social media content',
@@ -588,64 +706,9 @@ const dataSourceCategories = {
       placeholder: 'Enter your user ID',
       required: false
     }]
-  }, {
-    id: 'website',
-    name: 'Website',
-    description: 'Connect to website content via URL or API',
-    icon: Globe,
-    isConnected: false,
-    fields: [{
-      id: 'url',
-      label: 'Website URL',
-      type: 'text',
-      placeholder: 'https://www.example.com',
-      required: true
-    }, {
-      id: 'api_endpoint',
-      label: 'API Endpoint',
-      type: 'text',
-      placeholder: 'https://api.example.com',
-      required: false
-    }, {
-      id: 'api_key',
-      label: 'API Key',
-      type: 'password',
-      placeholder: '••••••••',
-      required: false
-    }, {
-      id: 'crawl_depth',
-      label: 'Crawl Depth',
-      type: 'text',
-      placeholder: '1, 2, or 3',
-      required: false
-    }]
-  }, {
-    id: 'youtube',
-    name: 'YouTube',
-    description: 'Connect to YouTube channels and video content',
-    icon: Youtube,
-    isConnected: false,
-    fields: [{
-      id: 'api_key',
-      label: 'API Key',
-      type: 'password',
-      placeholder: '••••••••',
-      required: true
-    }, {
-      id: 'channel_id',
-      label: 'Channel ID',
-      type: 'text',
-      placeholder: 'Enter channel ID',
-      required: false
-    }, {
-      id: 'playlist_id',
-      label: 'Playlist ID',
-      type: 'text',
-      placeholder: 'Enter playlist ID',
-      required: false
-    }]
   }],
-  enterprise: [{
+  enterprise: [// ... keep existing code (enterprise data sources)
+  {
     id: 'salesforce',
     name: 'Salesforce',
     description: 'Connect to your Salesforce CRM for customer data',
@@ -760,7 +823,7 @@ const dataSourceCategories = {
 };
 
 // Flatten all data sources for backward compatibility
-const dataSources: DataSourceType[] = [...dataSourceCategories.warehouses, ...dataSourceCategories.databases, ...dataSourceCategories.lakes, ...dataSourceCategories.repositories, ...dataSourceCategories.web, ...dataSourceCategories.enterprise];
+const dataSources: DataSourceType[] = [...dataSourceCategories.api, ...dataSourceCategories.warehouses, ...dataSourceCategories.databases, ...dataSourceCategories.lakes, ...dataSourceCategories.repositories, ...dataSourceCategories.web, ...dataSourceCategories.enterprise];
 const DataSourceSettings = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -864,6 +927,9 @@ const DataSourceSettings = () => {
             <div className="flex flex-wrap gap-2">
               <Button variant={selectedCategory === 'all' ? 'default' : 'outline'} size="sm" className={selectedCategory === 'all' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} onClick={() => setSelectedCategory('all')}>
                 All Sources
+              </Button>
+              <Button variant={selectedCategory === 'api' ? 'default' : 'outline'} size="sm" className={selectedCategory === 'api' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} onClick={() => setSelectedCategory('api')}>
+                API Configuration
               </Button>
               <Button variant={selectedCategory === 'warehouses' ? 'default' : 'outline'} size="sm" className={selectedCategory === 'warehouses' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} onClick={() => setSelectedCategory('warehouses')}>
                 Data Warehouses
@@ -986,7 +1052,17 @@ const DataSourceSettings = () => {
                             <label htmlFor={`${source.id}-${field.id}`} className="block text-sm font-medium text-gray-700">
                               {field.label} {field.required && <span className="text-red-500">*</span>}
                             </label>
-                            <Input id={`${source.id}-${field.id}`} type={field.type} placeholder={field.placeholder} required={field.required} className="h-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500" />
+                            {field.type === 'textarea' ? (
+                              <textarea
+                                id={`${source.id}-${field.id}`}
+                                placeholder={field.placeholder}
+                                required={field.required}
+                                className="w-full min-h-[60px] px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
+                                rows={3}
+                              />
+                            ) : (
+                              <Input id={`${source.id}-${field.id}`} type={field.type} placeholder={field.placeholder} required={field.required} className="h-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500" />
+                            )}
                           </div>)}
                         <div className="pt-3 border-t border-gray-100">
                           <Button type="button" onClick={() => handleConnect(source.id)} disabled={connectingSource !== null} className="bg-blue-600 hover:bg-blue-700 text-white">
