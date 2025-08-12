@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { X, ChevronRight, Key, Globe, Database, ArrowLeft, FileText, Video, Link, CheckCircle } from 'lucide-react'
+import { X, ChevronRight, ArrowLeft } from 'lucide-react'
 
 interface MinimalOnboardingWizardProps {
   isOpen: boolean
@@ -17,7 +17,6 @@ interface DataSource {
   id: string
   name: string
   type: 'document' | 'web' | 'youtube' | 'api' | 'database'
-  icon: React.ElementType
   description: string
   fields: Array<{
     key: string
@@ -33,7 +32,6 @@ const availableDataSources: DataSource[] = [
     id: 'website',
     name: 'Website Scraper',
     type: 'web',
-    icon: Globe,
     description: 'Extract content from websites',
     fields: [
       { key: 'url', label: 'Website URL', type: 'url', placeholder: 'https://example.com', required: true },
@@ -44,7 +42,6 @@ const availableDataSources: DataSource[] = [
     id: 'youtube',
     name: 'YouTube Videos',
     type: 'youtube',
-    icon: Video,
     description: 'Extract transcripts from YouTube videos',
     fields: [
       { key: 'url', label: 'YouTube URL', type: 'url', placeholder: 'https://youtube.com/watch?v=...', required: true }
@@ -54,7 +51,6 @@ const availableDataSources: DataSource[] = [
     id: 'documents',
     name: 'Document Upload',
     type: 'document',
-    icon: FileText,
     description: 'Upload PDF, DOCX, or TXT files',
     fields: [
       { key: 'name', label: 'Collection Name', type: 'text', placeholder: 'My Documents', required: true }
@@ -64,7 +60,6 @@ const availableDataSources: DataSource[] = [
     id: 'api',
     name: 'API Endpoint',
     type: 'api',
-    icon: Link,
     description: 'Connect to REST API endpoints',
     fields: [
       { key: 'endpoint', label: 'API Endpoint', type: 'url', placeholder: 'https://api.example.com/data', required: true },
@@ -167,9 +162,6 @@ export default function MinimalOnboardingWizard({ isOpen, onClose, onComplete }:
           {currentStep === 1 && (
             <div className="space-y-4">
               <div className="text-center mb-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Key className="h-6 w-6 text-primary" />
-                </div>
                 <h3 className="font-medium text-gray-900 mb-1">API Key</h3>
                 <p className="text-sm text-gray-500">Enter your API key to get started</p>
               </div>
@@ -192,9 +184,6 @@ export default function MinimalOnboardingWizard({ isOpen, onClose, onComplete }:
           {currentStep === 2 && (
             <div className="space-y-4">
               <div className="text-center mb-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Globe className="h-6 w-6 text-primary" />
-                </div>
                 <h3 className="font-medium text-gray-900 mb-1">Add Content</h3>
                 <p className="text-sm text-gray-500">Add some initial content sources</p>
               </div>
@@ -232,9 +221,6 @@ export default function MinimalOnboardingWizard({ isOpen, onClose, onComplete }:
           {currentStep === 3 && (
             <div className="space-y-4">
               <div className="text-center mb-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Database className="h-6 w-6 text-primary" />
-                </div>
                 <h3 className="font-medium text-gray-900 mb-1">Data Source</h3>
                 <p className="text-sm text-gray-500">Choose a data source type</p>
               </div>
@@ -243,24 +229,22 @@ export default function MinimalOnboardingWizard({ isOpen, onClose, onComplete }:
                   Select Data Source
                 </Label>
                 <Select value={selectedDataSource} onValueChange={setSelectedDataSource}>
-                  <SelectTrigger className="h-10">
-                    <SelectValue placeholder="Choose a data source..." />
+                  <SelectTrigger className="h-10 w-full bg-white border border-gray-300 text-gray-900 hover:border-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20">
+                    <SelectValue placeholder="Choose a data source..." className="text-gray-500" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white">
-                    {availableDataSources.map((source) => {
-                      const IconComponent = source.icon
-                      return (
-                        <SelectItem key={source.id} value={source.id} className="cursor-pointer">
-                          <div className="flex items-center space-x-2">
-                            <IconComponent className="h-4 w-4 text-primary" />
-                            <div>
-                              <div className="font-medium">{source.name}</div>
-                              <div className="text-xs text-gray-500">{source.description}</div>
-                            </div>
-                          </div>
-                        </SelectItem>
-                      )
-                    })}
+                  <SelectContent className="bg-white border border-gray-200 shadow-lg rounded-md">
+                    {availableDataSources.map((source) => (
+                      <SelectItem 
+                        key={source.id} 
+                        value={source.id} 
+                        className="cursor-pointer hover:bg-gray-50 focus:bg-gray-50 text-gray-900 px-3 py-2"
+                      >
+                        <div>
+                          <div className="font-medium">{source.name}</div>
+                          <div className="text-xs text-gray-500">{source.description}</div>
+                        </div>
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -272,9 +256,6 @@ export default function MinimalOnboardingWizard({ isOpen, onClose, onComplete }:
               {getSelectedDataSource() ? (
                 <>
                   <div className="text-center mb-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                      {React.createElement(getSelectedDataSource()!.icon, { className: "h-6 w-6 text-primary" })}
-                    </div>
                     <h3 className="font-medium text-gray-900 mb-1">Configure {getSelectedDataSource()!.name}</h3>
                     <p className="text-sm text-gray-500">{getSelectedDataSource()!.description}</p>
                   </div>
@@ -309,9 +290,6 @@ export default function MinimalOnboardingWizard({ isOpen, onClose, onComplete }:
                 </>
               ) : (
                 <div className="text-center py-6">
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <CheckCircle className="h-6 w-6 text-gray-400" />
-                  </div>
                   <h3 className="font-medium text-gray-900 mb-1">All Set!</h3>
                   <p className="text-sm text-gray-500">You can add data sources later</p>
                 </div>
