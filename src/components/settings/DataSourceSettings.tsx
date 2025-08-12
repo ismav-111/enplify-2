@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Server, Cloud, ChevronDown, Rocket, Sparkles, HardDrive, Folder, FileText, Share2, Facebook, Twitter, Linkedin, Instagram, MonitorSpeaker, CloudSnow, Zap, Archive, FolderOpen, CloudDrizzle, Shield, Settings } from 'lucide-react';
+import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Server, Cloud, ChevronDown, Rocket, Sparkles, HardDrive, Folder, FileText, Share2, Facebook, Linkedin, Instagram, MonitorSpeaker, CloudSnow, Zap, Archive, FolderOpen, CloudDrizzle, Shield, Settings } from 'lucide-react';
+import { XIcon } from '@/components/icons/XIcon';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -193,7 +194,7 @@ const dataSourceCategories = {
     id: 'twitter',
     name: 'X (formerly Twitter)',
     description: 'Connect to X (Twitter) profiles and tweets',
-    icon: Twitter,
+    icon: XIcon,
     isConnected: false,
     fields: [{
       id: 'username',
