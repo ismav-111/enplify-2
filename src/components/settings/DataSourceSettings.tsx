@@ -114,6 +114,131 @@ const dataSourceCategories = {
       placeholder: '1, 2, or 3',
       required: false
     }]
+  }, {
+    id: 'youtube',
+    name: 'YouTube',
+    description: 'Connect to YouTube channels and videos',
+    icon: Youtube,
+    isConnected: false,
+    fields: [{
+      id: 'channel_url',
+      label: 'Channel URL',
+      type: 'text',
+      placeholder: 'https://www.youtube.com/@channel',
+      required: true
+    }, {
+      id: 'api_key',
+      label: 'YouTube API Key',
+      type: 'password',
+      placeholder: '••••••••',
+      required: true
+    }, {
+      id: 'video_limit',
+      label: 'Video Limit',
+      type: 'text',
+      placeholder: '50',
+      required: false
+    }]
+  }, {
+    id: 'linkedin',
+    name: 'LinkedIn',
+    description: 'Connect to LinkedIn profiles and company pages',
+    icon: Linkedin,
+    isConnected: false,
+    fields: [{
+      id: 'profile_url',
+      label: 'Profile/Company URL',
+      type: 'text',
+      placeholder: 'https://www.linkedin.com/in/username',
+      required: true
+    }, {
+      id: 'access_token',
+      label: 'Access Token',
+      type: 'password',
+      placeholder: '••••••••',
+      required: true
+    }, {
+      id: 'post_limit',
+      label: 'Post Limit',
+      type: 'text',
+      placeholder: '100',
+      required: false
+    }]
+  }, {
+    id: 'facebook',
+    name: 'Facebook',
+    description: 'Connect to Facebook pages and posts',
+    icon: Facebook,
+    isConnected: false,
+    fields: [{
+      id: 'page_id',
+      label: 'Page ID',
+      type: 'text',
+      placeholder: 'Your Facebook Page ID',
+      required: true
+    }, {
+      id: 'access_token',
+      label: 'Access Token',
+      type: 'password',
+      placeholder: '••••••••',
+      required: true
+    }, {
+      id: 'post_limit',
+      label: 'Post Limit',
+      type: 'text',
+      placeholder: '100',
+      required: false
+    }]
+  }, {
+    id: 'twitter',
+    name: 'X (formerly Twitter)',
+    description: 'Connect to X (Twitter) profiles and tweets',
+    icon: Twitter,
+    isConnected: false,
+    fields: [{
+      id: 'username',
+      label: 'Username',
+      type: 'text',
+      placeholder: '@username',
+      required: true
+    }, {
+      id: 'bearer_token',
+      label: 'Bearer Token',
+      type: 'password',
+      placeholder: '••••••••',
+      required: true
+    }, {
+      id: 'tweet_limit',
+      label: 'Tweet Limit',
+      type: 'text',
+      placeholder: '100',
+      required: false
+    }]
+  }, {
+    id: 'instagram',
+    name: 'Instagram',
+    description: 'Connect to Instagram profiles and posts',
+    icon: Instagram,
+    isConnected: false,
+    fields: [{
+      id: 'username',
+      label: 'Username',
+      type: 'text',
+      placeholder: '@username',
+      required: true
+    }, {
+      id: 'access_token',
+      label: 'Access Token',
+      type: 'password',
+      placeholder: '••••••••',
+      required: true
+    }, {
+      id: 'post_limit',
+      label: 'Post Limit',
+      type: 'text',
+      placeholder: '50',
+      required: false
+    }]
   }],
   warehouses: [{
     id: 'snowflake',
