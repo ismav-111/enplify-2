@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -162,12 +161,12 @@ export default function MinimalOnboardingWizard({ isOpen, onClose, onComplete }:
           {currentStep === 1 && (
             <div className="space-y-4">
               <div className="text-center mb-4">
-                <h3 className="font-medium text-gray-900 mb-1">API Key</h3>
-                <p className="text-sm text-gray-500">Enter your API key to get started</p>
+                <h3 className="font-medium text-gray-900 mb-1">OpenAI API Key</h3>
+                <p className="text-sm text-gray-500">Enter your OpenAI API key to get started</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="api-key" className="text-sm font-medium">
-                  API Key
+                  OpenAI API Key
                 </Label>
                 <Input
                   id="api-key"
