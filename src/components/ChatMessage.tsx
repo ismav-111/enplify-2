@@ -62,13 +62,13 @@ interface ChatMessageProps {
       size: number;
     };
   };
+  onShowSources?: (sources: any) => void;
 }
 
-const ChatMessage = ({ message }: ChatMessageProps) => {
+const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
   const [chartType, setChartType] = useState<'line' | 'bar' | 'pie' | 'composed'>('line');
-  const [isSourcesSidebarOpen, setIsSourcesSidebarOpen] = useState(false);
   
   // Set default view mode based on message mode
   const getDefaultViewMode = () => {
@@ -1143,78 +1143,6 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     return <div className="space-y-3">{formattedContent}</div>;
   };
 
-  // Sources Sidebar Component - Integrated
-  const renderSourcesSidebar = () => {
-    const sourceInfo = getSourceInfo();
-    if (!sourceInfo || !isSourcesSidebarOpen) return null;
-
-    return (
-      <div className="w-80 bg-background border-l border-border flex-shrink-0">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="font-semibold text-lg flex items-center gap-2">
-            <sourceInfo.icon className="w-5 h-5" />
-            Sources
-          </h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsSourcesSidebarOpen(false)}
-          >
-            <X className="w-4 h-4" />
-          </Button>
-        </div>
-        
-        <div className="p-4 overflow-y-auto h-[calc(100vh-8rem)]">
-          <div className="space-y-4">
-            {sourceInfo.items.map((source, index) => {
-              const SourceIcon = source.icon;
-              return (
-                <div key={index} className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <SourceIcon size={16} className="text-gray-600" />
-                    </div>
-                    <div className="flex-1 space-y-1">
-                      <h3 className="font-semibold text-gray-900 text-sm">{source.title}</h3>
-                      <p className="text-xs text-gray-600">
-                        {source.date} — by {source.author} · 2023 · Cited by {source.citedBy} —
-                      </p>
-                      <p className="text-xs text-gray-700 leading-relaxed">
-                        {source.description}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-            
-            {/* More section */}
-            <div className="pt-4 border-t border-gray-200">
-              <h4 className="font-semibold text-gray-900 mb-4 text-sm">More</h4>
-              <div className="space-y-4">
-                {sourceInfo.items.slice(0, 2).map((source, index) => {
-                  const SourceIcon = source.icon;
-                  return (
-                    <div key={`more-${index}`} className="flex items-start gap-3">
-                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                        <SourceIcon size={16} className="text-gray-600" />
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <h3 className="font-semibold text-gray-900 text-sm">{source.title} - Extended Analysis</h3>
-                        <p className="text-xs text-gray-700 leading-relaxed">
-                          Additional insights and extended analysis from {source.author.toLowerCase()} covering supplementary data points and contextual information.
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   // Sources button to replace source cards
   const renderSourcesButton = () => {
@@ -1228,7 +1156,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => setIsSourcesSidebarOpen(true)}
+          onClick={() => onShowSources?.(sourceInfo)}
           className="flex items-center gap-2 px-3 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full text-sm text-gray-700 font-medium"
         >
           <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
@@ -1241,15 +1169,15 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   };
 
   return (
-    <div className={`flex mb-4 ${isSourcesSidebarOpen ? 'w-full' : ''}`}>
+    <div className="flex mb-4">
       {!message.isUser && (
         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center flex-shrink-0 mt-1 border border-gray-200">
           <span className="text-gray-700 font-bold text-sm font-comfortaa">e</span>
         </div>
       )}
       
-      <div className={`flex ${isSourcesSidebarOpen ? 'flex-1' : 'flex-col'} ${message.isUser ? 'items-end ml-auto' : 'ml-3'} ${isSourcesSidebarOpen ? 'w-full' : 'max-w-[85%]'}`}>
-        <div className={`${isSourcesSidebarOpen ? 'flex-1 mr-4' : 'w-full'}`}>
+      <div className={`flex flex-col ${message.isUser ? 'items-end ml-auto' : 'ml-3'} max-w-[85%]`}>
+        <div className="w-full">
           {message.isUser ? (
             <>
               <div className="rounded-2xl py-3 px-4 text-gray-800 max-w-lg" style={{ backgroundColor: '#F1F1F9' }}>
@@ -1346,9 +1274,6 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             </>
           )}
         </div>
-        
-        {/* Sources Sidebar - Integrated */}
-        {renderSourcesSidebar()}
       </div>
     </div>
   );

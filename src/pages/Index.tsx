@@ -4,7 +4,7 @@ import ChatMessage from '@/components/ChatMessage';
 import MessageInput from '@/components/MessageInput';
 import ResponsePreferences, { ResponsePreferences as ResponsePreferencesType } from '@/components/ResponsePreferences';
 import { useEffect, useState } from 'react';
-import { Files, Settings, User, Search, Eye, Trash2 } from 'lucide-react';
+import { Files, Settings, User, Search, Eye, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -135,6 +135,10 @@ const Index = () => {
 
   // File viewer state
   const [viewingFile, setViewingFile] = useState<FileItem | null>(null);
+
+  // Sources sidebar state
+  const [isSourcesSidebarOpen, setIsSourcesSidebarOpen] = useState(false);
+  const [currentSources, setCurrentSources] = useState<any>(null);
 
   // Create a new chat automatically when there are no conversations
   useEffect(() => {
@@ -479,7 +483,16 @@ const Index = () => {
           <ScrollArea className="h-full">
             {hasMessages ? <div className="max-w-5xl mx-auto px-6 py-8 w-full min-h-full">
                 <div className="space-y-4">
-                  {currentConversation.messages.map(message => <ChatMessage key={message.id} message={message} />)}
+                  {currentConversation.messages.map(message => 
+                    <ChatMessage 
+                      key={message.id} 
+                      message={message} 
+                      onShowSources={(sources) => {
+                        setCurrentSources(sources);
+                        setIsSourcesSidebarOpen(true);
+                      }}
+                    />
+                  )}
                   {isLoading && <div className="flex mb-8">
                       <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center flex-shrink-0 mt-1 border border-gray-200">
                         <span className="text-gray-700 font-bold text-sm font-comfortaa">e</span>
@@ -526,6 +539,47 @@ const Index = () => {
           </div>
         </div>
       </div>
+
+      {/* Sources Sidebar */}
+      {isSourcesSidebarOpen && currentSources && (
+        <div className="w-80 bg-background border-l border-border flex-shrink-0">
+          <div className="flex items-center justify-between p-4 border-b">
+            <h2 className="font-semibold text-lg flex items-center gap-2">
+              <currentSources.icon className="w-5 h-5" />
+              Sources
+            </h2>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsSourcesSidebarOpen(false)}
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+          
+          <div className="p-4 space-y-4 h-[calc(100vh-80px)] overflow-y-auto">
+            {currentSources.items?.map((source: any, index: number) => (
+              <div key={index} className="border border-gray-200 rounded-lg p-4 space-y-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
+                      <source.icon className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-sm text-gray-900">{source.title}</h3>
+                      <p className="text-xs text-gray-500">{source.author} • {source.date}</p>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    Cited by {source.citedBy}
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600 leading-relaxed">{source.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Minimal Onboarding Wizard */}
       <MinimalOnboardingWizard
