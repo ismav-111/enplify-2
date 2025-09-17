@@ -1,6 +1,6 @@
 
 import { useState, useRef, useEffect } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight, Table, Database, Globe, Server } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight, Table, Database, Globe, Server, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -68,6 +68,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
   const [chartType, setChartType] = useState<'line' | 'bar' | 'pie' | 'composed'>('line');
+  const [isCitationsOpen, setIsCitationsOpen] = useState(false);
   
   // Set default view mode based on message mode
   const getDefaultViewMode = () => {
@@ -196,10 +197,36 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         return {
           title: 'Document Sources',
           items: [
-            { name: 'company_policies.pdf', type: 'pdf', icon: FileText },
-            { name: 'employee_handbook.docx', type: 'doc', icon: FileText },
-            { name: 'quarterly_reports.xlsx', type: 'excel', icon: Table },
-            { name: 'meeting_notes.txt', type: 'text', icon: FileText }
+            { 
+              name: 'company_policies.pdf', 
+              type: 'pdf', 
+              icon: FileText,
+              title: 'Company Policy Guidelines',
+              author: 'HR Department', 
+              date: 'July 11, 2023',
+              citedBy: '193',
+              description: 'On this page, you will find all of our data, charts, and comprehensive policy documentation covering employee guidelines, procedures, and regulatory compliance standards.'
+            },
+            { 
+              name: 'employee_handbook.docx', 
+              type: 'doc', 
+              icon: FileText,
+              title: 'Employee Handbook 2024',
+              author: 'Management Team',
+              date: 'March 14, 2024', 
+              citedBy: '156',
+              description: 'The current employee handbook contains updated policies, benefits information, and workplace guidelines according to the most recent organizational standards.'
+            },
+            { 
+              name: 'quarterly_reports.xlsx', 
+              type: 'excel', 
+              icon: Table,
+              title: 'Q3 Financial Reports',
+              author: 'Finance Department',
+              date: 'September 30, 2024',
+              citedBy: '89',
+              description: 'Quarterly financial analysis including revenue breakdowns, expense reports, and performance metrics for stakeholder review and strategic planning.'
+            }
           ],
           icon: FileText
         };
@@ -207,10 +234,26 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         return {
           title: 'Data Sources', 
           items: [
-            { name: 'sales_database.sql', type: 'database', icon: Database },
-            { name: 'revenue_analytics.csv', type: 'csv', icon: Table },
-            { name: 'customer_metrics.json', type: 'api', icon: Globe },
-            { name: 'financial_reports.xlsx', type: 'excel', icon: Table }
+            { 
+              name: 'sales_database.sql', 
+              type: 'database', 
+              icon: Database,
+              title: 'Sales Performance Database',
+              author: 'Analytics Team',
+              date: 'August 15, 2024',
+              citedBy: '278',
+              description: 'Comprehensive sales data repository containing customer transactions, revenue metrics, and performance indicators for business intelligence analysis.'
+            },
+            { 
+              name: 'revenue_analytics.csv', 
+              type: 'csv', 
+              icon: Table,
+              title: 'Revenue Analytics Report',
+              author: 'Business Intelligence',
+              date: 'September 20, 2024',
+              citedBy: '145',
+              description: 'Detailed revenue analysis with trend projections, market segmentation data, and growth opportunity assessments for strategic decision making.'
+            }
           ],
           icon: BarChart2
         };
@@ -218,10 +261,26 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         return {
           title: 'Knowledge Sources',
           items: [
-            { name: 'knowledge_base.md', type: 'markdown', icon: FileText },
-            { name: 'documentation.pdf', type: 'pdf', icon: FileText },
-            { name: 'faq_database.json', type: 'api', icon: Globe },
-            { name: 'support_articles.html', type: 'web', icon: Globe }
+            { 
+              name: 'knowledge_base.md', 
+              type: 'markdown', 
+              icon: FileText,
+              title: 'Knowledge Base Documentation',
+              author: 'Technical Writing Team',
+              date: 'June 5, 2024',
+              citedBy: '324',
+              description: 'Comprehensive knowledge base containing technical documentation, troubleshooting guides, and best practices for system administration.'
+            },
+            { 
+              name: 'documentation.pdf', 
+              type: 'pdf', 
+              icon: FileText,
+              title: 'System Documentation',
+              author: 'Engineering Team',
+              date: 'May 22, 2024',
+              citedBy: '198',
+              description: 'Technical system documentation including architecture diagrams, API specifications, and implementation guidelines for developers.'
+            }
           ],
           icon: FileText
         };
@@ -1084,36 +1143,96 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     return <div className="space-y-3">{formattedContent}</div>;
   };
 
-  // Updated renderSourceInfo to show source cards at bottom
-  const renderSourceCards = () => {
-    if (message.mode !== 'endocs' && message.mode !== 'ensights') return null;
-    
+  // Citations Dialog Component
+  const renderCitationsDialog = () => {
     const sourceInfo = getSourceInfo();
     if (!sourceInfo) return null;
 
     return (
-      <div className="mt-6 pt-4 border-t border-gray-100">
-        <div className="flex items-center gap-2 mb-3">
-          <sourceInfo.icon size={16} className="text-gray-600" />
-          <span className="text-base font-medium text-gray-700">{sourceInfo.title}</span>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {sourceInfo.items.map((source, index) => {
-            const SourceIcon = source.icon;
-            return (
-              <div 
-                key={index}
-                className="flex items-center gap-2 px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer border border-gray-200"
-              >
-                <SourceIcon size={14} className="text-gray-500" />
-                <span className="text-base text-gray-700">{source.name}</span>
-                <span className="text-xs text-gray-500 bg-white px-1.5 py-0.5 rounded uppercase font-medium">
-                  {source.type}
-                </span>
+      <Dialog open={isCitationsOpen} onOpenChange={setIsCitationsOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+          <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <DialogTitle className="text-lg font-semibold">Citations</DialogTitle>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsCitationsOpen(false)}
+              className="h-8 w-8 p-0"
+            >
+              <X size={16} />
+            </Button>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto space-y-6">
+            {sourceInfo.items.map((source, index) => {
+              const SourceIcon = source.icon;
+              return (
+                <div key={index} className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <SourceIcon size={16} className="text-gray-600" />
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <h3 className="font-semibold text-gray-900">{source.title}</h3>
+                      <p className="text-sm text-gray-600">
+                        {source.date} — by {source.author} · 2023 · Cited by {source.citedBy} —
+                      </p>
+                      <p className="text-sm text-gray-700 leading-relaxed">
+                        {source.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            
+            {/* More section */}
+            <div className="pt-4 border-t border-gray-200">
+              <h4 className="font-semibold text-gray-900 mb-4">More</h4>
+              <div className="space-y-4">
+                {sourceInfo.items.slice(0, 2).map((source, index) => {
+                  const SourceIcon = source.icon;
+                  return (
+                    <div key={`more-${index}`} className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                        <SourceIcon size={16} className="text-gray-600" />
+                      </div>
+                      <div className="flex-1 space-y-1">
+                        <h3 className="font-semibold text-gray-900">{source.title} - Extended Analysis</h3>
+                        <p className="text-sm text-gray-700 leading-relaxed">
+                          Additional insights and extended analysis from {source.author.toLowerCase()} covering supplementary data points and contextual information.
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            );
-          })}
-        </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
+  // Sources button to replace source cards
+  const renderSourcesButton = () => {
+    if (message.mode !== 'endocs' && message.mode !== 'ensights' && message.mode !== 'encore') return null;
+    
+    const sourceInfo = getSourceInfo();
+    if (!sourceInfo || !sourceInfo.items.length) return null;
+
+    return (
+      <div className="mt-6 pt-4 border-t border-gray-100">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setIsCitationsOpen(true)}
+          className="flex items-center gap-2 px-3 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full text-sm text-gray-700 font-medium"
+        >
+          <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+            <span className="text-white text-xs font-bold">UW</span>
+          </div>
+          <span>Sources</span>
+        </Button>
       </div>
     );
   };
@@ -1179,8 +1298,11 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
               {/* Legacy rendering for ensights without context bar */}
               {message.mode === 'ensights' && !renderContextBar() && message.chartData && renderChartData()}
               
-              {/* Show source cards at bottom for endocs and ensights */}
-              {renderSourceCards()}
+              {/* Show sources button at bottom */}
+              {renderSourcesButton()}
+              
+              {/* Citations Dialog */}
+              {renderCitationsDialog()}
             </div>
 
             {/* Action Buttons */}
