@@ -68,7 +68,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
   const [chartType, setChartType] = useState<'line' | 'bar' | 'pie' | 'composed'>('line');
-  const [isCitationsOpen, setIsCitationsOpen] = useState(false);
+  const [isSourcesSidebarOpen, setIsSourcesSidebarOpen] = useState(false);
   
   // Set default view mode based on message mode
   const getDefaultViewMode = () => {
@@ -1143,73 +1143,85 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     return <div className="space-y-3">{formattedContent}</div>;
   };
 
-  // Citations Dialog Component
-  const renderCitationsDialog = () => {
+  // Sources Sidebar Component
+  const renderSourcesSidebar = () => {
     const sourceInfo = getSourceInfo();
     if (!sourceInfo) return null;
 
     return (
-      <Dialog open={isCitationsOpen} onOpenChange={setIsCitationsOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
-          <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-            <DialogTitle className="text-lg font-semibold">Citations</DialogTitle>
+      <div className="fixed inset-0 z-50">
+        {/* Backdrop */}
+        <div 
+          className="absolute inset-0 bg-black/20" 
+          onClick={() => setIsSourcesSidebarOpen(false)}
+        />
+        
+        {/* Sidebar */}
+        <div className="absolute right-0 top-0 h-full w-96 bg-background border-l shadow-lg">
+          <div className="flex items-center justify-between p-4 border-b">
+            <h2 className="font-semibold text-lg flex items-center gap-2">
+              <sourceInfo.icon className="w-5 h-5" />
+              Sources
+            </h2>
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setIsCitationsOpen(false)}
-              className="h-8 w-8 p-0"
+              onClick={() => setIsSourcesSidebarOpen(false)}
             >
-              <X size={16} />
+              <X className="w-4 h-4" />
             </Button>
-          </DialogHeader>
-          <div className="flex-1 overflow-y-auto space-y-6">
-            {sourceInfo.items.map((source, index) => {
-              const SourceIcon = source.icon;
-              return (
-                <div key={index} className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <SourceIcon size={16} className="text-gray-600" />
-                    </div>
-                    <div className="flex-1 space-y-1">
-                      <h3 className="font-semibold text-gray-900">{source.title}</h3>
-                      <p className="text-sm text-gray-600">
-                        {source.date} — by {source.author} · 2023 · Cited by {source.citedBy} —
-                      </p>
-                      <p className="text-sm text-gray-700 leading-relaxed">
-                        {source.description}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-            
-            {/* More section */}
-            <div className="pt-4 border-t border-gray-200">
-              <h4 className="font-semibold text-gray-900 mb-4">More</h4>
-              <div className="space-y-4">
-                {sourceInfo.items.slice(0, 2).map((source, index) => {
-                  const SourceIcon = source.icon;
-                  return (
-                    <div key={`more-${index}`} className="flex items-start gap-3">
+          </div>
+          
+          <div className="p-4 overflow-y-auto h-[calc(100%-4rem)]">
+            <div className="space-y-4">
+              {sourceInfo.items.map((source, index) => {
+                const SourceIcon = source.icon;
+                return (
+                  <div key={index} className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
+                    <div className="flex items-start gap-3">
                       <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                         <SourceIcon size={16} className="text-gray-600" />
                       </div>
                       <div className="flex-1 space-y-1">
-                        <h3 className="font-semibold text-gray-900">{source.title} - Extended Analysis</h3>
+                        <h3 className="font-semibold text-gray-900">{source.title}</h3>
+                        <p className="text-sm text-gray-600">
+                          {source.date} — by {source.author} · 2023 · Cited by {source.citedBy} —
+                        </p>
                         <p className="text-sm text-gray-700 leading-relaxed">
-                          Additional insights and extended analysis from {source.author.toLowerCase()} covering supplementary data points and contextual information.
+                          {source.description}
                         </p>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                );
+              })}
+              
+              {/* More section */}
+              <div className="pt-4 border-t border-gray-200">
+                <h4 className="font-semibold text-gray-900 mb-4">More</h4>
+                <div className="space-y-4">
+                  {sourceInfo.items.slice(0, 2).map((source, index) => {
+                    const SourceIcon = source.icon;
+                    return (
+                      <div key={`more-${index}`} className="flex items-start gap-3">
+                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                          <SourceIcon size={16} className="text-gray-600" />
+                        </div>
+                        <div className="flex-1 space-y-1">
+                          <h3 className="font-semibold text-gray-900">{source.title} - Extended Analysis</h3>
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            Additional insights and extended analysis from {source.author.toLowerCase()} covering supplementary data points and contextual information.
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      </div>
     );
   };
 
@@ -1225,7 +1237,7 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => setIsCitationsOpen(true)}
+          onClick={() => setIsSourcesSidebarOpen(true)}
           className="flex items-center gap-2 px-3 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full text-sm text-gray-700 font-medium"
         >
           <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
@@ -1301,8 +1313,8 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
               {/* Show sources button at bottom */}
               {renderSourcesButton()}
               
-              {/* Citations Dialog */}
-              {renderCitationsDialog()}
+              {/* Sources Sidebar */}
+              {isSourcesSidebarOpen && renderSourcesSidebar()}
             </div>
 
             {/* Action Buttons */}
