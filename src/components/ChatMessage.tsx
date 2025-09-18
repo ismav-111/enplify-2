@@ -196,88 +196,47 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
       case 'endocs':
         return {
           title: 'Document Sources',
-          totalSources: 8,
+          totalSources: 3,
           items: [
             { 
-              name: 'company_policies.pdf', 
-              type: 'document',
+              name: 'ourworldindata.org', 
+              type: 'website',
               domain: 'ourworldindata.org',
               color: '#3b82f6',
-              icon: FileText,
+              icon: Globe,
               title: 'Population Growth',
               author: 'H Ritchie', 
               date: 'July 11, 2023',
               year: '2023',
               citedBy: '193',
-              description: 'On this page, you will find all of our data, charts, and comprehensive policy documentation covering employee guidelines, procedures, and regulatory compliance standards.',
-              textExcerpts: [
-                'The current world population is 8,245,947,592 as of Sunday, September 14, 2025 according to the most recent United Nations estimates.',
-                'Population growth through history from 5000 BC to the current year (2025) for the entire population of the world.'
-              ]
+              description: 'On this page, you will find all of our data, charts, and comprehensive policy documentation.',
+              dataSource: 'Data extracted from webpage content'
             },
             { 
-              name: 'worldometer_population.html', 
-              type: 'website',
-              domain: 'Worldometer',
-              color: '#10b981',
-              icon: Globe,
-              title: 'World Population Clock: 8.2 Billion People (LIVE, 2025)',
-              author: 'Worldometer Team',
-              date: 'March 14, 2004', 
-              citedBy: '156',
-              description: 'The current world population is 8,245,947,592 as of Sunday, September 14, 2025 according to the most recent United Nations estimates.',
-              textExcerpts: [
-                'It was estimated that the world population reached one billion for the first time in 1804.',
-                'The world population is the total number of humans currently alive.'
-              ]
-            },
-            { 
-              name: 'wikipedia_world_population.html', 
-              type: 'website',
-              domain: 'Wikipedia',
-              color: '#6b7280',
-              icon: Globe,
-              title: 'World population',
-              author: 'Wikipedia Contributors',
-              date: 'September 30, 2024',
-              citedBy: '89',
-              description: 'March 14, 2004 — The world population is the total number of humans currently alive. It was estimated that the world population reached one billion.',
-              textExcerpts: [
-                'The world population is the total number of humans currently alive.',
-                'World population milestones are used to track human population growth over time.'
-              ]
-            },
-            { 
-              name: 'worldometers_population_by_year.html', 
-              type: 'website',
-              domain: 'worldometers.info',
-              color: '#f59e0b',
-              icon: Globe,
-              title: 'World Population by Year',
-              author: 'Worldometers Research',
-              date: 'August 15, 2024',
-              citedBy: '278',
-              description: 'Population growth through history from 5000 BC to the current year (2025) for the entire population of the world.',
-              textExcerpts: [
-                'Population by country, available from 10,000 BCE to 2023, based on data and estimates from multiple sources.',
-                'Explore detailed population estimates and projections via tables, population pyramids, maps.'
-              ]
-            },
-            { 
-              name: 'un_population_prospects.pdf', 
+              name: 'sales_presentation.pptx', 
               type: 'document',
-              domain: 'un.org',
-              color: '#3b82f6',
+              domain: 'Sales Presentation',
+              color: '#d97706',
               icon: FileText,
-              title: 'Graphs / Profiles - World Population Prospects - the United Nations',
-              author: 'UN Statistics Division',
-              date: 'September 20, 2024',
-              citedBy: '145',
-              description: 'Disclaimer: This web site contains data tables, figures, maps, analyses, and technical notes from the current revision of the World Population Prospects.',
-              textExcerpts: [
-                'The 2024 Revision of World Population Prospects is the 27th edition of official United Nations population estimates.',
-                'World population projections are an important input to forecasts of economic growth.'
-              ]
+              title: 'Q3 Sales Performance Review',
+              author: 'Sales Team',
+              date: 'September 15, 2024', 
+              citedBy: '45',
+              description: 'Quarterly sales analysis and performance metrics presentation for stakeholder review.',
+              dataSource: 'Data extracted from Slide 2, 7, and 12'
+            },
+            { 
+              name: 'company_policies.pdf', 
+              type: 'document',
+              domain: 'Company Document',
+              color: '#dc2626',
+              icon: FileText,
+              title: 'Employee Handbook 2024',
+              author: 'HR Department',
+              date: 'January 10, 2024',
+              citedBy: '89',
+              description: 'Comprehensive employee policies and procedures documentation.',
+              dataSource: 'Data extracted from Page 15-18'
             }
           ],
           icon: FileText
@@ -285,39 +244,46 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
       case 'ensights':
         return {
           title: 'Data Sources',
-          totalSources: 5,
+          totalSources: 3,
           items: [
             { 
-              name: 'sales_dashboard.xlsx', 
+              name: 'financial_dashboard.xlsx', 
               type: 'document',
-              domain: 'Internal Database',
-              color: '#8b5cf6',
-              icon: Database,
-              title: 'Sales Performance Database',
+              domain: 'Excel Spreadsheet',
+              color: '#059669',
+              icon: Table,
+              title: 'Q3 Financial Dashboard',
+              author: 'Finance Team',
+              date: 'September 20, 2024',
+              citedBy: '145',
+              description: 'Comprehensive financial metrics and KPI dashboard for quarterly analysis.',
+              dataSource: 'Data extracted from Sheet 1-3 (Revenue, Costs, Projections)'
+            },
+            { 
+              name: 'sales_analytics.pptx', 
+              type: 'document',
+              domain: 'PowerPoint Presentation',
+              color: '#d97706',
+              icon: FileText,
+              title: 'Sales Analytics Presentation',
               author: 'Analytics Team',
               date: 'August 15, 2024',
               citedBy: '278',
-              description: 'Comprehensive sales data repository containing customer transactions, revenue metrics, and performance indicators for business intelligence analysis.',
-              textExcerpts: [
-                'Q3 revenue increased by 23% compared to the previous quarter, driven by strong performance in the enterprise segment.',
-                'Customer acquisition costs decreased by 15% while customer lifetime value increased by 31%.'
-              ]
+              description: 'Data visualization and insights from sales performance analysis.',
+              dataSource: 'Data extracted from Slide 4, 8, and 15'
             },
             { 
-              name: 'market_analysis.csv', 
-              type: 'document',
+              name: 'market-research.com', 
+              type: 'website',
               domain: 'market-research.com',
-              color: '#06b6d4',
-              icon: Table,
-              title: 'Revenue Analytics Report',
-              author: 'Business Intelligence',
-              date: 'September 20, 2024',
-              citedBy: '145',
-              description: 'Detailed revenue analysis with trend projections, market segmentation data, and growth opportunity assessments for strategic decision making.',
-              textExcerpts: [
-                'Market penetration in the SMB segment shows significant growth potential with 67% untapped market share.',
-                'Revenue forecasting models predict 28% growth trajectory for the next fiscal year.'
-              ]
+              color: '#7c3aed',
+              icon: Globe,
+              title: 'Market Research Report 2024',
+              author: 'Market Research Institute',
+              date: 'July 30, 2024',
+              citedBy: '523',
+              description: 'Industry analysis and market trends for strategic business planning.',
+              dataSource: 'Data extracted from Research Section 2.3'
             }
           ],
           icon: BarChart2
@@ -325,10 +291,10 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
       case 'encore':
         return {
           title: 'Knowledge Sources',
-          totalSources: 12,
+          totalSources: 3,
           items: [
             { 
-              name: 'openai_gpt4.html', 
+              name: 'openai.com', 
               type: 'website',
               domain: 'openai.com',
               color: '#10b981',
@@ -337,43 +303,34 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
               author: 'OpenAI Research Team',
               date: 'June 5, 2024',
               citedBy: '324',
-              description: 'Comprehensive technical documentation covering GPT-4 architecture, capabilities, limitations, and safety considerations for large language model applications.',
-              textExcerpts: [
-                'GPT-4 is a large-scale, multimodal model which can accept image and text inputs and produce text outputs.',
-                'We trained GPT-4 using Reinforcement Learning from Human Feedback (RLHF), using the same methods as InstructGPT.'
-              ]
+              description: 'Technical documentation covering GPT-4 architecture and capabilities.',
+              dataSource: 'Data extracted from Technical Overview section'
             },
             { 
-              name: 'anthropic_claude.pdf', 
+              name: 'ai_research_presentation.pptx', 
               type: 'document',
-              domain: 'anthropic.com',
-              color: '#f59e0b',
+              domain: 'Research Presentation',
+              color: '#d97706',
               icon: FileText,
-              title: 'Claude: Constitutional AI and Harmlessness',
-              author: 'Anthropic Research',
-              date: 'May 22, 2024',
-              citedBy: '198',
-              description: 'Technical system documentation covering Constitutional AI methods, safety training procedures, and harmlessness optimization techniques for AI assistants.',
-              textExcerpts: [
-                'Constitutional AI training involves teaching AI systems to follow a set of principles or constitution.',
-                'Our approach combines reinforcement learning from human feedback with constitutional methods.'
-              ]
+              title: 'AI Safety and Alignment Research',
+              author: 'AI Research Lab',
+              date: 'August 12, 2024',
+              citedBy: '156',
+              description: 'Latest findings in AI safety research and alignment methodologies.',
+              dataSource: 'Data extracted from Slide 6, 11, and 20'
             },
             { 
-              name: 'arxiv_transformer_paper.pdf', 
+              name: 'transformer_architecture.pdf', 
               type: 'document',
-              domain: 'arxiv.org',
+              domain: 'Research Paper',
               color: '#dc2626',
               icon: FileText,
               title: 'Attention Is All You Need',
               author: 'Vaswani et al.',
               date: 'December 6, 2017',
               citedBy: '45,892',
-              description: 'The foundational paper introducing the Transformer architecture, which revolutionized natural language processing and became the basis for modern large language models.',
-              textExcerpts: [
-                'We propose a new simple network architecture, the Transformer, based solely on attention mechanisms.',
-                'The Transformer follows this overall architecture using stacked self-attention and point-wise, fully connected layers.'
-              ]
+              description: 'The foundational paper introducing the Transformer architecture.',
+              dataSource: 'Data extracted from Page 3-5 (Architecture Overview)'
             }
           ],
           icon: FileText

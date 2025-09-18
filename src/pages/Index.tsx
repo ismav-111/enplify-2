@@ -543,8 +543,8 @@ const Index = () => {
       {/* Sources Sidebar */}
       {isSourcesSidebarOpen && currentSources && (
         <div className="w-96 bg-white border-l border-gray-200 flex-shrink-0">
-          <div className="flex items-center justify-between p-6 border-b border-gray-100">
-            <h2 className="font-semibold text-xl text-gray-900 flex items-center gap-2">
+          <div className="flex items-center justify-between p-4 border-b border-gray-100">
+            <h2 className="font-semibold text-lg text-gray-900">
               Sources
             </h2>
             <Button
@@ -557,26 +557,14 @@ const Index = () => {
             </Button>
           </div>
           
-          <ScrollArea className="h-[calc(100vh-88px)]">
-            <div className="p-6 space-y-6">
+          <ScrollArea className="h-[calc(100vh-80px)]">
+            <div className="p-4 space-y-4">
               {currentSources.items?.map((source: any, index: number) => (
-                <div key={index} className="space-y-3">
+                <div key={index} className="space-y-2">
                   {/* Source Header */}
-                  <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 mt-1">
-                      {source.favicon ? (
-                        <img 
-                          src={source.favicon} 
-                          alt={source.domain}
-                          className="w-4 h-4 rounded-sm"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            target.nextElementSibling?.removeAttribute('hidden');
-                          }}
-                        />
-                      ) : null}
-                      <div className={`w-4 h-4 rounded-sm flex items-center justify-center text-xs font-semibold text-white ${source.favicon ? 'hidden' : ''}`} style={{backgroundColor: source.color || '#64748b'}}>
+                  <div className="flex items-start gap-2">
+                    <div className="flex-shrink-0 mt-0.5">
+                      <div className="w-4 h-4 rounded-sm flex items-center justify-center text-xs font-semibold text-white" style={{backgroundColor: source.color || '#64748b'}}>
                         {source.domain?.charAt(0).toUpperCase() || source.type?.charAt(0).toUpperCase()}
                       </div>
                     </div>
@@ -587,10 +575,10 @@ const Index = () => {
 
                   {/* Source Title and Content */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 leading-tight mb-2">
+                    <h3 className="text-sm font-semibold text-gray-900 leading-tight mb-1">
                       {source.title}
                     </h3>
-                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                    <div className="flex items-center gap-1 text-xs text-gray-500 mb-2">
                       <span>{source.date}</span>
                       <span>—</span>
                       <span>by {source.author}</span>
@@ -608,25 +596,22 @@ const Index = () => {
                       )}
                       <span>—</span>
                     </div>
-                    <p className="text-sm text-gray-700 leading-relaxed">
+                    <p className="text-xs text-gray-600 leading-relaxed">
                       {source.description}
                     </p>
                   </div>
 
-                  {/* Referenced Text Excerpts */}
-                  {source.textExcerpts && source.textExcerpts.length > 0 && (
-                    <div className="mt-4 space-y-2">
-                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Referenced Text</p>
-                      {source.textExcerpts.map((excerpt: string, excerptIndex: number) => (
-                        <div key={excerptIndex} className="bg-blue-50 border-l-4 border-blue-200 pl-4 py-2">
-                          <p className="text-sm text-gray-700 italic">"{excerpt}"</p>
-                        </div>
-                      ))}
+                  {/* Data Source Location */}
+                  {source.dataSource && (
+                    <div className="mt-2">
+                      <p className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                        {source.dataSource}
+                      </p>
                     </div>
                   )}
                   
                   {index < currentSources.items.length - 1 && (
-                    <div className="border-b border-gray-100 mt-6"></div>
+                    <div className="border-b border-gray-100 mt-4"></div>
                   )}
                 </div>
               ))}
