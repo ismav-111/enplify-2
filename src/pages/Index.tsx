@@ -542,42 +542,105 @@ const Index = () => {
 
       {/* Sources Sidebar */}
       {isSourcesSidebarOpen && currentSources && (
-        <div className="w-80 bg-background border-l border-border flex-shrink-0">
-          <div className="flex items-center justify-between p-4 border-b">
-            <h2 className="font-semibold text-lg flex items-center gap-2">
-              <currentSources.icon className="w-5 h-5" />
+        <div className="w-96 bg-white border-l border-gray-200 flex-shrink-0">
+          <div className="flex items-center justify-between p-6 border-b border-gray-100">
+            <h2 className="font-semibold text-xl text-gray-900 flex items-center gap-2">
               Sources
             </h2>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setIsSourcesSidebarOpen(false)}
+              className="h-8 w-8 p-0 hover:bg-gray-100"
             >
               <X className="w-4 h-4" />
             </Button>
           </div>
           
-          <div className="p-4 space-y-4 h-[calc(100vh-80px)] overflow-y-auto">
-            {currentSources.items?.map((source: any, index: number) => (
-              <div key={index} className="border border-gray-200 rounded-lg p-4 space-y-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
-                      <source.icon className="w-4 h-4 text-blue-600" />
+          <ScrollArea className="h-[calc(100vh-88px)]">
+            <div className="p-6 space-y-6">
+              {currentSources.items?.map((source: any, index: number) => (
+                <div key={index} className="space-y-3">
+                  {/* Source Header */}
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 mt-1">
+                      {source.favicon ? (
+                        <img 
+                          src={source.favicon} 
+                          alt={source.domain}
+                          className="w-4 h-4 rounded-sm"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            target.nextElementSibling?.removeAttribute('hidden');
+                          }}
+                        />
+                      ) : null}
+                      <div className={`w-4 h-4 rounded-sm flex items-center justify-center text-xs font-semibold text-white ${source.favicon ? 'hidden' : ''}`} style={{backgroundColor: source.color || '#64748b'}}>
+                        {source.domain?.charAt(0).toUpperCase() || source.type?.charAt(0).toUpperCase()}
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-medium text-sm text-gray-900">{source.title}</h3>
-                      <p className="text-xs text-gray-500">{source.author} • {source.date}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-gray-500 font-medium">{source.domain || source.type}</p>
                     </div>
                   </div>
-                  <div className="text-xs text-gray-400">
-                    Cited by {source.citedBy}
+
+                  {/* Source Title and Content */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 leading-tight mb-2">
+                      {source.title}
+                    </h3>
+                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                      <span>{source.date}</span>
+                      <span>—</span>
+                      <span>by {source.author}</span>
+                      {source.year && (
+                        <>
+                          <span>•</span>
+                          <span>{source.year}</span>
+                        </>
+                      )}
+                      {source.citedBy && (
+                        <>
+                          <span>•</span>
+                          <span>Cited by {source.citedBy}</span>
+                        </>
+                      )}
+                      <span>—</span>
+                    </div>
+                    <p className="text-sm text-gray-700 leading-relaxed">
+                      {source.description}
+                    </p>
                   </div>
+
+                  {/* Referenced Text Excerpts */}
+                  {source.textExcerpts && source.textExcerpts.length > 0 && (
+                    <div className="mt-4 space-y-2">
+                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Referenced Text</p>
+                      {source.textExcerpts.map((excerpt: string, excerptIndex: number) => (
+                        <div key={excerptIndex} className="bg-blue-50 border-l-4 border-blue-200 pl-4 py-2">
+                          <p className="text-sm text-gray-700 italic">"{excerpt}"</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {index < currentSources.items.length - 1 && (
+                    <div className="border-b border-gray-100 mt-6"></div>
+                  )}
                 </div>
-                <p className="text-sm text-gray-600 leading-relaxed">{source.description}</p>
-              </div>
-            ))}
-          </div>
+              ))}
+
+              {/* More Sources Indicator */}
+              {currentSources.totalSources && currentSources.totalSources > currentSources.items.length && (
+                <div className="pt-4 border-t border-gray-100">
+                  <Button variant="ghost" className="w-full text-sm text-gray-500">
+                    More sources available ({currentSources.totalSources - currentSources.items.length} more)
+                  </Button>
+                </div>
+              )}
+            </div>
+          </ScrollArea>
         </div>
       )}
 
