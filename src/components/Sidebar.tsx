@@ -19,6 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import WorkspaceSection, { Workspace } from './WorkspaceSection';
 
 interface SidebarProps {
   conversations: Array<{ id: string; title: string; preview: string }>;
@@ -28,6 +29,18 @@ interface SidebarProps {
   onClearAll: () => void;
   onRenameConversation?: (id: string, newTitle: string) => void;
   onDeleteConversation?: (id: string) => void;
+  workspaces?: Workspace[];
+  onWorkspaceAction?: {
+    onCreateWorkspace: () => void;
+    onCreateSubWorkspace: (workspaceId: string) => void;
+    onSelectWorkspace: (workspaceId: string, subWorkspaceId?: string) => void;
+    onToggleWorkspace: (workspaceId: string) => void;
+    onRenameWorkspace: (workspaceId: string, newName: string) => void;
+    onRenameSubWorkspace: (workspaceId: string, subWorkspaceId: string, newName: string) => void;
+    onDeleteWorkspace: (workspaceId: string) => void;
+    onDeleteSubWorkspace: (workspaceId: string, subWorkspaceId: string) => void;
+    onInviteUsers: (workspaceId: string, subWorkspaceId: string) => void;
+  };
 }
 
 const Sidebar = ({ 
@@ -37,7 +50,9 @@ const Sidebar = ({
   onSelectConversation, 
   onClearAll,
   onRenameConversation,
-  onDeleteConversation
+  onDeleteConversation,
+  workspaces = [],
+  onWorkspaceAction
 }: SidebarProps) => {
   const [isOpen, setIsOpen] = useState(true);
   const [hoveredConversation, setHoveredConversation] = useState<string | null>(null);
@@ -160,11 +175,11 @@ const Sidebar = ({
           </Tooltip>
         </div>
 
-        {/* Conversations */}
+        {/* Conversations - Limited to 5 recent */}
         <div className="flex-1 overflow-y-auto px-2">
           <div className="px-2 mb-2">
             <div className="flex items-center justify-between my-4">
-              <h3 className="text-sm font-medium text-gray-500">Your conversations</h3>
+              <h3 className="text-sm font-medium text-gray-500">Recent conversations</h3>
               {conversations.length > 0 && (
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -184,8 +199,8 @@ const Sidebar = ({
               )}
             </div>
             
-            <div className="space-y-1">
-              {conversations.map((conv) => (
+            <div className="space-y-1 mb-6">
+              {conversations.slice(0, 5).map((conv) => (
                 <div
                   key={conv.id}
                   onClick={() => editingConversation !== conv.id && onSelectConversation(conv.id)}
@@ -289,6 +304,22 @@ const Sidebar = ({
                 </div>
               ))}
             </div>
+
+            {/* Workspaces Section */}
+            {onWorkspaceAction && (
+              <WorkspaceSection 
+                workspaces={workspaces}
+                onCreateWorkspace={onWorkspaceAction.onCreateWorkspace}
+                onCreateSubWorkspace={onWorkspaceAction.onCreateSubWorkspace}
+                onSelectWorkspace={onWorkspaceAction.onSelectWorkspace}
+                onToggleWorkspace={onWorkspaceAction.onToggleWorkspace}
+                onRenameWorkspace={onWorkspaceAction.onRenameWorkspace}
+                onRenameSubWorkspace={onWorkspaceAction.onRenameSubWorkspace}
+                onDeleteWorkspace={onWorkspaceAction.onDeleteWorkspace}
+                onDeleteSubWorkspace={onWorkspaceAction.onDeleteSubWorkspace}
+                onInviteUsers={onWorkspaceAction.onInviteUsers}
+              />
+            )}
           </div>
         </div>
 

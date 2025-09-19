@@ -1,6 +1,7 @@
 import { useChat } from '@/hooks/useChat';
 import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
+import { Workspace } from '@/components/WorkspaceSection';
 import MessageInput from '@/components/MessageInput';
 import ResponsePreferences, { ResponsePreferences as ResponsePreferencesType } from '@/components/ResponsePreferences';
 import { useEffect, useState } from 'react';
@@ -140,6 +141,32 @@ const Index = () => {
   const [isSourcesSidebarOpen, setIsSourcesSidebarOpen] = useState(false);
   const [currentSources, setCurrentSources] = useState<any>(null);
 
+  // Workspaces state - Mock data for demonstration
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([
+    {
+      id: 'ws-1',
+      name: 'Marketing Team',
+      isExpanded: true,
+      isActive: false,
+      isOwner: true,
+      subWorkspaces: [
+        { id: 'sub-1', name: 'Campaigns', isActive: true, memberCount: 5, isOwner: true },
+        { id: 'sub-2', name: 'Analytics', isActive: false, memberCount: 3, isOwner: false },
+      ]
+    },
+    {
+      id: 'ws-2',
+      name: 'Sales Operations',
+      isExpanded: false,
+      isActive: false,
+      isOwner: true,
+      subWorkspaces: [
+        { id: 'sub-3', name: 'Leads', isActive: false, memberCount: 8, isOwner: true },
+        { id: 'sub-4', name: 'Reports', isActive: false, memberCount: 4, isOwner: true },
+      ]
+    }
+  ]);
+
   // Create a new chat automatically when there are no conversations
   useEffect(() => {
     if (conversations.length === 0) {
@@ -236,10 +263,100 @@ const Index = () => {
   // Check if files icon should be shown (hide for encore mode)
   const showFilesIcon = currentConversation?.mode !== 'encore';
 
+  // Workspace handlers
+  const workspaceActions = {
+    onCreateWorkspace: () => {
+      const newWorkspace: Workspace = {
+        id: `ws-${Date.now()}`,
+        name: `New Workspace ${workspaces.length + 1}`,
+        isExpanded: true,
+        isActive: false,
+        isOwner: true,
+        subWorkspaces: []
+      };
+      setWorkspaces(prev => [...prev, newWorkspace]);
+    },
+    onCreateSubWorkspace: (workspaceId: string) => {
+      setWorkspaces(prev => prev.map(ws => 
+        ws.id === workspaceId 
+          ? {
+              ...ws,
+              subWorkspaces: [...ws.subWorkspaces, {
+                id: `sub-${Date.now()}`,
+                name: `New Subworkspace ${ws.subWorkspaces.length + 1}`,
+                isActive: false,
+                memberCount: 1,
+                isOwner: true
+              }]
+            }
+          : ws
+      ));
+    },
+    onSelectWorkspace: (workspaceId: string, subWorkspaceId?: string) => {
+      setWorkspaces(prev => prev.map(ws => ({
+        ...ws,
+        isActive: ws.id === workspaceId && !subWorkspaceId,
+        subWorkspaces: ws.subWorkspaces.map(sub => ({
+          ...sub,
+          isActive: subWorkspaceId ? sub.id === subWorkspaceId && ws.id === workspaceId : false
+        }))
+      })));
+    },
+    onToggleWorkspace: (workspaceId: string) => {
+      setWorkspaces(prev => prev.map(ws => 
+        ws.id === workspaceId ? { ...ws, isExpanded: !ws.isExpanded } : ws
+      ));
+    },
+    onRenameWorkspace: (workspaceId: string, newName: string) => {
+      setWorkspaces(prev => prev.map(ws => 
+        ws.id === workspaceId ? { ...ws, name: newName } : ws
+      ));
+    },
+    onRenameSubWorkspace: (workspaceId: string, subWorkspaceId: string, newName: string) => {
+      setWorkspaces(prev => prev.map(ws => 
+        ws.id === workspaceId 
+          ? {
+              ...ws,
+              subWorkspaces: ws.subWorkspaces.map(sub => 
+                sub.id === subWorkspaceId ? { ...sub, name: newName } : sub
+              )
+            }
+          : ws
+      ));
+    },
+    onDeleteWorkspace: (workspaceId: string) => {
+      setWorkspaces(prev => prev.filter(ws => ws.id !== workspaceId));
+    },
+    onDeleteSubWorkspace: (workspaceId: string, subWorkspaceId: string) => {
+      setWorkspaces(prev => prev.map(ws => 
+        ws.id === workspaceId 
+          ? {
+              ...ws,
+              subWorkspaces: ws.subWorkspaces.filter(sub => sub.id !== subWorkspaceId)
+            }
+          : ws
+      ));
+    },
+    onInviteUsers: (workspaceId: string, subWorkspaceId: string) => {
+      // Mock invite functionality - would open invite dialog
+      console.log(`Inviting users to workspace ${workspaceId}, subworkspace ${subWorkspaceId}`);
+    }
+  };
+
   return <div className="flex h-screen bg-background">
       {/* Fixed Sidebar */}
       <div className="flex-shrink-0">
-        <Sidebar conversations={conversations} activeConversation={activeConversation} onNewChat={createNewChat} onSelectConversation={setActiveConversation} onClearAll={clearAllConversations} onDeleteConversation={deleteConversation} onRenameConversation={renameConversation} />
+        <Sidebar 
+          conversations={conversations} 
+          activeConversation={activeConversation} 
+          onNewChat={createNewChat} 
+          onSelectConversation={setActiveConversation} 
+          onClearAll={clearAllConversations} 
+          onDeleteConversation={deleteConversation} 
+          onRenameConversation={renameConversation}
+          workspaces={workspaces}
+          onWorkspaceAction={workspaceActions}
+        />
       </div>
 
       <div className="flex-1 flex flex-col">
