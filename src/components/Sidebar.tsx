@@ -176,10 +176,10 @@ const Sidebar = ({
         </div>
 
         {/* Conversations - Limited to 5 recent */}
-        <div className="flex-1 overflow-y-auto px-2">
-          <div className="px-2 mb-2">
-            <div className="flex items-center justify-between my-4">
-              <h3 className="text-sm font-medium text-gray-500">Recent conversations</h3>
+        <div className="flex-1 overflow-y-auto px-4">
+          <div>
+            <div className="flex items-center justify-between mb-2 mt-3">
+              <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Recent</h3>
               {conversations.length > 0 && (
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -187,32 +187,32 @@ const Sidebar = ({
                       variant="ghost" 
                       size="icon" 
                       onClick={onClearAll}
-                      className="text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-50 p-1"
+                      className="h-5 w-5 p-0"
                     >
-                      <Trash size={16} />
+                      <Trash size={12} className="text-gray-400" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Clear all conversations</p>
+                  <TooltipContent side="right">
+                    <p>Clear all</p>
                   </TooltipContent>
                 </Tooltip>
               )}
             </div>
             
-            <div className="space-y-1 mb-6">
+            <div className="space-y-0.5 mb-4">
               {conversations.slice(0, 5).map((conv) => (
                 <div
                   key={conv.id}
                   onClick={() => editingConversation !== conv.id && onSelectConversation(conv.id)}
                   onMouseEnter={() => setHoveredConversation(conv.id)}
                   onMouseLeave={() => setHoveredConversation(null)}
-                  className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 hover:bg-gray-50 relative cursor-pointer ${
+                  className={`w-full text-left px-2 py-1.5 rounded-md transition-all duration-150 hover:bg-gray-50 relative cursor-pointer group ${
                     activeConversation === conv.id ? 'bg-[#F1F1F9]' : ''
                   }`}
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
                     {editingConversation === conv.id ? (
-                      <div className="flex items-center gap-2 w-full">
+                      <div className="flex items-center gap-1 flex-1">
                         <input
                           value={editTitle}
                           onChange={(e) => setEditTitle(e.target.value)}
@@ -223,79 +223,51 @@ const Sidebar = ({
                               handleRenameCancel();
                             }
                           }}
-                          className="text-sm font-medium flex-1 bg-transparent border-none outline-none focus:outline-none p-0 m-0"
+                          className="text-xs font-medium flex-1 bg-white border border-gray-300 rounded px-1 py-0.5 outline-none focus:border-[#4E50A8]"
                           autoFocus
                           onFocus={(e) => e.target.select()}
                           onBlur={handleRenameConfirm}
                         />
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-6 w-6 text-green-600 hover:text-green-700 hover:bg-green-50 p-1"
-                              onClick={handleRenameConfirm}
-                            >
-                              <Check size={14} />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Save changes</p>
-                          </TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-6 w-6 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1"
-                              onClick={handleRenameCancel}
-                            >
-                              <X size={14} />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Cancel editing</p>
-                          </TooltipContent>
-                        </Tooltip>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-5 w-5 p-0"
+                          onClick={handleRenameConfirm}
+                        >
+                          <Check size={10} className="text-green-600" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-5 w-5 p-0"
+                          onClick={handleRenameCancel}
+                        >
+                          <X size={10} className="text-gray-400" />
+                        </Button>
                       </div>
                     ) : (
                       <>
-                        <p className="text-sm font-medium text-gray-800 flex-1 pr-2 whitespace-nowrap overflow-hidden" title={conv.title}>
+                        <p className="text-xs font-medium text-gray-800 flex-1 truncate" title={conv.title}>
                           {truncateTitle(conv.title)}
                         </p>
                         {hoveredConversation === conv.id && (
-                          <div className="flex gap-1 flex-shrink-0">
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon" 
-                                  className="h-6 w-6 text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1"
-                                  onClick={(e) => handleRenameClick(e, conv.id)}
-                                >
-                                  <Edit size={14} />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Rename conversation</p>
-                              </TooltipContent>
-                            </Tooltip>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon" 
-                                  className="h-6 w-6 text-gray-400 hover:text-red-600 hover:bg-red-50 p-1"
-                                  onClick={(e) => handleDeleteClick(e, conv.id)}
-                                >
-                                  <Trash size={14} />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Delete conversation</p>
-                              </TooltipContent>
-                            </Tooltip>
+                          <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-5 w-5 p-0"
+                              onClick={(e) => handleRenameClick(e, conv.id)}
+                            >
+                              <Edit size={10} className="text-gray-400" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-5 w-5 p-0"
+                              onClick={(e) => handleDeleteClick(e, conv.id)}
+                            >
+                              <Trash size={10} className="text-gray-400 hover:text-red-600" />
+                            </Button>
                           </div>
                         )}
                       </>

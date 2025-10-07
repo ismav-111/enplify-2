@@ -487,56 +487,41 @@ const WorkspaceSection = ({
 
   return (
     <>
-      <div className="space-y-4">
-        {/* Personal Workspaces */}
-        {personalWorkspaces.length > 0 && (
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide px-2">Personal</h3>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={onCreateWorkspace}
-                    className="h-5 w-5 p-0"
-                  >
-                    <Plus size={12} className="text-gray-400" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  <p>New workspace</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-            <div className="space-y-0.5">
-              {personalWorkspaces.map(renderWorkspace)}
-            </div>
-          </div>
-        )}
+      <div>
+        {/* All Workspaces - Combined Section */}
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Workspaces</h3>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={onCreateWorkspace}
+                className="h-5 w-5 p-0"
+              >
+                <Plus size={12} className="text-gray-400" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>New workspace</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
 
-        {/* Shared Workspaces */}
-        {sharedWorkspaces.length > 0 && (
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide px-2">Shared</h3>
-            </div>
-            <div className="space-y-0.5">
-              {sharedWorkspaces.map(renderWorkspace)}
-            </div>
+        {workspaces.length > 0 ? (
+          <div className="space-y-0.5">
+            {workspaces.map(renderWorkspace)}
           </div>
-        )}
-
-        {workspaces.length === 0 && (
-          <div className="text-center py-6">
-            <p className="text-xs text-gray-500 mb-2">No workspaces yet</p>
+        ) : (
+          <div className="text-center py-4">
+            <p className="text-[11px] text-gray-500 mb-2">No workspaces yet</p>
             <Button 
               variant="outline" 
               size="sm"
               onClick={onCreateWorkspace}
-              className="h-7 text-xs"
+              className="h-7 text-[11px]"
             >
-              <Plus size={12} className="mr-1" />
+              <Plus size={11} className="mr-1" />
               Create workspace
             </Button>
           </div>
