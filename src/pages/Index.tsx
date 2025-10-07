@@ -675,70 +675,47 @@ const Index = () => {
           </div>
           
           <ScrollArea className="h-[calc(100vh-80px)]">
-            <div className="p-4 space-y-4">
+            <div className="p-3 space-y-3">
               {currentSources.items?.map((source: any, index: number) => (
-                <div key={index} className="space-y-2">
-                  {/* Source Header */}
-                  <div className="flex items-start gap-2">
-                    <div className="flex-shrink-0 mt-0.5">
-                      <div className="w-4 h-4 rounded-sm flex items-center justify-center text-xs font-semibold text-white" style={{backgroundColor: source.color || '#64748b'}}>
-                        {source.domain?.charAt(0).toUpperCase() || source.type?.charAt(0).toUpperCase()}
-                      </div>
+                <div key={index} className="group">
+                  <div className="space-y-1.5">
+                    {/* Source type badge */}
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">
+                        {source.domain || source.type}
+                      </span>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs text-gray-500 font-medium">{source.domain || source.type}</p>
-                    </div>
-                  </div>
 
-                  {/* Source Title and Content */}
-                  <div>
-                    <h3 className="text-sm font-semibold text-gray-900 leading-tight mb-1">
+                    {/* Title */}
+                    <h3 className="text-xs font-medium text-gray-900 leading-snug line-clamp-2">
                       {source.title}
                     </h3>
-                    <div className="flex items-center gap-1 text-xs text-gray-500 mb-2">
-                      <span>{source.date}</span>
-                      <span>—</span>
-                      <span>by {source.author}</span>
-                      {source.year && (
-                        <>
-                          <span>•</span>
-                          <span>{source.year}</span>
-                        </>
-                      )}
-                      {source.citedBy && (
-                        <>
-                          <span>•</span>
-                          <span>Cited by {source.citedBy}</span>
-                        </>
-                      )}
-                      <span>—</span>
-                    </div>
-                    <p className="text-xs text-gray-600 leading-relaxed">
+
+                    {/* Data source location - most important info */}
+                    {source.dataSource && (
+                      <p className="text-[11px] text-blue-600 font-medium">
+                        {source.dataSource}
+                      </p>
+                    )}
+
+                    {/* Brief excerpt - truncated */}
+                    <p className="text-[11px] text-gray-600 leading-relaxed line-clamp-2">
                       {source.description}
                     </p>
                   </div>
-
-                  {/* Data Source Location */}
-                  {source.dataSource && (
-                    <div className="mt-2">
-                      <p className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                        {source.dataSource}
-                      </p>
-                    </div>
-                  )}
                   
                   {index < currentSources.items.length - 1 && (
-                    <div className="border-b border-gray-100 mt-4"></div>
+                    <div className="border-b border-gray-100 mt-3"></div>
                   )}
                 </div>
               ))}
 
               {/* More Sources Indicator */}
               {currentSources.totalSources && currentSources.totalSources > currentSources.items.length && (
-                <div className="pt-4 border-t border-gray-100">
-                  <Button variant="ghost" className="w-full text-sm text-gray-500">
-                    More sources available ({currentSources.totalSources - currentSources.items.length} more)
-                  </Button>
+                <div className="pt-2 mt-2 border-t border-gray-100">
+                  <button className="w-full text-[11px] text-gray-500 hover:text-gray-700 py-2">
+                    +{currentSources.totalSources - currentSources.items.length} more sources
+                  </button>
                 </div>
               )}
             </div>
