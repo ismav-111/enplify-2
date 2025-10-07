@@ -32,14 +32,14 @@ interface SidebarProps {
   workspaces?: Workspace[];
   onWorkspaceAction?: {
     onCreateWorkspace: () => void;
-    onCreateSubWorkspace: (workspaceId: string) => void;
-    onSelectWorkspace: (workspaceId: string, subWorkspaceId?: string) => void;
+    onCreateSession: (workspaceId: string) => void;
+    onSelectWorkspace: (workspaceId: string, sessionId?: string) => void;
     onToggleWorkspace: (workspaceId: string) => void;
     onRenameWorkspace: (workspaceId: string, newName: string) => void;
-    onRenameSubWorkspace: (workspaceId: string, subWorkspaceId: string, newName: string) => void;
+    onRenameSession: (workspaceId: string, sessionId: string, newName: string) => void;
     onDeleteWorkspace: (workspaceId: string) => void;
-    onDeleteSubWorkspace: (workspaceId: string, subWorkspaceId: string) => void;
-    onInviteUsers: (workspaceId: string, subWorkspaceId: string) => void;
+    onDeleteSession: (workspaceId: string, sessionId: string) => void;
+    onInviteUsers: (workspaceId: string, sessionId: string) => void;
   };
 }
 
@@ -310,13 +310,13 @@ const Sidebar = ({
               <WorkspaceSection 
                 workspaces={workspaces}
                 onCreateWorkspace={onWorkspaceAction.onCreateWorkspace}
-                onCreateSubWorkspace={onWorkspaceAction.onCreateSubWorkspace}
+                onCreateSession={onWorkspaceAction.onCreateSession}
                 onSelectWorkspace={onWorkspaceAction.onSelectWorkspace}
                 onToggleWorkspace={onWorkspaceAction.onToggleWorkspace}
                 onRenameWorkspace={onWorkspaceAction.onRenameWorkspace}
-                onRenameSubWorkspace={onWorkspaceAction.onRenameSubWorkspace}
+                onRenameSession={onWorkspaceAction.onRenameSession}
                 onDeleteWorkspace={onWorkspaceAction.onDeleteWorkspace}
-                onDeleteSubWorkspace={onWorkspaceAction.onDeleteSubWorkspace}
+                onDeleteSession={onWorkspaceAction.onDeleteSession}
                 onInviteUsers={onWorkspaceAction.onInviteUsers}
               />
             )}

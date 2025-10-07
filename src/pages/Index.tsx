@@ -149,9 +149,10 @@ const Index = () => {
       isExpanded: true,
       isActive: false,
       isOwner: true,
-      subWorkspaces: [
-        { id: 'sub-1', name: 'Campaigns', isActive: true, memberCount: 5, isOwner: true },
-        { id: 'sub-2', name: 'Analytics', isActive: false, memberCount: 3, isOwner: false },
+      isShared: false,
+      sessions: [
+        { id: 'ses-1', name: 'Q4 Campaign', isActive: true, isOwner: true },
+        { id: 'ses-2', name: 'Brand Strategy', isActive: false, isOwner: false },
       ]
     },
     {
@@ -160,9 +161,10 @@ const Index = () => {
       isExpanded: false,
       isActive: false,
       isOwner: true,
-      subWorkspaces: [
-        { id: 'sub-3', name: 'Leads', isActive: false, memberCount: 8, isOwner: true },
-        { id: 'sub-4', name: 'Reports', isActive: false, memberCount: 4, isOwner: true },
+      isShared: true,
+      sessions: [
+        { id: 'ses-3', name: 'Lead Gen', isActive: false, memberCount: 8, isOwner: true },
+        { id: 'ses-4', name: 'Reports Review', isActive: false, memberCount: 4, isOwner: true },
       ]
     }
   ]);
@@ -272,33 +274,34 @@ const Index = () => {
         isExpanded: true,
         isActive: false,
         isOwner: true,
-        subWorkspaces: []
+        isShared: false,
+        sessions: []
       };
       setWorkspaces(prev => [...prev, newWorkspace]);
     },
-    onCreateSubWorkspace: (workspaceId: string) => {
+    onCreateSession: (workspaceId: string) => {
       setWorkspaces(prev => prev.map(ws => 
         ws.id === workspaceId 
           ? {
               ...ws,
-              subWorkspaces: [...ws.subWorkspaces, {
-                id: `sub-${Date.now()}`,
-                name: `New Subworkspace ${ws.subWorkspaces.length + 1}`,
+              sessions: [...ws.sessions, {
+                id: `ses-${Date.now()}`,
+                name: `New Session ${ws.sessions.length + 1}`,
                 isActive: false,
-                memberCount: 1,
+                memberCount: ws.isShared ? 1 : undefined,
                 isOwner: true
               }]
             }
           : ws
       ));
     },
-    onSelectWorkspace: (workspaceId: string, subWorkspaceId?: string) => {
+    onSelectWorkspace: (workspaceId: string, sessionId?: string) => {
       setWorkspaces(prev => prev.map(ws => ({
         ...ws,
-        isActive: ws.id === workspaceId && !subWorkspaceId,
-        subWorkspaces: ws.subWorkspaces.map(sub => ({
-          ...sub,
-          isActive: subWorkspaceId ? sub.id === subWorkspaceId && ws.id === workspaceId : false
+        isActive: ws.id === workspaceId && !sessionId,
+        sessions: ws.sessions.map(ses => ({
+          ...ses,
+          isActive: sessionId ? ses.id === sessionId && ws.id === workspaceId : false
         }))
       })));
     },
@@ -312,13 +315,13 @@ const Index = () => {
         ws.id === workspaceId ? { ...ws, name: newName } : ws
       ));
     },
-    onRenameSubWorkspace: (workspaceId: string, subWorkspaceId: string, newName: string) => {
+    onRenameSession: (workspaceId: string, sessionId: string, newName: string) => {
       setWorkspaces(prev => prev.map(ws => 
         ws.id === workspaceId 
           ? {
               ...ws,
-              subWorkspaces: ws.subWorkspaces.map(sub => 
-                sub.id === subWorkspaceId ? { ...sub, name: newName } : sub
+              sessions: ws.sessions.map(ses => 
+                ses.id === sessionId ? { ...ses, name: newName } : ses
               )
             }
           : ws
@@ -327,19 +330,19 @@ const Index = () => {
     onDeleteWorkspace: (workspaceId: string) => {
       setWorkspaces(prev => prev.filter(ws => ws.id !== workspaceId));
     },
-    onDeleteSubWorkspace: (workspaceId: string, subWorkspaceId: string) => {
+    onDeleteSession: (workspaceId: string, sessionId: string) => {
       setWorkspaces(prev => prev.map(ws => 
         ws.id === workspaceId 
           ? {
               ...ws,
-              subWorkspaces: ws.subWorkspaces.filter(sub => sub.id !== subWorkspaceId)
+              sessions: ws.sessions.filter(ses => ses.id !== sessionId)
             }
           : ws
       ));
     },
-    onInviteUsers: (workspaceId: string, subWorkspaceId: string) => {
+    onInviteUsers: (workspaceId: string, sessionId: string) => {
       // Mock invite functionality - would open invite dialog
-      console.log(`Inviting users to workspace ${workspaceId}, subworkspace ${subWorkspaceId}`);
+      console.log(`Inviting users to workspace ${workspaceId}, session ${sessionId}`);
     }
   };
 
