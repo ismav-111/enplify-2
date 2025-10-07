@@ -156,21 +156,21 @@
 
 /* ULTIMATE font size override for ALL AI responses - using highest specificity */
 * {
-  font-size: 16px !important;
+  font-size: 14px !important;
   line-height: 1.5 !important;
 }
 
-/* Bold headings at 16px - highest specificity */
+/* Bold headings at 14px - highest specificity */
 h1, h2, h3, h4, h5, h6 {
-  font-size: 16px !important;
+  font-size: 14px !important;
   font-weight: 700 !important;
   line-height: 1.5 !important;
   margin: 0.5em 0 !important;
 }
 
-/* Regular text elements at 16px */
+/* Regular text elements at 14px */
 p, div, span, li, td, th, strong, em, b, i, a, label, button {
-  font-size: 16px !important;
+  font-size: 14px !important;
   font-weight: 400 !important;
   line-height: 1.5 !important;
 }
@@ -178,23 +178,23 @@ p, div, span, li, td, th, strong, em, b, i, a, label, button {
 /* Ensure bold styling works */
 strong, b {
   font-weight: 700 !important;
-  font-size: 16px !important;
+  font-size: 14px !important;
 }
 
 /* Ensure italic styling works */
 em, i {
   font-style: italic !important;
-  font-size: 16px !important;
+  font-size: 14px !important;
 }
 
 /* Override any Tailwind size classes */
 .text-xs, .text-sm, .text-base, .text-lg, .text-xl, .text-2xl, .text-3xl, .text-4xl, .text-5xl, .text-6xl {
-  font-size: 16px !important;
+  font-size: 14px !important;
 }
 
 /* Override any heading size classes */
 .text-sm, .text-lg, .text-xl, .text-2xl, .text-3xl, .text-4xl, .text-5xl, .text-6xl, .text-7xl, .text-8xl, .text-9xl {
-  font-size: 16px !important;
+  font-size: 14px !important;
 }
 
 /* Button Hover States - Proper button interactions */
