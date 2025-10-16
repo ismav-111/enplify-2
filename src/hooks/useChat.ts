@@ -9,6 +9,7 @@ interface Message {
   mode?: 'encore' | 'endocs' | 'ensights';
   tableData?: any[];
   chartData?: any[];
+  sqlQuery?: string;
   file?: {
     name: string;
     type: string;
@@ -448,7 +449,18 @@ Would you like me to provide more specific guidance on any aspect of this topic?
             isUser: false,
             timestamp: new Date(),
             mode: 'endocs',
-            tableData: preferences?.format === 'table' ? generateTableData() : undefined
+            tableData: preferences?.format === 'table' ? generateTableData() : undefined,
+            sqlQuery: `SELECT 
+  d.document_id,
+  d.title,
+  d.content,
+  d.department,
+  d.last_updated,
+  ROUND(ts_rank(d.search_vector, plainto_tsquery('${content.replace(/'/g, "''")}')) * 100, 2) || '%' AS relevance
+FROM enterprise_documents d
+WHERE d.search_vector @@ plainto_tsquery('${content.replace(/'/g, "''")}')
+ORDER BY ts_rank(d.search_vector, plainto_tsquery('${content.replace(/'/g, "''")}')) DESC
+LIMIT 25;`
           };
           break;
           

@@ -1,6 +1,6 @@
 
 import { useState, useRef, useEffect } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight, Table, Database, Globe, Server, X } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight, Table, Database, Globe, Server, X, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -45,6 +45,12 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import {
+  Tooltip as TooltipComponent,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import * as XLSX from 'xlsx';
 
 interface ChatMessageProps {
@@ -56,6 +62,7 @@ interface ChatMessageProps {
     mode?: 'encore' | 'endocs' | 'ensights';
     tableData?: any[];
     chartData?: any[];
+    sqlQuery?: string;
     file?: {
       name: string;
       type: string;
@@ -592,7 +599,28 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
             <TableHeader>
               <TableRow className="bg-gray-50/80">
                 <TableHead className="font-semibold text-gray-900 py-3 px-4 text-base">
-                  Document
+                  <div className="flex items-center gap-2">
+                    Document
+                    {message.sqlQuery && (
+                      <TooltipProvider>
+                        <TooltipComponent>
+                          <TooltipTrigger asChild>
+                            <button className="inline-flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors">
+                              <Info size={16} />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-lg p-4">
+                            <div className="space-y-2">
+                              <p className="font-semibold text-sm">SQL Query Used:</p>
+                              <pre className="text-xs bg-muted p-2 rounded overflow-x-auto">
+                                {message.sqlQuery}
+                              </pre>
+                            </div>
+                          </TooltipContent>
+                        </TooltipComponent>
+                      </TooltipProvider>
+                    )}
+                  </div>
                 </TableHead>
                 <TableHead className="font-semibold text-gray-900 py-3 px-4 text-base">
                   Content
