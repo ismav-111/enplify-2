@@ -425,7 +425,33 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
             }
           </p>
         </div>
-        <div className="flex gap-1 items-center bg-gray-100 rounded-lg p-1">
+        <div className="flex gap-2 items-center">
+          {/* SQL Query Info Button - only for endocs mode with tableData */}
+          {message.mode === 'endocs' && message.sqlQuery && viewMode === 'table' && (
+            <TooltipProvider>
+              <TooltipComponent>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-9 gap-2"
+                  >
+                    <Database size={16} />
+                    <span className="text-sm">View Query</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" align="end" className="max-w-2xl p-4">
+                  <div className="space-y-2">
+                    <p className="font-semibold text-sm">SQL Query Used:</p>
+                    <pre className="text-xs bg-muted p-3 rounded overflow-x-auto whitespace-pre-wrap">
+{message.sqlQuery}
+                    </pre>
+                  </div>
+                </TooltipContent>
+              </TooltipComponent>
+            </TooltipProvider>
+          )}
+          <div className="flex gap-1 items-center bg-gray-100 rounded-lg p-1">
           {/* View Mode Selector */}
           <Button 
             variant="ghost"
@@ -582,6 +608,7 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
               )}
             </DropdownMenuContent>
           </DropdownMenu>
+          </div>
         </div>
       </div>
     );
@@ -599,28 +626,7 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
             <TableHeader>
               <TableRow className="bg-gray-50/80">
                 <TableHead className="font-semibold text-gray-900 py-3 px-4 text-base">
-                  <div className="flex items-center gap-2">
-                    Document
-                    {message.sqlQuery && (
-                      <TooltipProvider>
-                        <TooltipComponent>
-                          <TooltipTrigger asChild>
-                            <button className="inline-flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors">
-                              <Info size={16} />
-                            </button>
-                          </TooltipTrigger>
-                          <TooltipContent side="top" className="max-w-lg p-4">
-                            <div className="space-y-2">
-                              <p className="font-semibold text-sm">SQL Query Used:</p>
-                              <pre className="text-xs bg-muted p-2 rounded overflow-x-auto">
-                                {message.sqlQuery}
-                              </pre>
-                            </div>
-                          </TooltipContent>
-                        </TooltipComponent>
-                      </TooltipProvider>
-                    )}
-                  </div>
+                  Document
                 </TableHead>
                 <TableHead className="font-semibold text-gray-900 py-3 px-4 text-base">
                   Content
