@@ -10,6 +10,7 @@ interface Message {
   tableData?: any[];
   chartData?: any[];
   sqlQuery?: string;
+  snowflakeQuery?: string;
   file?: {
     name: string;
     type: string;
@@ -460,6 +461,17 @@ Would you like me to provide more specific guidance on any aspect of this topic?
 FROM enterprise_documents d
 WHERE d.search_vector @@ plainto_tsquery('${content.replace(/'/g, "''")}')
 ORDER BY ts_rank(d.search_vector, plainto_tsquery('${content.replace(/'/g, "''")}')) DESC
+LIMIT 25;`,
+            snowflakeQuery: `SELECT 
+  d.document_id,
+  d.title,
+  d.content,
+  d.department,
+  d.last_updated,
+  ROUND(VECTOR_COSINE_SIMILARITY(d.search_vector, PARSE_VECTOR('${content.replace(/'/g, "''")}')) * 100, 2) || '%' AS relevance
+FROM ENTERPRISE_DB.DOCUMENTS_SCHEMA.enterprise_documents d
+WHERE CONTAINS(d.content, '${content.replace(/'/g, "''")}')
+ORDER BY VECTOR_COSINE_SIMILARITY(d.search_vector, PARSE_VECTOR('${content.replace(/'/g, "''")}')) DESC
 LIMIT 25;`
           };
           break;

@@ -1,7 +1,8 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight, Table, Database, Globe, Server, X, Info } from 'lucide-react';
-import sqlIcon from '@/assets/sql.svg';
+import sqlIcon from "@/assets/sql.svg";
+import snowflakeIcon from "@/assets/snowflake.svg";
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -64,6 +65,7 @@ interface ChatMessageProps {
     tableData?: any[];
     chartData?: any[];
     sqlQuery?: string;
+    snowflakeQuery?: string;
     file?: {
       name: string;
       type: string;
@@ -445,6 +447,30 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
                     <p className="font-semibold text-sm">SQL Query Used:</p>
                     <pre className="text-xs bg-muted p-3 rounded overflow-x-auto whitespace-pre-wrap">
 {message.sqlQuery}
+                    </pre>
+                  </div>
+                </TooltipContent>
+              </TooltipComponent>
+            </TooltipProvider>
+          )}
+          {/* Snowflake Query Info Button - only for endocs mode with tableData */}
+          {message.mode === 'endocs' && message.snowflakeQuery && viewMode === 'table' && (
+            <TooltipProvider>
+              <TooltipComponent>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-9 w-9 p-0"
+                  >
+                    <img src={snowflakeIcon} alt="Snowflake Query" className="w-5 h-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" align="end" className="max-w-2xl p-4">
+                  <div className="space-y-2">
+                    <p className="font-semibold text-sm">Snowflake Query Used:</p>
+                    <pre className="text-xs bg-muted p-3 rounded overflow-x-auto whitespace-pre-wrap">
+{message.snowflakeQuery}
                     </pre>
                   </div>
                 </TooltipContent>
