@@ -1,6 +1,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight, Table, Database, Globe, Server, X, Info } from 'lucide-react';
+import sqlIcon from '@/assets/sql.svg';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -432,12 +433,11 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
               <TooltipComponent>
                 <TooltipTrigger asChild>
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size="sm"
-                    className="h-9 gap-2"
+                    className="h-9 w-9 p-0"
                   >
-                    <Database size={16} />
-                    <span className="text-sm">View Query</span>
+                    <img src={sqlIcon} alt="SQL Query" className="w-5 h-5" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="bottom" align="end" className="max-w-2xl p-4">
