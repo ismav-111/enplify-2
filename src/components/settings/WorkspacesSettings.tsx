@@ -64,8 +64,7 @@ interface Workspace {
 const WorkspacesSettings = () => {
   const [inviteDialog, setInviteDialog] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
-  const [selectedWorkspace, setSelectedWorkspace] = useState<string | null>(null);
-
+  
   // Mock data - replace with actual data from your backend
   // Only shared workspaces
   const workspaces: Workspace[] = [
@@ -106,6 +105,11 @@ const WorkspacesSettings = () => {
   // Separate workspaces by ownership
   const ownedWorkspaces = workspaces.filter(w => w.role === 'owner' || w.role === 'admin');
   const invitedWorkspaces = workspaces.filter(w => w.role === 'contributor' || w.role === 'viewer' || w.role === 'guest');
+  
+  const [selectedWorkspace, setSelectedWorkspace] = useState<string | null>(
+    ownedWorkspaces.length > 0 ? ownedWorkspaces[0].id : null
+  );
+
 
   const members: WorkspaceMember[] = [
     {
