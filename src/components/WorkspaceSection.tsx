@@ -11,9 +11,7 @@ import {
   Edit,
   Trash,
   Check,
-  X,
-  User,
-  Share2
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -235,13 +233,6 @@ const WorkspaceSection = ({
                 <ChevronRight size={12} className="text-gray-500" />
               )}
             </Button>
-
-            {/* Icon */}
-            {workspace.isShared ? (
-              <Share2 size={12} className="text-blue-500 flex-shrink-0" />
-            ) : (
-              <User size={12} className="text-gray-500 flex-shrink-0" />
-            )}
 
             {/* Title or Edit */}
             {editingItem === workspace.id ? (
