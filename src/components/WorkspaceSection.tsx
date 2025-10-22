@@ -309,7 +309,7 @@ const WorkspaceSection = ({
                           <MoreHorizontal size={10} className="text-gray-400" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-32 bg-white z-50">
+                      <DropdownMenuContent align="end" className="w-32">
                         {workspace.isShared && (
                           <DropdownMenuItem 
                             onClick={(e) => {
