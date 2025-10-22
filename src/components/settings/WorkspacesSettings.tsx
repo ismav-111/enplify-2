@@ -203,8 +203,8 @@ const WorkspacesSettings = () => {
                   className="flex items-center justify-between p-4 rounded-lg border border-border/50 bg-card hover:border-primary/20 hover:shadow-sm transition-all"
                 >
                   <div className="flex items-center gap-4 flex-1">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                      <Users className="w-5 h-5 text-primary-foreground" />
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-muted to-muted-foreground/20 flex items-center justify-center">
+                      <Users className="w-5 h-5 text-muted-foreground" />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
