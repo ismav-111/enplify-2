@@ -36,14 +36,19 @@ import {
   Calendar,
   Trash2,
   Settings,
-  Shield
+  Shield,
+  Edit3,
+  Eye,
+  UserCheck
 } from 'lucide-react';
 import { toast } from 'sonner';
+
+type WorkspaceRole = 'owner' | 'admin' | 'editor' | 'viewer' | 'guest';
 
 interface WorkspaceMember {
   id: string;
   email: string;
-  role: 'owner' | 'admin' | 'member';
+  role: WorkspaceRole;
   joinedAt: string;
 }
 
@@ -51,7 +56,7 @@ interface Workspace {
   id: string;
   name: string;
   memberCount: number;
-  role: 'owner' | 'admin' | 'member';
+  role: WorkspaceRole;
   createdAt: string;
   isShared: boolean;
 }
@@ -76,7 +81,7 @@ const WorkspacesSettings = () => {
       id: '2',
       name: 'Marketing Team',
       memberCount: 8,
-      role: 'member',
+      role: 'viewer',
       createdAt: '2024-01-20',
       isShared: true,
     },
@@ -92,7 +97,7 @@ const WorkspacesSettings = () => {
       id: '4',
       name: 'Product Design',
       memberCount: 4,
-      role: 'member',
+      role: 'editor',
       createdAt: '2024-03-01',
       isShared: true,
     },
@@ -100,7 +105,7 @@ const WorkspacesSettings = () => {
 
   // Separate workspaces by ownership
   const ownedWorkspaces = workspaces.filter(w => w.role === 'owner' || w.role === 'admin');
-  const invitedWorkspaces = workspaces.filter(w => w.role === 'member');
+  const invitedWorkspaces = workspaces.filter(w => w.role === 'editor' || w.role === 'viewer' || w.role === 'guest');
 
   const members: WorkspaceMember[] = [
     {
@@ -118,8 +123,20 @@ const WorkspacesSettings = () => {
     {
       id: '3',
       email: 'mike@example.com',
-      role: 'member',
+      role: 'editor',
       joinedAt: '2024-02-01',
+    },
+    {
+      id: '4',
+      email: 'emma@example.com',
+      role: 'viewer',
+      joinedAt: '2024-02-10',
+    },
+    {
+      id: '5',
+      email: 'guest@example.com',
+      role: 'guest',
+      joinedAt: '2024-03-01',
     },
   ];
 
@@ -139,18 +156,22 @@ const WorkspacesSettings = () => {
     toast.success('Member removed successfully');
   };
 
-  const getRoleBadge = (role: string) => {
-    const variants = {
-      owner: 'default',
-      admin: 'secondary',
-      member: 'outline',
-    } as const;
+  const getRoleBadge = (role: WorkspaceRole) => {
+    const roleConfig = {
+      owner: { variant: 'default' as const, icon: Crown, label: 'Owner' },
+      admin: { variant: 'secondary' as const, icon: Shield, label: 'Admin' },
+      editor: { variant: 'outline' as const, icon: Edit3, label: 'Editor' },
+      viewer: { variant: 'outline' as const, icon: Eye, label: 'Viewer' },
+      guest: { variant: 'outline' as const, icon: UserCheck, label: 'Guest' },
+    };
+
+    const config = roleConfig[role];
+    const Icon = config.icon;
 
     return (
-      <Badge variant={variants[role as keyof typeof variants]} className="capitalize">
-        {role === 'owner' && <Crown className="w-3 h-3 mr-1" />}
-        {role === 'admin' && <Shield className="w-3 h-3 mr-1" />}
-        {role}
+      <Badge variant={config.variant} className="capitalize">
+        <Icon className="w-3 h-3 mr-1" />
+        {config.label}
       </Badge>
     );
   };
