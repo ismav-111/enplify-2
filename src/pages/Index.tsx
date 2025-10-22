@@ -17,6 +17,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import type { ResponseMode } from '@/components/MessageInput';
 import MinimalOnboardingWizard from "@/components/MinimalOnboardingWizard"
 import { useMinimalOnboarding } from "@/hooks/useMinimalOnboarding"
+import { Checkbox } from '@/components/ui/checkbox'
 
 interface FileItem {
   id: string;
@@ -137,6 +138,10 @@ const Index = () => {
   // File viewer state
   const [viewingFile, setViewingFile] = useState<FileItem | null>(null);
 
+  // Multi-select state for files
+  const [selectedFileIds, setSelectedFileIds] = useState<string[]>([]);
+  const [showAllFiles, setShowAllFiles] = useState(false);
+
   // Sources sidebar state
   const [isSourcesSidebarOpen, setIsSourcesSidebarOpen] = useState(false);
   const [currentSources, setCurrentSources] = useState<any>(null);
@@ -248,6 +253,32 @@ const Index = () => {
   // Delete file function
   const handleDeleteFile = (fileId: string) => {
     setUploadedFiles(files => files.filter(file => file.id !== fileId));
+    setSelectedFileIds(prev => prev.filter(id => id !== fileId));
+  };
+
+  // Bulk delete function
+  const handleBulkDelete = () => {
+    setUploadedFiles(files => files.filter(file => !selectedFileIds.includes(file.id)));
+    setSelectedFileIds([]);
+  };
+
+  // Toggle file selection
+  const toggleFileSelection = (fileId: string) => {
+    setSelectedFileIds(prev => 
+      prev.includes(fileId) 
+        ? prev.filter(id => id !== fileId)
+        : [...prev, fileId]
+    );
+  };
+
+  // Toggle select all
+  const toggleSelectAll = () => {
+    const displayedFiles = showAllFiles ? filteredFiles : filteredFiles.slice(0, 10);
+    if (selectedFileIds.length === displayedFiles.length) {
+      setSelectedFileIds([]);
+    } else {
+      setSelectedFileIds(displayedFiles.map(f => f.id));
+    }
   };
 
   // Check if file can be viewed (has URL and is viewable type)
@@ -397,7 +428,7 @@ const Index = () => {
                     </div>
                     
                     {/* File type filter tabs - show only relevant modes */}
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 mb-2">
                       <Button variant={fileFilter === 'all' ? 'default' : 'outline'} size="sm" className={fileFilter === 'all' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} onClick={() => setFileFilter('all')}>
                         All
                       </Button>
@@ -408,11 +439,59 @@ const Index = () => {
                         Excel
                       </Button>
                     </div>
+
+                    {/* Multi-select controls - only show for endocs/ensights */}
+                    {(fileFilter === 'endocs' || fileFilter === 'ensights') && filteredFiles.length > 0 && (
+                      <div className="flex items-center justify-between py-2 border-t border-gray-100">
+                        <div className="flex items-center gap-2">
+                          <Checkbox 
+                            checked={selectedFileIds.length === (showAllFiles ? filteredFiles : filteredFiles.slice(0, 10)).length && selectedFileIds.length > 0}
+                            onCheckedChange={toggleSelectAll}
+                            id="select-all"
+                          />
+                          <label htmlFor="select-all" className="text-xs text-gray-600 cursor-pointer">
+                            Select All
+                          </label>
+                        </div>
+                        {selectedFileIds.length > 0 && (
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="ghost" size="sm" className="h-7 text-xs text-red-600 hover:text-red-700 hover:bg-red-50">
+                                <Trash2 size={12} className="mr-1" />
+                                Delete ({selectedFileIds.length})
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete Files</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to delete {selectedFileIds.length} file{selectedFileIds.length !== 1 ? 's' : ''}? This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleBulkDelete} className="bg-red-500 hover:bg-red-600">
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        )}
+                      </div>
+                    )}
                   </div>
                   
                   <ScrollArea className="h-64">
                     <div className="p-2">
-                      {filteredFiles.slice(0, 10).map(file => <div key={file.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-md group">
+                      {filteredFiles.slice(0, 10).map(file => <div key={file.id} className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-md group">
+                          {/* Checkbox for multi-select - only show for endocs/ensights */}
+                          {(fileFilter === 'endocs' || fileFilter === 'ensights') && (
+                            <Checkbox 
+                              checked={selectedFileIds.includes(file.id)}
+                              onCheckedChange={() => toggleFileSelection(file.id)}
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          )}
                           <div className="w-8 h-8 bg-[#F1F1F9] rounded-md flex items-center justify-center flex-shrink-0">
                             <span className="text-[#4E50A8] text-xs font-medium">{getFileTypeDisplay(file.type)}</span>
                           </div>
@@ -454,11 +533,11 @@ const Index = () => {
                     </div>
                   </ScrollArea>
                   
-                  {filteredFiles.length > 10 && <Dialog>
+                  {filteredFiles.length > 10 && <Dialog open={showAllFiles} onOpenChange={setShowAllFiles}>
                       <DialogTrigger asChild>
                         <div className="p-3 border-t border-gray-100">
                           <Button variant="ghost" size="sm" className="w-full justify-center text-[#4E50A8]">
-                            View All Files
+                            View More Files ({filteredFiles.length - 10} more)
                           </Button>
                         </div>
                       </DialogTrigger>
@@ -477,7 +556,7 @@ const Index = () => {
                         </div>
                         
                         {/* File type filter tabs in dialog */}
-                        <div className="flex gap-2 mb-4">
+                        <div className="flex gap-2 mb-3">
                           <Button variant={fileFilter === 'all' ? 'default' : 'outline'} size="sm" className={fileFilter === 'all' ? 'bg-[#4E50A8] text-white' : 'text-gray-600'} onClick={() => setFileFilter('all')}>
                             All
                           </Button>
@@ -488,10 +567,58 @@ const Index = () => {
                             Excel
                           </Button>
                         </div>
+
+                        {/* Multi-select controls - only show for endocs/ensights */}
+                        {(fileFilter === 'endocs' || fileFilter === 'ensights') && filteredFiles.length > 0 && (
+                          <div className="flex items-center justify-between py-2 px-1 mb-2 border-y border-gray-100">
+                            <div className="flex items-center gap-2">
+                              <Checkbox 
+                                checked={selectedFileIds.length === filteredFiles.length && selectedFileIds.length > 0}
+                                onCheckedChange={toggleSelectAll}
+                                id="select-all-dialog"
+                              />
+                              <label htmlFor="select-all-dialog" className="text-xs text-gray-600 cursor-pointer">
+                                Select All
+                              </label>
+                            </div>
+                            {selectedFileIds.length > 0 && (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="sm" className="h-7 text-xs text-red-600 hover:text-red-700 hover:bg-red-50">
+                                    <Trash2 size={12} className="mr-1" />
+                                    Delete ({selectedFileIds.length})
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Delete Files</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to delete {selectedFileIds.length} file{selectedFileIds.length !== 1 ? 's' : ''}? This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={handleBulkDelete} className="bg-red-500 hover:bg-red-600">
+                                      Delete
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            )}
+                          </div>
+                        )}
                         
                         <ScrollArea className="flex-1 pr-4">
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-1">
-                            {filteredFiles.map(file => <div key={file.id} className="flex items-center gap-3 p-3 border border-gray-100 rounded-md hover:bg-gray-50 group">
+                            {filteredFiles.map(file => <div key={file.id} className="flex items-center gap-2 p-3 border border-gray-100 rounded-md hover:bg-gray-50 group">
+                                {/* Checkbox for multi-select - only show for endocs/ensights */}
+                                {(fileFilter === 'endocs' || fileFilter === 'ensights') && (
+                                  <Checkbox 
+                                    checked={selectedFileIds.includes(file.id)}
+                                    onCheckedChange={() => toggleFileSelection(file.id)}
+                                    onClick={(e) => e.stopPropagation()}
+                                  />
+                                )}
                                 <div className="w-10 h-10 bg-[#F1F1F9] rounded-md flex items-center justify-center flex-shrink-0">
                                   <span className="text-[#4E50A8] text-xs font-medium">{getFileTypeDisplay(file.type)}</span>
                                 </div>
