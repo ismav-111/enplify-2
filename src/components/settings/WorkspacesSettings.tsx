@@ -43,7 +43,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-type WorkspaceRole = 'owner' | 'admin' | 'editor' | 'viewer' | 'guest';
+type WorkspaceRole = 'owner' | 'admin' | 'contributor' | 'viewer' | 'guest';
 
 interface WorkspaceMember {
   id: string;
@@ -97,7 +97,7 @@ const WorkspacesSettings = () => {
       id: '4',
       name: 'Product Design',
       memberCount: 4,
-      role: 'editor',
+      role: 'contributor',
       createdAt: '2024-03-01',
       isShared: true,
     },
@@ -105,35 +105,23 @@ const WorkspacesSettings = () => {
 
   // Separate workspaces by ownership
   const ownedWorkspaces = workspaces.filter(w => w.role === 'owner' || w.role === 'admin');
-  const invitedWorkspaces = workspaces.filter(w => w.role === 'editor' || w.role === 'viewer' || w.role === 'guest');
+  const invitedWorkspaces = workspaces.filter(w => w.role === 'contributor' || w.role === 'viewer' || w.role === 'guest');
 
   const members: WorkspaceMember[] = [
     {
       id: '1',
-      email: 'john@example.com',
-      role: 'owner',
-      joinedAt: '2024-01-15',
-    },
-    {
-      id: '2',
-      email: 'sarah@example.com',
-      role: 'admin',
-      joinedAt: '2024-01-20',
-    },
-    {
-      id: '3',
       email: 'mike@example.com',
-      role: 'editor',
+      role: 'contributor',
       joinedAt: '2024-02-01',
     },
     {
-      id: '4',
+      id: '2',
       email: 'emma@example.com',
       role: 'viewer',
       joinedAt: '2024-02-10',
     },
     {
-      id: '5',
+      id: '3',
       email: 'guest@example.com',
       role: 'guest',
       joinedAt: '2024-03-01',
@@ -160,7 +148,7 @@ const WorkspacesSettings = () => {
     const roleConfig = {
       owner: { variant: 'default' as const, icon: Crown, label: 'Owner' },
       admin: { variant: 'secondary' as const, icon: Shield, label: 'Admin' },
-      editor: { variant: 'outline' as const, icon: Edit3, label: 'Editor' },
+      contributor: { variant: 'outline' as const, icon: Edit3, label: 'Contributor' },
       viewer: { variant: 'outline' as const, icon: Eye, label: 'Viewer' },
       guest: { variant: 'outline' as const, icon: UserCheck, label: 'Guest' },
     };
@@ -378,7 +366,7 @@ const WorkspacesSettings = () => {
                         {new Date(member.joinedAt).toLocaleDateString()}
                       </TableCell>
                       <TableCell>
-                        {member.role !== 'owner' && ownedWorkspaces.find(w => w.id === selectedWorkspace) && (
+                        {ownedWorkspaces.find(w => w.id === selectedWorkspace) && (
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="icon">
