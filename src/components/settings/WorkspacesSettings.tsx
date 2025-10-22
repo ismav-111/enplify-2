@@ -1,0 +1,345 @@
+import { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { 
+  Users, 
+  Plus, 
+  MoreVertical, 
+  UserPlus, 
+  Crown, 
+  Mail,
+  Calendar,
+  Trash2,
+  Settings,
+  Shield
+} from 'lucide-react';
+import { toast } from 'sonner';
+
+interface WorkspaceMember {
+  id: string;
+  email: string;
+  role: 'owner' | 'admin' | 'member';
+  joinedAt: string;
+}
+
+interface Workspace {
+  id: string;
+  name: string;
+  memberCount: number;
+  role: 'owner' | 'admin' | 'member';
+  createdAt: string;
+  isShared: boolean;
+}
+
+const WorkspacesSettings = () => {
+  const [inviteDialog, setInviteDialog] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [selectedWorkspace, setSelectedWorkspace] = useState<string | null>(null);
+
+  // Mock data - replace with actual data from your backend
+  const workspaces: Workspace[] = [
+    {
+      id: '1',
+      name: 'Team Alpha',
+      memberCount: 5,
+      role: 'owner',
+      createdAt: '2024-01-15',
+      isShared: true,
+    },
+    {
+      id: '2',
+      name: 'Personal Projects',
+      memberCount: 1,
+      role: 'owner',
+      createdAt: '2024-02-01',
+      isShared: false,
+    },
+    {
+      id: '3',
+      name: 'Client Work',
+      memberCount: 3,
+      role: 'admin',
+      createdAt: '2024-02-20',
+      isShared: true,
+    },
+  ];
+
+  const members: WorkspaceMember[] = [
+    {
+      id: '1',
+      email: 'john@example.com',
+      role: 'owner',
+      joinedAt: '2024-01-15',
+    },
+    {
+      id: '2',
+      email: 'sarah@example.com',
+      role: 'admin',
+      joinedAt: '2024-01-20',
+    },
+    {
+      id: '3',
+      email: 'mike@example.com',
+      role: 'member',
+      joinedAt: '2024-02-01',
+    },
+  ];
+
+  const handleInvite = () => {
+    if (inviteEmail.trim()) {
+      toast.success(`Invitation sent to ${inviteEmail}`);
+      setInviteEmail('');
+      setInviteDialog(false);
+    }
+  };
+
+  const handleLeaveWorkspace = (workspaceId: string) => {
+    toast.success('Left workspace successfully');
+  };
+
+  const handleRemoveMember = (memberId: string) => {
+    toast.success('Member removed successfully');
+  };
+
+  const getRoleBadge = (role: string) => {
+    const variants = {
+      owner: 'default',
+      admin: 'secondary',
+      member: 'outline',
+    } as const;
+
+    return (
+      <Badge variant={variants[role as keyof typeof variants]} className="capitalize">
+        {role === 'owner' && <Crown className="w-3 h-3 mr-1" />}
+        {role === 'admin' && <Shield className="w-3 h-3 mr-1" />}
+        {role}
+      </Badge>
+    );
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Your Workspaces */}
+      <Card className="border-border/50 shadow-sm">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-xl">Your Workspaces</CardTitle>
+              <CardDescription className="mt-1.5">
+                Manage and collaborate across different workspaces
+              </CardDescription>
+            </div>
+            <Button className="bg-primary hover:bg-primary/90">
+              <Plus className="w-4 h-4 mr-2" />
+              New Workspace
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {workspaces.map((workspace) => (
+              <div
+                key={workspace.id}
+                className="flex items-center justify-between p-4 rounded-lg border border-border/50 bg-card hover:border-primary/20 hover:shadow-sm transition-all"
+              >
+                <div className="flex items-center gap-4 flex-1">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                    <Users className="w-5 h-5 text-primary-foreground" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold text-foreground">{workspace.name}</h3>
+                      {getRoleBadge(workspace.role)}
+                      {workspace.isShared && (
+                        <Badge variant="outline" className="text-xs">
+                          <Users className="w-3 h-3 mr-1" />
+                          Shared
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <Users className="w-3.5 h-3.5" />
+                        {workspace.memberCount} {workspace.memberCount === 1 ? 'member' : 'members'}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-3.5 h-3.5" />
+                        Created {new Date(workspace.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreVertical className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {workspace.isShared && (
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setSelectedWorkspace(workspace.id);
+                          setInviteDialog(true);
+                        }}
+                      >
+                        <UserPlus className="w-4 h-4 mr-2" />
+                        Invite Members
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem>
+                      <Settings className="w-4 h-4 mr-2" />
+                      Settings
+                    </DropdownMenuItem>
+                    {workspace.role !== 'owner' && (
+                      <DropdownMenuItem
+                        onClick={() => handleLeaveWorkspace(workspace.id)}
+                        className="text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Leave Workspace
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Workspace Members */}
+      <Card className="border-border/50 shadow-sm">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-xl">Team Members</CardTitle>
+              <CardDescription className="mt-1.5">
+                Manage members in your shared workspaces
+              </CardDescription>
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => setInviteDialog(true)}
+            >
+              <Mail className="w-4 h-4 mr-2" />
+              Invite
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-lg border border-border/50">
+            <Table>
+              <TableHeader>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead>Member</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Joined</TableHead>
+                  <TableHead className="w-[50px]"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {members.map((member) => (
+                  <TableRow key={member.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-foreground text-sm font-medium">
+                          {member.email.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="font-medium">{member.email}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>{getRoleBadge(member.role)}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {new Date(member.joinedAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      {member.role !== 'owner' && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreVertical className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem>Change Role</DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => handleRemoveMember(member.id)}
+                              className="text-destructive"
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Remove
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Invite Dialog */}
+      <Dialog open={inviteDialog} onOpenChange={setInviteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Invite Team Member</DialogTitle>
+            <DialogDescription>
+              Send an invitation to collaborate on this workspace
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="invite-email">Email Address</Label>
+              <Input
+                id="invite-email"
+                type="email"
+                placeholder="colleague@example.com"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setInviteDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleInvite} className="bg-primary hover:bg-primary/90">
+              Send Invitation
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default WorkspacesSettings;
