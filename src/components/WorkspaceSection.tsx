@@ -275,26 +275,28 @@ const WorkspaceSection = ({
                   {truncateTitle(workspace.name)}
                 </span>
                 
-                {hoveredItem === workspace.id && workspace.isOwner && (
+                {hoveredItem === workspace.id && (
                   <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-5 w-5 p-0"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onCreateSession(workspace.id);
-                          }}
-                        >
-                          <Plus size={10} className="text-gray-400" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent side="right">
-                        <p>Add session</p>
-                      </TooltipContent>
-                    </Tooltip>
+                    {workspace.isOwner && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-5 w-5 p-0"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onCreateSession(workspace.id);
+                            }}
+                          >
+                            <Plus size={10} className="text-gray-400" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          <p>Add session</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
                     
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -307,26 +309,42 @@ const WorkspaceSection = ({
                           <MoreHorizontal size={10} className="text-gray-400" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-32">
-                        <DropdownMenuItem 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRenameClick(e, workspace.id, workspace.name);
-                          }}
-                        >
-                          <Edit size={10} className="mr-2" />
-                          Rename
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteClick(e, 'workspace', workspace.id, workspace.name);
-                          }}
-                          className="text-red-600"
-                        >
-                          <Trash size={10} className="mr-2" />
-                          Delete
-                        </DropdownMenuItem>
+                      <DropdownMenuContent align="end" className="w-32 bg-white z-50">
+                        {workspace.isShared && (
+                          <DropdownMenuItem 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // Trigger invite for workspace - you'll need to implement this
+                              console.log('Invite to workspace:', workspace.id);
+                            }}
+                          >
+                            <UserPlus size={10} className="mr-2" />
+                            Invite
+                          </DropdownMenuItem>
+                        )}
+                        {workspace.isOwner && (
+                          <>
+                            <DropdownMenuItem 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRenameClick(e, workspace.id, workspace.name);
+                              }}
+                            >
+                              <Edit size={10} className="mr-2" />
+                              Rename
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteClick(e, 'workspace', workspace.id, workspace.name);
+                              }}
+                              className="text-red-600"
+                            >
+                              <Trash size={10} className="mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
