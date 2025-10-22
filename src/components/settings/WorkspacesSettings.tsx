@@ -284,10 +284,6 @@ const WorkspacesSettings = () => {
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-semibold text-foreground">{workspace.name}</h3>
                         {getRoleBadge(workspace.role)}
-                        <Badge variant="outline" className="text-xs">
-                          <Mail className="w-3 h-3 mr-1" />
-                          Invited
-                        </Badge>
                       </div>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <span className="flex items-center gap-1">
