@@ -16,6 +16,7 @@ interface DataSourceType {
   description: string;
   icon: LucideIcon;
   isConnected: boolean;
+  requiresOAuth?: boolean;
   fields: {
     id: string;
     label: string;
@@ -608,23 +609,12 @@ const dataSourceCategories = {
     description: 'Connect to your SharePoint sites and document libraries',
     icon: Share2,
     isConnected: false,
+    requiresOAuth: true,
     fields: [{
       id: 'site_url',
       label: 'SharePoint Site URL',
       type: 'text',
       placeholder: 'https://company.sharepoint.com/sites/yoursite',
-      required: true
-    }, {
-      id: 'client_id',
-      label: 'Client ID',
-      type: 'text',
-      placeholder: 'Enter your client ID',
-      required: true
-    }, {
-      id: 'client_secret',
-      label: 'Client Secret',
-      type: 'password',
-      placeholder: '••••••••',
       required: true
     }, {
       id: 'library_name',
@@ -658,19 +648,8 @@ const dataSourceCategories = {
     description: 'Connect to your Microsoft OneDrive for file access',
     icon: Cloud,
     isConnected: false,
+    requiresOAuth: true,
     fields: [{
-      id: 'client_id',
-      label: 'Client ID',
-      type: 'text',
-      placeholder: 'Enter your client ID',
-      required: true
-    }, {
-      id: 'client_secret',
-      label: 'Client Secret',
-      type: 'password',
-      placeholder: '••••••••',
-      required: true
-    }, {
       id: 'folder_path',
       label: 'Folder Path',
       type: 'text',
@@ -683,23 +662,12 @@ const dataSourceCategories = {
     description: 'Connect to your Google Drive for file access',
     icon: HardDrive,
     isConnected: false,
+    requiresOAuth: true,
     fields: [{
-      id: 'client_id',
-      label: 'Client ID',
-      type: 'text',
-      placeholder: 'Enter your client ID',
-      required: true
-    }, {
-      id: 'client_secret',
-      label: 'Client Secret',
-      type: 'password',
-      placeholder: '••••••••',
-      required: true
-    }, {
       id: 'folder_id',
-      label: 'Folder ID',
+      label: 'Folder ID (Optional)',
       type: 'text',
-      placeholder: 'Enter folder ID',
+      placeholder: 'Enter folder ID to sync specific folder',
       required: false
     }]
   }, {
@@ -875,6 +843,32 @@ const DataSourceSettings = () => {
   };
   const filteredDataSources = getFilteredDataSources();
   const handleConnect = async (sourceId: string) => {
+    const source = dataSources.find(s => s.id === sourceId);
+    
+    // Handle OAuth sources differently
+    if (source?.requiresOAuth) {
+      setConnectingSource(sourceId);
+      
+      // In a real implementation, this would open an OAuth popup/redirect
+      toast.info(`Opening ${source.name} authorization...`, {
+        description: 'You will be redirected to authorize access'
+      });
+      
+      // Simulate OAuth flow (in production, this would be a real OAuth redirect)
+      setTimeout(() => {
+        setConnectedSources(prev => ({
+          ...prev,
+          [sourceId]: true
+        }));
+        toast.success(`Successfully authorized ${source.name}`);
+        setExpandedSource(null);
+        setConnectingSource(null);
+      }, 2000);
+      
+      return;
+    }
+    
+    // Regular connection flow for non-OAuth sources
     setConnectingSource(sourceId);
     setConnectionProgress(0);
 
@@ -1061,32 +1055,88 @@ const DataSourceSettings = () => {
                         </Button>
                       </div>
                     </div> : <div className="bg-white rounded-lg border border-gray-200 p-5">
-                      <form className="space-y-4">
-                        {source.fields.map(field => <div key={field.id} className="space-y-2">
-                            <label htmlFor={`${source.id}-${field.id}`} className="block text-sm font-medium text-gray-700">
-                              {field.label} {field.required && <span className="text-red-500">*</span>}
-                            </label>
-                            {field.type === 'textarea' ? (
-                              <textarea
-                                id={`${source.id}-${field.id}`}
-                                placeholder={field.placeholder}
-                                required={field.required}
-                                className="w-full min-h-[60px] px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
-                                rows={3}
-                              />
-                            ) : (
-                              <Input id={`${source.id}-${field.id}`} type={field.type} placeholder={field.placeholder} required={field.required} className="h-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500" />
-                            )}
-                          </div>)}
-                        <div className="pt-3 border-t border-gray-100">
-                          <Button type="button" onClick={() => handleConnect(source.id)} disabled={connectingSource !== null} className="bg-blue-600 hover:bg-blue-700 text-white">
-                            {connectingSource === source.id ? <>
-                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                Connecting...
-                              </> : `Connect to ${source.name}`}
-                          </Button>
+                      {source.requiresOAuth ? (
+                        <div className="space-y-4">
+                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div className="flex items-start gap-3">
+                              <Shield className="h-5 w-5 text-blue-600 mt-0.5" />
+                              <div>
+                                <h4 className="font-semibold text-blue-900 text-sm mb-1">OAuth Authorization Required</h4>
+                                <p className="text-sm text-blue-700">
+                                  This data source requires secure OAuth authorization. Click the button below to authorize access to your {source.name} account.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {source.fields.length > 0 && (
+                            <form className="space-y-4">
+                              {source.fields.map(field => (
+                                <div key={field.id} className="space-y-2">
+                                  <label htmlFor={`${source.id}-${field.id}`} className="block text-sm font-medium text-gray-700">
+                                    {field.label} {field.required && <span className="text-red-500">*</span>}
+                                  </label>
+                                  <Input 
+                                    id={`${source.id}-${field.id}`} 
+                                    type={field.type} 
+                                    placeholder={field.placeholder} 
+                                    required={field.required} 
+                                    className="h-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
+                                  />
+                                </div>
+                              ))}
+                            </form>
+                          )}
+                          
+                          <div className="pt-3 border-t border-gray-100">
+                            <Button 
+                              type="button" 
+                              onClick={() => handleConnect(source.id)} 
+                              disabled={connectingSource !== null}
+                              className="bg-blue-600 hover:bg-blue-700 text-white"
+                            >
+                              {connectingSource === source.id ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                  Authorizing...
+                                </>
+                              ) : (
+                                <>
+                                  <Shield className="h-4 w-4 mr-2" />
+                                  Authorize {source.name}
+                                </>
+                              )}
+                            </Button>
+                          </div>
                         </div>
-                      </form>
+                      ) : (
+                        <form className="space-y-4">
+                          {source.fields.map(field => <div key={field.id} className="space-y-2">
+                              <label htmlFor={`${source.id}-${field.id}`} className="block text-sm font-medium text-gray-700">
+                                {field.label} {field.required && <span className="text-red-500">*</span>}
+                              </label>
+                              {field.type === 'textarea' ? (
+                                <textarea
+                                  id={`${source.id}-${field.id}`}
+                                  placeholder={field.placeholder}
+                                  required={field.required}
+                                  className="w-full min-h-[60px] px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
+                                  rows={3}
+                                />
+                              ) : (
+                                <Input id={`${source.id}-${field.id}`} type={field.type} placeholder={field.placeholder} required={field.required} className="h-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500" />
+                              )}
+                            </div>)}
+                          <div className="pt-3 border-t border-gray-100">
+                            <Button type="button" onClick={() => handleConnect(source.id)} disabled={connectingSource !== null} className="bg-blue-600 hover:bg-blue-700 text-white">
+                              {connectingSource === source.id ? <>
+                                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                  Connecting...
+                                </> : `Connect to ${source.name}`}
+                            </Button>
+                          </div>
+                        </form>
+                      )}
                     </div>}
                 </div>
               </div>}
