@@ -18,6 +18,7 @@ import type { ResponseMode } from '@/components/MessageInput';
 import MinimalOnboardingWizard from "@/components/MinimalOnboardingWizard"
 import { useMinimalOnboarding } from "@/hooks/useMinimalOnboarding"
 import { Checkbox } from '@/components/ui/checkbox'
+import { toast } from 'sonner'
 
 interface FileItem {
   id: string;
@@ -298,14 +299,15 @@ const Index = () => {
 
   // Workspace handlers
   const workspaceActions = {
-    onCreateWorkspace: () => {
+    onCreateWorkspace: (isShared: boolean = false) => {
       const newWorkspace: Workspace = {
         id: `ws-${Date.now()}`,
-        name: `New Workspace ${workspaces.length + 1}`,
+        name: isShared ? `New Shared Workspace ${workspaces.filter(w => w.isShared).length + 1}` : `New Workspace ${workspaces.filter(w => !w.isShared).length + 1}`,
         isExpanded: true,
         isActive: false,
         isOwner: true,
-        isShared: false,
+        isShared: isShared,
+        memberCount: isShared ? 1 : undefined,
         sessions: []
       };
       setWorkspaces(prev => [...prev, newWorkspace]);
@@ -374,6 +376,11 @@ const Index = () => {
     onInviteUsers: (workspaceId: string, sessionId: string) => {
       // Mock invite functionality - would open invite dialog
       console.log(`Inviting users to workspace ${workspaceId}, session ${sessionId}`);
+    },
+    onInviteToWorkspace: (workspaceId: string) => {
+      // Mock invite functionality for workspace
+      console.log(`Inviting users to workspace ${workspaceId}`);
+      toast.info("Invite functionality coming soon!");
     }
   };
 
@@ -712,15 +719,34 @@ const Index = () => {
                   {getFileTypeDisplay(viewingFile.type)} • {formatFileSize(viewingFile.size)} • {viewingFile.date.toLocaleDateString()}
                 </DialogDescription>
               </DialogHeader>
-              <div className="flex items-center justify-center p-4 bg-gray-50 rounded-md min-h-[400px]">
-                {viewingFile.type === 'application/pdf' ? <div className="text-center text-gray-500">
-                    <Files size={48} className="mx-auto mb-2" />
-                    <p>PDF Preview</p>
-                    <p className="text-sm">Click to download or view in browser</p>
-                  </div> : <div className="text-center text-gray-500">
+              <div className="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-md min-h-[400px] gap-4">
+                {viewingFile.type === 'application/pdf' ? (
+                  <>
+                    <div className="text-center text-gray-500">
+                      <Files size={48} className="mx-auto mb-2" />
+                      <p>PDF Document</p>
+                      <p className="text-sm text-gray-400 mt-1">Click below to view in browser</p>
+                    </div>
+                    {viewingFile.url && (
+                      <a 
+                        href={viewingFile.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2"
+                      >
+                        <Button variant="default" className="bg-[#4E50A8] hover:bg-[#3d3f85]">
+                          <Eye size={16} className="mr-2" />
+                          Open File
+                        </Button>
+                      </a>
+                    )}
+                  </>
+                ) : (
+                  <div className="text-center text-gray-500">
                     <Files size={48} className="mx-auto mb-2" />
                     <p>File preview not available</p>
-                  </div>}
+                  </div>
+                )}
               </div>
             </DialogContent>
           </Dialog>}

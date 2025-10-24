@@ -62,11 +62,12 @@ export interface Workspace {
   sessions: Session[];
   isOwner: boolean;
   isShared: boolean;
+  memberCount?: number;
 }
 
 interface WorkspaceSectionProps {
   workspaces: Workspace[];
-  onCreateWorkspace: () => void;
+  onCreateWorkspace: (isShared?: boolean) => void;
   onCreateSession: (workspaceId: string) => void;
   onSelectWorkspace: (workspaceId: string, sessionId?: string) => void;
   onToggleWorkspace: (workspaceId: string) => void;
@@ -75,6 +76,7 @@ interface WorkspaceSectionProps {
   onDeleteWorkspace: (workspaceId: string) => void;
   onDeleteSession: (workspaceId: string, sessionId: string) => void;
   onInviteUsers: (workspaceId: string, sessionId: string) => void;
+  onInviteToWorkspace: (workspaceId: string) => void;
 }
 
 const WorkspaceSection = ({
@@ -87,7 +89,8 @@ const WorkspaceSection = ({
   onRenameSession,
   onDeleteWorkspace,
   onDeleteSession,
-  onInviteUsers
+  onInviteUsers,
+  onInviteToWorkspace
 }: WorkspaceSectionProps) => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<string | null>(null);
@@ -275,80 +278,78 @@ const WorkspaceSection = ({
                   {truncateTitle(workspace.name)}
                 </span>
                 
-                {hoveredItem === workspace.id && (
-                  <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                    {workspace.isOwner && (
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-5 w-5 p-0"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onCreateSession(workspace.id);
-                            }}
-                          >
-                            <Plus size={10} className="text-gray-400" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                          <p>Add session</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    )}
-                    
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-5 w-5 p-0"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <MoreHorizontal size={10} className="text-gray-400" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-32">
-                        {workspace.isShared && (
-                          <DropdownMenuItem 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              // Trigger invite for workspace - you'll need to implement this
-                              console.log('Invite to workspace:', workspace.id);
-                            }}
-                          >
-                            <UserPlus size={10} className="mr-2" />
-                            Invite
-                          </DropdownMenuItem>
-                        )}
-                        {workspace.isOwner && (
-                          <>
-                            <DropdownMenuItem 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleRenameClick(e, workspace.id, workspace.name);
-                              }}
-                            >
-                              <Edit size={10} className="mr-2" />
-                              Rename
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteClick(e, 'workspace', workspace.id, workspace.name);
-                              }}
-                              className="text-red-600"
-                            >
-                              <Trash size={10} className="mr-2" />
-                              Delete
-                            </DropdownMenuItem>
-                          </>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                {workspace.isShared && workspace.memberCount !== undefined && (
+                  <div className="flex items-center gap-0.5 text-gray-400 mr-1">
+                    <Users size={10} />
+                    <span className="text-[10px]">{workspace.memberCount}</span>
                   </div>
                 )}
+                
+                <div className="flex gap-0.5">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-5 w-5 p-0"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onCreateSession(workspace.id);
+                        }}
+                      >
+                        <Plus size={10} className="text-gray-400" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p>Add session</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-5 w-5 p-0"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <MoreHorizontal size={10} className="text-gray-400" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-32 bg-white">
+                      {workspace.isShared && (
+                        <DropdownMenuItem 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onInviteToWorkspace(workspace.id);
+                          }}
+                        >
+                          <UserPlus size={10} className="mr-2" />
+                          Invite
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuItem 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRenameClick(e, workspace.id, workspace.name);
+                        }}
+                      >
+                        <Edit size={10} className="mr-2" />
+                        Rename
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteClick(e, 'workspace', workspace.id, workspace.name);
+                        }}
+                        className="text-red-600"
+                      >
+                        <Trash size={10} className="mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </>
             )}
           </div>
@@ -412,69 +413,43 @@ const WorkspaceSection = ({
                           {truncateTitle(session.name, 22)}
                         </span>
                         
-                        {workspace.isShared && session.memberCount !== undefined && (
-                          <div className="flex items-center gap-0.5 text-gray-400 mr-1">
-                            <Users size={9} />
-                            <span className="text-[10px]">{session.memberCount}</span>
-                          </div>
-                        )}
-                        
-                        <div className={`flex gap-0.5 transition-opacity ${hoveredItem === sessionId ? 'opacity-100' : 'opacity-0'}`}>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                className="h-4 w-4 p-0"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <MoreHorizontal size={9} className="text-gray-400" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-32">
-                              {workspace.isShared && (
+                        {hoveredItem === sessionId && (
+                          <div className={`flex gap-0.5 transition-opacity opacity-100`}>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-4 w-4 p-0"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <MoreHorizontal size={9} className="text-gray-400" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-32">
                                 <DropdownMenuItem 
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleInviteClick(
-                                      e, 
-                                      workspace.id, 
-                                      session.id, 
-                                      workspace.name,
-                                      session.name
-                                    );
+                                    handleRenameClick(e, sessionId, session.name);
                                   }}
                                 >
-                                  <UserPlus size={9} className="mr-2" />
-                                  Invite
+                                  <Edit size={9} className="mr-2" />
+                                  Rename
                                 </DropdownMenuItem>
-                              )}
-                              {session.isOwner && (
-                                <>
-                                  <DropdownMenuItem 
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleRenameClick(e, sessionId, session.name);
-                                    }}
-                                  >
-                                    <Edit size={9} className="mr-2" />
-                                    Rename
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem 
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleDeleteClick(e, 'session', workspace.id, session.name, session.id);
-                                    }}
-                                    className="text-red-600"
-                                  >
-                                    <Trash size={9} className="mr-2" />
-                                    Delete
-                                  </DropdownMenuItem>
-                                </>
-                              )}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
+                                <DropdownMenuItem 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteClick(e, 'session', workspace.id, session.name, session.id);
+                                  }}
+                                  className="text-red-600"
+                                >
+                                  <Trash size={9} className="mr-2" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        )}
                       </>
                     )}
                   </div>
@@ -502,7 +477,7 @@ const WorkspaceSection = ({
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        onClick={onCreateWorkspace}
+                        onClick={() => onCreateWorkspace(false)}
                         className="h-5 w-5 p-0"
                       >
                         <Plus size={12} className="text-gray-400" />
@@ -524,6 +499,21 @@ const WorkspaceSection = ({
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Shared Workspaces</h3>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => onCreateWorkspace(true)}
+                        className="h-5 w-5 p-0"
+                      >
+                        <Plus size={12} className="text-gray-400" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p>New shared workspace</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
                 <div className="space-y-0.5">
                   {sharedWorkspaces.map(renderWorkspace)}
@@ -540,7 +530,7 @@ const WorkspaceSection = ({
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    onClick={onCreateWorkspace}
+                    onClick={() => onCreateWorkspace(false)}
                     className="h-5 w-5 p-0"
                   >
                     <Plus size={12} className="text-gray-400" />
@@ -556,7 +546,7 @@ const WorkspaceSection = ({
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={onCreateWorkspace}
+                onClick={() => onCreateWorkspace(false)}
                 className="h-7 text-[11px]"
               >
                 <Plus size={11} className="mr-1" />
