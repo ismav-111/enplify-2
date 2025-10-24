@@ -31,7 +31,7 @@ interface SidebarProps {
   onDeleteConversation?: (id: string) => void;
   workspaces?: Workspace[];
   onWorkspaceAction?: {
-    onCreateWorkspace: (isShared?: boolean) => void;
+    onCreateWorkspace: () => void;
     onCreateSession: (workspaceId: string) => void;
     onSelectWorkspace: (workspaceId: string, sessionId?: string) => void;
     onToggleWorkspace: (workspaceId: string) => void;
@@ -40,7 +40,6 @@ interface SidebarProps {
     onDeleteWorkspace: (workspaceId: string) => void;
     onDeleteSession: (workspaceId: string, sessionId: string) => void;
     onInviteUsers: (workspaceId: string, sessionId: string) => void;
-    onInviteToWorkspace: (workspaceId: string) => void;
   };
 }
 
@@ -291,7 +290,6 @@ const Sidebar = ({
                 onDeleteWorkspace={onWorkspaceAction.onDeleteWorkspace}
                 onDeleteSession={onWorkspaceAction.onDeleteSession}
                 onInviteUsers={onWorkspaceAction.onInviteUsers}
-                onInviteToWorkspace={onWorkspaceAction.onInviteToWorkspace}
               />
             )}
           </div>
