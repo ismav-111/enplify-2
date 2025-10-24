@@ -18,6 +18,7 @@ import type { ResponseMode } from '@/components/MessageInput';
 import MinimalOnboardingWizard from "@/components/MinimalOnboardingWizard"
 import { useMinimalOnboarding } from "@/hooks/useMinimalOnboarding"
 import { Checkbox } from '@/components/ui/checkbox'
+import { toast } from 'sonner'
 
 interface FileItem {
   id: string;
@@ -306,6 +307,7 @@ const Index = () => {
         isActive: false,
         isOwner: true,
         isShared: isShared,
+        memberCount: isShared ? 1 : undefined,
         sessions: []
       };
       setWorkspaces(prev => [...prev, newWorkspace]);
@@ -374,6 +376,11 @@ const Index = () => {
     onInviteUsers: (workspaceId: string, sessionId: string) => {
       // Mock invite functionality - would open invite dialog
       console.log(`Inviting users to workspace ${workspaceId}, session ${sessionId}`);
+    },
+    onInviteToWorkspace: (workspaceId: string) => {
+      // Mock invite functionality for workspace
+      console.log(`Inviting users to workspace ${workspaceId}`);
+      toast.info("Invite functionality coming soon!");
     }
   };
 

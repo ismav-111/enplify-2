@@ -62,6 +62,7 @@ export interface Workspace {
   sessions: Session[];
   isOwner: boolean;
   isShared: boolean;
+  memberCount?: number;
 }
 
 interface WorkspaceSectionProps {
@@ -75,6 +76,7 @@ interface WorkspaceSectionProps {
   onDeleteWorkspace: (workspaceId: string) => void;
   onDeleteSession: (workspaceId: string, sessionId: string) => void;
   onInviteUsers: (workspaceId: string, sessionId: string) => void;
+  onInviteToWorkspace: (workspaceId: string) => void;
 }
 
 const WorkspaceSection = ({
@@ -87,7 +89,8 @@ const WorkspaceSection = ({
   onRenameSession,
   onDeleteWorkspace,
   onDeleteSession,
-  onInviteUsers
+  onInviteUsers,
+  onInviteToWorkspace
 }: WorkspaceSectionProps) => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<string | null>(null);
@@ -275,6 +278,13 @@ const WorkspaceSection = ({
                   {truncateTitle(workspace.name)}
                 </span>
                 
+                {workspace.isShared && workspace.memberCount !== undefined && (
+                  <div className="flex items-center gap-0.5 text-gray-400 mr-1">
+                    <Users size={10} />
+                    <span className="text-[10px]">{workspace.memberCount}</span>
+                  </div>
+                )}
+                
                 {hoveredItem === workspace.id && (
                   <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Tooltip>
@@ -312,37 +322,32 @@ const WorkspaceSection = ({
                           <DropdownMenuItem 
                             onClick={(e) => {
                               e.stopPropagation();
-                              // Trigger invite for workspace - you'll need to implement this
-                              console.log('Invite to workspace:', workspace.id);
+                              onInviteToWorkspace(workspace.id);
                             }}
                           >
                             <UserPlus size={10} className="mr-2" />
                             Invite
                           </DropdownMenuItem>
                         )}
-                        {workspace.isOwner && (
-                          <>
-                            <DropdownMenuItem 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleRenameClick(e, workspace.id, workspace.name);
-                              }}
-                            >
-                              <Edit size={10} className="mr-2" />
-                              Rename
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteClick(e, 'workspace', workspace.id, workspace.name);
-                              }}
-                              className="text-red-600"
-                            >
-                              <Trash size={10} className="mr-2" />
-                              Delete
-                            </DropdownMenuItem>
-                          </>
-                        )}
+                        <DropdownMenuItem 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRenameClick(e, workspace.id, workspace.name);
+                          }}
+                        >
+                          <Edit size={10} className="mr-2" />
+                          Rename
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteClick(e, 'workspace', workspace.id, workspace.name);
+                          }}
+                          className="text-red-600"
+                        >
+                          <Trash size={10} className="mr-2" />
+                          Delete
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
