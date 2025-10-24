@@ -66,7 +66,7 @@ export interface Workspace {
 
 interface WorkspaceSectionProps {
   workspaces: Workspace[];
-  onCreateWorkspace: () => void;
+  onCreateWorkspace: (isShared?: boolean) => void;
   onCreateSession: (workspaceId: string) => void;
   onSelectWorkspace: (workspaceId: string, sessionId?: string) => void;
   onToggleWorkspace: (workspaceId: string) => void;
@@ -486,7 +486,7 @@ const WorkspaceSection = ({
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        onClick={onCreateWorkspace}
+                        onClick={() => onCreateWorkspace(false)}
                         className="h-5 w-5 p-0"
                       >
                         <Plus size={12} className="text-gray-400" />
@@ -513,14 +513,14 @@ const WorkspaceSection = ({
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        onClick={onCreateWorkspace}
+                        onClick={() => onCreateWorkspace(true)}
                         className="h-5 w-5 p-0"
                       >
                         <Plus size={12} className="text-gray-400" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent side="right">
-                      <p>New workspace</p>
+                      <p>New shared workspace</p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
@@ -539,7 +539,7 @@ const WorkspaceSection = ({
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    onClick={onCreateWorkspace}
+                    onClick={() => onCreateWorkspace(false)}
                     className="h-5 w-5 p-0"
                   >
                     <Plus size={12} className="text-gray-400" />
@@ -555,7 +555,7 @@ const WorkspaceSection = ({
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={onCreateWorkspace}
+                onClick={() => onCreateWorkspace(false)}
                 className="h-7 text-[11px]"
               >
                 <Plus size={11} className="mr-1" />

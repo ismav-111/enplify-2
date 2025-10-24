@@ -298,14 +298,14 @@ const Index = () => {
 
   // Workspace handlers
   const workspaceActions = {
-    onCreateWorkspace: () => {
+    onCreateWorkspace: (isShared: boolean = false) => {
       const newWorkspace: Workspace = {
         id: `ws-${Date.now()}`,
-        name: `New Workspace ${workspaces.length + 1}`,
+        name: isShared ? `New Shared Workspace ${workspaces.filter(w => w.isShared).length + 1}` : `New Workspace ${workspaces.filter(w => !w.isShared).length + 1}`,
         isExpanded: true,
         isActive: false,
         isOwner: true,
-        isShared: false,
+        isShared: isShared,
         sessions: []
       };
       setWorkspaces(prev => [...prev, newWorkspace]);
