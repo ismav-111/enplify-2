@@ -508,6 +508,21 @@ const WorkspaceSection = ({
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Shared Workspaces</h3>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={onCreateWorkspace}
+                        className="h-5 w-5 p-0"
+                      >
+                        <Plus size={12} className="text-gray-400" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p>New workspace</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
                 <div className="space-y-0.5">
                   {sharedWorkspaces.map(renderWorkspace)}
