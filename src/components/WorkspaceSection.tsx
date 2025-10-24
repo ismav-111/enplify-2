@@ -415,16 +415,8 @@ const WorkspaceSection = ({
                           {truncateTitle(session.name, 22)}
                         </span>
                         
-                        {workspace.isShared && session.memberCount !== undefined && (
-                          <div className="flex items-center gap-0.5 text-gray-400 mr-1">
-                            <Users size={9} />
-                            <span className="text-[10px]">{session.memberCount}</span>
-                          </div>
-                        )}
-                        
-                        {/* Only show actions for sessions in personal workspaces, not shared */}
-                        {!workspace.isShared && (
-                          <div className={`flex gap-0.5 transition-opacity ${hoveredItem === sessionId ? 'opacity-100' : 'opacity-0'}`}>
+                        {hoveredItem === sessionId && (
+                          <div className={`flex gap-0.5 transition-opacity opacity-100`}>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button 
@@ -437,29 +429,25 @@ const WorkspaceSection = ({
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="w-32">
-                                {session.isOwner && (
-                                  <>
-                                    <DropdownMenuItem 
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleRenameClick(e, sessionId, session.name);
-                                      }}
-                                    >
-                                      <Edit size={9} className="mr-2" />
-                                      Rename
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem 
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleDeleteClick(e, 'session', workspace.id, session.name, session.id);
-                                      }}
-                                      className="text-red-600"
-                                    >
-                                      <Trash size={9} className="mr-2" />
-                                      Delete
-                                    </DropdownMenuItem>
-                                  </>
-                                )}
+                                <DropdownMenuItem 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRenameClick(e, sessionId, session.name);
+                                  }}
+                                >
+                                  <Edit size={9} className="mr-2" />
+                                  Rename
+                                </DropdownMenuItem>
+                                <DropdownMenuItem 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteClick(e, 'session', workspace.id, session.name, session.id);
+                                  }}
+                                  className="text-red-600"
+                                >
+                                  <Trash size={9} className="mr-2" />
+                                  Delete
+                                </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </div>
