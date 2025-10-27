@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 const Settings = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState("profile");
+  const [activeTab, setActiveTab] = useState("workspaces");
 
   // Check URL parameters for tab selection
   useEffect(() => {
@@ -70,12 +70,6 @@ const Settings = () => {
         >
           <TabsList className="grid w-full grid-cols-3 mb-8 bg-card/50 backdrop-blur-sm border border-border/50 h-14 rounded-xl p-1 shadow-sm">
             <TabsTrigger 
-              value="profile" 
-              className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-md h-11 text-base font-medium rounded-lg transition-all"
-            >
-              Profile
-            </TabsTrigger>
-            <TabsTrigger 
               value="workspaces" 
               className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-md h-11 text-base font-medium rounded-lg transition-all"
             >
@@ -87,11 +81,13 @@ const Settings = () => {
             >
               Data Sources
             </TabsTrigger>
+            <TabsTrigger 
+              value="profile" 
+              className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-md h-11 text-base font-medium rounded-lg transition-all"
+            >
+              Profile
+            </TabsTrigger>
           </TabsList>
-          
-          <TabsContent value="profile" className="mt-0">
-            <ProfileSettings />
-          </TabsContent>
           
           <TabsContent value="workspaces" className="mt-0">
             <WorkspacesSettings />
@@ -99,6 +95,10 @@ const Settings = () => {
           
           <TabsContent value="data-sources" className="mt-0">
             <DataSourceSettings />
+          </TabsContent>
+          
+          <TabsContent value="profile" className="mt-0">
+            <ProfileSettings />
           </TabsContent>
         </Tabs>
       </div>
