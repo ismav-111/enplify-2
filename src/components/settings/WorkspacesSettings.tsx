@@ -253,7 +253,7 @@ const WorkspacesSettings = () => {
       <Card className="border-border/50 shadow-sm">
         <CardHeader className="pb-4">
           <div>
-            <CardTitle className="text-xl">Workspaces You're Invited To</CardTitle>
+            <CardTitle className="text-xl">Shared Workspace</CardTitle>
             <CardDescription className="mt-1.5">
               Shared workspaces where you collaborate as a member
             </CardDescription>
