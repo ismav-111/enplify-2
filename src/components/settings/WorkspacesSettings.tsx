@@ -175,7 +175,7 @@ const WorkspacesSettings = () => {
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-xl">Workspaces You Manage</CardTitle>
+              <CardTitle className="text-xl">My Workspace</CardTitle>
               <CardDescription className="mt-1.5">
                 Shared workspaces where you can invite and manage members
               </CardDescription>
