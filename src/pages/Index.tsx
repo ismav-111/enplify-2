@@ -14,6 +14,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Tooltip as TooltipComponent, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import type { ResponseMode } from '@/components/MessageInput';
 import MinimalOnboardingWizard from "@/components/MinimalOnboardingWizard"
 import { useMinimalOnboarding } from "@/hooks/useMinimalOnboarding"
@@ -813,39 +814,87 @@ const Index = () => {
           
           <ScrollArea className="h-[calc(100vh-80px)]">
             <div className="p-3 space-y-3">
-              {currentSources.items?.map((source: any, index: number) => (
-                <div key={index} className="group">
-                  <div className="space-y-1.5">
-                    {/* Source type badge */}
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">
-                        {source.domain || source.type}
-                      </span>
+              {currentSources.items?.map((source: any, index: number) => {
+                const isSelected = currentSources.selectedIndex === index || (currentSources.selectedIndex === undefined && index === 0);
+                return (
+                  <div 
+                    key={index} 
+                    className={`group p-3 rounded-lg transition-all cursor-pointer hover:bg-gray-50 ${
+                      isSelected ? 'bg-blue-50 border border-blue-200' : 'border border-transparent'
+                    }`}
+                    onClick={() => source.url && window.open(source.url, '_blank')}
+                  >
+                    <div className="space-y-2">
+                      {/* Favicon and domain */}
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded flex items-center justify-center bg-white border border-gray-200">
+                          {source.favicon?.startsWith('http') ? (
+                            <img 
+                              src={source.favicon} 
+                              alt={source.name}
+                              className="w-4 h-4"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = 'none';
+                                const parent = (e.target as HTMLImageElement).parentElement;
+                                if (parent) parent.textContent = '🌐';
+                              }}
+                            />
+                          ) : (
+                            <span className="text-xs">{source.favicon || '🌐'}</span>
+                          )}
+                        </div>
+                        <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">
+                          {source.domain || source.type}
+                        </span>
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="text-sm font-semibold text-gray-900 leading-snug">
+                        {source.title}
+                      </h3>
+
+                      {/* Data source location with tooltip */}
+                      {source.dataSource && (
+                        <TooltipProvider>
+                          <TooltipComponent>
+                            <TooltipTrigger asChild>
+                              <p className="text-xs text-blue-600 font-medium line-clamp-2 cursor-help">
+                                {source.dataSource}
+                              </p>
+                            </TooltipTrigger>
+                            <TooltipContent side="left" className="max-w-xs">
+                              <p className="text-xs">{source.dataSource}</p>
+                            </TooltipContent>
+                          </TooltipComponent>
+                        </TooltipProvider>
+                      )}
+
+                      {/* Brief excerpt - truncated with hover */}
+                      <TooltipProvider>
+                        <TooltipComponent>
+                          <TooltipTrigger asChild>
+                            <p className="text-[11px] text-gray-600 leading-relaxed line-clamp-2 cursor-help">
+                              {source.description}
+                            </p>
+                          </TooltipTrigger>
+                          <TooltipContent side="left" className="max-w-xs">
+                            <p className="text-xs">{source.description}</p>
+                          </TooltipContent>
+                        </TooltipComponent>
+                      </TooltipProvider>
+
+                      {/* Author and date */}
+                      {(source.author || source.date) && (
+                        <div className="flex items-center gap-2 text-[10px] text-gray-500 pt-1">
+                          {source.author && <span>{source.author}</span>}
+                          {source.author && source.date && <span>•</span>}
+                          {source.date && <span>{source.date}</span>}
+                        </div>
+                      )}
                     </div>
-
-                    {/* Title */}
-                    <h3 className="text-xs font-medium text-gray-900 leading-snug line-clamp-2">
-                      {source.title}
-                    </h3>
-
-                    {/* Data source location - most important info */}
-                    {source.dataSource && (
-                      <p className="text-[11px] text-blue-600 font-medium">
-                        {source.dataSource}
-                      </p>
-                    )}
-
-                    {/* Brief excerpt - truncated */}
-                    <p className="text-[11px] text-gray-600 leading-relaxed line-clamp-2">
-                      {source.description}
-                    </p>
                   </div>
-                  
-                  {index < currentSources.items.length - 1 && (
-                    <div className="border-b border-gray-100 mt-3"></div>
-                  )}
-                </div>
-              ))}
+                );
+              })}
 
               {/* More Sources Indicator */}
               {currentSources.totalSources && currentSources.totalSources > currentSources.items.length && (
