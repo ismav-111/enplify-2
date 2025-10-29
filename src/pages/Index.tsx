@@ -19,12 +19,6 @@ import MinimalOnboardingWizard from "@/components/MinimalOnboardingWizard"
 import { useMinimalOnboarding } from "@/hooks/useMinimalOnboarding"
 import { Checkbox } from '@/components/ui/checkbox'
 import { toast } from 'sonner'
-import {
-  Tooltip as TooltipComponent,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface FileItem {
   id: string;
@@ -152,7 +146,6 @@ const Index = () => {
   // Sources sidebar state
   const [isSourcesSidebarOpen, setIsSourcesSidebarOpen] = useState(false);
   const [currentSources, setCurrentSources] = useState<any>(null);
-  const [selectedSourceIndexInSidebar, setSelectedSourceIndexInSidebar] = useState(0);
 
   // Workspaces state - Mock data for demonstration
   const [workspaces, setWorkspaces] = useState<Workspace[]>([
@@ -748,9 +741,8 @@ const Index = () => {
                     <ChatMessage 
                       key={message.id} 
                       message={message} 
-                      onShowSources={(sources, selectedIndex = 0) => {
+                      onShowSources={(sources) => {
                         setCurrentSources(sources);
-                        setSelectedSourceIndexInSidebar(selectedIndex);
                         setIsSourcesSidebarOpen(true);
                       }}
                     />
@@ -821,98 +813,39 @@ const Index = () => {
           
           <ScrollArea className="h-[calc(100vh-80px)]">
             <div className="p-3 space-y-3">
-              {currentSources.items?.map((source: any, index: number) => {
-                const SourceIcon = source.icon;
-                const isSelected = index === selectedSourceIndexInSidebar;
-                
-                return (
-                  <div 
-                    key={index} 
-                    className={`group cursor-pointer rounded-lg p-3 transition-all ${
-                      isSelected ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
-                    }`}
-                    onClick={() => {
-                      if (source.url && source.url !== '#') {
-                        window.open(source.url, '_blank');
-                      }
-                    }}
-                  >
-                    <div className="space-y-2">
-                      {/* Favicon and domain */}
-                      <div className="flex items-center gap-2">
-                        <div 
-                          className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
-                          style={{ backgroundColor: source.color }}
-                        >
-                          {source.favicon ? (
-                            <img 
-                              src={source.favicon} 
-                              alt={source.name} 
-                              className="w-4 h-4" 
-                              onError={(e) => {
-                                e.currentTarget.style.display = 'none';
-                                e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                              }} 
-                            />
-                          ) : null}
-                          <SourceIcon className={`w-3 h-3 text-white ${source.favicon ? 'hidden' : ''}`} />
-                        </div>
-                        <TooltipProvider>
-                          <TooltipComponent>
-                            <TooltipTrigger asChild>
-                              <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wide truncate">
-                                {source.domain || source.type}
-                              </span>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>{source.domain || source.type}</p>
-                            </TooltipContent>
-                          </TooltipComponent>
-                        </TooltipProvider>
-                      </div>
-
-                      {/* Title */}
-                      <h3 className="text-xs font-medium text-gray-900 leading-snug line-clamp-2">
-                        {source.title}
-                      </h3>
-
-                      {/* Data source location - most important info */}
-                      {source.dataSource && (
-                        <TooltipProvider>
-                          <TooltipComponent>
-                            <TooltipTrigger asChild>
-                              <p className="text-[11px] text-blue-600 font-medium line-clamp-1">
-                                {source.dataSource}
-                              </p>
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-xs">
-                              <p className="text-xs">{source.dataSource}</p>
-                            </TooltipContent>
-                          </TooltipComponent>
-                        </TooltipProvider>
-                      )}
-
-                      {/* Brief excerpt - truncated */}
-                      <TooltipProvider>
-                        <TooltipComponent>
-                          <TooltipTrigger asChild>
-                            <p className="text-[11px] text-gray-600 leading-relaxed line-clamp-2">
-                              {source.description}
-                            </p>
-                          </TooltipTrigger>
-                          <TooltipContent className="max-w-xs">
-                            <p className="text-xs">{source.description}</p>
-                          </TooltipContent>
-                        </TooltipComponent>
-                      </TooltipProvider>
+              {currentSources.items?.map((source: any, index: number) => (
+                <div key={index} className="group">
+                  <div className="space-y-1.5">
+                    {/* Source type badge */}
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">
+                        {source.domain || source.type}
+                      </span>
                     </div>
-                    
-                    {index < currentSources.items.length - 1 && (
-                      <div className="border-b border-gray-100 mt-3"></div>
+
+                    {/* Title */}
+                    <h3 className="text-xs font-medium text-gray-900 leading-snug line-clamp-2">
+                      {source.title}
+                    </h3>
+
+                    {/* Data source location - most important info */}
+                    {source.dataSource && (
+                      <p className="text-[11px] text-blue-600 font-medium">
+                        {source.dataSource}
+                      </p>
                     )}
+
+                    {/* Brief excerpt - truncated */}
+                    <p className="text-[11px] text-gray-600 leading-relaxed line-clamp-2">
+                      {source.description}
+                    </p>
                   </div>
-                );
-              })}
+                  
+                  {index < currentSources.items.length - 1 && (
+                    <div className="border-b border-gray-100 mt-3"></div>
+                  )}
+                </div>
+              ))}
 
               {/* More Sources Indicator */}
               {currentSources.totalSources && currentSources.totalSources > currentSources.items.length && (

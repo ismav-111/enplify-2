@@ -72,14 +72,13 @@ interface ChatMessageProps {
       size: number;
     };
   };
-  onShowSources?: (sources: any, selectedIndex?: number) => void;
+  onShowSources?: (sources: any) => void;
 }
 
 const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
   const [chartType, setChartType] = useState<'line' | 'bar' | 'pie' | 'composed'>('line');
-  const [selectedSourceIndex, setSelectedSourceIndex] = useState(0);
   
   // Set default view mode based on message mode
   const getDefaultViewMode = () => {
@@ -221,9 +220,7 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
               year: '2023',
               citedBy: '193',
               description: 'On this page, you will find all of our data, charts, and comprehensive policy documentation.',
-              dataSource: 'Data extracted from webpage content',
-              url: 'https://ourworldindata.org',
-              favicon: 'https://ourworldindata.org/favicon.ico'
+              dataSource: 'Data extracted from webpage content'
             },
             { 
               name: 'sales_presentation.pptx', 
@@ -236,9 +233,7 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
               date: 'September 15, 2024', 
               citedBy: '45',
               description: 'Quarterly sales analysis and performance metrics presentation for stakeholder review.',
-              dataSource: 'Data extracted from Slide 2, 7, and 12',
-              url: '#',
-              favicon: null
+              dataSource: 'Data extracted from Slide 2, 7, and 12'
             },
             { 
               name: 'company_policies.pdf', 
@@ -251,9 +246,7 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
               date: 'January 10, 2024',
               citedBy: '89',
               description: 'Comprehensive employee policies and procedures documentation.',
-              dataSource: 'Data extracted from Page 15-18',
-              url: '#',
-              favicon: null
+              dataSource: 'Data extracted from Page 15-18'
             }
           ],
           icon: FileText
@@ -274,9 +267,7 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
               date: 'September 20, 2024',
               citedBy: '145',
               description: 'Comprehensive financial metrics and KPI dashboard for quarterly analysis.',
-              dataSource: 'Data extracted from Sheet 1-3 (Revenue, Costs, Projections)',
-              url: '#',
-              favicon: null
+              dataSource: 'Data extracted from Sheet 1-3 (Revenue, Costs, Projections)'
             },
             { 
               name: 'sales_analytics.pptx', 
@@ -289,9 +280,7 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
               date: 'August 15, 2024',
               citedBy: '278',
               description: 'Data visualization and insights from sales performance analysis.',
-              dataSource: 'Data extracted from Slide 4, 8, and 15',
-              url: '#',
-              favicon: null
+              dataSource: 'Data extracted from Slide 4, 8, and 15'
             },
             { 
               name: 'market-research.com', 
@@ -304,9 +293,7 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
               date: 'July 30, 2024',
               citedBy: '523',
               description: 'Industry analysis and market trends for strategic business planning.',
-              dataSource: 'Data extracted from Research Section 2.3',
-              url: 'https://market-research.com',
-              favicon: 'https://market-research.com/favicon.ico'
+              dataSource: 'Data extracted from Research Section 2.3'
             }
           ],
           icon: BarChart2
@@ -327,9 +314,7 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
               date: 'June 5, 2024',
               citedBy: '324',
               description: 'Technical documentation covering GPT-4 architecture and capabilities.',
-              dataSource: 'Data extracted from Technical Overview section',
-              url: 'https://openai.com',
-              favicon: 'https://openai.com/favicon.ico'
+              dataSource: 'Data extracted from Technical Overview section'
             },
             { 
               name: 'ai_research_presentation.pptx', 
@@ -342,9 +327,7 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
               date: 'August 12, 2024',
               citedBy: '156',
               description: 'Latest findings in AI safety research and alignment methodologies.',
-              dataSource: 'Data extracted from Slide 6, 11, and 20',
-              url: '#',
-              favicon: null
+              dataSource: 'Data extracted from Slide 6, 11, and 20'
             },
             { 
               name: 'transformer_architecture.pdf', 
@@ -357,9 +340,7 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
               date: 'December 6, 2017',
               citedBy: '45,892',
               description: 'The foundational paper introducing the Transformer architecture.',
-              dataSource: 'Data extracted from Page 3-5 (Architecture Overview)',
-              url: '#',
-              favicon: null
+              dataSource: 'Data extracted from Page 3-5 (Architecture Overview)'
             }
           ],
           icon: FileText
@@ -1281,72 +1262,19 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
     const sourceInfo = getSourceInfo();
     if (!sourceInfo || !sourceInfo.items.length) return null;
 
-    const selectedSource = sourceInfo.items[selectedSourceIndex];
-
     return (
       <div className="mt-6 pt-4 border-t border-gray-100">
-        <div className="space-y-3">
-          {/* Favicons row */}
-          <div className="flex items-center gap-2">
-            {sourceInfo.items.map((source, index) => {
-              const SourceIcon = source.icon;
-              return (
-                <TooltipProvider key={index}>
-                  <TooltipComponent>
-                    <TooltipTrigger asChild>
-                      <button
-                        onClick={() => {
-                          setSelectedSourceIndex(index);
-                          onShowSources?.(sourceInfo, index);
-                        }}
-                        className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
-                          selectedSourceIndex === index 
-                            ? 'ring-2 ring-blue-600 ring-offset-2' 
-                            : 'hover:ring-2 hover:ring-gray-300 hover:ring-offset-1'
-                        }`}
-                        style={{ backgroundColor: source.color }}
-                      >
-                        {source.favicon ? (
-                          <img src={source.favicon} alt={source.name} className="w-4 h-4" onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                          }} />
-                        ) : null}
-                        <SourceIcon className={`w-4 h-4 text-white ${source.favicon ? 'hidden' : ''}`} />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{source.name}</p>
-                    </TooltipContent>
-                  </TooltipComponent>
-                </TooltipProvider>
-              );
-            })}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onShowSources?.(sourceInfo, selectedSourceIndex)}
-              className="ml-2 text-xs text-gray-600 hover:text-gray-900"
-            >
-              Details
-            </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onShowSources?.(sourceInfo)}
+          className="flex items-center gap-2 px-3 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full text-sm text-gray-700 font-medium"
+        >
+          <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+            <span className="text-white text-xs font-bold">UW</span>
           </div>
-
-          {/* Truncated summary with tooltip */}
-          <TooltipProvider>
-            <TooltipComponent>
-              <TooltipTrigger asChild>
-                <div className="text-xs text-gray-600">
-                  <span className="font-medium">Source: </span>
-                  <span className="line-clamp-2">{selectedSource.dataSource}</span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="max-w-md">
-                <p className="text-xs">View complete source</p>
-              </TooltipContent>
-            </TooltipComponent>
-          </TooltipProvider>
-        </div>
+          <span>Sources</span>
+        </Button>
       </div>
     );
   };
