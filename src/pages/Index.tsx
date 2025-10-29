@@ -6,12 +6,6 @@ import MessageInput from '@/components/MessageInput';
 import ResponsePreferences, { ResponsePreferences as ResponsePreferencesType } from '@/components/ResponsePreferences';
 import { useEffect, useState } from 'react';
 import { Files, Settings, User, Search, Eye, Trash2, X } from 'lucide-react';
-import {
-  Tooltip as TooltipComponent,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -152,7 +146,6 @@ const Index = () => {
   // Sources sidebar state
   const [isSourcesSidebarOpen, setIsSourcesSidebarOpen] = useState(false);
   const [currentSources, setCurrentSources] = useState<any>(null);
-  const [selectedSourceIndexInSidebar, setSelectedSourceIndexInSidebar] = useState(0);
 
   // Workspaces state - Mock data for demonstration
   const [workspaces, setWorkspaces] = useState<Workspace[]>([
@@ -750,7 +743,6 @@ const Index = () => {
                       message={message} 
                       onShowSources={(sources) => {
                         setCurrentSources(sources);
-                        setSelectedSourceIndexInSidebar(sources.selectedIndex || 0);
                         setIsSourcesSidebarOpen(true);
                       }}
                     />
@@ -821,101 +813,39 @@ const Index = () => {
           
           <ScrollArea className="h-[calc(100vh-80px)]">
             <div className="p-3 space-y-3">
-              {currentSources.items?.map((source: any, index: number) => {
-                const SourceIcon = source.icon;
-                const isSelected = index === selectedSourceIndexInSidebar;
-                
-                return (
-                  <div 
-                    key={index} 
-                    className={`group cursor-pointer rounded-lg p-3 transition-all ${
-                      isSelected ? 'bg-blue-50 border-2 border-blue-200' : 'hover:bg-gray-50 border-2 border-transparent'
-                    }`}
-                    onClick={() => {
-                      if (source.url && source.url !== '#') {
-                        window.open(source.url, '_blank');
-                      }
-                      setSelectedSourceIndexInSidebar(index);
-                    }}
-                  >
-                    <div className="space-y-1.5">
-                      {/* Favicon and domain */}
-                      <div className="flex items-center gap-2">
-                        <div 
-                          className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0"
-                          style={{ backgroundColor: source.color + '20' }}
-                        >
-                          {source.favicon ? (
-                            <img 
-                              src={source.favicon} 
-                              alt={source.name}
-                              className="w-4 h-4 rounded"
-                              onError={(e) => {
-                                e.currentTarget.style.display = 'none';
-                                const parent = e.currentTarget.parentElement;
-                                if (parent) {
-                                  const icon = document.createElement('div');
-                                  icon.innerHTML = `<svg class="w-3 h-3" style="color: ${source.color}" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16z"/></svg>`;
-                                  parent.appendChild(icon.firstChild!);
-                                }
-                              }}
-                            />
-                          ) : (
-                            <SourceIcon className="w-3 h-3" style={{ color: source.color }} />
-                          )}
-                        </div>
-                        <TooltipProvider>
-                          <TooltipComponent>
-                            <TooltipTrigger asChild>
-                              <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wide truncate flex-1">
-                                {source.domain || source.type}
-                              </span>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="text-xs">{source.domain || source.type}</p>
-                            </TooltipContent>
-                          </TooltipComponent>
-                        </TooltipProvider>
-                      </div>
-
-                      {/* Title */}
-                      <h3 className="text-xs font-medium text-gray-900 leading-snug line-clamp-2">
-                        {source.title}
-                      </h3>
-
-                      {/* Data source location - with tooltip */}
-                      {source.dataSource && (
-                        <TooltipProvider>
-                          <TooltipComponent>
-                            <TooltipTrigger asChild>
-                              <p className="text-[11px] text-blue-600 font-medium line-clamp-1 cursor-help">
-                                {source.dataSource}
-                              </p>
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-xs">
-                              <p className="text-xs">{source.dataSource}</p>
-                            </TooltipContent>
-                          </TooltipComponent>
-                        </TooltipProvider>
-                      )}
-
-                      {/* Brief excerpt - with tooltip */}
-                      <TooltipProvider>
-                        <TooltipComponent>
-                          <TooltipTrigger asChild>
-                            <p className="text-[11px] text-gray-600 leading-relaxed line-clamp-2 cursor-help">
-                              {source.description}
-                            </p>
-                          </TooltipTrigger>
-                          <TooltipContent className="max-w-xs">
-                            <p className="text-xs">{source.description}</p>
-                          </TooltipContent>
-                        </TooltipComponent>
-                      </TooltipProvider>
+              {currentSources.items?.map((source: any, index: number) => (
+                <div key={index} className="group">
+                  <div className="space-y-1.5">
+                    {/* Source type badge */}
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wide">
+                        {source.domain || source.type}
+                      </span>
                     </div>
+
+                    {/* Title */}
+                    <h3 className="text-xs font-medium text-gray-900 leading-snug line-clamp-2">
+                      {source.title}
+                    </h3>
+
+                    {/* Data source location - most important info */}
+                    {source.dataSource && (
+                      <p className="text-[11px] text-blue-600 font-medium">
+                        {source.dataSource}
+                      </p>
+                    )}
+
+                    {/* Brief excerpt - truncated */}
+                    <p className="text-[11px] text-gray-600 leading-relaxed line-clamp-2">
+                      {source.description}
+                    </p>
                   </div>
-                );
-              })}
+                  
+                  {index < currentSources.items.length - 1 && (
+                    <div className="border-b border-gray-100 mt-3"></div>
+                  )}
+                </div>
+              ))}
 
               {/* More Sources Indicator */}
               {currentSources.totalSources && currentSources.totalSources > currentSources.items.length && (
