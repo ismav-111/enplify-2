@@ -1001,13 +1001,6 @@ const DataSourceSettings = () => {
               </div>
 
               <div>
-                <h3 className="font-semibold mb-2">Help improve Grok</h3>
-                <p className="text-muted-foreground">
-                  Your conversations may be used for training. You control this in settings.
-                </p>
-              </div>
-
-              <div>
                 <h3 className="font-semibold mb-2">Your data stays yours</h3>
                 <p className="text-muted-foreground">
                   We keep your data until you delete it. Disconnect anytime in settings.
