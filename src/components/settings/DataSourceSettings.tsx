@@ -989,14 +989,14 @@ const DataSourceSettings = () => {
               <div>
                 <h3 className="font-semibold mb-2">Access your files</h3>
                 <p className="text-muted-foreground">
-                  Files from {currentConnectingSource?.name} help Grok answer your questions
+                  Connect your {currentConnectingSource?.name} so enplify.ai can use your files to give more accurate answers.
                 </p>
               </div>
 
               <div>
                 <h3 className="font-semibold mb-2">Your data stays yours</h3>
                 <p className="text-muted-foreground">
-                  We keep your data until you delete it. Disconnect anytime in settings.
+                  We only use your files to help with your questions. You can disconnect or delete your data anytime in Settings.
                 </p>
               </div>
             </div>
