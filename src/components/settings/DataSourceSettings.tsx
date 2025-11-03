@@ -1119,7 +1119,7 @@ const DataSourceSettings = () => {
                     <Loader2 className="h-4 w-4 mr-2 animate-spin inline" />
                     Connecting...
                   </Badge>
-                ) : (
+                ) : expandedSource !== source.id ? (
                   <Button
                     onClick={() => {
                       // If source has fields or needs OAuth dialog, expand first
@@ -1136,7 +1136,7 @@ const DataSourceSettings = () => {
                   >
                     Connect
                   </Button>
-                )}
+                ) : null}
               </div>
             </div>
 
