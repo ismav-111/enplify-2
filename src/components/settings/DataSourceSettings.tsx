@@ -976,13 +976,6 @@ const DataSourceSettings = () => {
       {/* Connection Dialog */}
       <Dialog open={showConnectionDialog} onOpenChange={setShowConnectionDialog}>
         <DialogContent className="sm:max-w-md">
-          <button 
-            onClick={() => setShowConnectionDialog(false)}
-            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
-          >
-            <span className="text-2xl">×</span>
-          </button>
-          
           <div className="flex flex-col items-center gap-6 py-6">
             <div className="p-4 bg-muted rounded-2xl">
               {currentConnectingSource && <currentConnectingSource.icon className="h-12 w-12" />}
