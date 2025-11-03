@@ -1132,7 +1132,7 @@ const DataSourceSettings = () => {
                       }
                     }}
                     disabled={connectingSource !== null}
-                    className="bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 text-base px-4 py-2 font-medium"
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
                   >
                     Connect
                   </Button>
@@ -1182,7 +1182,7 @@ const DataSourceSettings = () => {
                               size="sm"
                               onClick={() => handleSync(source.id)}
                               disabled={syncInfo[source.id]?.syncing}
-                              className="bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 text-base px-3 py-2 font-medium"
+                              className="bg-blue-600 hover:bg-blue-700 text-white"
                             >
                               {syncInfo[source.id]?.syncing ? (
                                 <>
@@ -1289,7 +1289,7 @@ const DataSourceSettings = () => {
                                   type="button" 
                                   onClick={() => handleConnect(source.id)} 
                                   disabled={connectingSource !== null}
-                                  className="bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 font-medium"
+                                  className="bg-blue-600 hover:bg-blue-700 text-white"
                                 >
                                   {connectingSource === source.id ? (
                                     <>
@@ -1326,7 +1326,7 @@ const DataSourceSettings = () => {
                               )}
                             </div>)}
                           <div className="pt-3 border-t border-gray-100">
-                            <Button type="button" onClick={() => handleConnect(source.id)} disabled={connectingSource !== null} className="bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 font-medium">
+                            <Button type="button" onClick={() => handleConnect(source.id)} disabled={connectingSource !== null} className="bg-blue-600 hover:bg-blue-700 text-white">
                               {connectingSource === source.id ? <>
                                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                                   Connecting...
