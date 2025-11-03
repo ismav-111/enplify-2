@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Server, Cloud, ChevronDown, Rocket, Sparkles, HardDrive, Folder, FileText, Share2, Facebook, Linkedin, Instagram, MonitorSpeaker, CloudSnow, Zap, Archive, FolderOpen, CloudDrizzle, Shield, Settings } from 'lucide-react';
+import { FileSpreadsheet, Database, Globe, Youtube, BarChart, LucideIcon, Briefcase, Search, Loader2, Server, Cloud, ChevronDown, Rocket, Sparkles, HardDrive, Folder, FileText, Share2, Facebook, Linkedin, Instagram, MonitorSpeaker, CloudSnow, Zap, Archive, FolderOpen, CloudDrizzle, Shield, Settings, RefreshCw, Clock } from 'lucide-react';
 import { XIcon } from '@/components/icons/XIcon';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
@@ -24,6 +24,12 @@ interface DataSourceType {
     placeholder: string;
     required: boolean;
   }[];
+}
+
+interface SyncInfo {
+  lastSyncTime?: string;
+  changes?: string;
+  syncing?: boolean;
 }
 
 // Group data sources by category
@@ -649,13 +655,7 @@ const dataSourceCategories = {
     icon: Cloud,
     isConnected: false,
     requiresOAuth: true,
-    fields: [{
-      id: 'folder_path',
-      label: 'Folder Path',
-      type: 'text',
-      placeholder: '/Documents',
-      required: false
-    }]
+    fields: []
   }, {
     id: 'googledrive',
     name: 'Google Drive',
@@ -663,13 +663,7 @@ const dataSourceCategories = {
     icon: HardDrive,
     isConnected: false,
     requiresOAuth: true,
-    fields: [{
-      id: 'folder_id',
-      label: 'Folder ID (Optional)',
-      type: 'text',
-      placeholder: 'Enter folder ID to sync specific folder',
-      required: false
-    }]
+    fields: []
   }, {
     id: 'dropbox',
     name: 'Dropbox',
@@ -817,6 +811,9 @@ const DataSourceSettings = () => {
   const [connectingSource, setConnectingSource] = useState<string | null>(null);
   const [connectionProgress, setConnectionProgress] = useState(0);
   const [showWelcomeDialog, setShowWelcomeDialog] = useState(true);
+  const [showConnectionDialog, setShowConnectionDialog] = useState(false);
+  const [currentConnectingSource, setCurrentConnectingSource] = useState<DataSourceType | null>(null);
+  const [syncInfo, setSyncInfo] = useState<Record<string, SyncInfo>>({});
 
   // Auto-expand first data source for quick setup
   useEffect(() => {
@@ -847,6 +844,13 @@ const DataSourceSettings = () => {
     
     // Handle OAuth sources differently
     if (source?.requiresOAuth) {
+      // For Google Drive and OneDrive, show the custom dialog
+      if (sourceId === 'googledrive' || sourceId === 'onedrive') {
+        setCurrentConnectingSource(source);
+        setShowConnectionDialog(true);
+        return;
+      }
+      
       setConnectingSource(sourceId);
       
       // In a real implementation, this would open an OAuth popup/redirect
@@ -906,10 +910,123 @@ const DataSourceSettings = () => {
   const toggleExpanded = (sourceId: string) => {
     setExpandedSource(expandedSource === sourceId ? null : sourceId);
   };
+
+  const handleDialogConnect = () => {
+    if (!currentConnectingSource) return;
+    
+    const sourceId = currentConnectingSource.id;
+    setShowConnectionDialog(false);
+    setConnectingSource(sourceId);
+    
+    // Simulate OAuth connection
+    setTimeout(() => {
+      setConnectedSources(prev => ({
+        ...prev,
+        [sourceId]: true
+      }));
+      
+      // Set initial sync info
+      const now = new Date();
+      setSyncInfo(prev => ({
+        ...prev,
+        [sourceId]: {
+          lastSyncTime: now.toLocaleString(),
+          changes: 'Initial connection - Files synced'
+        }
+      }));
+      
+      toast.success(`Successfully connected to ${currentConnectingSource.name}`);
+      setExpandedSource(null);
+      setConnectingSource(null);
+      setCurrentConnectingSource(null);
+    }, 2000);
+  };
+
+  const handleSync = (sourceId: string) => {
+    setSyncInfo(prev => ({
+      ...prev,
+      [sourceId]: {
+        ...prev[sourceId],
+        syncing: true
+      }
+    }));
+
+    // Simulate sync operation
+    setTimeout(() => {
+      const now = new Date();
+      setSyncInfo(prev => ({
+        ...prev,
+        [sourceId]: {
+          lastSyncTime: now.toLocaleString(),
+          changes: `${Math.floor(Math.random() * 10) + 1} new files, ${Math.floor(Math.random() * 5)} updated`,
+          syncing: false
+        }
+      }));
+      
+      const sourceName = dataSources.find(s => s.id === sourceId)?.name;
+      toast.success(`${sourceName} synced successfully`);
+    }, 2000);
+  };
   return <>
       {/* Welcome Dialog */}
       <Dialog open={showWelcomeDialog} onOpenChange={setShowWelcomeDialog}>
         
+      </Dialog>
+
+      {/* Connection Dialog */}
+      <Dialog open={showConnectionDialog} onOpenChange={setShowConnectionDialog}>
+        <DialogContent className="sm:max-w-md">
+          <button 
+            onClick={() => setShowConnectionDialog(false)}
+            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+          >
+            <span className="text-2xl">×</span>
+          </button>
+          
+          <div className="flex flex-col items-center gap-6 py-6">
+            <div className="p-4 bg-muted rounded-2xl">
+              {currentConnectingSource && <currentConnectingSource.icon className="h-12 w-12" />}
+            </div>
+            
+            <div className="text-center space-y-2">
+              <h2 className="text-2xl font-bold">Connect {currentConnectingSource?.name}</h2>
+            </div>
+
+            <div className="w-full space-y-4 text-sm">
+              <div>
+                <h3 className="font-semibold mb-2">Access your files</h3>
+                <p className="text-muted-foreground">
+                  Files from {currentConnectingSource?.name} help Grok answer your questions
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2">Help improve Grok</h3>
+                <p className="text-muted-foreground">
+                  Your conversations may be used for training. You control this in settings.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2">Your data stays yours</h3>
+                <p className="text-muted-foreground">
+                  We keep your data until you delete it. Disconnect anytime in settings.
+                </p>
+              </div>
+            </div>
+
+            <Button 
+              onClick={handleDialogConnect}
+              className="w-full bg-foreground text-background hover:bg-foreground/90 h-12 text-base font-semibold"
+            >
+              Connect {currentConnectingSource?.name}
+            </Button>
+
+            <p className="text-xs text-muted-foreground text-center">
+              Manage connections in settings.
+            </p>
+          </div>
+        </DialogContent>
       </Dialog>
 
     <div className="space-y-8 animate-fade-in">
@@ -1049,6 +1166,59 @@ const DataSourceSettings = () => {
                           <Switch id={`${source.id}-active`} defaultChecked />
                         </div>
                       </div>
+
+                      {/* Sync section for Google Drive and OneDrive */}
+                      {(source.id === 'googledrive' || source.id === 'onedrive') && (
+                        <div className="space-y-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <RefreshCw className="h-4 w-4 text-blue-700" />
+                              <span className="font-semibold text-blue-900 text-sm">Sync Status</span>
+                            </div>
+                            <Button 
+                              size="sm"
+                              onClick={() => handleSync(source.id)}
+                              disabled={syncInfo[source.id]?.syncing}
+                              className="bg-blue-600 hover:bg-blue-700 text-white"
+                            >
+                              {syncInfo[source.id]?.syncing ? (
+                                <>
+                                  <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                                  Syncing...
+                                </>
+                              ) : (
+                                <>
+                                  <RefreshCw className="h-3 w-3 mr-1" />
+                                  Sync Now
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                          
+                          {syncInfo[source.id]?.lastSyncTime && (
+                            <div className="space-y-2 text-sm">
+                              <div className="flex items-start gap-2">
+                                <Clock className="h-4 w-4 text-blue-600 mt-0.5" />
+                                <div>
+                                  <p className="font-medium text-blue-900">Last synced:</p>
+                                  <p className="text-blue-700">{syncInfo[source.id].lastSyncTime}</p>
+                                </div>
+                              </div>
+                              
+                              {syncInfo[source.id]?.changes && (
+                                <div className="flex items-start gap-2">
+                                  <FileText className="h-4 w-4 text-blue-600 mt-0.5" />
+                                  <div>
+                                    <p className="font-medium text-blue-900">Changes:</p>
+                                    <p className="text-blue-700">{syncInfo[source.id].changes}</p>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
                       <div>
                         <Button variant="secondary" onClick={() => handleDisconnect(source.id)}>
                           Disconnect
@@ -1057,57 +1227,82 @@ const DataSourceSettings = () => {
                     </div> : <div className="bg-white rounded-lg border border-gray-200 p-5">
                       {source.requiresOAuth ? (
                         <div className="space-y-4">
-                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                            <div className="flex items-start gap-3">
-                              <Shield className="h-5 w-5 text-blue-600 mt-0.5" />
-                              <div>
-                                <h4 className="font-semibold text-blue-900 text-sm mb-1">OAuth Authorization Required</h4>
-                                <p className="text-sm text-blue-700">
-                                  This data source requires secure OAuth authorization. Click the button below to authorize access to your {source.name} account.
-                                </p>
-                              </div>
+                          {/* For Google Drive and OneDrive, show simplified connect UI */}
+                          {(source.id === 'googledrive' || source.id === 'onedrive') ? (
+                            <div className="pt-3">
+                              <Button 
+                                type="button" 
+                                onClick={() => handleConnect(source.id)} 
+                                disabled={connectingSource !== null}
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                              >
+                                {connectingSource === source.id ? (
+                                  <>
+                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                    Connecting...
+                                  </>
+                                ) : (
+                                  <>
+                                    Connect {source.name}
+                                  </>
+                                )}
+                              </Button>
                             </div>
-                          </div>
-                          
-                          {source.fields.length > 0 && (
-                            <form className="space-y-4">
-                              {source.fields.map(field => (
-                                <div key={field.id} className="space-y-2">
-                                  <label htmlFor={`${source.id}-${field.id}`} className="block text-sm font-medium text-gray-700">
-                                    {field.label} {field.required && <span className="text-red-500">*</span>}
-                                  </label>
-                                  <Input 
-                                    id={`${source.id}-${field.id}`} 
-                                    type={field.type} 
-                                    placeholder={field.placeholder} 
-                                    required={field.required} 
-                                    className="h-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
-                                  />
+                          ) : (
+                            <>
+                              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <div className="flex items-start gap-3">
+                                  <Shield className="h-5 w-5 text-blue-600 mt-0.5" />
+                                  <div>
+                                    <h4 className="font-semibold text-blue-900 text-sm mb-1">OAuth Authorization Required</h4>
+                                    <p className="text-sm text-blue-700">
+                                      This data source requires secure OAuth authorization. Click the button below to authorize access to your {source.name} account.
+                                    </p>
+                                  </div>
                                 </div>
-                              ))}
-                            </form>
-                          )}
-                          
-                          <div className="pt-3 border-t border-gray-100">
-                            <Button 
-                              type="button" 
-                              onClick={() => handleConnect(source.id)} 
-                              disabled={connectingSource !== null}
-                              className="bg-blue-600 hover:bg-blue-700 text-white"
-                            >
-                              {connectingSource === source.id ? (
-                                <>
-                                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                  Authorizing...
-                                </>
-                              ) : (
-                                <>
-                                  <Shield className="h-4 w-4 mr-2" />
-                                  Authorize {source.name}
-                                </>
+                              </div>
+                              
+                              {source.fields.length > 0 && (
+                                <form className="space-y-4">
+                                  {source.fields.map(field => (
+                                    <div key={field.id} className="space-y-2">
+                                      <label htmlFor={`${source.id}-${field.id}`} className="block text-sm font-medium text-gray-700">
+                                        {field.label} {field.required && <span className="text-red-500">*</span>}
+                                      </label>
+                                      <Input 
+                                        id={`${source.id}-${field.id}`} 
+                                        type={field.type} 
+                                        placeholder={field.placeholder} 
+                                        required={field.required} 
+                                        className="h-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
+                                      />
+                                    </div>
+                                  ))}
+                                </form>
                               )}
-                            </Button>
-                          </div>
+                              
+                              <div className="pt-3 border-t border-gray-100">
+                                <Button 
+                                  type="button" 
+                                  onClick={() => handleConnect(source.id)} 
+                                  disabled={connectingSource !== null}
+                                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                                >
+                                  {connectingSource === source.id ? (
+                                    <>
+                                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                      Authorizing...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Shield className="h-4 w-4 mr-2" />
+                                      Authorize {source.name}
+                                    </>
+                                  )}
+                                </Button>
+                              </div>
+                            </>
+                          )}
                         </div>
                       ) : (
                         <form className="space-y-4">
