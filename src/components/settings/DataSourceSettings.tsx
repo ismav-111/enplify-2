@@ -1103,7 +1103,7 @@ const DataSourceSettings = () => {
       <div className="space-y-6">
         {filteredDataSources.map(source => <div key={source.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
             {/* Main Row */}
-            <div className="flex items-center justify-between p-8 cursor-pointer hover:bg-gray-50 transition-colors" onClick={() => !connectedSources[source.id] && toggleExpanded(source.id)}>
+            <div className="flex items-center justify-between p-8">
               <div className="flex items-center gap-6">
                 <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
                   <source.icon className="h-6 w-6 text-gray-600" />
@@ -1117,23 +1117,40 @@ const DataSourceSettings = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-6">
-                {connectedSources[source.id] ? <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4">
+                {connectedSources[source.id] ? (
+                  <>
                     <Badge className="bg-green-50 text-green-700 border-green-200 hover:bg-green-50 text-base px-4 py-2 font-medium">
                       Connected
                     </Badge>
-                    <ChevronDown className={`h-5 w-5 text-gray-400 cursor-pointer transition-transform hover:text-gray-600 ${expandedSource === source.id ? 'rotate-180' : ''}`} onClick={e => {
-                  e.stopPropagation();
-                  toggleExpanded(source.id);
-                }} />
-                  </div> : connectingSource === source.id ? <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-base px-4 py-2 font-medium">
+                    <ChevronDown 
+                      className={`h-5 w-5 text-gray-400 cursor-pointer transition-transform hover:text-gray-600 ${expandedSource === source.id ? 'rotate-180' : ''}`} 
+                      onClick={() => toggleExpanded(source.id)} 
+                    />
+                  </>
+                ) : connectingSource === source.id ? (
+                  <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-base px-4 py-2 font-medium">
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin inline" />
                     Connecting...
-                  </Badge> : <div className="flex items-center gap-4">
-                    <Badge variant="outline" className="text-gray-500 text-base px-4 py-2 border-gray-300 font-medium">
-                      Not Connected
-                    </Badge>
-                    <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform hover:text-gray-600 ${expandedSource === source.id ? 'rotate-180' : ''}`} />
-                  </div>}
+                  </Badge>
+                ) : (
+                  <Button
+                    onClick={() => {
+                      // If source has fields or needs OAuth dialog, expand first
+                      if ((source.fields.length > 0 && !source.requiresOAuth) || 
+                          (source.requiresOAuth && source.id !== 'googledrive' && source.id !== 'onedrive')) {
+                        toggleExpanded(source.id);
+                      } else {
+                        // Direct connect for Google Drive and OneDrive
+                        handleConnect(source.id);
+                      }
+                    }}
+                    disabled={connectingSource !== null}
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    Connect
+                  </Button>
+                )}
               </div>
             </div>
 
