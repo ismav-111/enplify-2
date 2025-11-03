@@ -1003,7 +1003,8 @@ const DataSourceSettings = () => {
 
             <Button 
               onClick={handleDialogConnect}
-              className="w-full bg-foreground text-background hover:bg-foreground/90 h-12 text-base font-semibold"
+              variant="default"
+              className="w-full h-12 text-base font-semibold"
             >
               Connect {currentConnectingSource?.name}
             </Button>
@@ -1020,7 +1021,7 @@ const DataSourceSettings = () => {
       <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-gray-900">Data Sources</h2>
-          <Badge variant="outline" className="px-4 py-2 text-base bg-blue-50 text-blue-700 border-blue-200 font-medium">
+          <Badge variant="outline" className="px-4 py-2 text-base bg-primary/10 text-primary border-primary/20 font-medium">
             {Object.values(connectedSources).filter(Boolean).length} Connected
           </Badge>
         </div>
@@ -1036,28 +1037,28 @@ const DataSourceSettings = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">Filter by Category</label>
             <div className="flex flex-wrap gap-2">
-              <Button variant={selectedCategory === 'all' ? 'default' : 'outline'} size="sm" className={selectedCategory === 'all' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} onClick={() => setSelectedCategory('all')}>
+              <Button variant={selectedCategory === 'all' ? 'default' : 'outline'} size="sm" onClick={() => setSelectedCategory('all')}>
                 All Sources
               </Button>
-              <Button variant={selectedCategory === 'api' ? 'default' : 'outline'} size="sm" className={selectedCategory === 'api' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} onClick={() => setSelectedCategory('api')}>
+              <Button variant={selectedCategory === 'api' ? 'default' : 'outline'} size="sm" onClick={() => setSelectedCategory('api')}>
                 API Configuration
               </Button>
-              <Button variant={selectedCategory === 'web' ? 'default' : 'outline'} size="sm" className={selectedCategory === 'web' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} onClick={() => setSelectedCategory('web')}>
+              <Button variant={selectedCategory === 'web' ? 'default' : 'outline'} size="sm" onClick={() => setSelectedCategory('web')}>
                 Web Sources
               </Button>
-              <Button variant={selectedCategory === 'warehouses' ? 'default' : 'outline'} size="sm" className={selectedCategory === 'warehouses' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} onClick={() => setSelectedCategory('warehouses')}>
+              <Button variant={selectedCategory === 'warehouses' ? 'default' : 'outline'} size="sm" onClick={() => setSelectedCategory('warehouses')}>
                 Data Warehouses
               </Button>
-              <Button variant={selectedCategory === 'databases' ? 'default' : 'outline'} size="sm" className={selectedCategory === 'databases' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} onClick={() => setSelectedCategory('databases')}>
+              <Button variant={selectedCategory === 'databases' ? 'default' : 'outline'} size="sm" onClick={() => setSelectedCategory('databases')}>
                 Databases
               </Button>
-              <Button variant={selectedCategory === 'lakes' ? 'default' : 'outline'} size="sm" className={selectedCategory === 'lakes' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} onClick={() => setSelectedCategory('lakes')}>
+              <Button variant={selectedCategory === 'lakes' ? 'default' : 'outline'} size="sm" onClick={() => setSelectedCategory('lakes')}>
                 Data Lakes
               </Button>
-              <Button variant={selectedCategory === 'repositories' ? 'default' : 'outline'} size="sm" className={selectedCategory === 'repositories' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} onClick={() => setSelectedCategory('repositories')}>
+              <Button variant={selectedCategory === 'repositories' ? 'default' : 'outline'} size="sm" onClick={() => setSelectedCategory('repositories')}>
                 Repositories
               </Button>
-              <Button variant={selectedCategory === 'enterprise' ? 'default' : 'outline'} size="sm" className={selectedCategory === 'enterprise' ? 'bg-[#4E50A8] text-white' : 'text-gray-600 hover:bg-gray-50'} onClick={() => setSelectedCategory('enterprise')}>
+              <Button variant={selectedCategory === 'enterprise' ? 'default' : 'outline'} size="sm" onClick={() => setSelectedCategory('enterprise')}>
                 Enterprise
               </Button>
             </div>
@@ -1106,16 +1107,16 @@ const DataSourceSettings = () => {
               <div className="flex items-center gap-4">
                 {connectedSources[source.id] ? (
                   <>
-                    <Badge className="bg-green-50 text-green-700 border-green-200 hover:bg-green-50 text-base px-4 py-2 font-medium">
+                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/10 text-base px-4 py-2 font-medium">
                       Connected
                     </Badge>
                     <ChevronDown 
-                      className={`h-5 w-5 text-gray-400 cursor-pointer transition-transform hover:text-gray-600 ${expandedSource === source.id ? 'rotate-180' : ''}`} 
+                      className={`h-5 w-5 text-muted-foreground cursor-pointer transition-transform hover:text-foreground ${expandedSource === source.id ? 'rotate-180' : ''}`} 
                       onClick={() => toggleExpanded(source.id)} 
                     />
                   </>
                 ) : connectingSource === source.id ? (
-                  <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-base px-4 py-2 font-medium">
+                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-base px-4 py-2 font-medium">
                     <Loader2 className="h-4 w-4 mr-2 animate-spin inline" />
                     Connecting...
                   </Badge>
@@ -1132,7 +1133,7 @@ const DataSourceSettings = () => {
                       }
                     }}
                     disabled={connectingSource !== null}
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    variant="default"
                   >
                     Connect
                   </Button>
@@ -1159,30 +1160,30 @@ const DataSourceSettings = () => {
                         Please wait while we establish a secure connection to your data source.
                       </p>
                     </div> : connectedSources[source.id] ? <div className="space-y-4">
-                      <div className="flex items-start justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                      <div className="flex items-start justify-between p-4 bg-primary/10 rounded-lg border border-primary/20">
                         <div>
-                          <h4 className="font-semibold text-green-900 text-sm mb-1">Connection Active</h4>
-                          <p className="text-sm text-green-700">Data source is currently connected and active</p>
+                          <h4 className="font-semibold text-primary text-sm mb-1">Connection Active</h4>
+                          <p className="text-sm text-primary/80">Data source is currently connected and active</p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Label htmlFor={`${source.id}-active`} className="text-sm text-green-700">Active</Label>
+                          <Label htmlFor={`${source.id}-active`} className="text-sm text-primary">Active</Label>
                           <Switch id={`${source.id}-active`} defaultChecked />
                         </div>
                       </div>
 
                       {/* Sync section for Google Drive and OneDrive */}
                       {(source.id === 'googledrive' || source.id === 'onedrive') && (
-                        <div className="space-y-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <div className="space-y-3 p-4 bg-primary/10 rounded-lg border border-primary/20">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <RefreshCw className="h-4 w-4 text-blue-700" />
-                              <span className="font-semibold text-blue-900 text-sm">Sync Status</span>
+                              <RefreshCw className="h-4 w-4 text-primary" />
+                              <span className="font-semibold text-primary text-sm">Sync Status</span>
                             </div>
                             <Button 
                               size="sm"
                               onClick={() => handleSync(source.id)}
                               disabled={syncInfo[source.id]?.syncing}
-                              className="bg-blue-600 hover:bg-blue-700 text-white"
+                              variant="default"
                             >
                               {syncInfo[source.id]?.syncing ? (
                                 <>
@@ -1201,19 +1202,19 @@ const DataSourceSettings = () => {
                           {syncInfo[source.id]?.lastSyncTime && (
                             <div className="space-y-2 text-sm">
                               <div className="flex items-start gap-2">
-                                <Clock className="h-4 w-4 text-blue-600 mt-0.5" />
+                                <Clock className="h-4 w-4 text-primary mt-0.5" />
                                 <div>
-                                  <p className="font-medium text-blue-900">Last synced:</p>
-                                  <p className="text-blue-700">{syncInfo[source.id].lastSyncTime}</p>
+                                  <p className="font-medium text-primary">Last synced:</p>
+                                  <p className="text-primary/80">{syncInfo[source.id].lastSyncTime}</p>
                                 </div>
                               </div>
                               
                               {syncInfo[source.id]?.changes && (
                                 <div className="flex items-start gap-2">
-                                  <FileText className="h-4 w-4 text-blue-600 mt-0.5" />
+                                  <FileText className="h-4 w-4 text-primary mt-0.5" />
                                   <div>
-                                    <p className="font-medium text-blue-900">Changes:</p>
-                                    <p className="text-blue-700">{syncInfo[source.id].changes}</p>
+                                    <p className="font-medium text-primary">Changes:</p>
+                                    <p className="text-primary/80">{syncInfo[source.id].changes}</p>
                                   </div>
                                 </div>
                               )}
@@ -1237,7 +1238,8 @@ const DataSourceSettings = () => {
                                 type="button" 
                                 onClick={() => handleConnect(source.id)} 
                                 disabled={connectingSource !== null}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                                variant="default"
+                                className="w-full"
                               >
                                 {connectingSource === source.id ? (
                                   <>
@@ -1253,12 +1255,12 @@ const DataSourceSettings = () => {
                             </div>
                           ) : (
                             <>
-                              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                              <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
                                 <div className="flex items-start gap-3">
-                                  <Shield className="h-5 w-5 text-blue-600 mt-0.5" />
+                                  <Shield className="h-5 w-5 text-primary mt-0.5" />
                                   <div>
-                                    <h4 className="font-semibold text-blue-900 text-sm mb-1">OAuth Authorization Required</h4>
-                                    <p className="text-sm text-blue-700">
+                                    <h4 className="font-semibold text-primary text-sm mb-1">OAuth Authorization Required</h4>
+                                    <p className="text-sm text-primary/80">
                                       This data source requires secure OAuth authorization. Click the button below to authorize access to your {source.name} account.
                                     </p>
                                   </div>
@@ -1269,27 +1271,26 @@ const DataSourceSettings = () => {
                                 <form className="space-y-4">
                                   {source.fields.map(field => (
                                     <div key={field.id} className="space-y-2">
-                                      <label htmlFor={`${source.id}-${field.id}`} className="block text-sm font-medium text-gray-700">
-                                        {field.label} {field.required && <span className="text-red-500">*</span>}
+                                      <label htmlFor={`${source.id}-${field.id}`} className="block text-sm font-medium text-muted-foreground">
+                                        {field.label} {field.required && <span className="text-destructive">*</span>}
                                       </label>
                                       <Input 
                                         id={`${source.id}-${field.id}`} 
                                         type={field.type} 
                                         placeholder={field.placeholder} 
                                         required={field.required} 
-                                        className="h-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500" 
                                       />
                                     </div>
                                   ))}
                                 </form>
                               )}
                               
-                              <div className="pt-3 border-t border-gray-100">
+                              <div className="pt-3 border-t border-border">
                                 <Button 
                                   type="button" 
                                   onClick={() => handleConnect(source.id)} 
                                   disabled={connectingSource !== null}
-                                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                                  variant="default"
                                 >
                                   {connectingSource === source.id ? (
                                     <>
@@ -1310,23 +1311,23 @@ const DataSourceSettings = () => {
                       ) : (
                         <form className="space-y-4">
                           {source.fields.map(field => <div key={field.id} className="space-y-2">
-                              <label htmlFor={`${source.id}-${field.id}`} className="block text-sm font-medium text-gray-700">
-                                {field.label} {field.required && <span className="text-red-500">*</span>}
+                              <label htmlFor={`${source.id}-${field.id}`} className="block text-sm font-medium text-muted-foreground">
+                                {field.label} {field.required && <span className="text-destructive">*</span>}
                               </label>
                               {field.type === 'textarea' ? (
                                 <textarea
                                   id={`${source.id}-${field.id}`}
                                   placeholder={field.placeholder}
                                   required={field.required}
-                                  className="w-full min-h-[60px] px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
+                                  className="w-full min-h-[60px] px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none text-sm"
                                   rows={3}
                                 />
                               ) : (
-                                <Input id={`${source.id}-${field.id}`} type={field.type} placeholder={field.placeholder} required={field.required} className="h-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500" />
+                                <Input id={`${source.id}-${field.id}`} type={field.type} placeholder={field.placeholder} required={field.required} />
                               )}
                             </div>)}
-                          <div className="pt-3 border-t border-gray-100">
-                            <Button type="button" onClick={() => handleConnect(source.id)} disabled={connectingSource !== null} className="bg-blue-600 hover:bg-blue-700 text-white">
+                          <div className="pt-3 border-t border-border">
+                            <Button type="button" onClick={() => handleConnect(source.id)} disabled={connectingSource !== null} variant="default">
                               {connectingSource === source.id ? <>
                                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                                   Connecting...
