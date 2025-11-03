@@ -987,16 +987,16 @@ const DataSourceSettings = () => {
 
             <div className="w-full space-y-4 text-sm">
               <div>
-                <h3 className="font-semibold mb-2">Access your files</h3>
+                <h3 className="font-semibold mb-2">Enable file access</h3>
                 <p className="text-muted-foreground">
-                  Connect your {currentConnectingSource?.name} so enplify.ai can use your files to give more accurate answers.
+                  Connect {currentConnectingSource?.name} for more precise answers from enplify.ai.
                 </p>
               </div>
 
               <div>
-                <h3 className="font-semibold mb-2">Your data stays yours</h3>
+                <h3 className="font-semibold mb-2">Privacy first</h3>
                 <p className="text-muted-foreground">
-                  We only use your files to help with your questions. You can disconnect or delete your data anytime in Settings.
+                  Your files are only used to assist you. Manage or delete anytime.
                 </p>
               </div>
             </div>
