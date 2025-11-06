@@ -43,7 +43,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-type WorkspaceRole = 'owner' | 'admin' | 'contributor' | 'viewer' | 'guest';
+type WorkspaceRole = 'owner' | 'admin' | 'editor' | 'viewer' | 'guest';
 
 interface WorkspaceMember {
   id: string;
@@ -96,7 +96,7 @@ const WorkspacesSettings = () => {
       id: '4',
       name: 'Product Design',
       memberCount: 4,
-      role: 'contributor',
+      role: 'editor',
       createdAt: '2024-03-01',
       isShared: true,
     },
@@ -104,7 +104,7 @@ const WorkspacesSettings = () => {
 
   // Separate workspaces by ownership
   const ownedWorkspaces = workspaces.filter(w => w.role === 'owner' || w.role === 'admin');
-  const invitedWorkspaces = workspaces.filter(w => w.role === 'contributor' || w.role === 'viewer' || w.role === 'guest');
+  const invitedWorkspaces = workspaces.filter(w => w.role === 'editor' || w.role === 'viewer' || w.role === 'guest');
   
   const [selectedWorkspace, setSelectedWorkspace] = useState<string | null>(
     ownedWorkspaces.length > 0 ? ownedWorkspaces[0].id : null
@@ -115,7 +115,7 @@ const WorkspacesSettings = () => {
     {
       id: '1',
       email: 'mike@example.com',
-      role: 'contributor',
+      role: 'editor',
       joinedAt: '2024-02-01',
     },
     {
@@ -152,7 +152,7 @@ const WorkspacesSettings = () => {
     const roleConfig = {
       owner: { variant: 'default' as const, icon: Crown, label: 'Owner' },
       admin: { variant: 'secondary' as const, icon: Shield, label: 'Admin' },
-      contributor: { variant: 'outline' as const, icon: Edit3, label: 'Contributor' },
+      editor: { variant: 'outline' as const, icon: Edit3, label: 'Editor' },
       viewer: { variant: 'outline' as const, icon: Eye, label: 'Viewer' },
       guest: { variant: 'outline' as const, icon: UserCheck, label: 'Guest' },
     };

@@ -9,7 +9,7 @@ import { Files, Settings, User, Search, Eye, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -45,6 +45,7 @@ const Index = () => {
   } = useChat();
 
   const { showOnboarding, completeOnboarding, closeOnboarding } = useMinimalOnboarding()
+  const navigate = useNavigate()
 
   // Response preferences state
   const [responsePreferences, setResponsePreferences] = useState<ResponsePreferencesType>({
@@ -407,15 +408,10 @@ const Index = () => {
       console.log(`Inviting users to workspace ${workspaceId}, session ${sessionId}`);
     },
     onInviteToWorkspace: (workspaceId: string) => {
-      // Mock invite functionality for workspace
-      console.log(`Inviting users to workspace ${workspaceId}`);
-      toast.info("Invite functionality coming soon!");
+      navigate('/settings?tab=workspaces');
     },
     onWorkspaceSettings: (workspaceId: string) => {
-      // Navigate to workspace settings
-      const workspace = workspaces.find(w => w.id === workspaceId);
-      console.log(`Opening settings for workspace ${workspaceId}:`, workspace?.name);
-      toast.info(`Opening settings for "${workspace?.name}"`);
+      navigate('/settings?tab=workspaces');
     }
   };
 
