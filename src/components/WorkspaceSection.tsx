@@ -126,7 +126,10 @@ const WorkspaceSection = ({
 
   const handleWizardComplete = (data: {
     name: string;
-    dataSources: string[];
+    dataSources: Array<{
+      id: string;
+      config: Record<string, string>;
+    }>;
     invitedUsers: { email: string; role: string }[];
   }) => {
     onCreateWorkspace();
