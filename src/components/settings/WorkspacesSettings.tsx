@@ -4,6 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import {
   Table,
   TableBody,
@@ -61,9 +66,31 @@ interface Workspace {
   isShared: boolean;
 }
 
+// Form validation schema
+const inviteSchema = z.object({
+  email: z.string()
+    .trim()
+    .email({ message: "Please enter a valid email address" })
+    .max(255, { message: "Email must be less than 255 characters" }),
+  role: z.enum(['admin', 'editor', 'viewer'], {
+    required_error: "Please select a role",
+  }),
+});
+
+type InviteFormValues = z.infer<typeof inviteSchema>;
+
 const WorkspacesSettings = () => {
   const [inviteDialog, setInviteDialog] = useState(false);
-  const [inviteEmail, setInviteEmail] = useState('');
+  const [selectedWorkspaceForInvite, setSelectedWorkspaceForInvite] = useState<string | null>(null);
+  
+  // Form for invite dialog
+  const form = useForm<InviteFormValues>({
+    resolver: zodResolver(inviteSchema),
+    defaultValues: {
+      email: '',
+      role: 'viewer',
+    },
+  });
   
   // Mock data - replace with actual data from your backend
   // Only shared workspaces
@@ -132,12 +159,20 @@ const WorkspacesSettings = () => {
     },
   ];
 
-  const handleInvite = () => {
-    if (inviteEmail.trim()) {
-      toast.success(`Invitation sent to ${inviteEmail}`);
-      setInviteEmail('');
-      setInviteDialog(false);
-    }
+  const handleInvite = (values: InviteFormValues) => {
+    const workspace = workspaces.find(w => w.id === selectedWorkspaceForInvite);
+    toast.success(`Invitation sent to ${values.email} as ${values.role} for workspace "${workspace?.name}"`);
+    
+    // Reset form and close dialog
+    form.reset();
+    setInviteDialog(false);
+    setSelectedWorkspaceForInvite(null);
+  };
+
+  const handleOpenInviteDialog = (workspaceId: string) => {
+    setSelectedWorkspaceForInvite(workspaceId);
+    form.reset();
+    setInviteDialog(true);
   };
 
   const handleLeaveWorkspace = (workspaceId: string) => {
@@ -220,12 +255,9 @@ const WorkspacesSettings = () => {
                         <MoreVertical className="w-4 h-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="end" className="bg-white z-50">
                       <DropdownMenuItem
-                        onClick={() => {
-                          setSelectedWorkspace(workspace.id);
-                          setInviteDialog(true);
-                        }}
+                        onClick={() => handleOpenInviteDialog(workspace.id)}
                       >
                         <UserPlus className="w-4 h-4 mr-2" />
                         Invite Members
@@ -294,7 +326,7 @@ const WorkspacesSettings = () => {
                         <MoreVertical className="w-4 h-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="end" className="bg-white z-50">
                       <DropdownMenuItem>
                         <Settings className="w-4 h-4 mr-2" />
                         View Details
@@ -335,7 +367,7 @@ const WorkspacesSettings = () => {
               {ownedWorkspaces.find(w => w.id === selectedWorkspace) && (
                 <Button
                   variant="outline"
-                  onClick={() => setInviteDialog(true)}
+                  onClick={() => handleOpenInviteDialog(selectedWorkspace)}
                 >
                   <Mail className="w-4 h-4 mr-2" />
                   Invite
@@ -377,7 +409,7 @@ const WorkspacesSettings = () => {
                                 <MoreVertical className="w-4 h-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
+                             <DropdownMenuContent align="end" className="bg-white z-50">
                               <DropdownMenuItem>Change Role</DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => handleRemoveMember(member.id)}
@@ -400,34 +432,129 @@ const WorkspacesSettings = () => {
       )}
 
       {/* Invite Dialog */}
-      <Dialog open={inviteDialog} onOpenChange={setInviteDialog}>
-        <DialogContent>
+      <Dialog open={inviteDialog} onOpenChange={(open) => {
+        setInviteDialog(open);
+        if (!open) {
+          form.reset();
+          setSelectedWorkspaceForInvite(null);
+        }
+      }}>
+        <DialogContent className="sm:max-w-[500px] bg-white">
           <DialogHeader>
-            <DialogTitle>Invite Team Member</DialogTitle>
+            <DialogTitle className="text-xl">Invite Team Member</DialogTitle>
             <DialogDescription>
-              Send an invitation to collaborate on this workspace
+              Send an invitation to collaborate on{' '}
+              <span className="font-semibold text-foreground">
+                {workspaces.find(w => w.id === selectedWorkspaceForInvite)?.name || 'this workspace'}
+              </span>
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="invite-email">Email Address</Label>
-              <Input
-                id="invite-email"
-                type="email"
-                placeholder="colleague@example.com"
-                value={inviteEmail}
-                onChange={(e) => setInviteEmail(e.target.value)}
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleInvite)} className="space-y-6 py-4">
+              {/* Email Field */}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email Address</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="colleague@example.com"
+                        type="email"
+                        {...field}
+                        className="bg-white"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Enter the email address of the person you want to invite
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setInviteDialog(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleInvite} className="bg-primary hover:bg-primary/90">
-              Send Invitation
-            </Button>
-          </DialogFooter>
+
+              {/* Role Selection */}
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Role</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="bg-white">
+                          <SelectValue placeholder="Select a role" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="bg-white z-50">
+                        <SelectItem value="admin" className="cursor-pointer">
+                          <div className="flex flex-col items-start py-1">
+                            <div className="flex items-center gap-2">
+                              <Shield className="w-4 h-4 text-primary" />
+                              <span className="font-medium">Admin</span>
+                            </div>
+                            <span className="text-xs text-muted-foreground mt-1">
+                              Manage workspace settings, users, and all chat sessions
+                            </span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="editor" className="cursor-pointer">
+                          <div className="flex flex-col items-start py-1">
+                            <div className="flex items-center gap-2">
+                              <Edit3 className="w-4 h-4 text-secondary" />
+                              <span className="font-medium">Editor</span>
+                            </div>
+                            <span className="text-xs text-muted-foreground mt-1">
+                              Create and edit chat sessions within the workspace
+                            </span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="viewer" className="cursor-pointer">
+                          <div className="flex flex-col items-start py-1">
+                            <div className="flex items-center gap-2">
+                              <Eye className="w-4 h-4 text-muted-foreground" />
+                              <span className="font-medium">Viewer</span>
+                            </div>
+                            <span className="text-xs text-muted-foreground mt-1">
+                              View chat sessions but cannot make changes
+                            </span>
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Choose the level of access for this team member
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <DialogFooter className="gap-2">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => {
+                    form.reset();
+                    setInviteDialog(false);
+                    setSelectedWorkspaceForInvite(null);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  className="bg-primary hover:bg-primary/90"
+                  disabled={form.formState.isSubmitting}
+                >
+                  <Mail className="w-4 h-4 mr-2" />
+                  Send Invitation
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
     </div>
