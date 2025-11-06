@@ -17,6 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   Dialog,
   DialogContent,
@@ -44,7 +45,9 @@ import {
   Shield,
   Edit3,
   Eye,
-  UserCheck
+  UserCheck,
+  ChevronDown,
+  Database
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -64,6 +67,8 @@ interface Workspace {
   role: WorkspaceRole;
   createdAt: string;
   isShared: boolean;
+  dataSources?: string[];
+  members?: WorkspaceMember[];
 }
 
 // Form validation schema
@@ -81,7 +86,9 @@ type InviteFormValues = z.infer<typeof inviteSchema>;
 
 const WorkspacesSettings = () => {
   const [inviteDialog, setInviteDialog] = useState(false);
+  const [createWorkspaceDialog, setCreateWorkspaceDialog] = useState(false);
   const [selectedWorkspaceForInvite, setSelectedWorkspaceForInvite] = useState<string | null>(null);
+  const [expandedWorkspaces, setExpandedWorkspaces] = useState<Set<string>>(new Set());
   
   // Form for invite dialog
   const form = useForm<InviteFormValues>({
@@ -91,9 +98,15 @@ const WorkspacesSettings = () => {
       role: 'viewer',
     },
   });
+
+  // Form for create workspace dialog
+  const createWorkspaceForm = useForm({
+    defaultValues: {
+      name: '',
+    },
+  });
   
   // Mock data - replace with actual data from your backend
-  // Only shared workspaces
   const workspaces: Workspace[] = [
     {
       id: '1',
@@ -102,6 +115,14 @@ const WorkspacesSettings = () => {
       role: 'owner',
       createdAt: '2024-01-15',
       isShared: true,
+      dataSources: ['Snowflake', 'PostgreSQL'],
+      members: [
+        { id: '1', email: 'john@example.com', role: 'admin', joinedAt: '2024-01-15' },
+        { id: '2', email: 'mike@example.com', role: 'editor', joinedAt: '2024-02-01' },
+        { id: '3', email: 'emma@example.com', role: 'viewer', joinedAt: '2024-02-10' },
+        { id: '4', email: 'sarah@example.com', role: 'editor', joinedAt: '2024-02-15' },
+        { id: '5', email: 'tom@example.com', role: 'viewer', joinedAt: '2024-03-01' },
+      ],
     },
     {
       id: '2',
@@ -110,6 +131,8 @@ const WorkspacesSettings = () => {
       role: 'viewer',
       createdAt: '2024-01-20',
       isShared: true,
+      dataSources: ['MySQL'],
+      members: [],
     },
     {
       id: '3',
@@ -118,6 +141,11 @@ const WorkspacesSettings = () => {
       role: 'admin',
       createdAt: '2024-02-20',
       isShared: true,
+      dataSources: ['Snowflake', 'MongoDB'],
+      members: [
+        { id: '6', email: 'client1@example.com', role: 'viewer', joinedAt: '2024-02-20' },
+        { id: '7', email: 'client2@example.com', role: 'viewer', joinedAt: '2024-02-25' },
+      ],
     },
     {
       id: '4',
@@ -126,6 +154,8 @@ const WorkspacesSettings = () => {
       role: 'editor',
       createdAt: '2024-03-01',
       isShared: true,
+      dataSources: [],
+      members: [],
     },
   ];
 
@@ -183,6 +213,24 @@ const WorkspacesSettings = () => {
     toast.success('Member removed successfully');
   };
 
+  const handleCreateWorkspace = (values: any) => {
+    toast.success(`Workspace "${values.name}" created successfully`);
+    createWorkspaceForm.reset();
+    setCreateWorkspaceDialog(false);
+  };
+
+  const toggleWorkspaceExpansion = (workspaceId: string) => {
+    setExpandedWorkspaces(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(workspaceId)) {
+        newSet.delete(workspaceId);
+      } else {
+        newSet.add(workspaceId);
+      }
+      return newSet;
+    });
+  };
+
   const getRoleBadge = (role: WorkspaceRole) => {
     const roleConfig = {
       owner: { variant: 'default' as const, icon: Crown, label: 'Owner' },
@@ -215,9 +263,12 @@ const WorkspacesSettings = () => {
                 Shared workspaces where you can invite and manage members
               </CardDescription>
             </div>
-            <Button className="bg-primary hover:bg-primary/90">
+            <Button 
+              className="bg-primary hover:bg-primary/90"
+              onClick={() => setCreateWorkspaceDialog(true)}
+            >
               <Plus className="w-4 h-4 mr-2" />
-              New Shared Workspace
+              Create Workspace
             </Button>
           </div>
         </CardHeader>
@@ -225,50 +276,113 @@ const WorkspacesSettings = () => {
           {ownedWorkspaces.length > 0 ? (
             <div className="space-y-3">
               {ownedWorkspaces.map((workspace) => (
-                <div
-                  key={workspace.id}
-                  className="flex items-center justify-between p-4 rounded-lg border border-border/50 bg-card hover:border-primary/20 hover:shadow-sm transition-all"
-                >
-                  <div className="flex items-center gap-4 flex-1">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-muted to-muted-foreground/20 flex items-center justify-center">
-                      <Users className="w-5 h-5 text-muted-foreground" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-foreground">{workspace.name}</h3>
+                <Collapsible key={workspace.id}>
+                  <div className="rounded-lg border border-border/50 bg-card hover:border-primary/20 hover:shadow-sm transition-all">
+                    <div className="flex items-center justify-between p-4">
+                      <div className="flex items-center gap-4 flex-1">
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-muted to-muted-foreground/20 flex items-center justify-center">
+                          <Users className="w-5 h-5 text-muted-foreground" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-semibold text-foreground">{workspace.name}</h3>
+                            {getRoleBadge(workspace.role)}
+                          </div>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
+                            <span className="flex items-center gap-1">
+                              <Users className="w-3.5 h-3.5" />
+                              {workspace.memberCount} {workspace.memberCount === 1 ? 'member' : 'members'}
+                            </span>
+                            {workspace.dataSources && workspace.dataSources.length > 0 && (
+                              <span className="flex items-center gap-1">
+                                <Database className="w-3.5 h-3.5" />
+                                {workspace.dataSources.length} {workspace.dataSources.length === 1 ? 'source' : 'sources'}
+                              </span>
+                            )}
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-3.5 h-3.5" />
+                              Created {new Date(workspace.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Users className="w-3.5 h-3.5" />
-                          {workspace.memberCount} {workspace.memberCount === 1 ? 'member' : 'members'}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3.5 h-3.5" />
-                          Created {new Date(workspace.createdAt).toLocaleDateString()}
-                        </span>
+                      <div className="flex items-center gap-2">
+                        <CollapsibleTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => toggleWorkspaceExpansion(workspace.id)}
+                          >
+                            <ChevronDown className={`w-4 h-4 transition-transform ${expandedWorkspaces.has(workspace.id) ? 'rotate-180' : ''}`} />
+                          </Button>
+                        </CollapsibleTrigger>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreVertical className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="bg-white z-50">
+                            <DropdownMenuItem
+                              onClick={() => handleOpenInviteDialog(workspace.id)}
+                            >
+                              <UserPlus className="w-4 h-4 mr-2" />
+                              Invite Members
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Settings className="w-4 h-4 mr-2" />
+                              Workspace Settings
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     </div>
+
+                    <CollapsibleContent>
+                      <div className="border-t border-border/50 p-4 space-y-4">
+                        {/* Data Sources */}
+                        {workspace.dataSources && workspace.dataSources.length > 0 && (
+                          <div>
+                            <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                              <Database className="w-4 h-4" />
+                              Data Sources
+                            </h4>
+                            <div className="flex flex-wrap gap-2">
+                              {workspace.dataSources.map((source, idx) => (
+                                <Badge key={idx} variant="outline" className="bg-muted">
+                                  {source}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Members */}
+                        {workspace.members && workspace.members.length > 0 && (
+                          <div>
+                            <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                              <Users className="w-4 h-4" />
+                              Team Members
+                            </h4>
+                            <div className="space-y-2">
+                              {workspace.members.map((member) => (
+                                <div key={member.id} className="flex items-center justify-between p-2 rounded bg-muted/30">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-foreground text-xs font-medium">
+                                      {member.email.charAt(0).toUpperCase()}
+                                    </div>
+                                    <span className="text-sm">{member.email}</span>
+                                  </div>
+                                  {getRoleBadge(member.role)}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </CollapsibleContent>
                   </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreVertical className="w-4 h-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-white z-50">
-                      <DropdownMenuItem
-                        onClick={() => handleOpenInviteDialog(workspace.id)}
-                      >
-                        <UserPlus className="w-4 h-4 mr-2" />
-                        Invite Members
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Settings className="w-4 h-4 mr-2" />
-                        Workspace Settings
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
+                </Collapsible>
               ))}
             </div>
           ) : (
@@ -555,6 +669,50 @@ const WorkspacesSettings = () => {
               </DialogFooter>
             </form>
           </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Workspace Dialog */}
+      <Dialog open={createWorkspaceDialog} onOpenChange={setCreateWorkspaceDialog}>
+        <DialogContent className="sm:max-w-[500px] bg-white">
+          <DialogHeader>
+            <DialogTitle className="text-xl">Create New Workspace</DialogTitle>
+            <DialogDescription>
+              Create a new workspace to organize your data sources and collaborate with your team
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={createWorkspaceForm.handleSubmit(handleCreateWorkspace)} className="space-y-6 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="workspace-name">Workspace Name</Label>
+              <Input
+                id="workspace-name"
+                placeholder="My Workspace"
+                {...createWorkspaceForm.register('name')}
+                className="bg-white"
+              />
+            </div>
+
+            <DialogFooter className="gap-2">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => {
+                  createWorkspaceForm.reset();
+                  setCreateWorkspaceDialog(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="submit" 
+                className="bg-primary hover:bg-primary/90"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Create Workspace
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </div>
