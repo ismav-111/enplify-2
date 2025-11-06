@@ -13,6 +13,7 @@ import {
   Check,
   X
 } from 'lucide-react';
+import { WorkspaceCreationWizard } from './WorkspaceCreationWizard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -95,6 +96,7 @@ const WorkspaceSection = ({
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
+  const [wizardOpen, setWizardOpen] = useState(false);
   const [inviteDialog, setInviteDialog] = useState<{
     open: boolean;
     workspaceId: string;
@@ -121,6 +123,16 @@ const WorkspaceSection = ({
     workspaceId: '',
     name: ''
   });
+
+  const handleWizardComplete = (data: {
+    name: string;
+    dataSources: string[];
+    invitedUsers: { email: string; role: string }[];
+  }) => {
+    onCreateWorkspace();
+    // Here you would typically handle the data sources and invited users
+    console.log('Workspace created with:', data);
+  };
 
   const truncateTitle = (title: string, maxLength: number = 20) => {
     if (title.length <= maxLength) return title;
@@ -477,7 +489,7 @@ const WorkspaceSection = ({
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        onClick={() => onCreateWorkspace(false)}
+                        onClick={() => setWizardOpen(true)}
                         className="h-5 w-5 p-0"
                       >
                         <Plus size={12} className="text-gray-400" />
@@ -504,7 +516,7 @@ const WorkspaceSection = ({
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        onClick={() => onCreateWorkspace(true)}
+                        onClick={() => setWizardOpen(true)}
                         className="h-5 w-5 p-0"
                       >
                         <Plus size={12} className="text-gray-400" />
@@ -530,7 +542,7 @@ const WorkspaceSection = ({
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    onClick={() => onCreateWorkspace(false)}
+                    onClick={() => setWizardOpen(true)}
                     className="h-5 w-5 p-0"
                   >
                     <Plus size={12} className="text-gray-400" />
@@ -546,7 +558,7 @@ const WorkspaceSection = ({
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => onCreateWorkspace(false)}
+                onClick={() => setWizardOpen(true)}
                 className="h-7 text-[11px]"
               >
                 <Plus size={11} className="mr-1" />
@@ -624,6 +636,13 @@ const WorkspaceSection = ({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Workspace Creation Wizard */}
+      <WorkspaceCreationWizard
+        open={wizardOpen}
+        onOpenChange={setWizardOpen}
+        onComplete={handleWizardComplete}
+      />
     </>
   );
 };
