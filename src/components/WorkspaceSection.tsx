@@ -11,7 +11,8 @@ import {
   Edit,
   Trash,
   Check,
-  X
+  X,
+  Settings
 } from 'lucide-react';
 import { WorkspaceCreationWizard } from './WorkspaceCreationWizard';
 import { Button } from '@/components/ui/button';
@@ -68,7 +69,15 @@ export interface Workspace {
 
 interface WorkspaceSectionProps {
   workspaces: Workspace[];
-  onCreateWorkspace: (isShared?: boolean) => void;
+  onCreateWorkspace: (data?: {
+    name: string;
+    dataSources: Array<{
+      id: string;
+      config: Record<string, string>;
+    }>;
+    invitedUsers: { email: string; role: string }[];
+    isShared?: boolean;
+  }) => void;
   onCreateSession: (workspaceId: string) => void;
   onSelectWorkspace: (workspaceId: string, sessionId?: string) => void;
   onToggleWorkspace: (workspaceId: string) => void;
@@ -78,6 +87,7 @@ interface WorkspaceSectionProps {
   onDeleteSession: (workspaceId: string, sessionId: string) => void;
   onInviteUsers: (workspaceId: string, sessionId: string) => void;
   onInviteToWorkspace: (workspaceId: string) => void;
+  onWorkspaceSettings: (workspaceId: string) => void;
 }
 
 const WorkspaceSection = ({
@@ -91,7 +101,8 @@ const WorkspaceSection = ({
   onDeleteWorkspace,
   onDeleteSession,
   onInviteUsers,
-  onInviteToWorkspace
+  onInviteToWorkspace,
+  onWorkspaceSettings
 }: WorkspaceSectionProps) => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<string | null>(null);
@@ -132,9 +143,11 @@ const WorkspaceSection = ({
     }>;
     invitedUsers: { email: string; role: string }[];
   }) => {
-    onCreateWorkspace();
-    // Here you would typically handle the data sources and invited users
-    console.log('Workspace created with:', data);
+    // Pass the complete data to create workspace with proper name and configuration
+    onCreateWorkspace({
+      ...data,
+      isShared: data.invitedUsers.length > 0
+    });
   };
 
   const truncateTitle = (title: string, maxLength: number = 20) => {
@@ -332,6 +345,15 @@ const WorkspaceSection = ({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-32 bg-white">
+                      <DropdownMenuItem 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onWorkspaceSettings(workspace.id);
+                        }}
+                      >
+                        <Settings size={10} className="mr-2" />
+                        Settings
+                      </DropdownMenuItem>
                       {workspace.isShared && (
                         <DropdownMenuItem 
                           onClick={(e) => {

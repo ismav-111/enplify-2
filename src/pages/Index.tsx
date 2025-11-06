@@ -299,18 +299,47 @@ const Index = () => {
 
   // Workspace handlers
   const workspaceActions = {
-    onCreateWorkspace: (isShared: boolean = false) => {
-      const newWorkspace: Workspace = {
+    onCreateWorkspace: (data?: {
+      name: string;
+      dataSources: Array<{
+        id: string;
+        config: Record<string, string>;
+      }>;
+      invitedUsers: { email: string; role: string }[];
+      isShared?: boolean;
+    }) => {
+      // If data is provided from wizard, use it; otherwise create default workspace
+      const newWorkspace: Workspace = data ? {
         id: `ws-${Date.now()}`,
-        name: isShared ? `New Shared Workspace ${workspaces.filter(w => w.isShared).length + 1}` : `New Workspace ${workspaces.filter(w => !w.isShared).length + 1}`,
+        name: data.name,
         isExpanded: true,
         isActive: false,
         isOwner: true,
-        isShared: isShared,
-        memberCount: isShared ? 1 : undefined,
+        isShared: data.isShared || false,
+        memberCount: data.invitedUsers.length > 0 ? data.invitedUsers.length + 1 : undefined,
+        sessions: []
+      } : {
+        id: `ws-${Date.now()}`,
+        name: `New Workspace ${workspaces.length + 1}`,
+        isExpanded: true,
+        isActive: false,
+        isOwner: true,
+        isShared: false,
         sessions: []
       };
+      
       setWorkspaces(prev => [...prev, newWorkspace]);
+      
+      // Log workspace creation with data sources and invited users if provided
+      if (data) {
+        console.log('Workspace created with:', {
+          name: data.name,
+          dataSources: data.dataSources,
+          invitedUsers: data.invitedUsers
+        });
+        
+        toast.success(`Workspace "${data.name}" created successfully!`);
+      }
     },
     onCreateSession: (workspaceId: string) => {
       setWorkspaces(prev => prev.map(ws => 
@@ -381,6 +410,12 @@ const Index = () => {
       // Mock invite functionality for workspace
       console.log(`Inviting users to workspace ${workspaceId}`);
       toast.info("Invite functionality coming soon!");
+    },
+    onWorkspaceSettings: (workspaceId: string) => {
+      // Navigate to workspace settings
+      const workspace = workspaces.find(w => w.id === workspaceId);
+      console.log(`Opening settings for workspace ${workspaceId}:`, workspace?.name);
+      toast.info(`Opening settings for "${workspace?.name}"`);
     }
   };
 
