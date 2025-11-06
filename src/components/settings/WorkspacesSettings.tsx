@@ -87,7 +87,9 @@ type InviteFormValues = z.infer<typeof inviteSchema>;
 const WorkspacesSettings = () => {
   const [inviteDialog, setInviteDialog] = useState(false);
   const [createWorkspaceDialog, setCreateWorkspaceDialog] = useState(false);
+  const [dataSourceDialog, setDataSourceDialog] = useState(false);
   const [selectedWorkspaceForInvite, setSelectedWorkspaceForInvite] = useState<string | null>(null);
+  const [selectedWorkspaceForDataSource, setSelectedWorkspaceForDataSource] = useState<string | null>(null);
   const [expandedWorkspaces, setExpandedWorkspaces] = useState<Set<string>>(new Set());
   
   // Form for invite dialog
@@ -103,6 +105,13 @@ const WorkspacesSettings = () => {
   const createWorkspaceForm = useForm({
     defaultValues: {
       name: '',
+    },
+  });
+
+  // Form for data source dialog
+  const dataSourceForm = useForm({
+    defaultValues: {
+      type: '',
     },
   });
   
@@ -217,6 +226,25 @@ const WorkspacesSettings = () => {
     toast.success(`Workspace "${values.name}" created successfully`);
     createWorkspaceForm.reset();
     setCreateWorkspaceDialog(false);
+  };
+
+  const handleOpenDataSourceDialog = (workspaceId: string) => {
+    setSelectedWorkspaceForDataSource(workspaceId);
+    dataSourceForm.reset();
+    setDataSourceDialog(true);
+  };
+
+  const handleAddDataSource = (values: any) => {
+    const workspace = workspaces.find(w => w.id === selectedWorkspaceForDataSource);
+    toast.success(`Data source "${values.type}" added to workspace "${workspace?.name}"`);
+    dataSourceForm.reset();
+    setDataSourceDialog(false);
+    setSelectedWorkspaceForDataSource(null);
+  };
+
+  const handleRemoveDataSource = (workspaceId: string, dataSource: string) => {
+    const workspace = workspaces.find(w => w.id === workspaceId);
+    toast.success(`Removed ${dataSource} from workspace "${workspace?.name}"`);
   };
 
   const toggleWorkspaceExpansion = (workspaceId: string) => {
@@ -340,21 +368,42 @@ const WorkspacesSettings = () => {
                     <CollapsibleContent>
                       <div className="border-t border-border/50 p-4 space-y-4">
                         {/* Data Sources */}
-                        {workspace.dataSources && workspace.dataSources.length > 0 && (
-                          <div>
-                            <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="text-sm font-medium flex items-center gap-2">
                               <Database className="w-4 h-4" />
                               Data Sources
                             </h4>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleOpenDataSourceDialog(workspace.id)}
+                              className="h-8 text-xs"
+                            >
+                              <Plus className="w-3 h-3 mr-1" />
+                              Add Source
+                            </Button>
+                          </div>
+                          {workspace.dataSources && workspace.dataSources.length > 0 ? (
                             <div className="flex flex-wrap gap-2">
                               {workspace.dataSources.map((source, idx) => (
-                                <Badge key={idx} variant="outline" className="bg-muted">
+                                <Badge key={idx} variant="outline" className="bg-muted pl-2 pr-1 py-1 flex items-center gap-1">
                                   {source}
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleRemoveDataSource(workspace.id, source)}
+                                    className="h-4 w-4 p-0 hover:bg-destructive/10 hover:text-destructive ml-1"
+                                  >
+                                    <Trash2 className="w-3 h-3" />
+                                  </Button>
                                 </Badge>
                               ))}
                             </div>
-                          </div>
-                        )}
+                          ) : (
+                            <p className="text-sm text-muted-foreground">No data sources configured</p>
+                          )}
+                        </div>
 
                         {/* Members */}
                         {workspace.members && workspace.members.length > 0 && (
@@ -709,6 +758,67 @@ const WorkspacesSettings = () => {
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Create Workspace
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Data Source Dialog */}
+      <Dialog open={dataSourceDialog} onOpenChange={(open) => {
+        setDataSourceDialog(open);
+        if (!open) {
+          dataSourceForm.reset();
+          setSelectedWorkspaceForDataSource(null);
+        }
+      }}>
+        <DialogContent className="sm:max-w-[500px] bg-white">
+          <DialogHeader>
+            <DialogTitle className="text-xl">Add Data Source</DialogTitle>
+            <DialogDescription>
+              Connect a new data source to{' '}
+              <span className="font-semibold text-foreground">
+                {workspaces.find(w => w.id === selectedWorkspaceForDataSource)?.name || 'this workspace'}
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={dataSourceForm.handleSubmit(handleAddDataSource)} className="space-y-6 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="data-source-type">Data Source Type</Label>
+              <Select onValueChange={(value) => dataSourceForm.setValue('type', value)}>
+                <SelectTrigger className="bg-white">
+                  <SelectValue placeholder="Select a data source" />
+                </SelectTrigger>
+                <SelectContent className="bg-white z-50">
+                  <SelectItem value="Snowflake">Snowflake</SelectItem>
+                  <SelectItem value="PostgreSQL">PostgreSQL</SelectItem>
+                  <SelectItem value="MySQL">MySQL</SelectItem>
+                  <SelectItem value="MongoDB">MongoDB</SelectItem>
+                  <SelectItem value="BigQuery">BigQuery</SelectItem>
+                  <SelectItem value="Redshift">Redshift</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <DialogFooter className="gap-2">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => {
+                  dataSourceForm.reset();
+                  setDataSourceDialog(false);
+                  setSelectedWorkspaceForDataSource(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="submit" 
+                className="bg-primary hover:bg-primary/90"
+              >
+                <Database className="w-4 h-4 mr-2" />
+                Add Data Source
               </Button>
             </DialogFooter>
           </form>
