@@ -12,7 +12,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 
 interface InvitedUser {
   email: string;
-  role: 'admin' | 'contributor' | 'viewer';
+  role: 'admin' | 'editor' | 'viewer';
 }
 
 interface WorkspaceCreationWizardProps {
@@ -121,7 +121,7 @@ export function WorkspaceCreationWizard({ open, onOpenChange, onComplete }: Work
   const [expandedDataSource, setExpandedDataSource] = useState<string | null>(null);
   const [invitedUsers, setInvitedUsers] = useState<InvitedUser[]>([]);
   const [currentEmail, setCurrentEmail] = useState('');
-  const [currentRole, setCurrentRole] = useState<'admin' | 'contributor' | 'viewer'>('contributor');
+  const [currentRole, setCurrentRole] = useState<'admin' | 'editor' | 'viewer'>('editor');
 
   const handleClose = () => {
     setStep(1);
@@ -130,7 +130,7 @@ export function WorkspaceCreationWizard({ open, onOpenChange, onComplete }: Work
     setExpandedDataSource(null);
     setInvitedUsers([]);
     setCurrentEmail('');
-    setCurrentRole('contributor');
+    setCurrentRole('editor');
     onOpenChange(false);
   };
 
@@ -203,14 +203,14 @@ export function WorkspaceCreationWizard({ open, onOpenChange, onComplete }: Work
 
     setInvitedUsers([...invitedUsers, { email: currentEmail, role: currentRole }]);
     setCurrentEmail('');
-    setCurrentRole('contributor');
+    setCurrentRole('editor');
   };
 
   const removeUser = (email: string) => {
     setInvitedUsers(invitedUsers.filter(user => user.email !== email));
   };
 
-  const updateUserRole = (email: string, role: 'admin' | 'contributor' | 'viewer') => {
+  const updateUserRole = (email: string, role: 'admin' | 'editor' | 'viewer') => {
     setInvitedUsers(invitedUsers.map(user => 
       user.email === email ? { ...user, role } : user
     ));
@@ -388,7 +388,7 @@ export function WorkspaceCreationWizard({ open, onOpenChange, onComplete }: Work
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="contributor">Contributor</SelectItem>
+                      <SelectItem value="editor">Editor</SelectItem>
                       <SelectItem value="viewer">Viewer</SelectItem>
                     </SelectContent>
                   </Select>
@@ -410,7 +410,7 @@ export function WorkspaceCreationWizard({ open, onOpenChange, onComplete }: Work
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="admin">Admin</SelectItem>
-                              <SelectItem value="contributor">Contributor</SelectItem>
+                              <SelectItem value="editor">Editor</SelectItem>
                               <SelectItem value="viewer">Viewer</SelectItem>
                             </SelectContent>
                           </Select>
@@ -432,7 +432,7 @@ export function WorkspaceCreationWizard({ open, onOpenChange, onComplete }: Work
                 <p className="font-medium">Permission levels for chat sessions:</p>
                 <ul className="space-y-1 text-muted-foreground">
                   <li><span className="font-medium text-destructive">Admin:</span> Manage workspace settings, users, and all chat sessions</li>
-                  <li><span className="font-medium text-primary">Contributor:</span> Create and participate in chat sessions, access shared data</li>
+                  <li><span className="font-medium text-primary">Editor:</span> Create and participate in chat sessions, access shared data</li>
                   <li><span className="font-medium">Viewer:</span> View chat sessions and data, cannot create or modify</li>
                 </ul>
               </div>
