@@ -99,26 +99,26 @@ const Settings = () => {
           <SidebarContent className="px-3 py-4">
             <SidebarGroup>
               <SidebarGroupContent>
-                <SidebarMenu className="gap-1">
+                <SidebarMenu className="gap-2">
                   {menuItems.map((item) => (
                     <SidebarMenuItem key={item.value}>
                       <SidebarMenuButton
                         onClick={() => setActiveSection(item.value)}
                         isActive={activeSection === item.value}
                         className={`
-                          w-full justify-start px-3 py-2.5 text-sm font-medium
-                          transition-all duration-200 rounded-lg
+                          w-full justify-start px-3 py-3 text-sm font-medium
+                          transition-all duration-200 rounded-lg h-auto min-h-[48px]
                           ${activeSection === item.value 
                             ? 'bg-primary text-primary-foreground shadow-sm' 
                             : 'hover:bg-muted/50 text-muted-foreground hover:text-foreground'
                           }
                         `}
                       >
-                        <item.icon className="h-4 w-4 mr-3 shrink-0" />
-                        <div className="flex flex-col items-start gap-0.5">
-                          <span className="leading-none">{item.title}</span>
+                        <item.icon className="h-4 w-4 mr-3 shrink-0 mt-0.5" />
+                        <div className="flex flex-col items-start gap-1 flex-1 min-w-0">
+                          <span className="leading-tight">{item.title}</span>
                           {activeSection !== item.value && (
-                            <span className="text-xs opacity-70 font-normal leading-none">
+                            <span className="text-xs opacity-70 font-normal leading-tight">
                               {item.description}
                             </span>
                           )}
