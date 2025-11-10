@@ -1,27 +1,58 @@
 
 import { useState, useEffect } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProfileSettings from '@/components/settings/ProfileSettings';
 import DataSourceSettings from '@/components/settings/DataSourceSettings';
 import WorkspacesSettings from '@/components/settings/WorkspacesSettings';
-import { ChevronLeft, LogOut } from 'lucide-react';
+import { ChevronLeft, LogOut, Briefcase, Database, User } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import {
+  SidebarProvider,
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarTrigger,
+  SidebarInset,
+} from "@/components/ui/sidebar";
+
+const menuItems = [
+  {
+    title: "Workspaces",
+    icon: Briefcase,
+    value: "workspaces"
+  },
+  {
+    title: "Data Sources",
+    icon: Database,
+    value: "data-sources"
+  },
+  {
+    title: "Profile",
+    icon: User,
+    value: "profile"
+  }
+];
 
 const Settings = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState("workspaces");
+  const [activeSection, setActiveSection] = useState("workspaces");
 
-  // Check URL parameters for tab selection
+  // Check URL parameters for section selection
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const tab = searchParams.get('tab');
     if (tab === 'data-sources') {
-      setActiveTab('data-sources');
+      setActiveSection('data-sources');
     } else if (tab === 'workspaces') {
-      setActiveTab('workspaces');
+      setActiveSection('workspaces');
+    } else if (tab === 'profile') {
+      setActiveSection('profile');
     }
   }, [location.search]);
 
@@ -30,79 +61,90 @@ const Settings = () => {
     navigate('/signin');
   };
 
+  const renderContent = () => {
+    switch (activeSection) {
+      case 'workspaces':
+        return <WorkspacesSettings />;
+      case 'data-sources':
+        return <DataSourceSettings />;
+      case 'profile':
+        return <ProfileSettings />;
+      default:
+        return <WorkspacesSettings />;
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Modern Header */}
-        <div className="flex items-center justify-between mb-10">
-          <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => navigate('/')}
-              className="h-10 w-10 rounded-full hover:bg-primary/10 transition-all hover:scale-105"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                Settings
-              </h1>
-              <p className="text-muted-foreground mt-1.5">Manage your account, preferences, and workspaces</p>
+    <SidebarProvider defaultOpen={true}>
+      <div className="min-h-screen flex w-full bg-gradient-to-br from-background via-background to-muted/20">
+        <Sidebar className="border-r border-border/50">
+          <SidebarContent>
+            <SidebarGroup className="px-0 py-4">
+              <div className="px-4 mb-6">
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+                  Settings
+                </h2>
+                <p className="text-sm text-muted-foreground mt-1">Manage your preferences</p>
+              </div>
+              
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {menuItems.map((item) => (
+                    <SidebarMenuItem key={item.value}>
+                      <SidebarMenuButton
+                        onClick={() => setActiveSection(item.value)}
+                        isActive={activeSection === item.value}
+                        className="w-full justify-start px-4 py-3 text-base"
+                      >
+                        <item.icon className="h-5 w-5 mr-3" />
+                        <span>{item.title}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+
+              <div className="px-4 mt-auto pt-6">
+                <Button 
+                  variant="outline" 
+                  onClick={handleLogout}
+                  className="w-full justify-start hover:border-destructive hover:text-destructive transition-all"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </div>
+            </SidebarGroup>
+          </SidebarContent>
+        </Sidebar>
+
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-4 border-b border-border/50 bg-background/50 backdrop-blur-sm px-6">
+            <SidebarTrigger className="h-8 w-8" />
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => navigate('/')}
+                className="h-10 w-10 rounded-full hover:bg-primary/10 transition-all hover:scale-105"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold">
+                  {menuItems.find(item => item.value === activeSection)?.title}
+                </h1>
+                <p className="text-sm text-muted-foreground">Manage your {activeSection}</p>
+              </div>
             </div>
+          </header>
+
+          <div className="flex-1 p-6 overflow-auto">
+            {renderContent()}
           </div>
-          
-          <Button 
-            variant="outline" 
-            onClick={handleLogout}
-            className="flex items-center gap-2 hover:border-destructive hover:text-destructive transition-all"
-          >
-            <LogOut className="h-4 w-4" />
-            Logout
-          </Button>
-        </div>
-        
-        {/* Modern Tabs */}
-        <Tabs 
-          value={activeTab} 
-          onValueChange={setActiveTab}
-          className="w-full"
-        >
-          <TabsList className="grid w-full grid-cols-3 mb-8 bg-card/50 backdrop-blur-sm border border-border/50 h-14 rounded-xl p-1 shadow-sm">
-            <TabsTrigger 
-              value="workspaces" 
-              className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-md h-11 text-base font-medium rounded-lg transition-all"
-            >
-              Workspaces
-            </TabsTrigger>
-            <TabsTrigger 
-              value="data-sources" 
-              className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-md h-11 text-base font-medium rounded-lg transition-all"
-            >
-              Data Sources
-            </TabsTrigger>
-            <TabsTrigger 
-              value="profile" 
-              className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-md h-11 text-base font-medium rounded-lg transition-all"
-            >
-              Profile
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="workspaces" className="mt-0">
-            <WorkspacesSettings />
-          </TabsContent>
-          
-          <TabsContent value="data-sources" className="mt-0">
-            <DataSourceSettings />
-          </TabsContent>
-          
-          <TabsContent value="profile" className="mt-0">
-            <ProfileSettings />
-          </TabsContent>
-        </Tabs>
+        </SidebarInset>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 
