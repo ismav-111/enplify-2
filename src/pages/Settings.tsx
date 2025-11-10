@@ -3,9 +3,10 @@ import { useState, useEffect } from 'react';
 import ProfileSettings from '@/components/settings/ProfileSettings';
 import DataSourceSettings from '@/components/settings/DataSourceSettings';
 import WorkspacesSettings from '@/components/settings/WorkspacesSettings';
-import { ChevronLeft, LogOut, Briefcase, Database, User } from 'lucide-react';
+import { ArrowLeft, LogOut, Briefcase, Database, User, Settings as SettingsIcon } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import {
   SidebarProvider,
@@ -18,23 +19,28 @@ import {
   SidebarMenuButton,
   SidebarTrigger,
   SidebarInset,
+  SidebarFooter,
+  SidebarHeader,
 } from "@/components/ui/sidebar";
 
 const menuItems = [
   {
     title: "Workspaces",
     icon: Briefcase,
-    value: "workspaces"
+    value: "workspaces",
+    description: "Manage workspaces and teams"
   },
   {
     title: "Data Sources",
     icon: Database,
-    value: "data-sources"
+    value: "data-sources",
+    description: "Configure data connections"
   },
   {
     title: "Profile",
     icon: User,
-    value: "profile"
+    value: "profile",
+    description: "Personal information"
   }
 ];
 
@@ -76,72 +82,100 @@ const Settings = () => {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="min-h-screen flex w-full bg-gradient-to-br from-background via-background to-muted/20">
-        <Sidebar className="border-r border-border/50">
-          <SidebarContent>
-            <SidebarGroup className="px-0 py-4">
-              <div className="px-4 mb-6">
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                  Settings
-                </h2>
-                <p className="text-sm text-muted-foreground mt-1">Manage your preferences</p>
+      <div className="min-h-screen flex w-full bg-background">
+        <Sidebar className="border-r border-border">
+          <SidebarHeader className="border-b border-border px-6 py-5">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                <SettingsIcon className="h-5 w-5 text-primary" />
               </div>
-              
+              <div>
+                <h2 className="text-lg font-semibold">Settings</h2>
+                <p className="text-xs text-muted-foreground">Manage preferences</p>
+              </div>
+            </div>
+          </SidebarHeader>
+
+          <SidebarContent className="px-3 py-4">
+            <SidebarGroup>
               <SidebarGroupContent>
-                <SidebarMenu>
+                <SidebarMenu className="gap-1">
                   {menuItems.map((item) => (
                     <SidebarMenuItem key={item.value}>
                       <SidebarMenuButton
                         onClick={() => setActiveSection(item.value)}
                         isActive={activeSection === item.value}
-                        className="w-full justify-start px-4 py-3 text-base"
+                        className={`
+                          w-full justify-start px-3 py-2.5 text-sm font-medium
+                          transition-all duration-200 rounded-lg
+                          ${activeSection === item.value 
+                            ? 'bg-primary text-primary-foreground shadow-sm' 
+                            : 'hover:bg-muted/50 text-muted-foreground hover:text-foreground'
+                          }
+                        `}
                       >
-                        <item.icon className="h-5 w-5 mr-3" />
-                        <span>{item.title}</span>
+                        <item.icon className="h-4 w-4 mr-3 shrink-0" />
+                        <div className="flex flex-col items-start gap-0.5">
+                          <span className="leading-none">{item.title}</span>
+                          {activeSection !== item.value && (
+                            <span className="text-xs opacity-70 font-normal leading-none">
+                              {item.description}
+                            </span>
+                          )}
+                        </div>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
                 </SidebarMenu>
               </SidebarGroupContent>
-
-              <div className="px-4 mt-auto pt-6">
-                <Button 
-                  variant="outline" 
-                  onClick={handleLogout}
-                  className="w-full justify-start hover:border-destructive hover:text-destructive transition-all"
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Logout
-                </Button>
-              </div>
             </SidebarGroup>
           </SidebarContent>
+
+          <SidebarFooter className="border-t border-border p-3">
+            <Button 
+              variant="ghost" 
+              onClick={handleLogout}
+              className="w-full justify-start text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+            >
+              <LogOut className="h-4 w-4 mr-3" />
+              Sign Out
+            </Button>
+          </SidebarFooter>
         </Sidebar>
 
-        <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center gap-4 border-b border-border/50 bg-background/50 backdrop-blur-sm px-6">
-            <SidebarTrigger className="h-8 w-8" />
-            <div className="flex items-center gap-4">
+        <SidebarInset className="bg-muted/30">
+          <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-4 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6">
+            <div className="flex items-center gap-3 flex-1">
+              <SidebarTrigger className="h-7 w-7" />
+              <Separator orientation="vertical" className="h-5" />
               <Button 
                 variant="ghost" 
-                size="icon" 
+                size="sm"
                 onClick={() => navigate('/')}
-                className="h-10 w-10 rounded-full hover:bg-primary/10 transition-all hover:scale-105"
+                className="h-8 px-2 text-muted-foreground hover:text-foreground"
               >
-                <ChevronLeft className="h-5 w-5" />
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back
               </Button>
-              <div>
-                <h1 className="text-2xl font-bold">
-                  {menuItems.find(item => item.value === activeSection)?.title}
-                </h1>
-                <p className="text-sm text-muted-foreground">Manage your {activeSection}</p>
-              </div>
             </div>
           </header>
 
-          <div className="flex-1 p-6 overflow-auto">
-            {renderContent()}
-          </div>
+          <main className="flex-1 p-8 animate-fade-in">
+            <div className="max-w-5xl">
+              <div className="mb-6">
+                <h1 className="text-3xl font-bold tracking-tight">
+                  {menuItems.find(item => item.value === activeSection)?.title}
+                </h1>
+                <p className="text-muted-foreground mt-1.5">
+                  {menuItems.find(item => item.value === activeSection)?.description}
+                </p>
+              </div>
+              
+              <div className="animate-fade-in">
+                {renderContent()}
+              </div>
+            </div>
+          </main>
         </SidebarInset>
       </div>
     </SidebarProvider>
