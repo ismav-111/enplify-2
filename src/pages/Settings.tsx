@@ -404,7 +404,7 @@ const Settings = () => {
             <h1 className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
               enplify.ai
             </h1>
-            <SidebarTrigger className="h-8 w-8 text-gray-500 hover:text-gray-700" />
+            <SidebarTrigger className="h-8 w-8 text-gray-500 hover:text-gray-700 -mr-2" />
           </SidebarHeader>
 
           <SidebarContent className="px-3 py-4">
