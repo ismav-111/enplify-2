@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Folder, 
   FolderOpen, 
@@ -14,7 +15,6 @@ import {
   X,
   Settings
 } from 'lucide-react';
-import { WorkspaceCreationWizard } from './WorkspaceCreationWizard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -104,10 +104,10 @@ const WorkspaceSection = ({
   onInviteToWorkspace,
   onWorkspaceSettings
 }: WorkspaceSectionProps) => {
+  const navigate = useNavigate();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
-  const [wizardOpen, setWizardOpen] = useState(false);
   const [inviteDialog, setInviteDialog] = useState<{
     open: boolean;
     workspaceId: string;
@@ -134,21 +134,6 @@ const WorkspaceSection = ({
     workspaceId: '',
     name: ''
   });
-
-  const handleWizardComplete = (data: {
-    name: string;
-    dataSources: Array<{
-      id: string;
-      config: Record<string, string>;
-    }>;
-    invitedUsers: { email: string; role: string }[];
-  }) => {
-    // Pass the complete data to create workspace with proper name and configuration
-    onCreateWorkspace({
-      ...data,
-      isShared: data.invitedUsers.length > 0
-    });
-  };
 
   const truncateTitle = (title: string, maxLength: number = 20) => {
     if (title.length <= maxLength) return title;
@@ -511,12 +496,12 @@ const WorkspaceSection = ({
                   <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">My Workspaces</h3>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        onClick={() => setWizardOpen(true)}
-                        className="h-5 w-5 p-0"
-                      >
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={() => navigate('/settings')}
+                    className="h-5 w-5 p-0"
+                  >
                         <Plus size={12} className="text-gray-400" />
                       </Button>
                     </TooltipTrigger>
@@ -538,17 +523,17 @@ const WorkspaceSection = ({
                   <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Shared Workspaces</h3>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        onClick={() => setWizardOpen(true)}
-                        className="h-5 w-5 p-0"
-                      >
-                        <Plus size={12} className="text-gray-400" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="right">
-                      <p>New shared workspace</p>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={() => navigate('/settings')}
+                    className="h-5 w-5 p-0"
+                  >
+                    <Plus size={12} className="text-gray-400" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>New shared workspace</p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
@@ -564,28 +549,28 @@ const WorkspaceSection = ({
               <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Workspaces</h3>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={() => setWizardOpen(true)}
-                    className="h-5 w-5 p-0"
-                  >
-                    <Plus size={12} className="text-gray-400" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  <p>New workspace</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-            <div className="text-center py-4">
-              <p className="text-[11px] text-gray-500 mb-2">No workspaces yet</p>
               <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setWizardOpen(true)}
-                className="h-7 text-[11px]"
+                variant="ghost" 
+                size="icon" 
+                onClick={() => navigate('/settings')}
+                className="h-5 w-5 p-0"
               >
+                <Plus size={12} className="text-gray-400" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>New workspace</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+        <div className="text-center py-4">
+          <p className="text-[11px] text-gray-500 mb-2">No workspaces yet</p>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => navigate('/settings')}
+            className="h-7 text-[11px]"
+          >
                 <Plus size={11} className="mr-1" />
                 Create workspace
               </Button>
@@ -661,13 +646,6 @@ const WorkspaceSection = ({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      {/* Workspace Creation Wizard */}
-      <WorkspaceCreationWizard
-        open={wizardOpen}
-        onOpenChange={setWizardOpen}
-        onComplete={handleWizardComplete}
-      />
     </>
   );
 };
