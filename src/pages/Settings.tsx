@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import ProfileSettings from '@/components/settings/ProfileSettings';
-import { ArrowLeft, Briefcase, ChevronDown, ChevronRight, Grid, Users as UsersIcon, Database, Settings as SettingsIcon, User } from 'lucide-react';
+import { ArrowLeft, Briefcase, ChevronDown, ChevronRight, Grid, Users as UsersIcon, Database, Settings as SettingsIcon, User, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -119,53 +119,187 @@ const Settings = () => {
         );
       case 'members':
         return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Team Members</CardTitle>
-              <CardDescription>Manage members and their roles in {workspace.name}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">Members management coming soon...</p>
-            </CardContent>
-          </Card>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-semibold text-foreground">Members</h1>
+                <p className="text-sm text-muted-foreground mt-1">Invite and manage workspace members</p>
+              </div>
+              <Button className="bg-foreground text-background hover:bg-foreground/90">
+                <UsersIcon className="h-4 w-4 mr-2" />
+                Invite User
+              </Button>
+            </div>
+
+            <Card>
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-border">
+                        <th className="text-left py-4 px-6 text-sm font-medium text-foreground">Name</th>
+                        <th className="text-left py-4 px-6 text-sm font-medium text-foreground">Email</th>
+                        <th className="text-left py-4 px-6 text-sm font-medium text-foreground">Role</th>
+                        <th className="text-left py-4 px-6 text-sm font-medium text-foreground">Data Source Access</th>
+                        <th className="text-left py-4 px-6 text-sm font-medium text-foreground">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b border-border">
+                        <td className="py-4 px-6 text-base text-foreground">Sarah Johnson</td>
+                        <td className="py-4 px-6 text-base text-foreground">sarah.j@company.com</td>
+                        <td className="py-4 px-6">
+                          <Badge className="bg-foreground text-background hover:bg-foreground/90">Admin</Badge>
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="flex gap-2">
+                            <Badge variant="outline">Google Drive</Badge>
+                            <Badge variant="outline">Snowflake</Badge>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="flex gap-2">
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <SettingsIcon className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr className="border-b border-border">
+                        <td className="py-4 px-6 text-base text-foreground">Mike Chen</td>
+                        <td className="py-4 px-6 text-base text-foreground">mike.c@company.com</td>
+                        <td className="py-4 px-6">
+                          <Badge variant="secondary" className="bg-muted text-foreground">Member</Badge>
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="flex gap-2">
+                            <Badge variant="outline">Google Drive</Badge>
+                            <Badge variant="outline">OneDrive</Badge>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="flex gap-2">
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <SettingsIcon className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="py-4 px-6 text-base text-foreground">Emily Davis</td>
+                        <td className="py-4 px-6 text-base text-foreground">emily.d@company.com</td>
+                        <td className="py-4 px-6">
+                          <Badge variant="secondary" className="bg-muted text-foreground">Member</Badge>
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="flex gap-2">
+                            <Badge variant="outline">SharePoint</Badge>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="flex gap-2">
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <SettingsIcon className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         );
       case 'data-sources':
         return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Data Sources</CardTitle>
-              <CardDescription>Configure data connections for {workspace.name}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {workspace.dataSources.length > 0 ? (
-                  workspace.dataSources.map((source) => (
-                    <div key={source} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <Database className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm font-medium">{source}</span>
-                      </div>
-                      <Badge variant="outline">Connected</Badge>
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Connected Data Sources</CardTitle>
+                <CardDescription>Data sources active in this workspace</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {workspace.dataSources.map((source) => (
+                  <div key={source} className="flex items-center justify-between p-4 border border-border rounded-lg bg-background">
+                    <div className="flex items-center gap-3">
+                      <span className="text-base font-medium text-foreground">{source}</span>
+                      <Badge variant="secondary" className="bg-muted text-foreground">Connected</Badge>
                     </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-muted-foreground">No data sources connected</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                    <Button variant="outline" size="sm">
+                      Disconnect
+                    </Button>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Available Data Sources</CardTitle>
+                <CardDescription>Connect data sources to this workspace</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {['OneDrive', 'SharePoint', 'Snowflake', 'Salesforce', 'Confluence', 'Slack'].map((source) => (
+                  <div key={source} className="flex items-center justify-between p-4 border border-border rounded-lg bg-background">
+                    <span className="text-base font-medium text-foreground">{source}</span>
+                    <Button className="bg-foreground text-background hover:bg-foreground/90" size="sm">
+                      Connect
+                    </Button>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
         );
       case 'settings':
         return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Workspace Settings</CardTitle>
-              <CardDescription>Configure settings for {workspace.name}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">Workspace settings coming soon...</p>
-            </CardContent>
-          </Card>
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Workspace Settings</CardTitle>
+                <CardDescription>Edit workspace details and configuration</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-muted-foreground">Workspace Name</p>
+                  <p className="text-base text-foreground">{workspace.name}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-muted-foreground">Description</p>
+                  <p className="text-base text-foreground">{workspace.description}</p>
+                </div>
+
+                <Button className="bg-foreground text-background hover:bg-foreground/90">
+                  Edit Details
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="border-destructive/50">
+              <CardHeader>
+                <CardTitle className="text-lg text-destructive">Danger Zone</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Deleting this workspace will remove all members and disconnect all data sources.
+                </p>
+                <Button variant="destructive">
+                  Delete Workspace
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         );
     }
   };
