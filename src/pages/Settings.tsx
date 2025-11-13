@@ -82,20 +82,19 @@ const Settings = () => {
       dataSources: []
     };
     setWorkspaces(prev => [...prev, newWorkspace]);
-    setActiveView({ type: 'workspace', workspaceId: newWorkspace.id, section: 'overview' });
+    // Stay on all workspaces view after creation
+    setActiveView({ type: 'workspace', workspaceId: undefined, section: undefined });
     toast.success('Workspace created successfully');
   };
 
   const handleDeleteWorkspace = (workspaceId: string) => {
     setWorkspaces(prev => prev.filter(w => w.id !== workspaceId));
-    if (activeView.workspaceId === workspaceId) {
-      const remaining = workspaces.filter(w => w.id !== workspaceId);
-      setActiveView({ 
-        type: 'workspace', 
-        workspaceId: remaining[0]?.id,
-        section: 'overview' 
-      });
-    }
+    // Always go back to all workspaces view after deletion
+    setActiveView({ 
+      type: 'workspace', 
+      workspaceId: undefined,
+      section: undefined 
+    });
     toast.success('Workspace deleted successfully');
   };
 
@@ -131,6 +130,14 @@ const Settings = () => {
       case 'overview':
         return (
           <div className="space-y-8">
+            <Button 
+              variant="ghost" 
+              onClick={() => setActiveView({ type: 'workspace', workspaceId: undefined, section: undefined })}
+              className="mb-4"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to All Workspaces
+            </Button>
             <div className="space-y-2">
               <h1 className="text-3xl font-semibold text-foreground tracking-tight">{workspace.name}</h1>
               <p className="text-base text-muted-foreground">{workspace.description}</p>
@@ -186,6 +193,14 @@ const Settings = () => {
       case 'members':
         return (
           <div className="space-y-8">
+            <Button 
+              variant="ghost" 
+              onClick={() => setActiveView({ type: 'workspace', workspaceId: undefined, section: undefined })}
+              className="mb-4"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to All Workspaces
+            </Button>
             <div className="flex items-center justify-between">
               <div className="space-y-2">
                 <h1 className="text-3xl font-semibold text-foreground tracking-tight">Team Members</h1>
@@ -310,6 +325,14 @@ const Settings = () => {
       case 'data-sources':
         return (
           <div className="space-y-8">
+            <Button 
+              variant="ghost" 
+              onClick={() => setActiveView({ type: 'workspace', workspaceId: undefined, section: undefined })}
+              className="mb-4"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to All Workspaces
+            </Button>
             <div className="space-y-2">
               <h1 className="text-3xl font-semibold text-foreground tracking-tight">Data Sources</h1>
               <p className="text-base text-muted-foreground">Manage data source integrations for this workspace</p>
@@ -374,6 +397,14 @@ const Settings = () => {
       case 'settings':
         return (
           <div className="space-y-8">
+            <Button 
+              variant="ghost" 
+              onClick={() => setActiveView({ type: 'workspace', workspaceId: undefined, section: undefined })}
+              className="mb-4"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to All Workspaces
+            </Button>
             <div className="space-y-2">
               <h1 className="text-3xl font-semibold text-foreground tracking-tight">Workspace Settings</h1>
               <p className="text-base text-muted-foreground">Manage workspace configuration and preferences</p>
