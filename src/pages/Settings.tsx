@@ -1,8 +1,9 @@
 
 import { useState } from 'react';
 import ProfileSettings from '@/components/settings/ProfileSettings';
+import WorkspacesSettings from '@/components/settings/WorkspacesSettings';
 import { ArrowLeft, Briefcase, ChevronDown, ChevronRight, Grid, Users as UsersIcon, Database, Settings as SettingsIcon, User, Trash2, Sparkles } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
@@ -41,12 +42,16 @@ interface ActiveView {
 
 const Settings = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeView, setActiveView] = useState<ActiveView>({ 
     type: 'workspace', 
-    workspaceId: '1', 
+    workspaceId: mockWorkspaces.length > 0 ? mockWorkspaces[0].id : undefined,
     section: 'overview' 
   });
-  const [expandedWorkspaces, setExpandedWorkspaces] = useState<Set<string>>(new Set(['1']));
+  const [expandedWorkspaces, setExpandedWorkspaces] = useState<Set<string>>(
+    new Set(mockWorkspaces.length > 0 ? [mockWorkspaces[0].id] : [])
+  );
+  const [workspaces, setWorkspaces] = useState(mockWorkspaces);
 
   const toggleWorkspace = (workspaceId: string) => {
     setExpandedWorkspaces(prev => {
@@ -67,12 +72,59 @@ const Settings = () => {
     }
   };
 
+  const handleCreateWorkspace = (name: string, description?: string) => {
+    const newWorkspace = {
+      id: `ws-${Date.now()}`,
+      name,
+      memberCount: 1,
+      description: description || '',
+      created: new Date().toISOString().split('T')[0],
+      dataSources: []
+    };
+    setWorkspaces(prev => [...prev, newWorkspace]);
+    setActiveView({ type: 'workspace', workspaceId: newWorkspace.id, section: 'overview' });
+    toast.success('Workspace created successfully');
+  };
+
+  const handleDeleteWorkspace = (workspaceId: string) => {
+    setWorkspaces(prev => prev.filter(w => w.id !== workspaceId));
+    if (activeView.workspaceId === workspaceId) {
+      const remaining = workspaces.filter(w => w.id !== workspaceId);
+      setActiveView({ 
+        type: 'workspace', 
+        workspaceId: remaining[0]?.id,
+        section: 'overview' 
+      });
+    }
+    toast.success('Workspace deleted successfully');
+  };
+
+  const handleRenameWorkspace = (workspaceId: string, newName: string) => {
+    setWorkspaces(prev => prev.map(w => 
+      w.id === workspaceId ? { ...w, name: newName } : w
+    ));
+    toast.success('Workspace renamed successfully');
+  };
+
   const renderWorkspaceContent = () => {
     if (activeView.type === 'profile') {
       return <ProfileSettings />;
     }
 
-    const workspace = mockWorkspaces.find(w => w.id === activeView.workspaceId);
+    // If showing all workspaces view
+    if (!activeView.workspaceId) {
+      return (
+        <WorkspacesSettings 
+          workspaces={workspaces}
+          onCreateWorkspace={handleCreateWorkspace}
+          onDeleteWorkspace={handleDeleteWorkspace}
+          onRenameWorkspace={handleRenameWorkspace}
+          onSelectWorkspace={(id) => setActiveView({ type: 'workspace', workspaceId: id, section: 'overview' })}
+        />
+      );
+    }
+
+    const workspace = workspaces.find(w => w.id === activeView.workspaceId);
     if (!workspace) return null;
 
     switch (activeView.section) {
