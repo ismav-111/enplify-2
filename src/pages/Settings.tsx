@@ -24,13 +24,15 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 
-// Mock workspaces data
-const mockWorkspaces = [
-  { id: '1', name: 'Marketing Team', memberCount: 12, description: 'Marketing and content team workspace', created: '2024-01-15', dataSources: ['Google Drive', 'YouTube'] },
-  { id: '2', name: 'Engineering', memberCount: 25, description: 'Engineering team workspace', created: '2024-01-10', dataSources: ['GitHub', 'Jira'] },
-  { id: '3', name: 'Sales', memberCount: 8, description: 'Sales team workspace', created: '2024-02-01', dataSources: ['Salesforce'] },
-  { id: '4', name: 'Analytics', memberCount: 5, description: 'Analytics team workspace', created: '2024-02-15', dataSources: [] }
-];
+// Empty workspaces - user needs to create them
+const mockWorkspaces: Array<{
+  id: string;
+  name: string;
+  memberCount: number;
+  description: string;
+  created: string;
+  dataSources: string[];
+}> = [];
 
 type WorkspaceSection = 'overview' | 'members' | 'data-sources' | 'settings';
 
@@ -43,15 +45,13 @@ interface ActiveView {
 const Settings = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [workspaces, setWorkspaces] = useState(mockWorkspaces);
   const [activeView, setActiveView] = useState<ActiveView>({ 
     type: 'workspace', 
-    workspaceId: mockWorkspaces.length > 0 ? mockWorkspaces[0].id : undefined,
-    section: 'overview' 
+    workspaceId: undefined,
+    section: undefined 
   });
-  const [expandedWorkspaces, setExpandedWorkspaces] = useState<Set<string>>(
-    new Set(mockWorkspaces.length > 0 ? [mockWorkspaces[0].id] : [])
-  );
-  const [workspaces, setWorkspaces] = useState(mockWorkspaces);
+  const [expandedWorkspaces, setExpandedWorkspaces] = useState<Set<string>>(new Set());
 
   const toggleWorkspace = (workspaceId: string) => {
     setExpandedWorkspaces(prev => {
