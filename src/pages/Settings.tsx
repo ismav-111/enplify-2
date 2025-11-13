@@ -399,9 +399,9 @@ const Settings = () => {
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full bg-background">
-        <Sidebar className="border-r border-border w-72">
+        <Sidebar className="border-r border-border">
           <SidebarHeader className="h-16 px-6 border-b border-border flex items-center">
-            <h1 className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
+            <h1 className="text-2xl font-semibold text-primary font-comfortaa tracking-tight leading-none">
               enplify.ai
             </h1>
           </SidebarHeader>
