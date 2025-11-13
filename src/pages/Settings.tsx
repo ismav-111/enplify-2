@@ -399,17 +399,11 @@ const Settings = () => {
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full bg-background">
-        <Sidebar className="border-r border-border w-64">
-          <SidebarHeader className="border-b border-border p-4">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => navigate('/')}
-              className="w-full justify-start text-sm text-muted-foreground hover:text-foreground"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
-            </Button>
+        <Sidebar className="border-r border-border w-72">
+          <SidebarHeader className="h-16 px-6 border-b border-border flex items-center">
+            <h1 className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
+              enplify.ai
+            </h1>
           </SidebarHeader>
 
           <SidebarContent className="px-3 py-4">
@@ -535,8 +529,24 @@ const Settings = () => {
         </Sidebar>
 
         <SidebarInset className="flex-1">
-          <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-4 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6">
-            <SidebarTrigger className="h-7 w-7" />
+          <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-border px-6 bg-background">
+            <div className="flex items-center gap-3">
+              <SidebarTrigger className="-ml-1" />
+              <Separator orientation="vertical" className="h-6" />
+              <div className="flex items-center gap-2">
+                <SettingsIcon className="h-5 w-5 text-muted-foreground" />
+                <h2 className="text-xl font-semibold text-foreground">Settings</h2>
+              </div>
+            </div>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="text-sm font-medium hover:bg-accent"
+              onClick={() => navigate('/')}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Chat
+            </Button>
           </header>
 
           <main className="p-8 animate-fade-in">
