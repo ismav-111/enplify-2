@@ -105,13 +105,13 @@ const WorkspacesSettings = ({
   };
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-semibold text-foreground tracking-tight">Workspaces</h1>
-          <p className="text-base text-muted-foreground">Manage all your workspaces and their settings</p>
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-semibold text-foreground tracking-tight">Workspaces</h1>
+          <p className="text-sm text-muted-foreground">Manage all your workspaces and their settings</p>
         </div>
-        <Button onClick={() => setCreateDialog(true)} className="gap-2">
+        <Button onClick={() => setCreateDialog(true)} className="gap-2 shrink-0">
           <Plus className="h-4 w-4" />
           Create Workspace
         </Button>
@@ -132,7 +132,7 @@ const WorkspacesSettings = ({
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {workspaces.map((workspace) => (
             <Card key={workspace.id} className="hover:shadow-md transition-shadow cursor-pointer">
               <CardHeader>
