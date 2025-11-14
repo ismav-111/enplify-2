@@ -126,12 +126,12 @@ const WorkspacesSettings = ({
   };
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
+    <div className="space-y-6 flex flex-col items-center w-full">
+      <div className="space-y-2 w-full max-w-2xl">
         <h1 className="text-3xl font-semibold text-foreground tracking-tight">My Workspaces</h1>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-3 w-full max-w-2xl">
         {workspaces.map((workspace) => (
           <Card key={workspace.id} className="hover:bg-muted/50 transition-colors">
             <CardContent className="p-4">
