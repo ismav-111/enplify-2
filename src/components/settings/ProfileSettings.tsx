@@ -1,319 +1,266 @@
-
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { toast } from 'sonner';
-import { Eye, EyeOff, Copy, Trash2, Save } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { User, Mail, Lock, Check } from 'lucide-react';
 
 const ProfileSettings = () => {
-  const [email, setEmail] = useState('andrew@example.com');
-  const [orgName, setOrgName] = useState('Enplify AI');
-  const [phoneNumber, setPhoneNumber] = useState('+1 (555) 123-4567');
-  const [apiKey, setApiKey] = useState('');
-  const [showApiKey, setShowApiKey] = useState(false);
-  
-  const handleProfileSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast.success('Profile updated successfully');
-  };
-  
-  const handlePasswordChange = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast.success('Password changed successfully');
-  };
+  const [fullName, setFullName] = useState('vamsi');
+  const [email, setEmail] = useState('vamsiquadrant@gmail.com');
+  const [password, setPassword] = useState('');
+  const [smsEnabled, setSmsEnabled] = useState(false);
+  const [totpEnabled, setTotpEnabled] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState('zinc');
+  const [appearance, setAppearance] = useState<'light' | 'dark' | 'auto'>('auto');
+  const [highContrast, setHighContrast] = useState(false);
 
-  const handleEnable2FA = () => {
-    toast.success('Two-factor authentication enabled');
-  };
+  const themeColors = [
+    { name: 'zinc', color: 'bg-zinc-600' },
+    { name: 'violet', color: 'bg-violet-500' },
+    { name: 'blue', color: 'bg-blue-500' },
+    { name: 'pink', color: 'bg-pink-500' },
+    { name: 'purple', color: 'bg-purple-500' },
+    { name: 'indigo', color: 'bg-indigo-500' },
+    { name: 'orange', color: 'bg-orange-600' },
+    { name: 'teal', color: 'bg-teal-600' },
+    { name: 'stone', color: 'bg-stone-500' },
+    { name: 'emerald', color: 'bg-emerald-600' },
+  ];
 
-  const handleSaveApiKey = () => {
-    if (!apiKey.trim()) {
-      toast.error('Please enter an API key');
-      return;
-    }
-    toast.success('API key saved successfully');
-  };
-
-  const handleCopyApiKey = () => {
-    if (!apiKey) {
-      toast.error('No API key to copy');
-      return;
-    }
-    navigator.clipboard.writeText(apiKey);
-    toast.success('API key copied to clipboard');
-  };
-  
-  const handleDeleteProfile = () => {
-    toast.success('Profile/Organization deleted successfully');
-  };
-  
   return (
-    <div className="space-y-4">
-      <Accordion type="single" collapsible className="w-full space-y-4">
-        {/* Profile Information */}
-        <AccordionItem value="profile" className="border rounded-lg px-4 bg-card shadow-sm">
-          <AccordionTrigger className="text-lg font-semibold text-foreground hover:no-underline">
-            Profile Information
-          </AccordionTrigger>
-          <AccordionContent>
-            <p className="text-sm text-muted-foreground mb-4">
-              Update your organization and contact details
-            </p>
-            <form onSubmit={handleProfileSave} className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium text-foreground">
-                  Email
-                </label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="h-10"
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="orgName" className="text-sm font-medium text-foreground">
-                  Organization Name
-                </label>
-                <Input
-                  id="orgName"
-                  value={orgName}
-                  onChange={(e) => setOrgName(e.target.value)}
-                  className="h-10"
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="phoneNumber" className="text-sm font-medium text-foreground">
-                  Phone Number
-                </label>
-                <Input
-                  id="phoneNumber"
-                  type="tel"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="h-10"
-                  placeholder="+1 (555) 000-0000"
-                />
-              </div>
-              <Button type="submit" variant="secondary">
-                <Save className="h-4 w-4 mr-2" />
-                Save Changes
-              </Button>
-            </form>
-          </AccordionContent>
-        </AccordionItem>
-
-        {/* Security & Authentication */}
-        <AccordionItem value="security" className="border rounded-lg px-4 bg-card shadow-sm">
-          <AccordionTrigger className="text-lg font-semibold text-foreground hover:no-underline">
-            Security & Authentication
-          </AccordionTrigger>
-          <AccordionContent>
-            <p className="text-sm text-muted-foreground mb-4">
-              Manage your security settings and authentication methods
-            </p>
-            <div className="space-y-6">
-              {/* Change Password */}
-              <div>
-                <h3 className="text-sm font-semibold text-foreground mb-2">Password</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Update your password to keep your account secure
-                </p>
-                <form onSubmit={handlePasswordChange} className="space-y-3">
-                  <Input
-                    type="password"
-                    placeholder="Current Password"
-                    className="h-10"
-                  />
-                  <Input
-                    type="password"
-                    placeholder="New Password"
-                    className="h-10"
-                  />
-                  <Input
-                    type="password"
-                    placeholder="Confirm New Password"
-                    className="h-10"
-                  />
-                  <Button type="submit" variant="secondary">
-                    Change Password
-                  </Button>
-                </form>
-              </div>
-
-              {/* Two-Factor Authentication */}
-              <div className="pt-4 border-t">
-                <h3 className="text-sm font-semibold text-foreground mb-2">Two-Factor Authentication</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Add an extra layer of security to your account
-                </p>
-                <Button 
-                  variant="outline" 
-                  onClick={handleEnable2FA}
-                >
-                  Enable 2FA
-                </Button>
-              </div>
-
-              {/* Sessions */}
-              <div className="pt-4 border-t">
-                <h3 className="text-sm font-semibold text-foreground mb-2">Active Sessions</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Manage your active sessions across devices
-                </p>
-                <Button variant="outline">
-                  View Active Sessions
-                </Button>
-              </div>
+    <div className="space-y-12 max-w-5xl">
+      {/* Profile Section */}
+      <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-start">
+        <div className="space-y-1">
+          <h3 className="text-base font-medium text-foreground">Profile</h3>
+          <p className="text-sm text-muted-foreground">
+            Your personal information and account security settings.
+          </p>
+        </div>
+        
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label className="text-sm text-foreground">Avatar</Label>
+            <div className="flex items-center gap-4">
+              <Avatar className="h-16 w-16 bg-muted">
+                <AvatarFallback className="text-xl font-medium bg-muted text-foreground">
+                  {fullName.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-sm text-foreground">{fullName}</span>
             </div>
-          </AccordionContent>
-        </AccordionItem>
+          </div>
 
-        {/* API Configuration */}
-        <AccordionItem value="api" className="border rounded-lg px-4 bg-card shadow-sm">
-          <AccordionTrigger className="text-lg font-semibold text-foreground hover:no-underline">
-            API Configuration
-          </AccordionTrigger>
-          <AccordionContent>
-            <p className="text-sm text-muted-foreground mb-4">
-              Manage your API keys and integration settings
-            </p>
-            <div className="space-y-6">
-              {/* API Key */}
-              <div>
-                <h3 className="text-sm font-semibold text-foreground mb-2">API Key</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Enter your API key to authenticate requests
-                </p>
-                <div className="space-y-3">
-                  <div className="flex gap-2">
-                    <div className="relative flex-1">
-                      <Input
-                        type={showApiKey ? "text" : "password"}
-                        value={apiKey}
-                        onChange={(e) => setApiKey(e.target.value)}
-                        placeholder="sk_test_..."
-                        className="h-10 pr-10 font-mono text-sm"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-1 top-1 h-8 w-8 p-0"
-                        onClick={() => setShowApiKey(!showApiKey)}
-                      >
-                        {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleCopyApiKey}
-                      className="h-10"
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <Button 
-                    variant="secondary"
-                    onClick={handleSaveApiKey}
-                  >
-                    <Save className="h-4 w-4 mr-2" />
-                    Save API Key
-                  </Button>
-                </div>
-              </div>
-
-              {/* API Usage */}
-              <div className="pt-4 border-t">
-                <h3 className="text-sm font-semibold text-foreground mb-2">API Usage</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Monitor your API usage and rate limits
-                </p>
-                <div className="p-4 bg-muted rounded-lg border">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm text-muted-foreground">Requests this month</span>
-                    <span className="text-sm font-semibold text-foreground">1,234 / 10,000</span>
-                  </div>
-                  <div className="w-full bg-muted-foreground/20 rounded-full h-2">
-                    <div className="bg-primary h-2 rounded-full" style={{ width: '12.34%' }}></div>
-                  </div>
-                </div>
-              </div>
+          <div className="space-y-2">
+            <Label htmlFor="fullName" className="text-sm text-foreground">Full Name</Label>
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="fullName"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="pl-10"
+              />
             </div>
-          </AccordionContent>
-        </AccordionItem>
+          </div>
 
-        {/* Delete Profile/Organization */}
-        <AccordionItem value="delete" className="border border-destructive/50 rounded-lg px-4 bg-card shadow-sm">
-          <AccordionTrigger className="text-lg font-semibold text-destructive hover:no-underline">
-            <div className="flex items-center gap-2">
-              <Trash2 className="h-5 w-5" />
-              Delete Profile/Organization
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-sm text-foreground">Email</Label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="pl-10"
+              />
             </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <p className="text-sm text-muted-foreground mb-4">
-              Permanently delete your profile and organization data
-            </p>
-            <div className="p-4 bg-destructive/5 border border-destructive/20 rounded-lg mb-4">
-              <p className="text-sm text-foreground font-medium mb-2">Warning: This action cannot be undone</p>
-              <p className="text-sm text-muted-foreground mb-4">
-                Deleting your profile/organization will:
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="password" className="text-sm text-foreground">Password</Label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter New Password"
+                className="pl-10"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Two-factor authentication */}
+      <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-start">
+        <div className="space-y-1">
+          <h3 className="text-base font-medium text-foreground">Two-factor authentication (2FA)</h3>
+          <p className="text-sm text-muted-foreground">
+            Keep your account secure by enabling 2FA via SMS or using a temporary one-time passcode (TOTP) from an authenticator app.
+          </p>
+        </div>
+        
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 border rounded-lg">
+            <div className="space-y-1 flex-1">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-foreground">Text Message (SMS)</span>
+                {smsEnabled && <Badge variant="secondary" className="text-xs">Business</Badge>}
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Receive a one-time passcode via SMS each time you log in.
               </p>
-              <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-                <li>Permanently delete all your data</li>
-                <li>Remove all workspaces and members</li>
-                <li>Revoke all API keys and integrations</li>
-                <li>Cancel all active subscriptions</li>
-              </ul>
             </div>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete Profile/Organization
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete your profile, organization, and all associated data from our servers.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction 
-                    onClick={handleDeleteProfile}
-                    className="bg-destructive hover:bg-destructive/90"
-                  >
-                    Delete Everything
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+            <Switch
+              checked={smsEnabled}
+              onCheckedChange={setSmsEnabled}
+            />
+          </div>
+
+          <div className="flex items-center justify-between p-4 border rounded-lg">
+            <div className="space-y-1 flex-1">
+              <span className="text-sm font-medium text-foreground">Authenticator App (TOTP)</span>
+              <p className="text-sm text-muted-foreground">
+                Use an app to receive a temporary one-time passcode each time you log in.
+              </p>
+            </div>
+            <Switch
+              checked={totpEnabled}
+              onCheckedChange={setTotpEnabled}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Theme color */}
+      <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-start">
+        <div className="space-y-1">
+          <h3 className="text-base font-medium text-foreground">Theme color</h3>
+          <p className="text-sm text-muted-foreground">
+            Choose a preferred theme for the app.
+          </p>
+        </div>
+        
+        <div className="flex flex-wrap gap-3">
+          {themeColors.map((theme) => (
+            <button
+              key={theme.name}
+              onClick={() => setSelectedTheme(theme.name)}
+              className={`relative h-10 w-10 rounded-md ${theme.color} transition-all hover:scale-110 ${
+                selectedTheme === theme.name ? 'ring-2 ring-offset-2 ring-foreground' : ''
+              }`}
+            >
+              {selectedTheme === theme.name && (
+                <Check className="h-4 w-4 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Appearance */}
+      <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-start">
+        <div className="space-y-1">
+          <h3 className="text-base font-medium text-foreground">Appearance</h3>
+          <p className="text-sm text-muted-foreground">
+            Choose light or dark mode, or switch your mode automatically based on your system settings.
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-3 gap-4">
+          <Card
+            className={`cursor-pointer p-4 transition-all hover:border-foreground ${
+              appearance === 'light' ? 'border-foreground ring-2 ring-foreground' : ''
+            }`}
+            onClick={() => setAppearance('light')}
+          >
+            <div className="aspect-[4/3] rounded-md bg-gradient-to-br from-background to-muted mb-3 border flex items-center justify-center">
+              <div className="space-y-2 w-3/4">
+                <div className="h-2 w-full bg-foreground/20 rounded" />
+                <div className="h-2 w-2/3 bg-foreground/20 rounded" />
+                <div className="flex gap-1 mt-3">
+                  <div className="h-6 w-6 bg-foreground/30 rounded-sm" />
+                  <div className="h-6 w-6 bg-foreground/30 rounded-sm" />
+                </div>
+              </div>
+            </div>
+            <p className="text-sm font-medium text-center text-foreground">Light</p>
+          </Card>
+
+          <Card
+            className={`cursor-pointer p-4 transition-all hover:border-foreground ${
+              appearance === 'dark' ? 'border-foreground ring-2 ring-foreground' : ''
+            }`}
+            onClick={() => setAppearance('dark')}
+          >
+            <div className="aspect-[4/3] rounded-md bg-gradient-to-br from-zinc-900 to-zinc-800 mb-3 border flex items-center justify-center">
+              <div className="space-y-2 w-3/4">
+                <div className="h-2 w-full bg-white/20 rounded" />
+                <div className="h-2 w-2/3 bg-white/20 rounded" />
+                <div className="flex gap-1 mt-3">
+                  <div className="h-6 w-6 bg-white/30 rounded-sm" />
+                  <div className="h-6 w-6 bg-white/30 rounded-sm" />
+                </div>
+              </div>
+            </div>
+            <p className="text-sm font-medium text-center text-foreground">Dark</p>
+          </Card>
+
+          <Card
+            className={`cursor-pointer p-4 transition-all hover:border-foreground ${
+              appearance === 'auto' ? 'border-foreground ring-2 ring-foreground' : ''
+            }`}
+            onClick={() => setAppearance('auto')}
+          >
+            <div className="aspect-[4/3] rounded-md mb-3 border overflow-hidden flex">
+              <div className="w-1/2 bg-gradient-to-br from-background to-muted flex items-center justify-center">
+                <div className="space-y-1 w-3/4">
+                  <div className="h-1.5 w-full bg-foreground/20 rounded" />
+                  <div className="h-1.5 w-2/3 bg-foreground/20 rounded" />
+                  <div className="flex gap-0.5 mt-2">
+                    <div className="h-4 w-4 bg-foreground/30 rounded-sm" />
+                  </div>
+                </div>
+              </div>
+              <div className="w-1/2 bg-gradient-to-br from-zinc-900 to-zinc-800 flex items-center justify-center">
+                <div className="space-y-1 w-3/4">
+                  <div className="h-1.5 w-full bg-white/20 rounded" />
+                  <div className="h-1.5 w-2/3 bg-white/20 rounded" />
+                  <div className="flex gap-0.5 mt-2">
+                    <div className="h-4 w-4 bg-white/30 rounded-sm" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p className="text-sm font-medium text-center text-foreground">Auto</p>
+          </Card>
+        </div>
+      </div>
+
+      {/* Contrast */}
+      <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-start">
+        <div className="space-y-1">
+          <h3 className="text-base font-medium text-foreground">Contrast</h3>
+          <p className="text-sm text-muted-foreground">
+            Turn on and off high contrast text and borders.
+          </p>
+        </div>
+        
+        <div className="flex items-center justify-between p-4 border rounded-lg">
+          <span className="text-sm text-foreground">High Contrast for increased accessibility</span>
+          <Switch
+            checked={highContrast}
+            onCheckedChange={setHighContrast}
+          />
+        </div>
+      </div>
     </div>
   );
 };
