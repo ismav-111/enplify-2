@@ -482,12 +482,15 @@ const Settings = () => {
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full bg-background">
-        <Sidebar className="border-r border-gray-100">
-          <SidebarHeader className="h-16 px-6 border-b border-gray-100 flex justify-between items-center">
-            <h1 className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
-              enplify.ai
-            </h1>
-            <SidebarTrigger className="h-8 w-8 text-gray-500 hover:text-gray-700 -mr-2" />
+        <Sidebar className="border-r border-border">
+          <SidebarHeader className="px-6 py-4 border-b-0">
+            <div className="flex items-center justify-between mb-3">
+              <h1 className="text-2xl font-bold text-primary">
+                enplify.ai
+              </h1>
+              <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
+            </div>
+            <div className="h-[2px] w-full bg-gradient-to-r from-primary via-secondary to-accent rounded-full" />
           </SidebarHeader>
 
           <SidebarContent className="px-3 py-4">
