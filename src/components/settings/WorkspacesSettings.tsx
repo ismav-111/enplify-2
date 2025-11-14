@@ -104,116 +104,105 @@ const WorkspacesSettings = ({
     setDeleteDialog({ open: false, workspaceId: '', name: '' });
   };
 
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const getAvatarColor = (id: string) => {
+    const colors = [
+      'bg-[hsl(var(--primary))]',
+      'bg-[hsl(var(--chart-1))]',
+      'bg-[hsl(var(--chart-2))]',
+      'bg-[hsl(var(--chart-3))]',
+      'bg-[hsl(var(--chart-4))]',
+    ];
+    const index = id.charCodeAt(0) % colors.length;
+    return colors[index];
+  };
+
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-semibold text-foreground tracking-tight">Workspaces</h1>
-          <p className="text-base text-muted-foreground">Manage all your workspaces and their settings</p>
-        </div>
-        <Button onClick={() => setCreateDialog(true)} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Create Workspace
-        </Button>
+    <div className="space-y-6 max-w-4xl">
+      <div className="space-y-2">
+        <h1 className="text-3xl font-semibold text-foreground tracking-tight">My Workspaces</h1>
       </div>
 
-      {workspaces.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Users className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No Workspaces Yet</h3>
-            <p className="text-sm text-muted-foreground mb-4 text-center max-w-md">
-              Create your first workspace to start collaborating with your team
-            </p>
-            <Button onClick={() => setCreateDialog(true)} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Create Your First Workspace
-            </Button>
+      <div className="space-y-3">
+        {workspaces.map((workspace) => (
+          <Card key={workspace.id} className="hover:bg-muted/50 transition-colors">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 flex-1 cursor-pointer" onClick={() => onSelectWorkspace(workspace.id)}>
+                  <div className={`w-10 h-10 rounded-lg ${getAvatarColor(workspace.id)} flex items-center justify-center text-primary-foreground font-semibold`}>
+                    {getInitials(workspace.name)}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-foreground">{workspace.name}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Free Forever • {workspace.memberCount} {workspace.memberCount === 1 ? 'person' : 'people'}
+                    </p>
+                  </div>
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      Settings
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditDialog({ 
+                          open: true, 
+                          workspaceId: workspace.id, 
+                          currentName: workspace.name 
+                        });
+                        setEditWorkspaceName(workspace.name);
+                      }}
+                    >
+                      <Edit3 className="h-4 w-4 mr-2" />
+                      Rename
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDeleteDialog({ 
+                          open: true, 
+                          workspaceId: workspace.id, 
+                          name: workspace.name 
+                        });
+                      }}
+                      className="text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+        
+        <Card className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => setCreateDialog(true)}>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg border-2 border-dashed border-muted-foreground/30 flex items-center justify-center">
+                <Plus className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground">New Workspace</h3>
+                <p className="text-sm text-muted-foreground">Create new workspace for your next project.</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
-      ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {workspaces.map((workspace) => (
-            <Card key={workspace.id} className="hover:shadow-md transition-shadow cursor-pointer">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex-1" onClick={() => onSelectWorkspace(workspace.id)}>
-                    <CardTitle className="text-xl mb-1">{workspace.name}</CardTitle>
-                    <CardDescription className="line-clamp-2">{workspace.description || 'No description'}</CardDescription>
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditDialog({ 
-                            open: true, 
-                            workspaceId: workspace.id, 
-                            currentName: workspace.name 
-                          });
-                          setEditWorkspaceName(workspace.name);
-                        }}
-                      >
-                        <Edit3 className="h-4 w-4 mr-2" />
-                        Rename
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setDeleteDialog({ 
-                            open: true, 
-                            workspaceId: workspace.id, 
-                            name: workspace.name 
-                          });
-                        }}
-                        className="text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </CardHeader>
-              <CardContent onClick={() => onSelectWorkspace(workspace.id)}>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
-                      <span>{workspace.memberCount} {workspace.memberCount === 1 ? 'member' : 'members'}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      <span>{workspace.created}</span>
-                    </div>
-                  </div>
-                  
-                  {workspace.dataSources && workspace.dataSources.length > 0 && (
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Database className="h-4 w-4" />
-                        <span>Data Sources</span>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {workspace.dataSources.map((source, idx) => (
-                          <Badge key={idx} variant="secondary" className="text-xs">
-                            {source}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+      </div>
 
       {/* Create Workspace Dialog */}
       <Dialog open={createDialog} onOpenChange={setCreateDialog}>
