@@ -503,7 +503,7 @@ const Settings = () => {
                         <ChevronDown className="h-4 w-4" />
                       </CollapsibleTrigger>
                       <CollapsibleContent className="mt-1 space-y-0.5">
-                        {mockWorkspaces.map((workspace) => (
+                        {workspaces.map((workspace) => (
                           <Collapsible
                             key={workspace.id}
                             open={expandedWorkspaces.has(workspace.id)}
