@@ -129,66 +129,58 @@ const Settings = () => {
     switch (activeView.section) {
       case 'overview':
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <Button 
               variant="ghost" 
               onClick={() => setActiveView({ type: 'workspace', workspaceId: undefined, section: undefined })}
-              className="mb-2"
+              className="mb-4"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to All Workspaces
             </Button>
-            <div className="space-y-1">
-              <h1 className="text-2xl font-semibold text-foreground tracking-tight">{workspace.name}</h1>
-              <p className="text-sm text-muted-foreground">{workspace.description}</p>
+            <div className="space-y-2">
+              <h1 className="text-3xl font-semibold text-foreground tracking-tight">{workspace.name}</h1>
+              <p className="text-base text-muted-foreground">{workspace.description}</p>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-lg">Workspace Information</CardTitle>
-                  <CardDescription>Key details about this workspace</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="space-y-1">
-                      <p className="text-xs font-medium text-muted-foreground">Workspace Name</p>
-                      <p className="text-sm font-medium text-foreground">{workspace.name}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-xs font-medium text-muted-foreground">Created Date</p>
-                      <p className="text-sm font-medium text-foreground">{workspace.created}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-xs font-medium text-muted-foreground">Total Members</p>
-                      <p className="text-sm font-medium text-foreground">{workspace.memberCount} members</p>
-                    </div>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl">Workspace Information</CardTitle>
+                <CardDescription>Key details about this workspace</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-muted-foreground">Workspace Name</p>
+                    <p className="text-base font-medium text-foreground">{workspace.name}</p>
                   </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-lg">Description</CardTitle>
-                  <CardDescription>Workspace details and purpose</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-foreground">{workspace.description || 'No description provided'}</p>
-                </CardContent>
-              </Card>
-            </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-muted-foreground">Created Date</p>
+                    <p className="text-base font-medium text-foreground">{workspace.created}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-muted-foreground">Description</p>
+                    <p className="text-base font-medium text-foreground">{workspace.description}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-muted-foreground">Total Members</p>
+                    <p className="text-base font-medium text-foreground">{workspace.memberCount} members</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {workspace.dataSources.length > 0 && (
               <Card>
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-lg">Connected Data Sources</CardTitle>
+                <CardHeader>
+                  <CardTitle className="text-xl">Connected Data Sources</CardTitle>
                   <CardDescription>Active integrations for this workspace</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-3">
                     {workspace.dataSources.map((source) => (
-                      <Badge key={source} variant="secondary" className="px-3 py-1 text-xs font-medium">
-                        <Database className="h-3 w-3 mr-1.5" />
+                      <Badge key={source} variant="secondary" className="px-4 py-2 text-sm font-medium">
+                        <Database className="h-3.5 w-3.5 mr-2" />
                         {source}
                       </Badge>
                     ))}
@@ -200,21 +192,21 @@ const Settings = () => {
         );
       case 'members':
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <Button 
               variant="ghost" 
               onClick={() => setActiveView({ type: 'workspace', workspaceId: undefined, section: undefined })}
-              className="mb-2"
+              className="mb-4"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to All Workspaces
             </Button>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <h1 className="text-2xl font-semibold text-foreground tracking-tight">Team Members</h1>
-                <p className="text-sm text-muted-foreground">Manage workspace members and their permissions</p>
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <h1 className="text-3xl font-semibold text-foreground tracking-tight">Team Members</h1>
+                <p className="text-base text-muted-foreground">Manage workspace members and their permissions</p>
               </div>
-              <Button className="btn-primary shadow-md shrink-0">
+              <Button className="btn-primary shadow-md">
                 <UsersIcon className="h-4 w-4 mr-2" />
                 Invite Member
               </Button>
@@ -332,37 +324,37 @@ const Settings = () => {
         );
       case 'data-sources':
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <Button 
               variant="ghost" 
               onClick={() => setActiveView({ type: 'workspace', workspaceId: undefined, section: undefined })}
-              className="mb-2"
+              className="mb-4"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to All Workspaces
             </Button>
-            <div className="space-y-1">
-              <h1 className="text-2xl font-semibold text-foreground tracking-tight">Data Sources</h1>
-              <p className="text-sm text-muted-foreground">Manage data source integrations for this workspace</p>
+            <div className="space-y-2">
+              <h1 className="text-3xl font-semibold text-foreground tracking-tight">Data Sources</h1>
+              <p className="text-base text-muted-foreground">Manage data source integrations for this workspace</p>
             </div>
 
             <Card className="shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg">Connected Data Sources</CardTitle>
+              <CardHeader>
+                <CardTitle className="text-xl">Connected Data Sources</CardTitle>
                 <CardDescription>Active integrations in this workspace</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 {workspace.dataSources.length > 0 ? (
                   workspace.dataSources.map((source) => (
-                    <div key={source} className="flex items-center justify-between p-4 border border-border rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                          <Database className="h-4 w-4 text-primary" />
+                    <div key={source} className="flex items-center justify-between p-5 border border-border rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <Database className="h-5 w-5 text-primary" />
                         </div>
-                        <div className="space-y-0.5">
-                          <span className="text-sm font-semibold text-foreground">{source}</span>
+                        <div className="space-y-1">
+                          <span className="text-base font-semibold text-foreground">{source}</span>
                           <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 text-xs">
+                            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
                               Connected
                             </Badge>
                           </div>
@@ -404,51 +396,51 @@ const Settings = () => {
         );
       case 'settings':
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <Button 
               variant="ghost" 
               onClick={() => setActiveView({ type: 'workspace', workspaceId: undefined, section: undefined })}
-              className="mb-2"
+              className="mb-4"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to All Workspaces
             </Button>
-            <div className="space-y-1">
-              <h1 className="text-2xl font-semibold text-foreground tracking-tight">Workspace Settings</h1>
-              <p className="text-sm text-muted-foreground">Manage workspace configuration and preferences</p>
+            <div className="space-y-2">
+              <h1 className="text-3xl font-semibold text-foreground tracking-tight">Workspace Settings</h1>
+              <p className="text-base text-muted-foreground">Manage workspace configuration and preferences</p>
             </div>
 
             <Card className="shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg">General Settings</CardTitle>
+              <CardHeader>
+                <CardTitle className="text-xl">General Settings</CardTitle>
                 <CardDescription>Update workspace details and configuration</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <p className="text-xs font-semibold text-foreground">Workspace Name</p>
-                    <p className="text-sm text-muted-foreground">{workspace.name}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <p className="text-sm font-semibold text-foreground">Workspace Name</p>
+                    <p className="text-base text-muted-foreground">{workspace.name}</p>
                   </div>
 
-                  <div className="space-y-1">
-                    <p className="text-xs font-semibold text-foreground">Created Date</p>
-                    <p className="text-sm text-muted-foreground">{workspace.created}</p>
+                  <div className="space-y-2">
+                    <p className="text-sm font-semibold text-foreground">Created Date</p>
+                    <p className="text-base text-muted-foreground">{workspace.created}</p>
                   </div>
 
-                  <div className="space-y-1 md:col-span-2">
-                    <p className="text-xs font-semibold text-foreground">Description</p>
-                    <p className="text-sm text-muted-foreground">{workspace.description}</p>
+                  <div className="space-y-2 md:col-span-2">
+                    <p className="text-sm font-semibold text-foreground">Description</p>
+                    <p className="text-base text-muted-foreground">{workspace.description}</p>
                   </div>
                 </div>
 
                 <Separator />
 
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="space-y-0.5">
-                    <p className="text-xs font-semibold text-foreground">Workspace ID</p>
-                    <p className="text-xs text-muted-foreground font-mono">{workspace.id}</p>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <p className="text-sm font-semibold text-foreground">Workspace ID</p>
+                    <p className="text-sm text-muted-foreground font-mono">{workspace.id}</p>
                   </div>
-                  <Button className="btn-primary shadow-md shrink-0">
+                  <Button className="btn-primary shadow-md">
                     <SettingsIcon className="h-4 w-4 mr-2" />
                     Edit Details
                   </Button>
@@ -457,20 +449,20 @@ const Settings = () => {
             </Card>
 
             <Card className="border-destructive/50 shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg text-destructive flex items-center gap-2">
-                  <Trash2 className="h-4 w-4" />
+              <CardHeader>
+                <CardTitle className="text-xl text-destructive flex items-center gap-2">
+                  <Trash2 className="h-5 w-5" />
                   Danger Zone
                 </CardTitle>
                 <CardDescription>Irreversible actions that affect this workspace</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="p-3 bg-destructive/5 border border-destructive/20 rounded-lg">
-                  <p className="text-sm text-foreground font-medium mb-1">Delete Workspace</p>
-                  <p className="text-xs text-muted-foreground mb-3">
+                <div className="p-4 bg-destructive/5 border border-destructive/20 rounded-lg">
+                  <p className="text-sm text-foreground font-medium mb-2">Delete Workspace</p>
+                  <p className="text-sm text-muted-foreground mb-4">
                     This action cannot be undone. Deleting this workspace will:
                   </p>
-                  <ul className="list-disc list-inside text-xs text-muted-foreground space-y-0.5 mb-3">
+                  <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mb-4">
                     <li>Remove all members from the workspace</li>
                     <li>Disconnect all data sources</li>
                     <li>Delete all workspace data and settings</li>
@@ -490,15 +482,12 @@ const Settings = () => {
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full bg-background">
-        <Sidebar className="border-r border-border">
-          <SidebarHeader className="px-6 py-4 border-b-0">
-            <div className="flex items-center justify-between mb-3">
-              <h1 className="text-2xl font-bold text-primary">
-                enplify.ai
-              </h1>
-              <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
-            </div>
-            <div className="h-[2px] w-full bg-gradient-to-r from-primary via-secondary to-accent rounded-full" />
+        <Sidebar className="border-r border-gray-100">
+          <SidebarHeader className="h-16 px-6 border-b border-gray-100 flex justify-between items-center">
+            <h1 className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
+              enplify.ai
+            </h1>
+            <SidebarTrigger className="h-8 w-8 text-gray-500 hover:text-gray-700 -mr-2" />
           </SidebarHeader>
 
           <SidebarContent className="px-3 py-4">
@@ -624,7 +613,7 @@ const Settings = () => {
         </Sidebar>
 
         <SidebarInset className="flex-1">
-          <header className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border px-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-border px-6 bg-background">
             <div className="flex items-center gap-3">
               <SidebarTrigger className="-ml-1" />
               <Separator orientation="vertical" className="h-6" />
@@ -644,8 +633,8 @@ const Settings = () => {
             </Button>
           </header>
 
-          <main className="flex-1 overflow-auto">
-            <div className="container max-w-7xl mx-auto px-6 py-8 animate-fade-in">
+          <main className="p-8 animate-fade-in">
+            <div className="max-w-4xl">
               {renderWorkspaceContent()}
             </div>
           </main>
