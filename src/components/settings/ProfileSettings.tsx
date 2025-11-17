@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { User, Mail, Lock, Phone, Building2 } from 'lucide-react';
 
@@ -147,6 +148,13 @@ const ProfileSettings = () => {
             </div>
           </RadioGroup>
         </div>
+      </div>
+
+      {/* Save Changes Button */}
+      <div className="flex justify-end pt-6 border-t">
+        <Button className="bg-primary hover:bg-primary/90">
+          Save Changes
+        </Button>
       </div>
     </div>
   );
