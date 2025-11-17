@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { User, Mail, Lock, Phone, Building2 } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 
 const ProfileSettings = () => {
   const [email, setEmail] = useState('vamsiquadrant@gmail.com');
@@ -89,6 +90,9 @@ const ProfileSettings = () => {
           </div>
         </div>
       </div>
+
+      {/* Separator */}
+      <Separator className="my-8" />
 
       {/* Single sign-on (SSO) */}
       <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-start">
