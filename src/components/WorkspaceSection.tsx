@@ -13,7 +13,8 @@ import {
   Trash,
   Check,
   X,
-  Settings
+  Settings,
+  ArrowLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -88,6 +89,7 @@ interface WorkspaceSectionProps {
   onInviteUsers: (workspaceId: string, sessionId: string) => void;
   onInviteToWorkspace: (workspaceId: string) => void;
   onWorkspaceSettings: (workspaceId: string) => void;
+  onNewChat?: () => void;
 }
 
 const WorkspaceSection = ({
@@ -102,7 +104,8 @@ const WorkspaceSection = ({
   onDeleteSession,
   onInviteUsers,
   onInviteToWorkspace,
-  onWorkspaceSettings
+  onWorkspaceSettings,
+  onNewChat
 }: WorkspaceSectionProps) => {
   const navigate = useNavigate();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
@@ -287,6 +290,7 @@ const WorkspaceSection = ({
               </div>
             ) : (
               <>
+                <Folder size={12} className="text-gray-500 flex-shrink-0" />
                 <span className="text-xs font-medium text-gray-800 truncate flex-1" title={workspace.name}>
                   {truncateTitle(workspace.name)}
                 </span>
@@ -487,6 +491,19 @@ const WorkspaceSection = ({
   return (
     <>
       <div>
+        {/* Back to Conversation Button */}
+        {onNewChat && (
+          <div className="mb-4 mt-6">
+            <button 
+              onClick={onNewChat}
+              className="w-full flex items-center gap-2 px-2 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
+            >
+              <ArrowLeft size={16} />
+              Back to Conversation
+            </button>
+          </div>
+        )}
+
         {workspaces.length > 0 ? (
           <>
             {/* My Workspaces Section */}
