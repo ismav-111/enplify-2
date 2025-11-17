@@ -613,7 +613,7 @@ const Settings = () => {
         </Sidebar>
 
         <SidebarInset className="flex-1">
-          <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-border px-6 bg-background">
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border px-6 bg-background">
             <div className="flex items-center gap-3">
               <SidebarTrigger className="-ml-1" />
               <Separator orientation="vertical" className="h-6" />
@@ -622,19 +622,10 @@ const Settings = () => {
                 <h2 className="text-xl font-semibold text-foreground">Settings</h2>
               </div>
             </div>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="text-sm font-medium hover:bg-accent"
-              onClick={() => navigate('/')}
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Chat
-            </Button>
           </header>
 
-          <main className="p-8 animate-fade-in">
-            <div className="max-w-4xl">
+          <main className="p-8 animate-fade-in flex justify-center">
+            <div className="w-full">
               {renderWorkspaceContent()}
             </div>
           </main>
