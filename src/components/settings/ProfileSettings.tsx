@@ -24,7 +24,7 @@ const ProfileSettings = ({ className }: { className?: string }) => {
   ]);
   const [showApiKeyDialog, setShowApiKeyDialog] = useState(false);
   const [newApiKeyName, setNewApiKeyName] = useState('');
-  const [generatedApiKey, setGeneratedApiKey] = useState('');
+  const [newApiKeyValue, setNewApiKeyValue] = useState('');
   const { toast } = useToast();
   const handleAzureToggle = (checked: boolean) => {
     if (checked) {
@@ -37,22 +37,27 @@ const ProfileSettings = ({ className }: { className?: string }) => {
     }
   };
 
-  const handleGenerateApiKey = () => {
+  const handleSaveApiKey = () => {
     if (!newApiKeyName.trim()) {
       toast({ title: "Error", description: "Please enter a name for the API key", variant: "destructive" });
       return;
     }
-    const newKey = `sk_live_${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
-    setGeneratedApiKey(newKey);
+    if (!newApiKeyValue.trim()) {
+      toast({ title: "Error", description: "Please enter the API key", variant: "destructive" });
+      return;
+    }
     const newApiKey = {
       id: String(apiKeys.length + 1),
       name: newApiKeyName,
-      key: newKey,
+      key: newApiKeyValue,
       created: new Date().toISOString().split('T')[0],
       lastUsed: 'Never'
     };
     setApiKeys([...apiKeys, newApiKey]);
-    toast({ title: "Success", description: "API key generated successfully" });
+    setShowApiKeyDialog(false);
+    setNewApiKeyName('');
+    setNewApiKeyValue('');
+    toast({ title: "Success", description: "API key saved successfully" });
   };
 
   const handleCopyApiKey = (key: string) => {
@@ -198,10 +203,10 @@ const ProfileSettings = ({ className }: { className?: string }) => {
             <Button onClick={() => {
               setShowApiKeyDialog(true);
               setNewApiKeyName('');
-              setGeneratedApiKey('');
+              setNewApiKeyValue('');
             }} size="sm" className="gap-2">
               <Plus className="h-4 w-4" />
-              Create API Key
+              Add API Key
             </Button>
           </div>
 
@@ -241,13 +246,13 @@ const ProfileSettings = ({ className }: { className?: string }) => {
         </div>
       </div>
 
-      {/* API Key Creation Dialog */}
+      {/* API Key Dialog */}
       <Dialog open={showApiKeyDialog} onOpenChange={setShowApiKeyDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create New API Key</DialogTitle>
+            <DialogTitle>Add API Key</DialogTitle>
             <DialogDescription>
-              Generate a new API key for programmatic access. Make sure to copy it as you won't be able to see it again.
+              Enter your API key details to add it to your workspace.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -260,36 +265,28 @@ const ProfileSettings = ({ className }: { className?: string }) => {
                 placeholder="e.g., Production API Key" 
               />
             </div>
-            {generatedApiKey && (
-              <div className="space-y-2 p-4 bg-muted rounded-lg">
-                <Label className="text-sm font-medium">Your API Key</Label>
-                <div className="flex items-center gap-2">
-                  <code className="flex-1 text-xs bg-background p-2 rounded border font-mono break-all">
-                    {generatedApiKey}
-                  </code>
-                  <Button variant="outline" size="sm" onClick={() => handleCopyApiKey(generatedApiKey)}>
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Make sure to copy this API key. You won't be able to see it again.
-                </p>
-              </div>
-            )}
+            <div className="space-y-2">
+              <Label htmlFor="api_key_value">API Key</Label>
+              <Input 
+                id="api_key_value" 
+                type="password"
+                value={newApiKeyValue} 
+                onChange={e => setNewApiKeyValue(e.target.value)} 
+                placeholder="Enter your API key" 
+              />
+            </div>
           </div>
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => {
               setShowApiKeyDialog(false);
               setNewApiKeyName('');
-              setGeneratedApiKey('');
+              setNewApiKeyValue('');
             }}>
-              {generatedApiKey ? 'Done' : 'Cancel'}
+              Cancel
             </Button>
-            {!generatedApiKey && (
-              <Button onClick={handleGenerateApiKey}>
-                Generate Key
-              </Button>
-            )}
+            <Button onClick={handleSaveApiKey}>
+              Save API Key
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
