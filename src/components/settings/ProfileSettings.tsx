@@ -3,7 +3,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Switch } from '@/components/ui/switch';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { User, Mail, Lock, Phone, Building2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
@@ -12,7 +13,22 @@ const ProfileSettings = () => {
   const [orgName, setOrgName] = useState('Acme Corp');
   const [phoneNumber, setPhoneNumber] = useState('+1 (555) 123-4567');
   const [password, setPassword] = useState('');
-  const [ssoOption, setSsoOption] = useState('none');
+  const [azureSsoEnabled, setAzureSsoEnabled] = useState(false);
+  const [showAzureDialog, setShowAzureDialog] = useState(false);
+  const [azureClientId, setAzureClientId] = useState('');
+  const [azureClientSecret, setAzureClientSecret] = useState('');
+  const [azureTenantId, setAzureTenantId] = useState('');
+
+  const handleAzureToggle = (checked: boolean) => {
+    if (checked) {
+      setShowAzureDialog(true);
+    } else {
+      setAzureSsoEnabled(false);
+      setAzureClientId('');
+      setAzureClientSecret('');
+      setAzureTenantId('');
+    }
+  };
 
   return (
     <div className="space-y-12 max-w-5xl">
@@ -102,57 +118,84 @@ const ProfileSettings = () => {
             <Badge variant="secondary" className="text-xs">Business</Badge>
           </div>
           <p className="text-sm text-muted-foreground">
-            Require Workspace members to log in to ClickUp using their credentials from your SSO identity provider (IDP). Click on your vendor or use SAML to connect with other providers to start the setup process.
+            Enable Microsoft Azure Active Directory SSO for your workspace members.
           </p>
-          <a href="#" className="text-sm text-primary underline underline-offset-4 hover:text-primary/80">
-            Learn more
-          </a>
-          <span className="text-sm text-muted-foreground"> about SSO.</span>
         </div>
         
         <div className="space-y-4">
-          <RadioGroup value={ssoOption} onValueChange={setSsoOption}>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="none" id="sso-none" />
-              <Label htmlFor="sso-none" className="text-sm font-normal cursor-pointer">
-                Don't require SSO
-              </Label>
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="google" id="sso-google" />
-              <Label htmlFor="sso-google" className="text-sm font-normal cursor-pointer flex items-center gap-2">
-                Google
-                <Badge variant="secondary" className="text-xs">Business</Badge>
-              </Label>
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="microsoft" id="sso-microsoft" />
-              <Label htmlFor="sso-microsoft" className="text-sm font-normal cursor-pointer flex items-center gap-2">
-                Microsoft
-                <Badge variant="secondary" className="text-xs">Enterprise</Badge>
-              </Label>
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="okta" id="sso-okta" />
-              <Label htmlFor="sso-okta" className="text-sm font-normal cursor-pointer flex items-center gap-2">
-                Okta
-                <Badge variant="secondary" className="text-xs">Enterprise</Badge>
-              </Label>
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="saml" id="sso-saml" />
-              <Label htmlFor="sso-saml" className="text-sm font-normal cursor-pointer flex items-center gap-2">
-                SAML
-                <Badge variant="secondary" className="text-xs">Enterprise</Badge>
-              </Label>
-            </div>
-          </RadioGroup>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="azure-sso" className="text-sm font-normal cursor-pointer">
+              Microsoft Azure Directory
+            </Label>
+            <Switch
+              id="azure-sso"
+              checked={azureSsoEnabled}
+              onCheckedChange={handleAzureToggle}
+            />
+          </div>
         </div>
       </div>
+
+      {/* Azure SSO Configuration Dialog */}
+      <Dialog open={showAzureDialog} onOpenChange={setShowAzureDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Configure Azure Active Directory</DialogTitle>
+            <DialogDescription>
+              Enter your Azure AD credentials to enable SSO.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="azure_client_id">Azure Client ID</Label>
+              <Input
+                id="azure_client_id"
+                value={azureClientId}
+                onChange={(e) => setAzureClientId(e.target.value)}
+                placeholder="Enter Azure Client ID"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="azure_client_secret">Azure Client Secret</Label>
+              <Input
+                id="azure_client_secret"
+                type="password"
+                value={azureClientSecret}
+                onChange={(e) => setAzureClientSecret(e.target.value)}
+                placeholder="Enter Azure Client Secret"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="azure_tenant_id">Azure Tenant ID</Label>
+              <Input
+                id="azure_tenant_id"
+                value={azureTenantId}
+                onChange={(e) => setAzureTenantId(e.target.value)}
+                placeholder="Enter Azure Tenant ID"
+              />
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowAzureDialog(false);
+                setAzureSsoEnabled(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                setAzureSsoEnabled(true);
+                setShowAzureDialog(false);
+              }}
+            >
+              Save
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Save Changes Button */}
       <div className="flex justify-end pt-6 border-t">
