@@ -7,7 +7,6 @@ import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { User, Mail, Lock, Phone, Building2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-
 const ProfileSettings = () => {
   const [email, setEmail] = useState('vamsiquadrant@gmail.com');
   const [orgName, setOrgName] = useState('Acme Corp');
@@ -18,7 +17,6 @@ const ProfileSettings = () => {
   const [azureClientId, setAzureClientId] = useState('');
   const [azureClientSecret, setAzureClientSecret] = useState('');
   const [azureTenantId, setAzureTenantId] = useState('');
-
   const handleAzureToggle = (checked: boolean) => {
     if (checked) {
       setShowAzureDialog(true);
@@ -29,9 +27,7 @@ const ProfileSettings = () => {
       setAzureTenantId('');
     }
   };
-
-  return (
-    <div className="space-y-12 max-w-5xl">
+  return <div className="space-y-12 max-w-5xl">
       {/* Admin Account Badge */}
       <div className="flex items-center gap-2">
         <User className="h-4 w-4 text-muted-foreground" />
@@ -52,13 +48,7 @@ const ProfileSettings = () => {
             <Label htmlFor="email" className="text-sm text-foreground">Email</Label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="pl-10"
-              />
+              <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} className="pl-10" />
             </div>
           </div>
 
@@ -66,12 +56,7 @@ const ProfileSettings = () => {
             <Label htmlFor="orgName" className="text-sm text-foreground">Organization Name</Label>
             <div className="relative">
               <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="orgName"
-                value={orgName}
-                onChange={(e) => setOrgName(e.target.value)}
-                className="pl-10"
-              />
+              <Input id="orgName" value={orgName} onChange={e => setOrgName(e.target.value)} className="pl-10" />
             </div>
           </div>
 
@@ -79,14 +64,7 @@ const ProfileSettings = () => {
             <Label htmlFor="phoneNumber" className="text-sm text-foreground">Phone Number</Label>
             <div className="relative">
               <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="phoneNumber"
-                type="tel"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                placeholder="+1 (555) 000-0000"
-                className="pl-10"
-              />
+              <Input id="phoneNumber" type="tel" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="+1 (555) 000-0000" className="pl-10" />
             </div>
           </div>
 
@@ -94,14 +72,7 @@ const ProfileSettings = () => {
             <Label htmlFor="password" className="text-sm text-foreground">Update Password</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter New Password"
-                className="pl-10"
-              />
+              <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter New Password" className="pl-10" />
             </div>
           </div>
         </div>
@@ -115,11 +86,9 @@ const ProfileSettings = () => {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <h3 className="text-base font-medium text-foreground">Single sign-on (SSO)</h3>
-            <Badge variant="secondary" className="text-xs">Business</Badge>
+            
           </div>
-          <p className="text-sm text-muted-foreground">
-            Enable Microsoft Azure Active Directory SSO for your workspace members.
-          </p>
+          
         </div>
         
         <div className="space-y-4">
@@ -127,11 +96,7 @@ const ProfileSettings = () => {
             <Label htmlFor="azure-sso" className="text-sm font-normal cursor-pointer">
               Microsoft Azure Directory
             </Label>
-            <Switch
-              id="azure-sso"
-              checked={azureSsoEnabled}
-              onCheckedChange={handleAzureToggle}
-            />
+            <Switch id="azure-sso" checked={azureSsoEnabled} onCheckedChange={handleAzureToggle} />
           </div>
         </div>
       </div>
@@ -148,49 +113,28 @@ const ProfileSettings = () => {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="azure_client_id">Azure Client ID</Label>
-              <Input
-                id="azure_client_id"
-                value={azureClientId}
-                onChange={(e) => setAzureClientId(e.target.value)}
-                placeholder="Enter Azure Client ID"
-              />
+              <Input id="azure_client_id" value={azureClientId} onChange={e => setAzureClientId(e.target.value)} placeholder="Enter Azure Client ID" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="azure_client_secret">Azure Client Secret</Label>
-              <Input
-                id="azure_client_secret"
-                type="password"
-                value={azureClientSecret}
-                onChange={(e) => setAzureClientSecret(e.target.value)}
-                placeholder="Enter Azure Client Secret"
-              />
+              <Input id="azure_client_secret" type="password" value={azureClientSecret} onChange={e => setAzureClientSecret(e.target.value)} placeholder="Enter Azure Client Secret" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="azure_tenant_id">Azure Tenant ID</Label>
-              <Input
-                id="azure_tenant_id"
-                value={azureTenantId}
-                onChange={(e) => setAzureTenantId(e.target.value)}
-                placeholder="Enter Azure Tenant ID"
-              />
+              <Input id="azure_tenant_id" value={azureTenantId} onChange={e => setAzureTenantId(e.target.value)} placeholder="Enter Azure Tenant ID" />
             </div>
           </div>
           <div className="flex justify-end gap-2">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setShowAzureDialog(false);
-                setAzureSsoEnabled(false);
-              }}
-            >
+            <Button variant="outline" onClick={() => {
+            setShowAzureDialog(false);
+            setAzureSsoEnabled(false);
+          }}>
               Cancel
             </Button>
-            <Button
-              onClick={() => {
-                setAzureSsoEnabled(true);
-                setShowAzureDialog(false);
-              }}
-            >
+            <Button onClick={() => {
+            setAzureSsoEnabled(true);
+            setShowAzureDialog(false);
+          }}>
               Save
             </Button>
           </div>
@@ -203,8 +147,6 @@ const ProfileSettings = () => {
           Save Changes
         </Button>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ProfileSettings;

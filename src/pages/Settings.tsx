@@ -94,7 +94,7 @@ const Settings = () => {
   };
   const renderWorkspaceContent = () => {
     if (activeView.type === 'profile') {
-      return <ProfileSettings />;
+      return <ProfileSettings className="my-0 py-0" />;
     }
 
     // If showing all workspaces view
