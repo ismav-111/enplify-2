@@ -143,7 +143,7 @@ const WorkspacesSettings = ({
                   <div className="flex-1">
                     <h3 className="font-semibold text-foreground">{workspace.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Free Forever • {workspace.memberCount} {workspace.memberCount === 1 ? 'person' : 'people'}
+                      {workspace.memberCount} {workspace.memberCount === 1 ? 'person' : 'people'}
                     </p>
                   </div>
                 </div>

@@ -7,7 +7,7 @@ import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { User, Mail, Lock, Phone, Building2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-const ProfileSettings = () => {
+const ProfileSettings = ({ className }: { className?: string }) => {
   const [email, setEmail] = useState('vamsiquadrant@gmail.com');
   const [orgName, setOrgName] = useState('Acme Corp');
   const [phoneNumber, setPhoneNumber] = useState('+1 (555) 123-4567');
@@ -27,7 +27,7 @@ const ProfileSettings = () => {
       setAzureTenantId('');
     }
   };
-  return <div className="space-y-12 max-w-5xl">
+  return <div className={`space-y-12 max-w-5xl ${className || ''}`}>
       {/* Admin Account Badge */}
       <div className="flex items-center gap-2">
         <User className="h-4 w-4 text-muted-foreground" />
