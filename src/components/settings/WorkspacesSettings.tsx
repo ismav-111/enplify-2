@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +13,8 @@ import {
   Trash2,
   Edit3,
   Database,
-  User
+  User,
+  Settings as SettingsIcon
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -23,22 +25,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 
 interface WorkspaceSettingsData {
   id: string;
@@ -67,26 +53,10 @@ const WorkspacesSettings = ({
   onSelectWorkspace,
   onUpdateAvatar
 }: WorkspacesSettingsProps) => {
+  const navigate = useNavigate();
   const [createDialog, setCreateDialog] = useState(false);
-  const [editDialog, setEditDialog] = useState<{ open: boolean; workspaceId: string; currentName: string }>({
-    open: false,
-    workspaceId: '',
-    currentName: ''
-  });
-  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; workspaceId: string; name: string }>({
-    open: false,
-    workspaceId: '',
-    name: ''
-  });
-  const [avatarDialog, setAvatarDialog] = useState<{ open: boolean; workspaceId: string; currentAvatar?: string }>({
-    open: false,
-    workspaceId: '',
-    currentAvatar: undefined
-  });
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [newWorkspaceDescription, setNewWorkspaceDescription] = useState('');
-  const [editWorkspaceName, setEditWorkspaceName] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState('');
 
   const handleCreateWorkspace = () => {
     if (!newWorkspaceName.trim()) {
@@ -97,32 +67,6 @@ const WorkspacesSettings = ({
     setNewWorkspaceName('');
     setNewWorkspaceDescription('');
     setCreateDialog(false);
-  };
-
-  const handleRenameWorkspace = () => {
-    if (!editWorkspaceName.trim()) {
-      toast.error('Please enter a workspace name');
-      return;
-    }
-    onRenameWorkspace(editDialog.workspaceId, editWorkspaceName.trim());
-    setEditDialog({ open: false, workspaceId: '', currentName: '' });
-    setEditWorkspaceName('');
-  };
-
-  const handleDeleteWorkspace = () => {
-    onDeleteWorkspace(deleteDialog.workspaceId);
-    setDeleteDialog({ open: false, workspaceId: '', name: '' });
-  };
-
-  const handleUpdateAvatar = () => {
-    if (!avatarUrl.trim()) {
-      toast.error('Please enter an avatar URL');
-      return;
-    }
-    onUpdateAvatar(avatarDialog.workspaceId, avatarUrl.trim());
-    setAvatarDialog({ open: false, workspaceId: '', currentAvatar: undefined });
-    setAvatarUrl('');
-    toast.success('Workspace avatar updated');
   };
 
   const getInitials = (name: string) => {
@@ -172,57 +116,14 @@ const WorkspacesSettings = ({
                     </p>
                   </div>
                 </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm">
-                      Settings
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setAvatarDialog({ 
-                          open: true, 
-                          workspaceId: workspace.id, 
-                          currentAvatar: workspace.avatarUrl 
-                        });
-                        setAvatarUrl(workspace.avatarUrl || '');
-                      }}
-                    >
-                      <User className="h-4 w-4 mr-2" />
-                      Change Avatar
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setEditDialog({ 
-                          open: true, 
-                          workspaceId: workspace.id, 
-                          currentName: workspace.name 
-                        });
-                        setEditWorkspaceName(workspace.name);
-                      }}
-                    >
-                      <Edit3 className="h-4 w-4 mr-2" />
-                      Rename
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDeleteDialog({ 
-                          open: true, 
-                          workspaceId: workspace.id, 
-                          name: workspace.name 
-                        });
-                      }}
-                      className="text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => navigate(`/settings/workspace/${workspace.id}`)}
+                >
+                  <SettingsIcon className="h-4 w-4 mr-2" />
+                  Settings
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -288,105 +189,6 @@ const WorkspacesSettings = ({
         </DialogContent>
       </Dialog>
 
-      {/* Edit Workspace Dialog */}
-      <Dialog open={editDialog.open} onOpenChange={(open) => setEditDialog({ ...editDialog, open })}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Rename Workspace</DialogTitle>
-            <DialogDescription>
-              Enter a new name for this workspace
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-workspace-name">Workspace Name</Label>
-              <Input
-                id="edit-workspace-name"
-                value={editWorkspaceName}
-                onChange={(e) => setEditWorkspaceName(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleRenameWorkspace();
-                  }
-                }}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditDialog({ open: false, workspaceId: '', currentName: '' })}>
-              Cancel
-            </Button>
-            <Button onClick={handleRenameWorkspace}>
-              Save Changes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Avatar Update Dialog */}
-      <Dialog open={avatarDialog.open} onOpenChange={(open) => setAvatarDialog({ ...avatarDialog, open })}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Update Workspace Avatar</DialogTitle>
-            <DialogDescription>
-              Enter an image URL for the workspace avatar
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="avatar-url">Avatar URL</Label>
-              <Input
-                id="avatar-url"
-                placeholder="https://example.com/avatar.jpg"
-                value={avatarUrl}
-                onChange={(e) => setAvatarUrl(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleUpdateAvatar();
-                  }
-                }}
-              />
-            </div>
-            {avatarUrl && (
-              <div className="space-y-2">
-                <Label>Preview</Label>
-                <div className="w-20 h-20 rounded-lg overflow-hidden border border-border">
-                  <img src={avatarUrl} alt="Avatar preview" className="w-full h-full object-cover" />
-                </div>
-              </div>
-            )}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setAvatarDialog({ open: false, workspaceId: '', currentAvatar: undefined })}>
-              Cancel
-            </Button>
-            <Button onClick={handleUpdateAvatar}>
-              Update Avatar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Delete Workspace Dialog */}
-      <AlertDialog open={deleteDialog.open} onOpenChange={(open) => setDeleteDialog({ ...deleteDialog, open })}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Workspace</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete <strong>{deleteDialog.name}</strong>? This will also delete all sessions and data. This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleDeleteWorkspace}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Delete Workspace
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 };
