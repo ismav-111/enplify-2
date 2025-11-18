@@ -10,7 +10,6 @@ import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import AdminDashboard from "./pages/AdminDashboard";
 import UIComponents from "./pages/UIComponents";
-import WorkspaceSettings from "./pages/WorkspaceSettings";
 
 // Add Comfortaa font
 import "./styles/fonts.css";
@@ -26,7 +25,6 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/settings/workspace/:workspaceId" element={<Settings />} />
           <Route path="/signin" element={<Auth />} />
           <Route path="/signup" element={<Auth />} />
           <Route path="/admin" element={<AdminDashboard />} />
