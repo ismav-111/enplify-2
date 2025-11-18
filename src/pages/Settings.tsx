@@ -19,6 +19,7 @@ const mockWorkspaces: Array<{
   description: string;
   created: string;
   dataSources: string[];
+  avatarUrl?: string;
 }> = [];
 type WorkspaceSection = 'overview' | 'members' | 'data-sources' | 'settings';
 interface ActiveView {
@@ -64,7 +65,8 @@ const Settings = () => {
       memberCount: 1,
       description: description || '',
       created: new Date().toISOString().split('T')[0],
-      dataSources: []
+      dataSources: [],
+      avatarUrl: undefined
     };
     setWorkspaces(prev => [...prev, newWorkspace]);
     // Stay on all workspaces view after creation
@@ -92,6 +94,13 @@ const Settings = () => {
     } : w));
     toast.success('Workspace renamed successfully');
   };
+
+  const handleUpdateAvatar = (workspaceId: string, avatarUrl: string) => {
+    setWorkspaces(prev => prev.map(w => w.id === workspaceId ? {
+      ...w,
+      avatarUrl
+    } : w));
+  };
   const renderWorkspaceContent = () => {
     if (activeView.type === 'profile') {
       return <ProfileSettings className="my-0 py-0" />;
@@ -99,7 +108,7 @@ const Settings = () => {
 
     // If showing all workspaces view
     if (!activeView.workspaceId) {
-      return <WorkspacesSettings workspaces={workspaces} onCreateWorkspace={handleCreateWorkspace} onDeleteWorkspace={handleDeleteWorkspace} onRenameWorkspace={handleRenameWorkspace} onSelectWorkspace={id => setActiveView({
+      return <WorkspacesSettings workspaces={workspaces} onCreateWorkspace={handleCreateWorkspace} onDeleteWorkspace={handleDeleteWorkspace} onRenameWorkspace={handleRenameWorkspace} onUpdateAvatar={handleUpdateAvatar} onSelectWorkspace={id => setActiveView({
         type: 'workspace',
         workspaceId: id,
         section: 'overview'

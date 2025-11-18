@@ -11,7 +11,8 @@ import {
   Calendar,
   Trash2,
   Edit3,
-  Database
+  Database,
+  User
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -46,6 +47,7 @@ interface WorkspaceSettingsData {
   description: string;
   created: string;
   dataSources: string[];
+  avatarUrl?: string;
 }
 
 interface WorkspacesSettingsProps {
@@ -54,6 +56,7 @@ interface WorkspacesSettingsProps {
   onDeleteWorkspace: (workspaceId: string) => void;
   onRenameWorkspace: (workspaceId: string, newName: string) => void;
   onSelectWorkspace: (workspaceId: string) => void;
+  onUpdateAvatar: (workspaceId: string, avatarUrl: string) => void;
 }
 
 const WorkspacesSettings = ({
@@ -61,7 +64,8 @@ const WorkspacesSettings = ({
   onCreateWorkspace,
   onDeleteWorkspace,
   onRenameWorkspace,
-  onSelectWorkspace
+  onSelectWorkspace,
+  onUpdateAvatar
 }: WorkspacesSettingsProps) => {
   const [createDialog, setCreateDialog] = useState(false);
   const [editDialog, setEditDialog] = useState<{ open: boolean; workspaceId: string; currentName: string }>({
@@ -74,9 +78,15 @@ const WorkspacesSettings = ({
     workspaceId: '',
     name: ''
   });
+  const [avatarDialog, setAvatarDialog] = useState<{ open: boolean; workspaceId: string; currentAvatar?: string }>({
+    open: false,
+    workspaceId: '',
+    currentAvatar: undefined
+  });
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [newWorkspaceDescription, setNewWorkspaceDescription] = useState('');
   const [editWorkspaceName, setEditWorkspaceName] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
 
   const handleCreateWorkspace = () => {
     if (!newWorkspaceName.trim()) {
@@ -102,6 +112,17 @@ const WorkspacesSettings = ({
   const handleDeleteWorkspace = () => {
     onDeleteWorkspace(deleteDialog.workspaceId);
     setDeleteDialog({ open: false, workspaceId: '', name: '' });
+  };
+
+  const handleUpdateAvatar = () => {
+    if (!avatarUrl.trim()) {
+      toast.error('Please enter an avatar URL');
+      return;
+    }
+    onUpdateAvatar(avatarDialog.workspaceId, avatarUrl.trim());
+    setAvatarDialog({ open: false, workspaceId: '', currentAvatar: undefined });
+    setAvatarUrl('');
+    toast.success('Workspace avatar updated');
   };
 
   const getInitials = (name: string) => {
@@ -137,8 +158,12 @@ const WorkspacesSettings = ({
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 flex-1 cursor-pointer" onClick={() => onSelectWorkspace(workspace.id)}>
-                  <div className={`w-10 h-10 rounded-lg ${getAvatarColor(workspace.id)} flex items-center justify-center text-primary-foreground font-semibold`}>
-                    {getInitials(workspace.name)}
+                  <div className={`w-10 h-10 rounded-lg ${workspace.avatarUrl ? 'bg-muted' : getAvatarColor(workspace.id)} flex items-center justify-center text-primary-foreground font-semibold overflow-hidden`}>
+                    {workspace.avatarUrl ? (
+                      <img src={workspace.avatarUrl} alt={workspace.name} className="w-full h-full object-cover" />
+                    ) : (
+                      getInitials(workspace.name)
+                    )}
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-foreground">{workspace.name}</h3>
@@ -154,6 +179,20 @@ const WorkspacesSettings = ({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
+                    <DropdownMenuItem 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setAvatarDialog({ 
+                          open: true, 
+                          workspaceId: workspace.id, 
+                          currentAvatar: workspace.avatarUrl 
+                        });
+                        setAvatarUrl(workspace.avatarUrl || '');
+                      }}
+                    >
+                      <User className="h-4 w-4 mr-2" />
+                      Change Avatar
+                    </DropdownMenuItem>
                     <DropdownMenuItem 
                       onClick={(e) => {
                         e.stopPropagation();
@@ -279,6 +318,50 @@ const WorkspacesSettings = ({
             </Button>
             <Button onClick={handleRenameWorkspace}>
               Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Avatar Update Dialog */}
+      <Dialog open={avatarDialog.open} onOpenChange={(open) => setAvatarDialog({ ...avatarDialog, open })}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Update Workspace Avatar</DialogTitle>
+            <DialogDescription>
+              Enter an image URL for the workspace avatar
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="avatar-url">Avatar URL</Label>
+              <Input
+                id="avatar-url"
+                placeholder="https://example.com/avatar.jpg"
+                value={avatarUrl}
+                onChange={(e) => setAvatarUrl(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleUpdateAvatar();
+                  }
+                }}
+              />
+            </div>
+            {avatarUrl && (
+              <div className="space-y-2">
+                <Label>Preview</Label>
+                <div className="w-20 h-20 rounded-lg overflow-hidden border border-border">
+                  <img src={avatarUrl} alt="Avatar preview" className="w-full h-full object-cover" />
+                </div>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAvatarDialog({ open: false, workspaceId: '', currentAvatar: undefined })}>
+              Cancel
+            </Button>
+            <Button onClick={handleUpdateAvatar}>
+              Update Avatar
             </Button>
           </DialogFooter>
         </DialogContent>
