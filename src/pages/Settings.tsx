@@ -157,9 +157,7 @@ const Settings = () => {
   const location = useLocation();
   const [workspaces, setWorkspaces] = useState(mockWorkspaces);
   const [activeView, setActiveView] = useState<ActiveView>({
-    type: 'workspace',
-    workspaceId: undefined,
-    section: undefined
+    type: 'profile'
   });
   const [expandedWorkspaces, setExpandedWorkspaces] = useState<Set<string>>(new Set());
   const toggleWorkspace = (workspaceId: string) => {
