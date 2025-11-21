@@ -491,19 +491,6 @@ const WorkspaceSection = ({
   return (
     <>
       <div>
-        {/* Back to Conversation Button */}
-        {onNewChat && (
-          <div className="mb-4 mt-6">
-            <button 
-              onClick={onNewChat}
-              className="w-full flex items-center gap-2 px-2 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
-            >
-              <ArrowLeft size={16} />
-              Back to Conversation
-            </button>
-          </div>
-        )}
-
         {workspaces.length > 0 ? (
           <>
             {/* My Workspaces Section */}
