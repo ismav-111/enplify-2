@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import ProfileSettings from '@/components/settings/ProfileSettings';
 import WorkspacesSettings from '@/components/settings/WorkspacesSettings';
+import GeneralSection from '@/components/settings/GeneralSection';
 import { ArrowLeft, Briefcase, ChevronDown, ChevronRight, Grid, Users as UsersIcon, Database, Settings as SettingsIcon, User, Trash2, Sparkles, PanelLeft } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -22,7 +23,7 @@ const mockWorkspaces: Array<{
   dataSources: string[];
   avatarUrl?: string;
 }> = [];
-type WorkspaceSection = 'overview' | 'members' | 'data-sources' | 'settings';
+type WorkspaceSection = 'general' | 'members' | 'configuration';
 interface ActiveView {
   type: 'workspace' | 'profile';
   workspaceId?: string;
@@ -87,18 +88,29 @@ const SettingsSidebar = ({
                   </CollapsibleTrigger>
                   <CollapsibleContent className="mt-1 space-y-0.5">
                     {workspaces.map(workspace => <Collapsible key={workspace.id} open={expandedWorkspaces.has(workspace.id)} onOpenChange={() => toggleWorkspace(workspace.id)}>
-                        <CollapsibleTrigger className="flex items-center gap-2 pl-6 pr-3 py-2 text-sm text-foreground w-full hover:bg-muted/50 rounded-md transition-colors">
+                        <CollapsibleTrigger 
+                          onClick={() => handleSectionClick(workspace.id, 'general')}
+                          className="flex items-center gap-2 pl-6 pr-3 py-2 text-sm text-foreground w-full hover:bg-muted/50 rounded-md transition-colors"
+                        >
                           <span className="flex-1 text-left">{workspace.name}</span>
-                          {expandedWorkspaces.has(workspace.id) ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleWorkspace(workspace.id);
+                            }}
+                            className="p-0 hover:bg-transparent"
+                          >
+                            {expandedWorkspaces.has(workspace.id) ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+                          </button>
                         </CollapsibleTrigger>
                         <CollapsibleContent className="mt-0.5 space-y-0.5">
                           <SidebarMenuItem>
-                            <SidebarMenuButton onClick={() => handleSectionClick(workspace.id, 'overview')} isActive={activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'overview'} className={`
+                            <SidebarMenuButton onClick={() => handleSectionClick(workspace.id, 'general')} isActive={activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'general'} className={`
                                 pl-12 pr-3 py-2 text-sm transition-colors rounded-md
-                                ${activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'overview' ? 'bg-primary text-primary-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
+                                ${activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'general' ? 'bg-primary text-primary-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
                               `}>
                               <Grid className="h-3.5 w-3.5 mr-2" />
-                              Overview
+                              General
                             </SidebarMenuButton>
                           </SidebarMenuItem>
                           <SidebarMenuItem>
@@ -111,21 +123,12 @@ const SettingsSidebar = ({
                             </SidebarMenuButton>
                           </SidebarMenuItem>
                           <SidebarMenuItem>
-                            <SidebarMenuButton onClick={() => handleSectionClick(workspace.id, 'data-sources')} isActive={activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'data-sources'} className={`
+                            <SidebarMenuButton onClick={() => handleSectionClick(workspace.id, 'configuration')} isActive={activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'configuration'} className={`
                                 pl-12 pr-3 py-2 text-sm transition-colors rounded-md
-                                ${activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'data-sources' ? 'bg-primary text-primary-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
-                              `}>
-                              <Database className="h-3.5 w-3.5 mr-2" />
-                              Data Sources
-                            </SidebarMenuButton>
-                          </SidebarMenuItem>
-                          <SidebarMenuItem>
-                            <SidebarMenuButton onClick={() => handleSectionClick(workspace.id, 'settings')} isActive={activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'settings'} className={`
-                                pl-12 pr-3 py-2 text-sm transition-colors rounded-md
-                                ${activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'settings' ? 'bg-primary text-primary-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
+                                ${activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'configuration' ? 'bg-primary text-primary-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
                               `}>
                               <SettingsIcon className="h-3.5 w-3.5 mr-2" />
-                              Settings
+                              Configuration
                             </SidebarMenuButton>
                           </SidebarMenuItem>
                         </CollapsibleContent>
@@ -233,69 +236,20 @@ const Settings = () => {
       return <WorkspacesSettings workspaces={workspaces} onCreateWorkspace={handleCreateWorkspace} onDeleteWorkspace={handleDeleteWorkspace} onRenameWorkspace={handleRenameWorkspace} onUpdateAvatar={handleUpdateAvatar} onSelectWorkspace={id => setActiveView({
         type: 'workspace',
         workspaceId: id,
-        section: 'overview'
+        section: 'general'
       })} />;
     }
     const workspace = workspaces.find(w => w.id === activeView.workspaceId);
     if (!workspace) return null;
     switch (activeView.section) {
-      case 'overview':
-        return <div className="space-y-8">
-            <Button variant="ghost" onClick={() => setActiveView({
-            type: 'workspace',
-            workspaceId: undefined,
-            section: undefined
-          })} className="mb-4">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to All Workspaces
-            </Button>
-            <div className="space-y-2">
-              <h1 className="text-3xl font-semibold text-foreground tracking-tight">{workspace.name}</h1>
-              <p className="text-base text-muted-foreground">{workspace.description}</p>
-            </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">Workspace Information</CardTitle>
-                <CardDescription>Key details about this workspace</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Workspace Name</p>
-                    <p className="text-base font-medium text-foreground">{workspace.name}</p>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Created Date</p>
-                    <p className="text-base font-medium text-foreground">{workspace.created}</p>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Description</p>
-                    <p className="text-base font-medium text-foreground">{workspace.description}</p>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Total Members</p>
-                    <p className="text-base font-medium text-foreground">{workspace.memberCount} members</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {workspace.dataSources.length > 0 && <Card>
-                <CardHeader>
-                  <CardTitle className="text-xl">Connected Data Sources</CardTitle>
-                  <CardDescription>Active integrations for this workspace</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-3">
-                    {workspace.dataSources.map(source => <Badge key={source} variant="secondary" className="px-4 py-2 text-sm font-medium">
-                        <Database className="h-3.5 w-3.5 mr-2" />
-                        {source}
-                      </Badge>)}
-                  </div>
-                </CardContent>
-              </Card>}
-          </div>;
+      case 'general':
+        return <GeneralSection 
+          workspace={workspace}
+          onBack={() => setActiveView({ type: 'workspace', workspaceId: undefined, section: undefined })}
+          onRename={handleRenameWorkspace}
+          onUpdateAvatar={handleUpdateAvatar}
+          onDelete={handleDeleteWorkspace}
+        />;
       case 'members':
         return <div className="space-y-8">
             <Button variant="ghost" onClick={() => setActiveView({
@@ -426,7 +380,7 @@ const Settings = () => {
               </CardContent>
             </Card>
           </div>;
-      case 'data-sources':
+      case 'configuration':
         return <div className="space-y-8">
             <Button variant="ghost" onClick={() => setActiveView({
             type: 'workspace',
@@ -488,86 +442,8 @@ const Settings = () => {
               </CardContent>
             </Card>
           </div>;
-      case 'settings':
-        return <div className="space-y-8">
-            <Button variant="ghost" onClick={() => setActiveView({
-            type: 'workspace',
-            workspaceId: undefined,
-            section: undefined
-          })} className="mb-4">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to All Workspaces
-            </Button>
-            <div className="space-y-2">
-              <h1 className="text-3xl font-semibold text-foreground tracking-tight">Workspace Settings</h1>
-              <p className="text-base text-muted-foreground">Manage workspace configuration and preferences</p>
-            </div>
-
-            <Card className="shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-xl">General Settings</CardTitle>
-                <CardDescription>Update workspace details and configuration</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <p className="text-sm font-semibold text-foreground">Workspace Name</p>
-                    <p className="text-base text-muted-foreground">{workspace.name}</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <p className="text-sm font-semibold text-foreground">Created Date</p>
-                    <p className="text-base text-muted-foreground">{workspace.created}</p>
-                  </div>
-
-                  <div className="space-y-2 md:col-span-2">
-                    <p className="text-sm font-semibold text-foreground">Description</p>
-                    <p className="text-base text-muted-foreground">{workspace.description}</p>
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <p className="text-sm font-semibold text-foreground">Workspace ID</p>
-                    <p className="text-sm text-muted-foreground font-mono">{workspace.id}</p>
-                  </div>
-                  <Button className="btn-primary shadow-md">
-                    <SettingsIcon className="h-4 w-4 mr-2" />
-                    Edit Details
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-destructive/50 shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-xl text-destructive flex items-center gap-2">
-                  <Trash2 className="h-5 w-5" />
-                  Danger Zone
-                </CardTitle>
-                <CardDescription>Irreversible actions that affect this workspace</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="p-4 bg-destructive/5 border border-destructive/20 rounded-lg">
-                  <p className="text-sm text-foreground font-medium mb-2">Delete Workspace</p>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    This action cannot be undone. Deleting this workspace will:
-                  </p>
-                  <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mb-4">
-                    <li>Remove all members from the workspace</li>
-                    <li>Disconnect all data sources</li>
-                    <li>Delete all workspace data and settings</li>
-                  </ul>
-                </div>
-                <Button variant="destructive" className="shadow-md">
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete Workspace Permanently
-                </Button>
-              </CardContent>
-            </Card>
-          </div>;
+      default:
+        return null;
     }
   };
   return <TooltipProvider>
