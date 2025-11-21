@@ -28,7 +28,6 @@ interface ActiveView {
   workspaceId?: string;
   section?: WorkspaceSection;
 }
-
 interface SettingsSidebarProps {
   workspaces: typeof mockWorkspaces;
   expandedWorkspaces: Set<string>;
@@ -38,7 +37,6 @@ interface SettingsSidebarProps {
   handleSectionClick: (workspaceId: string, section: WorkspaceSection) => void;
   setActiveView: (view: ActiveView) => void;
 }
-
 const SettingsSidebar = ({
   workspaces,
   expandedWorkspaces,
@@ -48,10 +46,10 @@ const SettingsSidebar = ({
   handleSectionClick,
   setActiveView
 }: SettingsSidebarProps) => {
-  const { setOpenMobile } = useSidebar();
-
-  return (
-    <Sidebar className="border-r border-gray-100">
+  const {
+    setOpenMobile
+  } = useSidebar();
+  return <Sidebar className="border-r border-gray-100">
       {/* Header with branding and toggle button */}
       <SidebarHeader className="h-16 px-6 border-b border-gray-100 flex flex-row justify-between items-center">
         <h1 className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
@@ -59,14 +57,7 @@ const SettingsSidebar = ({
         </h1>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button 
-              onClick={() => setOpenMobile(false)}
-              variant="ghost" 
-              size="icon"
-              className="h-8 w-8 text-gray-500 hover:text-gray-700"
-            >
-              <PanelLeft size={18} />
-            </Button>
+            
           </TooltipTrigger>
           <TooltipContent>
             <p>Close sidebar</p>
@@ -80,10 +71,7 @@ const SettingsSidebar = ({
             <SidebarMenu className="space-y-1">
               {/* Back to Conversation Button */}
               <SidebarMenuItem className="mb-4">
-                <SidebarMenuButton 
-                  onClick={() => navigate('/')}
-                  className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-md transition-colors"
-                >
+                <SidebarMenuButton onClick={() => navigate('/')} className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-md transition-colors">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Conversation
                 </SidebarMenuButton>
@@ -162,8 +150,7 @@ const SettingsSidebar = ({
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-    </Sidebar>
-  );
+    </Sidebar>;
 };
 const Settings = () => {
   const navigate = useNavigate();
@@ -232,7 +219,6 @@ const Settings = () => {
     } : w));
     toast.success('Workspace renamed successfully');
   };
-
   const handleUpdateAvatar = (workspaceId: string, avatarUrl: string) => {
     setWorkspaces(prev => prev.map(w => w.id === workspaceId ? {
       ...w,
@@ -589,25 +575,10 @@ const Settings = () => {
   return <TooltipProvider>
       <SidebarProvider defaultOpen={true}>
         <div className="min-h-screen flex w-full bg-background">
-          <SettingsSidebar
-            workspaces={workspaces}
-            expandedWorkspaces={expandedWorkspaces}
-            activeView={activeView}
-            navigate={navigate}
-            toggleWorkspace={toggleWorkspace}
-            handleSectionClick={handleSectionClick}
-            setActiveView={setActiveView}
-          />
+          <SettingsSidebar workspaces={workspaces} expandedWorkspaces={expandedWorkspaces} activeView={activeView} navigate={navigate} toggleWorkspace={toggleWorkspace} handleSectionClick={handleSectionClick} setActiveView={setActiveView} />
           <SidebarInset className="flex-1">
           <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border px-6 bg-background">
-            <div className="flex items-center gap-3">
-              <SidebarTrigger className="-ml-1" />
-              <Separator orientation="vertical" className="h-6" />
-              <div className="flex items-center gap-2">
-                <SettingsIcon className="h-5 w-5 text-muted-foreground" />
-                <h2 className="text-xl font-semibold text-foreground">Settings</h2>
-              </div>
-            </div>
+            
           </header>
 
           <main className="p-8 animate-fade-in flex justify-center">
