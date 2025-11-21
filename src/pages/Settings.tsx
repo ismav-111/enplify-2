@@ -32,6 +32,8 @@ interface ActiveView {
 interface SettingsSidebarProps {
   workspaces: typeof mockWorkspaces;
   expandedWorkspaces: Set<string>;
+  workspacesExpanded: boolean;
+  setWorkspacesExpanded: (expanded: boolean) => void;
   activeView: ActiveView;
   navigate: ReturnType<typeof useNavigate>;
   toggleWorkspace: (id: string) => void;
@@ -41,6 +43,8 @@ interface SettingsSidebarProps {
 const SettingsSidebar = ({
   workspaces,
   expandedWorkspaces,
+  workspacesExpanded,
+  setWorkspacesExpanded,
   activeView,
   navigate,
   toggleWorkspace,
@@ -80,14 +84,46 @@ const SettingsSidebar = ({
               
               {/* Workspaces Section */}
               <div className="mb-2">
-                <Collapsible open={true}>
+                <Collapsible open={workspacesExpanded} onOpenChange={setWorkspacesExpanded}>
                   <CollapsibleTrigger className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-foreground w-full hover:bg-muted/50 rounded-md transition-colors">
                     <Briefcase className="h-4 w-4" />
                     <span className="flex-1 text-left">Workspaces</span>
-                    <ChevronDown className="h-4 w-4" />
+                    {workspacesExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                   </CollapsibleTrigger>
                   <CollapsibleContent className="mt-1 space-y-0.5">
-                    {workspaces.map(workspace => <Collapsible key={workspace.id} open={expandedWorkspaces.has(workspace.id)} onOpenChange={() => toggleWorkspace(workspace.id)}>
+                    {workspaces.length === 0 ? (
+                      <SidebarMenuItem>
+                        <SidebarMenuButton 
+                          onClick={() => {
+                            setActiveView({ type: 'workspace', workspaceId: undefined, section: undefined });
+                            setOpenMobile(false);
+                          }}
+                          className="pl-6 pr-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-md transition-colors"
+                        >
+                          <span>Create Workspace</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ) : (
+                      <>
+                        <SidebarMenuItem>
+                          <SidebarMenuButton 
+                            onClick={() => {
+                              setActiveView({ type: 'workspace', workspaceId: undefined, section: undefined });
+                              setOpenMobile(false);
+                            }}
+                            isActive={activeView.type === 'workspace' && !activeView.workspaceId}
+                            className={`
+                              pl-6 pr-3 py-2 text-sm transition-colors rounded-md
+                              ${activeView.type === 'workspace' && !activeView.workspaceId 
+                                ? 'bg-primary text-primary-foreground font-medium' 
+                                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
+                            `}
+                          >
+                            <Grid className="h-3.5 w-3.5 mr-2" />
+                            All Workspaces
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                        {workspaces.map(workspace => <Collapsible key={workspace.id} open={expandedWorkspaces.has(workspace.id)} onOpenChange={() => toggleWorkspace(workspace.id)}>
                         <CollapsibleTrigger 
                           onClick={() => handleSectionClick(workspace.id, 'general')}
                           className="flex items-center gap-2 pl-6 pr-3 py-2 text-sm text-foreground w-full hover:bg-muted/50 rounded-md transition-colors"
@@ -133,6 +169,8 @@ const SettingsSidebar = ({
                           </SidebarMenuItem>
                         </CollapsibleContent>
                       </Collapsible>)}
+                      </>
+                    )}
                   </CollapsibleContent>
                 </Collapsible>
               </div>
@@ -163,6 +201,7 @@ const Settings = () => {
     type: 'profile'
   });
   const [expandedWorkspaces, setExpandedWorkspaces] = useState<Set<string>>(new Set());
+  const [workspacesExpanded, setWorkspacesExpanded] = useState(true);
   const toggleWorkspace = (workspaceId: string) => {
     setExpandedWorkspaces(prev => {
       const newSet = new Set(prev);
@@ -449,7 +488,17 @@ const Settings = () => {
   return <TooltipProvider>
       <SidebarProvider defaultOpen={true}>
         <div className="min-h-screen flex w-full bg-background">
-          <SettingsSidebar workspaces={workspaces} expandedWorkspaces={expandedWorkspaces} activeView={activeView} navigate={navigate} toggleWorkspace={toggleWorkspace} handleSectionClick={handleSectionClick} setActiveView={setActiveView} />
+          <SettingsSidebar 
+            workspaces={workspaces} 
+            expandedWorkspaces={expandedWorkspaces}
+            workspacesExpanded={workspacesExpanded}
+            setWorkspacesExpanded={setWorkspacesExpanded}
+            activeView={activeView} 
+            navigate={navigate} 
+            toggleWorkspace={toggleWorkspace} 
+            handleSectionClick={handleSectionClick} 
+            setActiveView={setActiveView} 
+          />
           <SidebarInset className="flex-1">
           <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border px-6 bg-background">
             
