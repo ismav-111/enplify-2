@@ -12,7 +12,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarTrigger, SidebarInset, SidebarHeader, useSidebar } from "@/components/ui/sidebar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Empty workspaces - user needs to create them
 const mockWorkspaces: Array<{
@@ -111,26 +110,89 @@ const SettingsSidebar = ({
 
               {/* Individual Workspaces List */}
               {workspacesExpanded && workspaces.length > 0 && (
-                <div className="ml-6 space-y-0.5 mb-2">
+                <div className="ml-6 space-y-1 mb-2">
                   {workspaces.map(workspace => (
-                    <SidebarMenuItem key={workspace.id}>
-                      <SidebarMenuButton 
-                        onClick={() => {
-                          handleSectionClick(workspace.id, 'general');
-                          setOpenMobile(false);
-                        }}
-                        isActive={activeView.type === 'workspace' && activeView.workspaceId === workspace.id}
-                        className={`
-                          px-3 py-2 text-sm transition-colors rounded-md
-                          ${activeView.type === 'workspace' && activeView.workspaceId === workspace.id 
-                            ? 'bg-primary text-primary-foreground font-medium' 
-                            : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
-                        `}
+                    <div key={workspace.id} className="space-y-0.5">
+                      <Collapsible
+                        open={expandedWorkspaces.has(workspace.id)}
+                        onOpenChange={() => toggleWorkspace(workspace.id)}
                       >
-                        <Briefcase className="h-3.5 w-3.5 mr-2" />
-                        {workspace.name}
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
+                        <CollapsibleTrigger asChild>
+                          <SidebarMenuButton 
+                            className={`
+                              px-3 py-2 text-sm transition-colors rounded-md w-full justify-start
+                              ${activeView.type === 'workspace' && activeView.workspaceId === workspace.id 
+                                ? 'text-primary font-medium' 
+                                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
+                            `}
+                          >
+                            <Briefcase className="h-3.5 w-3.5 mr-2" />
+                            {workspace.name}
+                            <span className="ml-auto">
+                              {expandedWorkspaces.has(workspace.id) ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+                            </span>
+                          </SidebarMenuButton>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <div className="ml-6 space-y-0.5 mt-1">
+                            <SidebarMenuItem>
+                              <SidebarMenuButton
+                                onClick={() => {
+                                  handleSectionClick(workspace.id, 'general');
+                                  setOpenMobile(false);
+                                }}
+                                isActive={activeView.workspaceId === workspace.id && activeView.section === 'general'}
+                                className={`
+                                  px-3 py-1.5 text-xs transition-colors rounded-md
+                                  ${activeView.workspaceId === workspace.id && activeView.section === 'general'
+                                    ? 'bg-primary text-primary-foreground font-medium'
+                                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
+                                `}
+                              >
+                                <SettingsIcon className="h-3 w-3 mr-2" />
+                                General
+                              </SidebarMenuButton>
+                            </SidebarMenuItem>
+                            <SidebarMenuItem>
+                              <SidebarMenuButton
+                                onClick={() => {
+                                  handleSectionClick(workspace.id, 'members');
+                                  setOpenMobile(false);
+                                }}
+                                isActive={activeView.workspaceId === workspace.id && activeView.section === 'members'}
+                                className={`
+                                  px-3 py-1.5 text-xs transition-colors rounded-md
+                                  ${activeView.workspaceId === workspace.id && activeView.section === 'members'
+                                    ? 'bg-primary text-primary-foreground font-medium'
+                                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
+                                `}
+                              >
+                                <UsersIcon className="h-3 w-3 mr-2" />
+                                Members
+                              </SidebarMenuButton>
+                            </SidebarMenuItem>
+                            <SidebarMenuItem>
+                              <SidebarMenuButton
+                                onClick={() => {
+                                  handleSectionClick(workspace.id, 'configuration');
+                                  setOpenMobile(false);
+                                }}
+                                isActive={activeView.workspaceId === workspace.id && activeView.section === 'configuration'}
+                                className={`
+                                  px-3 py-1.5 text-xs transition-colors rounded-md
+                                  ${activeView.workspaceId === workspace.id && activeView.section === 'configuration'
+                                    ? 'bg-primary text-primary-foreground font-medium'
+                                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
+                                `}
+                              >
+                                <Database className="h-3 w-3 mr-2" />
+                                Configuration
+                              </SidebarMenuButton>
+                            </SidebarMenuItem>
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    </div>
                   ))}
                 </div>
               )}
@@ -262,55 +324,19 @@ const Settings = () => {
     }
     const workspace = workspaces.find(w => w.id === activeView.workspaceId);
     if (!workspace) return null;
-
-    // Render tabs for workspace sections
-    const workspaceTabs = (
-      <div className="mb-6">
-        <Button variant="ghost" onClick={() => setActiveView({
-          type: 'workspace',
-          workspaceId: undefined,
-          section: undefined
-        })} className="mb-4">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to All Workspaces
-        </Button>
-        <Tabs value={activeView.section || 'general'} onValueChange={(value) => {
-          handleSectionClick(workspace.id, value as WorkspaceSection);
-        }}>
-          <TabsList className="grid w-full max-w-md grid-cols-3">
-            <TabsTrigger value="general">
-              <SettingsIcon className="h-4 w-4 mr-2" />
-              General
-            </TabsTrigger>
-            <TabsTrigger value="members">
-              <UsersIcon className="h-4 w-4 mr-2" />
-              Members
-            </TabsTrigger>
-            <TabsTrigger value="configuration">
-              <Database className="h-4 w-4 mr-2" />
-              Configuration
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-      </div>
-    );
     switch (activeView.section) {
       case 'general':
         return (
-          <>
-            {workspaceTabs}
-            <GeneralSection 
-              workspace={workspace}
-              onBack={() => setActiveView({ type: 'workspace', workspaceId: undefined, section: undefined })}
-              onRename={handleRenameWorkspace}
-              onUpdateAvatar={handleUpdateAvatar}
-              onDelete={handleDeleteWorkspace}
-            />
-          </>
+          <GeneralSection 
+            workspace={workspace}
+            onBack={() => setActiveView({ type: 'workspace', workspaceId: undefined, section: undefined })}
+            onRename={handleRenameWorkspace}
+            onUpdateAvatar={handleUpdateAvatar}
+            onDelete={handleDeleteWorkspace}
+          />
         );
       case 'members':
         return <div className="space-y-8">
-            {workspaceTabs}
             <div className="flex items-center justify-between">
               <div className="space-y-2">
                 <h1 className="text-3xl font-semibold text-foreground tracking-tight">Team Members</h1>
@@ -433,7 +459,6 @@ const Settings = () => {
           </div>;
       case 'configuration':
         return <div className="space-y-8">
-            {workspaceTabs}
             <div className="space-y-2">
               <h1 className="text-3xl font-semibold text-foreground tracking-tight">Data Sources</h1>
               <p className="text-base text-muted-foreground">Manage data source integrations for this workspace</p>
