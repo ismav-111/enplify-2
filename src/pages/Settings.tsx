@@ -544,11 +544,15 @@ const Settings = () => {
         </Sidebar>
 
         <SidebarInset className="flex-1">
-          <header className="h-16 px-6 border-b border-gray-100 flex justify-between items-center bg-background">
-            <h1 className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
-              enplify.ai
-            </h1>
-            <SidebarTrigger />
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border px-6 bg-background">
+            <div className="flex items-center gap-3">
+              <SidebarTrigger className="-ml-1" />
+              <Separator orientation="vertical" className="h-6" />
+              <div className="flex items-center gap-2">
+                <SettingsIcon className="h-5 w-5 text-muted-foreground" />
+                <h2 className="text-xl font-semibold text-foreground">Settings</h2>
+              </div>
+            </div>
           </header>
 
           <main className="p-8 animate-fade-in flex justify-center">
