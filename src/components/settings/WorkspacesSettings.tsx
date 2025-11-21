@@ -52,22 +52,26 @@ interface WorkspaceSettingsData {
 
 interface WorkspacesSettingsProps {
   workspaces: WorkspaceSettingsData[];
+  showCreateDialog?: boolean;
   onCreateWorkspace: (name: string, description?: string) => void;
   onDeleteWorkspace: (workspaceId: string) => void;
   onRenameWorkspace: (workspaceId: string, newName: string) => void;
   onSelectWorkspace: (workspaceId: string) => void;
   onUpdateAvatar: (workspaceId: string, avatarUrl: string) => void;
+  onCloseCreateDialog?: () => void;
 }
 
 const WorkspacesSettings = ({
   workspaces,
+  showCreateDialog = false,
   onCreateWorkspace,
   onDeleteWorkspace,
   onRenameWorkspace,
   onSelectWorkspace,
-  onUpdateAvatar
+  onUpdateAvatar,
+  onCloseCreateDialog
 }: WorkspacesSettingsProps) => {
-  const [createDialog, setCreateDialog] = useState(false);
+  const [createDialog, setCreateDialog] = useState(showCreateDialog);
   const [editDialog, setEditDialog] = useState<{ open: boolean; workspaceId: string; currentName: string }>({
     open: false,
     workspaceId: '',
@@ -244,7 +248,12 @@ const WorkspacesSettings = ({
       </div>
 
       {/* Create Workspace Dialog */}
-      <Dialog open={createDialog} onOpenChange={setCreateDialog}>
+      <Dialog open={createDialog} onOpenChange={(open) => {
+        setCreateDialog(open);
+        if (!open && onCloseCreateDialog) {
+          onCloseCreateDialog();
+        }
+      }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New Workspace</DialogTitle>
