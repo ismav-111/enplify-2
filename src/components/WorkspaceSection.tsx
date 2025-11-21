@@ -503,7 +503,7 @@ const WorkspaceSection = ({
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    onClick={() => navigate('/settings')}
+                    onClick={() => navigate('/settings', { state: { openCreateWorkspace: true } })}
                     className="h-5 w-5 p-0"
                   >
                         <Plus size={12} className="text-gray-400" />
@@ -530,7 +530,7 @@ const WorkspaceSection = ({
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    onClick={() => navigate('/settings')}
+                    onClick={() => navigate('/settings', { state: { openCreateWorkspace: true } })}
                     className="h-5 w-5 p-0"
                   >
                     <Plus size={12} className="text-gray-400" />
@@ -556,7 +556,7 @@ const WorkspaceSection = ({
               <Button 
                 variant="ghost" 
                 size="icon" 
-                onClick={() => navigate('/settings')}
+                onClick={() => navigate('/settings', { state: { openCreateWorkspace: true } })}
                 className="h-5 w-5 p-0"
               >
                 <Plus size={12} className="text-gray-400" />
@@ -572,7 +572,7 @@ const WorkspaceSection = ({
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => navigate('/settings')}
+            onClick={() => navigate('/settings', { state: { openCreateWorkspace: true } })}
             className="h-7 text-[11px]"
           >
                 <Plus size={11} className="mr-1" />
