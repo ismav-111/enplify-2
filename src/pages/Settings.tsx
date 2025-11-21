@@ -32,6 +32,8 @@ interface ActiveView {
 interface SettingsSidebarProps {
   workspaces: typeof mockWorkspaces;
   expandedWorkspaces: Set<string>;
+  workspacesExpanded: boolean;
+  setWorkspacesExpanded: (expanded: boolean) => void;
   activeView: ActiveView;
   navigate: ReturnType<typeof useNavigate>;
   toggleWorkspace: (id: string) => void;
@@ -41,6 +43,8 @@ interface SettingsSidebarProps {
 const SettingsSidebar = ({
   workspaces,
   expandedWorkspaces,
+  workspacesExpanded,
+  setWorkspacesExpanded,
   activeView,
   navigate,
   toggleWorkspace,
@@ -79,24 +83,56 @@ const SettingsSidebar = ({
               </SidebarMenuItem>
               
               {/* Workspaces Section */}
-              <SidebarMenuItem className="mb-2">
-                <SidebarMenuButton 
-                  onClick={() => {
-                    setActiveView({ type: 'workspace', workspaceId: undefined, section: undefined });
-                    setOpenMobile(false);
-                  }}
-                  isActive={activeView.type === 'workspace' && !activeView.workspaceId}
-                  className={`
-                    px-3 py-2 text-sm font-medium transition-colors rounded-md
-                    ${activeView.type === 'workspace' && !activeView.workspaceId 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'text-foreground hover:text-foreground hover:bg-muted/50'}
-                  `}
-                >
-                  <Briefcase className="h-4 w-4 mr-2" />
-                  Workspaces
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              <div className="mb-2">
+                <Collapsible open={workspacesExpanded} onOpenChange={setWorkspacesExpanded}>
+                  <CollapsibleTrigger className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-foreground w-full hover:bg-muted/50 rounded-md transition-colors">
+                    <Briefcase className="h-4 w-4" />
+                    <span className="flex-1 text-left">Workspaces</span>
+                    {workspacesExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-1 space-y-0.5">
+                    <SidebarMenuItem>
+                      <SidebarMenuButton 
+                        onClick={() => {
+                          setActiveView({ type: 'workspace', workspaceId: undefined, section: undefined });
+                          setOpenMobile(false);
+                        }}
+                        isActive={activeView.type === 'workspace' && !activeView.workspaceId}
+                        className={`
+                          pl-6 pr-3 py-2 text-sm transition-colors rounded-md
+                          ${activeView.type === 'workspace' && !activeView.workspaceId 
+                            ? 'bg-primary text-primary-foreground font-medium' 
+                            : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
+                        `}
+                      >
+                        <Grid className="h-3.5 w-3.5 mr-2" />
+                        All Workspaces
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    
+                    {workspaces.map(workspace => (
+                      <SidebarMenuItem key={workspace.id}>
+                        <SidebarMenuButton 
+                          onClick={() => {
+                            handleSectionClick(workspace.id, 'general');
+                            setOpenMobile(false);
+                          }}
+                          isActive={activeView.type === 'workspace' && activeView.workspaceId === workspace.id}
+                          className={`
+                            pl-6 pr-3 py-2 text-sm transition-colors rounded-md
+                            ${activeView.type === 'workspace' && activeView.workspaceId === workspace.id 
+                              ? 'bg-primary text-primary-foreground font-medium' 
+                              : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
+                          `}
+                        >
+                          <Briefcase className="h-3.5 w-3.5 mr-2" />
+                          {workspace.name}
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </CollapsibleContent>
+                </Collapsible>
+              </div>
 
               {/* Profile Section */}
               <SidebarMenuItem>
@@ -128,6 +164,7 @@ const Settings = () => {
   });
   const [showCreateDialog, setShowCreateDialog] = useState(location.state?.openCreateWorkspace || false);
   const [expandedWorkspaces, setExpandedWorkspaces] = useState<Set<string>>(new Set());
+  const [workspacesExpanded, setWorkspacesExpanded] = useState(true);
 
   // Clear location state after dialog is opened to prevent reopening on refresh
   useEffect(() => {
@@ -435,6 +472,8 @@ const Settings = () => {
           <SettingsSidebar 
             workspaces={workspaces} 
             expandedWorkspaces={expandedWorkspaces}
+            workspacesExpanded={workspacesExpanded}
+            setWorkspacesExpanded={setWorkspacesExpanded}
             activeView={activeView} 
             navigate={navigate} 
             toggleWorkspace={toggleWorkspace} 
