@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ProfileSettings from '@/components/settings/ProfileSettings';
 import WorkspacesSettings from '@/components/settings/WorkspacesSettings';
-import { ArrowLeft, Briefcase, ChevronDown, ChevronRight, Grid, Users as UsersIcon, Database, Settings as SettingsIcon, User, Trash2, Sparkles } from 'lucide-react';
+import { ArrowLeft, Briefcase, ChevronDown, ChevronRight, Grid, Users as UsersIcon, Database, Settings as SettingsIcon, User, Trash2, Sparkles, PanelLeft } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -9,7 +9,8 @@ import { toast } from 'sonner';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarTrigger, SidebarInset, SidebarHeader } from "@/components/ui/sidebar";
+import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarTrigger, SidebarInset, SidebarHeader, useSidebar } from "@/components/ui/sidebar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 // Empty workspaces - user needs to create them
 const mockWorkspaces: Array<{
@@ -27,6 +28,143 @@ interface ActiveView {
   workspaceId?: string;
   section?: WorkspaceSection;
 }
+
+interface SettingsSidebarProps {
+  workspaces: typeof mockWorkspaces;
+  expandedWorkspaces: Set<string>;
+  activeView: ActiveView;
+  navigate: ReturnType<typeof useNavigate>;
+  toggleWorkspace: (id: string) => void;
+  handleSectionClick: (workspaceId: string, section: WorkspaceSection) => void;
+  setActiveView: (view: ActiveView) => void;
+}
+
+const SettingsSidebar = ({
+  workspaces,
+  expandedWorkspaces,
+  activeView,
+  navigate,
+  toggleWorkspace,
+  handleSectionClick,
+  setActiveView
+}: SettingsSidebarProps) => {
+  const { setOpenMobile } = useSidebar();
+
+  return (
+    <Sidebar className="border-r border-gray-100">
+      {/* Header with branding and toggle button */}
+      <SidebarHeader className="h-16 px-6 border-b border-gray-100 flex flex-row justify-between items-center">
+        <h1 className="text-5xl font-bold text-[#4E50A8] font-comfortaa">
+          enplify.ai
+        </h1>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button 
+              onClick={() => setOpenMobile(false)}
+              variant="ghost" 
+              size="icon"
+              className="h-8 w-8 text-gray-500 hover:text-gray-700"
+            >
+              <PanelLeft size={18} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Close sidebar</p>
+          </TooltipContent>
+        </Tooltip>
+      </SidebarHeader>
+
+      <SidebarContent className="px-3 py-4">
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu className="space-y-1">
+              {/* Back to Conversation Button */}
+              <SidebarMenuItem className="mb-4">
+                <SidebarMenuButton 
+                  onClick={() => navigate('/')}
+                  className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-md transition-colors"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Conversation
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              
+              {/* Workspaces Section */}
+              <div className="mb-2">
+                <Collapsible open={true}>
+                  <CollapsibleTrigger className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-foreground w-full hover:bg-muted/50 rounded-md transition-colors">
+                    <Briefcase className="h-4 w-4" />
+                    <span className="flex-1 text-left">Workspaces</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-1 space-y-0.5">
+                    {workspaces.map(workspace => <Collapsible key={workspace.id} open={expandedWorkspaces.has(workspace.id)} onOpenChange={() => toggleWorkspace(workspace.id)}>
+                        <CollapsibleTrigger className="flex items-center gap-2 pl-6 pr-3 py-2 text-sm text-foreground w-full hover:bg-muted/50 rounded-md transition-colors">
+                          <span className="flex-1 text-left">{workspace.name}</span>
+                          {expandedWorkspaces.has(workspace.id) ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="mt-0.5 space-y-0.5">
+                          <SidebarMenuItem>
+                            <SidebarMenuButton onClick={() => handleSectionClick(workspace.id, 'overview')} isActive={activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'overview'} className={`
+                                pl-12 pr-3 py-2 text-sm transition-colors rounded-md
+                                ${activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'overview' ? 'bg-primary text-primary-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
+                              `}>
+                              <Grid className="h-3.5 w-3.5 mr-2" />
+                              Overview
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                          <SidebarMenuItem>
+                            <SidebarMenuButton onClick={() => handleSectionClick(workspace.id, 'members')} isActive={activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'members'} className={`
+                                pl-12 pr-3 py-2 text-sm transition-colors rounded-md
+                                ${activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'members' ? 'bg-primary text-primary-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
+                              `}>
+                              <UsersIcon className="h-3.5 w-3.5 mr-2" />
+                              Members
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                          <SidebarMenuItem>
+                            <SidebarMenuButton onClick={() => handleSectionClick(workspace.id, 'data-sources')} isActive={activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'data-sources'} className={`
+                                pl-12 pr-3 py-2 text-sm transition-colors rounded-md
+                                ${activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'data-sources' ? 'bg-primary text-primary-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
+                              `}>
+                              <Database className="h-3.5 w-3.5 mr-2" />
+                              Data Sources
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                          <SidebarMenuItem>
+                            <SidebarMenuButton onClick={() => handleSectionClick(workspace.id, 'settings')} isActive={activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'settings'} className={`
+                                pl-12 pr-3 py-2 text-sm transition-colors rounded-md
+                                ${activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'settings' ? 'bg-primary text-primary-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
+                              `}>
+                              <SettingsIcon className="h-3.5 w-3.5 mr-2" />
+                              Settings
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        </CollapsibleContent>
+                      </Collapsible>)}
+                  </CollapsibleContent>
+                </Collapsible>
+              </div>
+
+              {/* Profile Section */}
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={() => setActiveView({
+                type: 'profile'
+              })} isActive={activeView.type === 'profile'} className={`
+                    px-3 py-2 text-sm transition-colors rounded-md
+                    ${activeView.type === 'profile' ? 'bg-primary text-primary-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
+                  `}>
+                  <User className="h-4 w-4 mr-2" />
+                  Profile
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
+  );
+};
 const Settings = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -448,102 +586,19 @@ const Settings = () => {
           </div>;
     }
   };
-  return <SidebarProvider defaultOpen={true}>
-      <div className="min-h-screen flex w-full bg-background">
-        <Sidebar className="border-r border-gray-100">
-          
-
-          <SidebarContent className="px-3 py-4">
-            <SidebarGroup>
-              <SidebarGroupContent>
-                <SidebarMenu className="space-y-1">
-                  {/* Back to Conversation Button */}
-                  <SidebarMenuItem className="mb-4">
-                    <SidebarMenuButton 
-                      onClick={() => navigate('/')}
-                      className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-md transition-colors"
-                    >
-                      <ArrowLeft className="h-4 w-4 mr-2" />
-                      Back to Conversation
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  
-                  {/* Workspaces Section */}
-                  <div className="mb-2">
-                    <Collapsible open={true}>
-                      <CollapsibleTrigger className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-foreground w-full hover:bg-muted/50 rounded-md transition-colors">
-                        <Briefcase className="h-4 w-4" />
-                        <span className="flex-1 text-left">Workspaces</span>
-                        <ChevronDown className="h-4 w-4" />
-                      </CollapsibleTrigger>
-                      <CollapsibleContent className="mt-1 space-y-0.5">
-                        {workspaces.map(workspace => <Collapsible key={workspace.id} open={expandedWorkspaces.has(workspace.id)} onOpenChange={() => toggleWorkspace(workspace.id)}>
-                            <CollapsibleTrigger className="flex items-center gap-2 pl-6 pr-3 py-2 text-sm text-foreground w-full hover:bg-muted/50 rounded-md transition-colors">
-                              <span className="flex-1 text-left">{workspace.name}</span>
-                              {expandedWorkspaces.has(workspace.id) ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-                            </CollapsibleTrigger>
-                            <CollapsibleContent className="mt-0.5 space-y-0.5">
-                              <SidebarMenuItem>
-                                <SidebarMenuButton onClick={() => handleSectionClick(workspace.id, 'overview')} isActive={activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'overview'} className={`
-                                    pl-12 pr-3 py-2 text-sm transition-colors rounded-md
-                                    ${activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'overview' ? 'bg-primary text-primary-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
-                                  `}>
-                                  <Grid className="h-3.5 w-3.5 mr-2" />
-                                  Overview
-                                </SidebarMenuButton>
-                              </SidebarMenuItem>
-                              <SidebarMenuItem>
-                                <SidebarMenuButton onClick={() => handleSectionClick(workspace.id, 'members')} isActive={activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'members'} className={`
-                                    pl-12 pr-3 py-2 text-sm transition-colors rounded-md
-                                    ${activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'members' ? 'bg-primary text-primary-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
-                                  `}>
-                                  <UsersIcon className="h-3.5 w-3.5 mr-2" />
-                                  Members
-                                </SidebarMenuButton>
-                              </SidebarMenuItem>
-                              <SidebarMenuItem>
-                                <SidebarMenuButton onClick={() => handleSectionClick(workspace.id, 'data-sources')} isActive={activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'data-sources'} className={`
-                                    pl-12 pr-3 py-2 text-sm transition-colors rounded-md
-                                    ${activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'data-sources' ? 'bg-primary text-primary-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
-                                  `}>
-                                  <Database className="h-3.5 w-3.5 mr-2" />
-                                  Data Sources
-                                </SidebarMenuButton>
-                              </SidebarMenuItem>
-                              <SidebarMenuItem>
-                                <SidebarMenuButton onClick={() => handleSectionClick(workspace.id, 'settings')} isActive={activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'settings'} className={`
-                                    pl-12 pr-3 py-2 text-sm transition-colors rounded-md
-                                    ${activeView.type === 'workspace' && activeView.workspaceId === workspace.id && activeView.section === 'settings' ? 'bg-primary text-primary-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
-                                  `}>
-                                  <SettingsIcon className="h-3.5 w-3.5 mr-2" />
-                                  Settings
-                                </SidebarMenuButton>
-                              </SidebarMenuItem>
-                            </CollapsibleContent>
-                          </Collapsible>)}
-                      </CollapsibleContent>
-                    </Collapsible>
-                  </div>
-
-                  {/* Profile Section */}
-                  <SidebarMenuItem>
-                    <SidebarMenuButton onClick={() => setActiveView({
-                    type: 'profile'
-                  })} isActive={activeView.type === 'profile'} className={`
-                        px-3 py-2 text-sm transition-colors rounded-md
-                        ${activeView.type === 'profile' ? 'bg-primary text-primary-foreground font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}
-                      `}>
-                      <User className="h-4 w-4 mr-2" />
-                      Profile
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </SidebarContent>
-        </Sidebar>
-
-        <SidebarInset className="flex-1">
+  return <TooltipProvider>
+      <SidebarProvider defaultOpen={true}>
+        <div className="min-h-screen flex w-full bg-background">
+          <SettingsSidebar
+            workspaces={workspaces}
+            expandedWorkspaces={expandedWorkspaces}
+            activeView={activeView}
+            navigate={navigate}
+            toggleWorkspace={toggleWorkspace}
+            handleSectionClick={handleSectionClick}
+            setActiveView={setActiveView}
+          />
+          <SidebarInset className="flex-1">
           <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border px-6 bg-background">
             <div className="flex items-center gap-3">
               <SidebarTrigger className="-ml-1" />
@@ -562,6 +617,7 @@ const Settings = () => {
           </main>
         </SidebarInset>
       </div>
-    </SidebarProvider>;
+    </SidebarProvider>
+  </TooltipProvider>;
 };
 export default Settings;
