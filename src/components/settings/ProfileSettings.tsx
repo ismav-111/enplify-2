@@ -78,7 +78,7 @@ const ProfileSettings = ({ className }: { className?: string }) => {
     setApiKeys(apiKeys.filter(k => k.id !== id));
     toast({ title: "Deleted", description: "API key has been revoked" });
   };
-  return <div className={`space-y-8 max-w-5xl ${className || ''}`}>
+  return <div className={`space-y-8 ${className || ''}`}>
       {/* Page Header */}
       <div className="space-y-1">
         <h1 className="text-3xl font-semibold text-foreground tracking-tight">My Settings</h1>
