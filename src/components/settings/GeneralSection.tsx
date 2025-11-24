@@ -106,7 +106,7 @@ const GeneralSection = ({
   };
 
   return (
-    <div className="space-y-8 max-w-4xl">
+    <div className="space-y-8">
       <div className="space-y-2">
         <h1 className="text-3xl font-semibold text-foreground tracking-tight">{workspace.name}</h1>
         <p className="text-base text-muted-foreground">Manage workspace details and preferences</p>
