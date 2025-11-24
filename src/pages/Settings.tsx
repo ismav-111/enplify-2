@@ -535,7 +535,7 @@ const Settings = () => {
           </header>
 
           <main className="p-8 animate-fade-in flex justify-center">
-            <div className="w-full">
+            <div className="w-full max-w-5xl mx-auto">
               {renderWorkspaceContent()}
             </div>
           </main>
