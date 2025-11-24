@@ -7,7 +7,7 @@ import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { User, Mail, Lock, Phone, Building2, Key, Copy, Trash2, Plus, Sparkles, AlertTriangle } from 'lucide-react';
+import { User, Mail, Lock, Phone, Building2, Key, Copy, Trash2, Plus, Sparkles, AlertTriangle, Edit } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent } from '@/components/ui/card';
@@ -32,6 +32,7 @@ const ProfileSettings = ({ className }: { className?: string }) => {
     { id: '2', name: 'Development API Key', key: 'sk_test_••••••••••••••••5678', created: '2024-02-20', lastUsed: 'Never' },
   ]);
   const [showApiKeyDialog, setShowApiKeyDialog] = useState(false);
+  const [editingApiKeyId, setEditingApiKeyId] = useState<string | null>(null);
   const [newApiKeyName, setNewApiKeyName] = useState('');
   const [newApiKeyValue, setNewApiKeyValue] = useState('');
   const { toast } = useToast();
@@ -55,18 +56,39 @@ const ProfileSettings = ({ className }: { className?: string }) => {
       toast({ title: "Error", description: "Please enter the API key", variant: "destructive" });
       return;
     }
-    const newApiKey = {
-      id: String(apiKeys.length + 1),
-      name: newApiKeyName,
-      key: newApiKeyValue,
-      created: new Date().toISOString().split('T')[0],
-      lastUsed: 'Never'
-    };
-    setApiKeys([...apiKeys, newApiKey]);
+    
+    if (editingApiKeyId) {
+      // Update existing key
+      setApiKeys(apiKeys.map(k => 
+        k.id === editingApiKeyId 
+          ? { ...k, name: newApiKeyName, key: newApiKeyValue }
+          : k
+      ));
+      toast({ title: "Success", description: "API key updated successfully" });
+    } else {
+      // Add new key
+      const newApiKey = {
+        id: String(apiKeys.length + 1),
+        name: newApiKeyName,
+        key: newApiKeyValue,
+        created: new Date().toISOString().split('T')[0],
+        lastUsed: 'Never'
+      };
+      setApiKeys([...apiKeys, newApiKey]);
+      toast({ title: "Success", description: "API key added successfully" });
+    }
+    
     setShowApiKeyDialog(false);
+    setEditingApiKeyId(null);
     setNewApiKeyName('');
     setNewApiKeyValue('');
-    toast({ title: "Success", description: "API key saved successfully" });
+  };
+
+  const handleEditApiKey = (apiKey: typeof apiKeys[0]) => {
+    setEditingApiKeyId(apiKey.id);
+    setNewApiKeyName(apiKey.name);
+    setNewApiKeyValue(apiKey.key);
+    setShowApiKeyDialog(true);
   };
 
   const handleCopyApiKey = (key: string) => {
@@ -142,38 +164,70 @@ const ProfileSettings = ({ className }: { className?: string }) => {
             </div>
           </div>
         </div>
+
+        {/* Save Profile Button */}
+        <div className="flex justify-start pt-2">
+          <Button onClick={() => {
+            toast({ title: "Success", description: "Profile updated successfully" });
+          }}>
+            Save Profile Changes
+          </Button>
+        </div>
       </div>
 
       {/* Separator */}
-      <Separator className="my-8" />
+      <Separator />
 
       {/* Single sign-on (SSO) */}
-      <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 items-start">
+      <div className="space-y-4">
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <h3 className="text-base font-medium text-foreground">Single sign-on (SSO)</h3>
-            
-          </div>
-          
+          <h3 className="text-lg font-semibold text-foreground">Single sign-on (SSO)</h3>
+          <p className="text-sm text-muted-foreground">
+            Configure Microsoft Azure Active Directory for secure authentication.
+          </p>
         </div>
         
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="azure-sso" className="text-sm font-normal cursor-pointer">
-              Microsoft Azure Directory
-            </Label>
-            <Switch id="azure-sso" checked={azureSsoEnabled} onCheckedChange={handleAzureToggle} />
-          </div>
-        </div>
+        <Card>
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="azure-sso" className="text-sm font-medium">
+                  Microsoft Azure Directory
+                </Label>
+                <Switch id="azure-sso" checked={azureSsoEnabled} onCheckedChange={handleAzureToggle} />
+              </div>
+              
+              {azureSsoEnabled && azureClientId && (
+                <div className="space-y-3 pt-2 border-t">
+                  <div className="space-y-2">
+                    <Label className="text-xs text-muted-foreground">Configured Client ID</Label>
+                    <div className="flex items-center gap-2">
+                      <code className="flex-1 text-sm bg-muted px-3 py-2 rounded-md font-mono">
+                        {azureClientId.substring(0, 8)}••••••••
+                      </code>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setShowAzureDialog(true)}
+                      >
+                        Update Configuration
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Azure SSO Configuration Dialog */}
       <Dialog open={showAzureDialog} onOpenChange={setShowAzureDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Configure Azure Active Directory</DialogTitle>
+            <DialogTitle>{azureSsoEnabled ? 'Update' : 'Configure'} Azure Active Directory</DialogTitle>
             <DialogDescription>
-              Enter your Azure AD credentials to enable SSO.
+              Enter your Azure AD credentials to {azureSsoEnabled ? 'update' : 'enable'} SSO.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -192,23 +246,30 @@ const ProfileSettings = ({ className }: { className?: string }) => {
           </div>
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => {
-            setShowAzureDialog(false);
-            setAzureSsoEnabled(false);
-          }}>
+              setShowAzureDialog(false);
+              if (!azureClientId) {
+                setAzureSsoEnabled(false);
+              }
+            }}>
               Cancel
             </Button>
             <Button onClick={() => {
-            setAzureSsoEnabled(true);
-            setShowAzureDialog(false);
-          }}>
-              Save
+              if (!azureClientId || !azureClientSecret || !azureTenantId) {
+                toast({ title: "Error", description: "Please fill in all fields", variant: "destructive" });
+                return;
+              }
+              setAzureSsoEnabled(true);
+              setShowAzureDialog(false);
+              toast({ title: "Success", description: "SSO configuration saved successfully" });
+            }}>
+              Save Configuration
             </Button>
           </div>
         </DialogContent>
       </Dialog>
 
       {/* Separator */}
-      <Separator className="my-8" />
+      <Separator />
 
       {/* API Keys Section */}
       <div className="space-y-4">
@@ -224,6 +285,7 @@ const ProfileSettings = ({ className }: { className?: string }) => {
           </div>
           <Button onClick={() => {
             setShowApiKeyDialog(true);
+            setEditingApiKeyId(null);
             setNewApiKeyName('');
             setNewApiKeyValue('');
           }} size="sm" className="gap-2">
@@ -261,6 +323,9 @@ const ProfileSettings = ({ className }: { className?: string }) => {
                       <Button variant="ghost" size="sm" onClick={() => handleCopyApiKey(apiKey.key)} className="h-8 w-8 p-0">
                         <Copy className="h-4 w-4" />
                       </Button>
+                      <Button variant="ghost" size="sm" onClick={() => handleEditApiKey(apiKey)} className="h-8 w-8 p-0">
+                        <Edit className="h-4 w-4" />
+                      </Button>
                       <Button variant="ghost" size="sm" onClick={() => handleDeleteApiKey(apiKey.id)} className="h-8 w-8 p-0 text-destructive hover:text-destructive">
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -273,7 +338,7 @@ const ProfileSettings = ({ className }: { className?: string }) => {
         )}
       </div>
 
-      <Separator className="my-6" />
+      <Separator />
 
       {/* Token Usage Section */}
       <div className="space-y-4">
@@ -316,7 +381,7 @@ const ProfileSettings = ({ className }: { className?: string }) => {
         </Card>
       </div>
 
-      <Separator className="my-6" />
+      <Separator />
 
       {/* Delete Profile Section */}
       <div className="space-y-4">
@@ -380,9 +445,9 @@ const ProfileSettings = ({ className }: { className?: string }) => {
       <Dialog open={showApiKeyDialog} onOpenChange={setShowApiKeyDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add API Key</DialogTitle>
+            <DialogTitle>{editingApiKeyId ? 'Update' : 'Add'} API Key</DialogTitle>
             <DialogDescription>
-              Enter your API key details to add it to your workspace.
+              {editingApiKeyId ? 'Update your API key details.' : 'Enter your API key details to add it to your workspace.'}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -409,24 +474,18 @@ const ProfileSettings = ({ className }: { className?: string }) => {
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => {
               setShowApiKeyDialog(false);
+              setEditingApiKeyId(null);
               setNewApiKeyName('');
               setNewApiKeyValue('');
             }}>
               Cancel
             </Button>
             <Button onClick={handleSaveApiKey}>
-              Save API Key
+              {editingApiKeyId ? 'Update' : 'Save'}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* Save Changes Button */}
-      <div className="flex justify-end pt-4">
-        <Button className="bg-primary hover:bg-primary/90">
-          Save Changes
-        </Button>
-      </div>
     </div>;
 };
 export default ProfileSettings;
