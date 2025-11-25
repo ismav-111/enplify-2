@@ -13,9 +13,9 @@ import { Badge } from '@/components/ui/badge';
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarTrigger, SidebarInset, SidebarHeader, useSidebar } from "@/components/ui/sidebar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { PeoplePicker, Person } from '@/components/PeoplePicker';
 
 // Empty workspaces - user needs to create them
 const mockWorkspaces: Array<{
@@ -235,8 +235,19 @@ const Settings = () => {
   
   // Add Member dialog state
   const [showAddMemberDialog, setShowAddMemberDialog] = useState(false);
-  const [newMemberEmail, setNewMemberEmail] = useState('');
-  const [newMemberRole, setNewMemberRole] = useState<string>('member');
+  const [selectedPeople, setSelectedPeople] = useState<Person[]>([]);
+  const [memberRole, setMemberRole] = useState<string>('member');
+  
+  // Mock available people - replace with actual data from your backend
+  const availablePeople: Person[] = [
+    { id: '1', name: 'Ninja Saboteur', email: 'ninja@company.com', role: 'UX/UI Designer' },
+    { id: '2', name: 'Niall Mackinnon', email: 'niall@company.com', role: 'Sr. Software Engineer' },
+    { id: '3', name: 'Nicholas Cetera', email: 'nicholas.c@company.com', role: 'Sr. Software Engineer' },
+    { id: '4', name: 'Anita Simon', email: 'anita.simon@company.com', role: 'Sr. Software Engineer' },
+    { id: '5', name: 'Nicholas Grubb', email: 'nigrubb@company.com', role: 'Principal GPM' },
+    { id: '6', name: 'Nicholas Arguell', email: 'niarquel@company.com', role: 'Software Engineer 2' },
+    { id: '7', name: 'Nick Golovkin', email: 'nick.g@company.com', role: 'Product Manager' },
+  ];
 
   // Clear location state after dialog is opened to prevent reopening on refresh
   useEffect(() => {
@@ -311,17 +322,18 @@ const Settings = () => {
   };
 
   const handleAddMember = () => {
-    if (!newMemberEmail.trim()) {
-      toast.error('Please enter an email address');
+    if (selectedPeople.length === 0) {
+      toast.error('Please select at least one person');
       return;
     }
     
-    // Here you would typically make an API call to add the member
-    toast.success(`Member ${newMemberEmail} added successfully with ${newMemberRole} role`);
+    // Here you would typically make an API call to add the members
+    const memberNames = selectedPeople.map(p => p.name).join(', ');
+    toast.success(`Added ${selectedPeople.length} member${selectedPeople.length > 1 ? 's' : ''} with ${memberRole} role`);
     
     // Reset form and close dialog
-    setNewMemberEmail('');
-    setNewMemberRole('member');
+    setSelectedPeople([]);
+    setMemberRole('member');
     setShowAddMemberDialog(false);
   };
   const renderWorkspaceContent = () => {
@@ -550,47 +562,50 @@ const Settings = () => {
       
       {/* Add Member Dialog */}
       <Dialog open={showAddMemberDialog} onOpenChange={setShowAddMemberDialog}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[550px]">
           <DialogHeader>
             <DialogTitle>Add Member</DialogTitle>
             <DialogDescription>
-              Add a new member to this workspace and assign their role.
+              Select people to add to this workspace and assign their role.
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-6 py-4">
             <div className="space-y-2">
-              <Label htmlFor="member-email">Email Address</Label>
-              <Input
-                id="member-email"
-                type="email"
-                placeholder="Enter member email"
-                value={newMemberEmail}
-                onChange={(e) => setNewMemberEmail(e.target.value)}
+              <Label>Select People</Label>
+              <PeoplePicker
+                availablePeople={availablePeople}
+                selectedPeople={selectedPeople}
+                onSelectionChange={setSelectedPeople}
+                maxSelection={10}
+                placeholder="Search and select people..."
               />
             </div>
             
             <div className="space-y-2">
               <Label htmlFor="member-role">Role</Label>
-              <Select value={newMemberRole} onValueChange={setNewMemberRole}>
+              <Select value={memberRole} onValueChange={setMemberRole}>
                 <SelectTrigger id="member-role">
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="admin">Admin</SelectItem>
                   <SelectItem value="member">Member</SelectItem>
-                  <SelectItem value="viewer">Viewer</SelectItem>
+                  <SelectItem value="owner">Owner</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAddMemberDialog(false)}>
+            <Button variant="outline" onClick={() => {
+              setShowAddMemberDialog(false);
+              setSelectedPeople([]);
+              setMemberRole('member');
+            }}>
               Cancel
             </Button>
             <Button onClick={handleAddMember}>
-              Add Member
+              Add {selectedPeople.length > 0 ? `${selectedPeople.length} ` : ''}Member{selectedPeople.length !== 1 ? 's' : ''}
             </Button>
           </DialogFooter>
         </DialogContent>
