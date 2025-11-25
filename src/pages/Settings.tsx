@@ -12,6 +12,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarTrigger, SidebarInset, SidebarHeader, useSidebar } from "@/components/ui/sidebar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 // Empty workspaces - user needs to create them
 const mockWorkspaces: Array<{
@@ -228,6 +232,11 @@ const Settings = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(location.state?.openCreateWorkspace || false);
   const [expandedWorkspaces, setExpandedWorkspaces] = useState<Set<string>>(new Set());
   const [workspacesExpanded, setWorkspacesExpanded] = useState(true);
+  
+  // Add Member dialog state
+  const [showAddMemberDialog, setShowAddMemberDialog] = useState(false);
+  const [newMemberEmail, setNewMemberEmail] = useState('');
+  const [newMemberRole, setNewMemberRole] = useState<string>('member');
 
   // Clear location state after dialog is opened to prevent reopening on refresh
   useEffect(() => {
@@ -300,6 +309,21 @@ const Settings = () => {
       avatarUrl
     } : w));
   };
+
+  const handleAddMember = () => {
+    if (!newMemberEmail.trim()) {
+      toast.error('Please enter an email address');
+      return;
+    }
+    
+    // Here you would typically make an API call to add the member
+    toast.success(`Member ${newMemberEmail} added successfully with ${newMemberRole} role`);
+    
+    // Reset form and close dialog
+    setNewMemberEmail('');
+    setNewMemberRole('member');
+    setShowAddMemberDialog(false);
+  };
   const renderWorkspaceContent = () => {
     if (activeView.type === 'profile') {
       return <ProfileSettings className="my-0 py-0" />;
@@ -342,9 +366,9 @@ const Settings = () => {
                 <h1 className="text-3xl font-semibold text-foreground tracking-tight">Team Members</h1>
                 <p className="text-base text-muted-foreground">Manage workspace members and their permissions</p>
               </div>
-              <Button className="btn-primary shadow-md">
+              <Button onClick={() => setShowAddMemberDialog(true)} className="btn-primary shadow-md">
                 <UsersIcon className="h-4 w-4 mr-2" />
-                Invite Member
+                Add Member
               </Button>
             </div>
 
@@ -357,7 +381,6 @@ const Settings = () => {
                         <th className="text-left py-4 px-6 text-sm font-semibold text-foreground">Name</th>
                         <th className="text-left py-4 px-6 text-sm font-semibold text-foreground">Email</th>
                         <th className="text-left py-4 px-6 text-sm font-semibold text-foreground">Role</th>
-                        <th className="text-left py-4 px-6 text-sm font-semibold text-foreground">Data Source Access</th>
                         <th className="text-right py-4 px-6 text-sm font-semibold text-foreground">Actions</th>
                       </tr>
                     </thead>
@@ -374,12 +397,6 @@ const Settings = () => {
                         <td className="py-4 px-6 text-sm text-muted-foreground">sarah.j@company.com</td>
                         <td className="py-4 px-6">
                           <Badge className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm">Admin</Badge>
-                        </td>
-                        <td className="py-4 px-6">
-                          <div className="flex flex-wrap gap-2">
-                            <Badge variant="outline" className="text-xs">Google Drive</Badge>
-                            <Badge variant="outline" className="text-xs">Snowflake</Badge>
-                          </div>
                         </td>
                         <td className="py-4 px-6">
                           <div className="flex justify-end gap-2">
@@ -406,12 +423,6 @@ const Settings = () => {
                           <Badge variant="secondary" className="shadow-sm">Member</Badge>
                         </td>
                         <td className="py-4 px-6">
-                          <div className="flex flex-wrap gap-2">
-                            <Badge variant="outline" className="text-xs">Google Drive</Badge>
-                            <Badge variant="outline" className="text-xs">OneDrive</Badge>
-                          </div>
-                        </td>
-                        <td className="py-4 px-6">
                           <div className="flex justify-end gap-2">
                             <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-muted">
                               <SettingsIcon className="h-4 w-4" />
@@ -434,11 +445,6 @@ const Settings = () => {
                         <td className="py-4 px-6 text-sm text-muted-foreground">emily.d@company.com</td>
                         <td className="py-4 px-6">
                           <Badge variant="secondary" className="shadow-sm">Member</Badge>
-                        </td>
-                        <td className="py-4 px-6">
-                          <div className="flex flex-wrap gap-2">
-                            <Badge variant="outline" className="text-xs">SharePoint</Badge>
-                          </div>
                         </td>
                         <td className="py-4 px-6">
                           <div className="flex justify-end gap-2">
@@ -541,6 +547,54 @@ const Settings = () => {
           </main>
         </SidebarInset>
       </div>
+      
+      {/* Add Member Dialog */}
+      <Dialog open={showAddMemberDialog} onOpenChange={setShowAddMemberDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Add Member</DialogTitle>
+            <DialogDescription>
+              Add a new member to this workspace and assign their role.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="member-email">Email Address</Label>
+              <Input
+                id="member-email"
+                type="email"
+                placeholder="Enter member email"
+                value={newMemberEmail}
+                onChange={(e) => setNewMemberEmail(e.target.value)}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="member-role">Role</Label>
+              <Select value={newMemberRole} onValueChange={setNewMemberRole}>
+                <SelectTrigger id="member-role">
+                  <SelectValue placeholder="Select role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="member">Member</SelectItem>
+                  <SelectItem value="viewer">Viewer</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAddMemberDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleAddMember}>
+              Add Member
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </SidebarProvider>
   </TooltipProvider>;
 };
