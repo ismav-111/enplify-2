@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ProfileSettings from '@/components/settings/ProfileSettings';
+import ProfileSettings, { AccountType } from '@/components/settings/ProfileSettings';
 import WorkspacesSettings from '@/components/settings/WorkspacesSettings';
 import GeneralSection from '@/components/settings/GeneralSection';
 import { ArrowLeft, Briefcase, ChevronDown, ChevronRight, Grid, Users as UsersIcon, Database, Settings as SettingsIcon, User, Trash2, Sparkles, PanelLeft } from 'lucide-react';
@@ -43,6 +43,7 @@ interface SettingsSidebarProps {
   toggleWorkspace: (id: string) => void;
   handleSectionClick: (workspaceId: string, section: WorkspaceSection) => void;
   setActiveView: (view: ActiveView) => void;
+  accountType: AccountType;
 }
 const SettingsSidebar = ({
   workspaces,
@@ -53,7 +54,8 @@ const SettingsSidebar = ({
   navigate,
   toggleWorkspace,
   handleSectionClick,
-  setActiveView
+  setActiveView,
+  accountType
 }: SettingsSidebarProps) => {
   const {
     setOpenMobile
@@ -86,34 +88,36 @@ const SettingsSidebar = ({
                 </SidebarMenuButton>
               </SidebarMenuItem>
               
-              {/* Workspaces Section */}
-              <SidebarMenuItem className="mb-2">
-                <SidebarMenuButton 
-                  onClick={() => {
-                    setActiveView({ type: 'workspace', workspaceId: undefined, section: undefined });
-                    setOpenMobile(false);
-                    setWorkspacesExpanded(!workspacesExpanded);
-                  }}
-                  isActive={activeView.type === 'workspace' && !activeView.workspaceId}
-                  className={`
-                    px-3 py-2 text-sm font-medium transition-colors rounded-md
-                    ${activeView.type === 'workspace' && !activeView.workspaceId 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'text-foreground hover:text-foreground hover:bg-muted/50'}
-                  `}
-                >
-                  <Briefcase className="h-4 w-4 mr-2" />
-                  Workspaces
-                  {workspaces.length > 0 && (
-                    <span className="ml-auto">
-                      {workspacesExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                    </span>
-                  )}
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {/* Workspaces Section - B2B only */}
+              {accountType === 'b2b' && (
+                <SidebarMenuItem className="mb-2">
+                  <SidebarMenuButton 
+                    onClick={() => {
+                      setActiveView({ type: 'workspace', workspaceId: undefined, section: undefined });
+                      setOpenMobile(false);
+                      setWorkspacesExpanded(!workspacesExpanded);
+                    }}
+                    isActive={activeView.type === 'workspace' && !activeView.workspaceId}
+                    className={`
+                      px-3 py-2 text-sm font-medium transition-colors rounded-md
+                      ${activeView.type === 'workspace' && !activeView.workspaceId 
+                        ? 'bg-primary text-primary-foreground' 
+                        : 'text-foreground hover:text-foreground hover:bg-muted/50'}
+                    `}
+                  >
+                    <Briefcase className="h-4 w-4 mr-2" />
+                    Workspaces
+                    {workspaces.length > 0 && (
+                      <span className="ml-auto">
+                        {workspacesExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                      </span>
+                    )}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
 
-              {/* Individual Workspaces List */}
-              {workspacesExpanded && workspaces.length > 0 && (
+              {/* Individual Workspaces List - B2B only */}
+              {accountType === 'b2b' && workspacesExpanded && workspaces.length > 0 && (
                 <div className="ml-6 space-y-1 mb-2">
                   {workspaces.map(workspace => (
                     <div key={workspace.id} className="space-y-0.5">
@@ -237,6 +241,7 @@ const Settings = () => {
   const [showAddMemberDialog, setShowAddMemberDialog] = useState(false);
   const [selectedPeople, setSelectedPeople] = useState<Person[]>([]);
   const [memberRole, setMemberRole] = useState<string>('member');
+  const [accountType, setAccountType] = useState<AccountType>('b2b');
   
   // Mock available people - replace with actual data from your backend
   const availablePeople: Person[] = [
@@ -256,6 +261,14 @@ const Settings = () => {
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
+
+  // Redirect B2C users to profile view if they're viewing workspaces
+  useEffect(() => {
+    if (accountType === 'b2c' && activeView.type === 'workspace') {
+      setActiveView({ type: 'profile' });
+    }
+  }, [accountType]);
+
   const toggleWorkspace = (workspaceId: string) => {
     setExpandedWorkspaces(prev => {
       const newSet = new Set(prev);
@@ -338,7 +351,7 @@ const Settings = () => {
   };
   const renderWorkspaceContent = () => {
     if (activeView.type === 'profile') {
-      return <ProfileSettings className="my-0 py-0" />;
+      return <ProfileSettings className="my-0 py-0" accountType={accountType} onAccountTypeChange={setAccountType} />;
     }
 
     // If showing all workspaces view
@@ -545,7 +558,8 @@ const Settings = () => {
             navigate={navigate} 
             toggleWorkspace={toggleWorkspace} 
             handleSectionClick={handleSectionClick} 
-            setActiveView={setActiveView} 
+            setActiveView={setActiveView}
+            accountType={accountType}
           />
           <SidebarInset className="flex-1">
           <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border px-6 bg-background">

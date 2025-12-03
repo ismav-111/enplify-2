@@ -11,7 +11,15 @@ import { User, Mail, Lock, Phone, Building2, Key, Copy, Trash2, Plus, Sparkles, 
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent } from '@/components/ui/card';
-const ProfileSettings = ({ className }: { className?: string }) => {
+export type AccountType = 'b2b' | 'b2c';
+
+interface ProfileSettingsProps {
+  className?: string;
+  accountType: AccountType;
+  onAccountTypeChange: (type: AccountType) => void;
+}
+
+const ProfileSettings = ({ className, accountType, onAccountTypeChange }: ProfileSettingsProps) => {
   const [fullName, setFullName] = useState('vamsi');
   const [email, setEmail] = useState('vamsiquadrant@gmail.com');
   const [orgName, setOrgName] = useState('Acme Corp');
@@ -106,6 +114,64 @@ const ProfileSettings = ({ className }: { className?: string }) => {
         <h1 className="text-3xl font-semibold text-foreground tracking-tight">My Settings</h1>
       </div>
 
+      {/* Account Type Selection */}
+      <div className="space-y-4">
+        <div className="space-y-1">
+          <h2 className="text-xl font-semibold text-foreground">Account Type</h2>
+          <p className="text-sm text-muted-foreground">
+            Choose your account type based on your usage.
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card 
+            className={`cursor-pointer transition-all hover:border-primary/50 ${accountType === 'b2c' ? 'border-primary ring-2 ring-primary/20' : ''}`}
+            onClick={() => onAccountTypeChange('b2c')}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${accountType === 'b2c' ? 'bg-primary/10' : 'bg-muted'}`}>
+                  <User className={`h-5 w-5 ${accountType === 'b2c' ? 'text-primary' : 'text-muted-foreground'}`} />
+                </div>
+                <div className="flex-1 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold text-foreground">Personal</p>
+                    {accountType === 'b2c' && <Badge variant="secondary" className="text-xs">Selected</Badge>}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    For individual users. Simple profile and preferences.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className={`cursor-pointer transition-all hover:border-primary/50 ${accountType === 'b2b' ? 'border-primary ring-2 ring-primary/20' : ''}`}
+            onClick={() => onAccountTypeChange('b2b')}
+          >
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${accountType === 'b2b' ? 'bg-primary/10' : 'bg-muted'}`}>
+                  <Building2 className={`h-5 w-5 ${accountType === 'b2b' ? 'text-primary' : 'text-muted-foreground'}`} />
+                </div>
+                <div className="flex-1 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold text-foreground">Business</p>
+                    {accountType === 'b2b' && <Badge variant="secondary" className="text-xs">Selected</Badge>}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    For teams and organizations. Includes workspaces and member management.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      <Separator />
+
       {/* Profile Section Header with Avatar */}
       <div className="space-y-4">
         <div className="flex items-start gap-4">
@@ -131,8 +197,8 @@ const ProfileSettings = ({ className }: { className?: string }) => {
             <div className="space-y-1">
               <p className="text-sm font-medium text-foreground">{fullName}</p>
               <Badge variant="secondary" className="gap-1">
-                <User className="h-3 w-3" />
-                Admin Account
+                {accountType === 'b2b' ? <Building2 className="h-3 w-3" /> : <User className="h-3 w-3" />}
+                {accountType === 'b2b' ? 'Admin Account' : 'Personal Account'}
               </Badge>
             </div>
           </div>
@@ -178,48 +244,50 @@ const ProfileSettings = ({ className }: { className?: string }) => {
       {/* Separator */}
       <Separator />
 
-      {/* Single sign-on (SSO) */}
-      <div className="space-y-4">
-        <div className="space-y-1">
-          <h3 className="text-lg font-semibold text-foreground">Single sign-on (SSO)</h3>
-          <p className="text-sm text-muted-foreground">
-            Configure Microsoft Azure Active Directory for secure authentication.
-          </p>
-        </div>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="azure-sso" className="text-sm font-medium">
-                  Microsoft Azure Directory
-                </Label>
-                <Switch id="azure-sso" checked={azureSsoEnabled} onCheckedChange={handleAzureToggle} />
-              </div>
-              
-              {azureSsoEnabled && azureClientId && (
-                <div className="space-y-3 pt-2 border-t">
-                  <div className="space-y-2">
-                    <Label className="text-xs text-muted-foreground">Configured Client ID</Label>
-                    <div className="flex items-center gap-2">
-                      <code className="flex-1 text-sm bg-muted px-3 py-2 rounded-md font-mono">
-                        {azureClientId.substring(0, 8)}••••••••
-                      </code>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => setShowAzureDialog(true)}
-                      >
-                        Update Configuration
-                      </Button>
+      {/* Single sign-on (SSO) - B2B only */}
+      {accountType === 'b2b' && (
+        <div className="space-y-4">
+          <div className="space-y-1">
+            <h3 className="text-lg font-semibold text-foreground">Single sign-on (SSO)</h3>
+            <p className="text-sm text-muted-foreground">
+              Configure Microsoft Azure Active Directory for secure authentication.
+            </p>
+          </div>
+          
+          <Card>
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="azure-sso" className="text-sm font-medium">
+                    Microsoft Azure Directory
+                  </Label>
+                  <Switch id="azure-sso" checked={azureSsoEnabled} onCheckedChange={handleAzureToggle} />
+                </div>
+                
+                {azureSsoEnabled && azureClientId && (
+                  <div className="space-y-3 pt-2 border-t">
+                    <div className="space-y-2">
+                      <Label className="text-xs text-muted-foreground">Configured Client ID</Label>
+                      <div className="flex items-center gap-2">
+                        <code className="flex-1 text-sm bg-muted px-3 py-2 rounded-md font-mono">
+                          {azureClientId.substring(0, 8)}••••••••
+                        </code>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => setShowAzureDialog(true)}
+                        >
+                          Update Configuration
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Azure SSO Configuration Dialog */}
       <Dialog open={showAzureDialog} onOpenChange={setShowAzureDialog}>
@@ -271,72 +339,74 @@ const ProfileSettings = ({ className }: { className?: string }) => {
       {/* Separator */}
       <Separator />
 
-      {/* API Keys Section */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <h3 className="text-lg font-semibold text-foreground">API Keys</h3>
-              <Badge variant="secondary" className="text-xs">Enterprise</Badge>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Manage API keys for programmatic access to your workspace.
-            </p>
-          </div>
-          <Button onClick={() => {
-            setShowApiKeyDialog(true);
-            setEditingApiKeyId(null);
-            setNewApiKeyName('');
-            setNewApiKeyValue('');
-          }} size="sm" className="gap-2">
-            <Plus className="h-4 w-4" />
-            Add API Key
-          </Button>
-        </div>
-
-        {apiKeys.length === 0 ? (
-          <Card>
-            <CardContent className="py-8">
-              <div className="text-center text-muted-foreground">
-                No API keys configured yet.
+      {/* API Keys Section - B2B only */}
+      {accountType === 'b2b' && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-foreground">API Keys</h3>
+                <Badge variant="secondary" className="text-xs">Enterprise</Badge>
               </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="space-y-2">
-            {apiKeys.map((apiKey) => (
-              <Card key={apiKey.id}>
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-start gap-3 flex-1 min-w-0">
-                      <Key className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-                      <div className="flex-1 min-w-0 space-y-1">
-                        <p className="font-medium text-sm text-foreground">{apiKey.name}</p>
-                        <p className="text-xs text-muted-foreground font-mono break-all">{apiKey.key}</p>
-                        <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
-                          <span>Created: {apiKey.created}</span>
-                          <span>Last used: {apiKey.lastUsed}</span>
+              <p className="text-sm text-muted-foreground">
+                Manage API keys for programmatic access to your workspace.
+              </p>
+            </div>
+            <Button onClick={() => {
+              setShowApiKeyDialog(true);
+              setEditingApiKeyId(null);
+              setNewApiKeyName('');
+              setNewApiKeyValue('');
+            }} size="sm" className="gap-2">
+              <Plus className="h-4 w-4" />
+              Add API Key
+            </Button>
+          </div>
+
+          {apiKeys.length === 0 ? (
+            <Card>
+              <CardContent className="py-8">
+                <div className="text-center text-muted-foreground">
+                  No API keys configured yet.
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-2">
+              {apiKeys.map((apiKey) => (
+                <Card key={apiKey.id}>
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-start gap-3 flex-1 min-w-0">
+                        <Key className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                        <div className="flex-1 min-w-0 space-y-1">
+                          <p className="font-medium text-sm text-foreground">{apiKey.name}</p>
+                          <p className="text-xs text-muted-foreground font-mono break-all">{apiKey.key}</p>
+                          <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+                            <span>Created: {apiKey.created}</span>
+                            <span>Last used: {apiKey.lastUsed}</span>
+                          </div>
                         </div>
                       </div>
+                      <div className="flex gap-1 shrink-0">
+                        <Button variant="ghost" size="sm" onClick={() => handleCopyApiKey(apiKey.key)} className="h-8 w-8 p-0">
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => handleEditApiKey(apiKey)} className="h-8 w-8 p-0">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => handleDeleteApiKey(apiKey.id)} className="h-8 w-8 p-0 text-destructive hover:text-destructive">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex gap-1 shrink-0">
-                      <Button variant="ghost" size="sm" onClick={() => handleCopyApiKey(apiKey.key)} className="h-8 w-8 p-0">
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => handleEditApiKey(apiKey)} className="h-8 w-8 p-0">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => handleDeleteApiKey(apiKey.id)} className="h-8 w-8 p-0 text-destructive hover:text-destructive">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <Separator />
 
