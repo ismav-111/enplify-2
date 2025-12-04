@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import ProfileSettings, { AccountType } from '@/components/settings/ProfileSettings';
 import WorkspacesSettings from '@/components/settings/WorkspacesSettings';
 import GeneralSection from '@/components/settings/GeneralSection';
+import DataSourceSettings from '@/components/settings/DataSourceSettings';
 import { ArrowLeft, Briefcase, ChevronDown, ChevronRight, Grid, Users as UsersIcon, Database, Settings as SettingsIcon, User, Trash2, Sparkles, PanelLeft } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -489,59 +490,7 @@ const Settings = () => {
             </Card>
           </div>;
       case 'configuration':
-        return <div className="space-y-8">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-semibold text-foreground tracking-tight">Data Sources</h1>
-              <p className="text-base text-muted-foreground">Manage data source integrations for this workspace</p>
-            </div>
-
-            <Card className="shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-xl">Connected Data Sources</CardTitle>
-                <CardDescription>Active integrations in this workspace</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {workspace.dataSources.length > 0 ? workspace.dataSources.map(source => <div key={source} className="flex items-center justify-between p-5 border border-border rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                          <Database className="h-5 w-5 text-primary" />
-                        </div>
-                        <div className="space-y-1">
-                          <span className="text-base font-semibold text-foreground">{source}</span>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                              Connected
-                            </Badge>
-                          </div>
-                        </div>
-                      </div>
-                      <Button variant="outline" size="sm" className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50">
-                        Disconnect
-                      </Button>
-                    </div>) : <p className="text-sm text-muted-foreground p-4 text-center">No data sources connected</p>}
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-xl">Available Data Sources</CardTitle>
-                <CardDescription>Connect new data sources to enhance your workspace</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {['OneDrive', 'SharePoint', 'Snowflake', 'Salesforce', 'Confluence', 'Slack'].map(source => <div key={source} className="flex items-center justify-between p-5 border border-border rounded-lg bg-background hover:bg-muted/20 transition-colors">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
-                        <Database className="h-5 w-5 text-muted-foreground" />
-                      </div>
-                      <span className="text-base font-semibold text-foreground">{source}</span>
-                    </div>
-                    <Button className="btn-primary shadow-md" size="sm">
-                      Connect
-                    </Button>
-                  </div>)}
-              </CardContent>
-            </Card>
-          </div>;
+        return <DataSourceSettings />;
       default:
         return null;
     }
