@@ -894,6 +894,17 @@ const DataSourceSettings = () => {
         ...prev,
         [sourceId]: true
       }));
+      
+      // Set initial sync info for all connected sources
+      const now = new Date();
+      setSyncInfo(prev => ({
+        ...prev,
+        [sourceId]: {
+          lastSyncTime: now.toLocaleString(),
+          changes: 'Initial connection - Data synced'
+        }
+      }));
+      
       toast.success(`Connected to ${dataSources.find(s => s.id === sourceId)?.name}`);
       setExpandedSource(null);
       setConnectingSource(null);
@@ -1107,8 +1118,8 @@ const DataSourceSettings = () => {
               <div className="flex items-center gap-4">
                 {connectedSources[source.id] ? (
                   <>
-                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/10 text-base px-4 py-2 font-medium">
-                      Connected
+                    <Badge variant="outline" className="bg-green-100 text-green-700 border-green-200 hover:bg-green-100 text-base px-4 py-2 font-medium">
+                      Synced
                     </Badge>
                     <ChevronDown 
                       className={`h-5 w-5 text-muted-foreground cursor-pointer transition-transform hover:text-foreground ${expandedSource === source.id ? 'rotate-180' : ''}`} 
@@ -1120,24 +1131,15 @@ const DataSourceSettings = () => {
                     <Loader2 className="h-4 w-4 mr-2 animate-spin inline" />
                     Connecting...
                   </Badge>
-                ) : expandedSource !== source.id ? (
+                ) : (
                   <Button
-                    onClick={() => {
-                      // If source has fields or needs OAuth dialog, expand first
-                      if ((source.fields.length > 0 && !source.requiresOAuth) || 
-                          (source.requiresOAuth && source.id !== 'googledrive' && source.id !== 'onedrive')) {
-                        toggleExpanded(source.id);
-                      } else {
-                        // Direct connect for Google Drive and OneDrive
-                        handleConnect(source.id);
-                      }
-                    }}
+                    onClick={() => toggleExpanded(source.id)}
                     disabled={connectingSource !== null}
                     variant="default"
                   >
                     Connect
                   </Button>
-                ) : null}
+                )}
               </div>
             </div>
 
@@ -1160,68 +1162,68 @@ const DataSourceSettings = () => {
                         Please wait while we establish a secure connection to your data source.
                       </p>
                     </div> : connectedSources[source.id] ? <div className="space-y-4">
-                      <div className="flex items-start justify-between p-4 bg-primary/10 rounded-lg border border-primary/20">
+                      <div className="flex items-start justify-between p-4 bg-green-50 rounded-lg border border-green-200">
                         <div>
-                          <h4 className="font-semibold text-primary text-sm mb-1">Connection Active</h4>
-                          <p className="text-sm text-primary/80">Data source is currently connected and active</p>
+                          <h4 className="font-semibold text-green-700 text-sm mb-1">Connection Synced</h4>
+                          <p className="text-sm text-green-600">Data source is connected and synced</p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Label htmlFor={`${source.id}-active`} className="text-sm text-primary">Active</Label>
+                          <Label htmlFor={`${source.id}-active`} className="text-sm text-green-700">Active</Label>
                           <Switch id={`${source.id}-active`} defaultChecked />
                         </div>
                       </div>
 
-                      {/* Sync section for Google Drive and OneDrive */}
-                      {(source.id === 'googledrive' || source.id === 'onedrive') && (
-                        <div className="space-y-3 p-4 bg-primary/10 rounded-lg border border-primary/20">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <RefreshCw className="h-4 w-4 text-primary" />
-                              <span className="font-semibold text-primary text-sm">Sync Status</span>
-                            </div>
-                            <Button 
-                              size="sm"
-                              onClick={() => handleSync(source.id)}
-                              disabled={syncInfo[source.id]?.syncing}
-                              variant="default"
-                            >
-                              {syncInfo[source.id]?.syncing ? (
-                                <>
-                                  <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                                  Syncing...
-                                </>
-                              ) : (
-                                <>
-                                  <RefreshCw className="h-3 w-3 mr-1" />
-                                  Sync Now
-                                </>
-                              )}
-                            </Button>
+                      {/* Sync section for all connected sources */}
+                      <div className="space-y-3 p-4 bg-muted/50 rounded-lg border border-border">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <RefreshCw className="h-4 w-4 text-muted-foreground" />
+                            <span className="font-semibold text-foreground text-sm">Sync Status</span>
                           </div>
-                          
-                          {syncInfo[source.id]?.lastSyncTime && (
-                            <div className="space-y-2 text-sm">
+                          <Button 
+                            size="sm"
+                            onClick={() => handleSync(source.id)}
+                            disabled={syncInfo[source.id]?.syncing}
+                            variant="outline"
+                          >
+                            {syncInfo[source.id]?.syncing ? (
+                              <>
+                                <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                                Syncing...
+                              </>
+                            ) : (
+                              <>
+                                <RefreshCw className="h-3 w-3 mr-1" />
+                                Sync Now
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                        
+                        {syncInfo[source.id]?.lastSyncTime ? (
+                          <div className="space-y-2 text-sm">
+                            <div className="flex items-start gap-2">
+                              <Clock className="h-4 w-4 text-muted-foreground mt-0.5" />
+                              <div>
+                                <p className="font-medium text-foreground">Last synced:</p>
+                                <p className="text-muted-foreground">{syncInfo[source.id].lastSyncTime}</p>
+                              </div>
+                            </div>
+                            
+                            {syncInfo[source.id]?.changes && (
                               <div className="flex items-start gap-2">
-                                <Clock className="h-4 w-4 text-primary mt-0.5" />
+                                <FileText className="h-4 w-4 text-muted-foreground mt-0.5" />
                                 <div>
-                                  <p className="font-medium text-primary">Last synced:</p>
-                                  <p className="text-primary/80">{syncInfo[source.id].lastSyncTime}</p>
+                                  <p className="font-medium text-foreground">Changes:</p>
+                                  <p className="text-muted-foreground">{syncInfo[source.id].changes}</p>
                                 </div>
                               </div>
-                              
-                              {syncInfo[source.id]?.changes && (
-                                <div className="flex items-start gap-2">
-                                  <FileText className="h-4 w-4 text-primary mt-0.5" />
-                                  <div>
-                                    <p className="font-medium text-primary">Changes:</p>
-                                    <p className="text-primary/80">{syncInfo[source.id].changes}</p>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      )}
+                            )}
+                          </div>
+                        ) : (
+                          <p className="text-sm text-muted-foreground">No sync history available</p>
+                        )}
+                      </div>
 
                       <div>
                         <Button variant="secondary" onClick={() => handleDisconnect(source.id)}>
@@ -1330,8 +1332,8 @@ const DataSourceSettings = () => {
                             <Button type="button" onClick={() => handleConnect(source.id)} disabled={connectingSource !== null} variant="default">
                               {connectingSource === source.id ? <>
                                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                  Connecting...
-                                </> : `Connect to ${source.name}`}
+                                  Saving...
+                                </> : `Save`}
                             </Button>
                           </div>
                         </form>
