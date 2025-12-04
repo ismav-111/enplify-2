@@ -810,18 +810,10 @@ const DataSourceSettings = () => {
   const [expandedSource, setExpandedSource] = useState<string | null>(null);
   const [connectingSource, setConnectingSource] = useState<string | null>(null);
   const [connectionProgress, setConnectionProgress] = useState(0);
-  const [showWelcomeDialog, setShowWelcomeDialog] = useState(true);
+  const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
   const [showConnectionDialog, setShowConnectionDialog] = useState(false);
   const [currentConnectingSource, setCurrentConnectingSource] = useState<DataSourceType | null>(null);
   const [syncInfo, setSyncInfo] = useState<Record<string, SyncInfo>>({});
-
-  // Auto-expand first data source for quick setup
-  useEffect(() => {
-    const firstUnconnectedSource = dataSources.find(source => !connectedSources[source.id]);
-    if (firstUnconnectedSource && showWelcomeDialog) {
-      setExpandedSource(firstUnconnectedSource.id);
-    }
-  }, [connectedSources, showWelcomeDialog]);
 
   // Filter data sources based on search query and category
   const getFilteredDataSources = () => {
@@ -1162,18 +1154,19 @@ const DataSourceSettings = () => {
                         Please wait while we establish a secure connection to your data source.
                       </p>
                     </div> : connectedSources[source.id] ? <div className="space-y-4">
-                      <div className="flex items-start justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                      {/* Active/Inactive Toggle */}
+                      <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
                         <div>
                           <h4 className="font-semibold text-green-700 text-sm mb-1">Connection Synced</h4>
                           <p className="text-sm text-green-600">Data source is connected and synced</p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Label htmlFor={`${source.id}-active`} className="text-sm text-green-700">Active</Label>
+                          <Label htmlFor={`${source.id}-active`} className="text-sm font-medium">Active</Label>
                           <Switch id={`${source.id}-active`} defaultChecked />
                         </div>
                       </div>
 
-                      {/* Sync section for all connected sources */}
+                      {/* Sync Status */}
                       <div className="space-y-3 p-4 bg-muted/50 rounded-lg border border-border">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
@@ -1194,7 +1187,7 @@ const DataSourceSettings = () => {
                             ) : (
                               <>
                                 <RefreshCw className="h-3 w-3 mr-1" />
-                                Sync Now
+                                Sync
                               </>
                             )}
                           </Button>
@@ -1225,12 +1218,13 @@ const DataSourceSettings = () => {
                         )}
                       </div>
 
+                      {/* Clear Button */}
                       <div>
-                        <Button variant="secondary" onClick={() => handleDisconnect(source.id)}>
-                          Disconnect
+                        <Button variant="destructive" onClick={() => handleDisconnect(source.id)}>
+                          Clear
                         </Button>
                       </div>
-                    </div> : <div className="bg-white rounded-lg border border-gray-200 p-5">
+                    </div> : <div className="bg-background rounded-lg border border-border p-5">
                       {source.requiresOAuth ? (
                         <div className="space-y-4">
                           {/* For Google Drive and OneDrive, show simplified connect UI */}
