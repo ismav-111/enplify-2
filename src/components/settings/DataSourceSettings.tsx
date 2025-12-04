@@ -1107,16 +1107,37 @@ const DataSourceSettings = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 {connectedSources[source.id] ? (
                   <>
-                    <Badge variant="outline" className="bg-green-100 text-green-700 border-green-200 hover:bg-green-100 text-base px-4 py-2 font-medium">
+                    <Badge variant="outline" className="bg-green-100 text-green-700 border-green-200 hover:bg-green-100 text-sm px-3 py-1.5 font-medium">
                       Synced
                     </Badge>
-                    <ChevronDown 
-                      className={`h-5 w-5 text-muted-foreground cursor-pointer transition-transform hover:text-foreground ${expandedSource === source.id ? 'rotate-180' : ''}`} 
-                      onClick={() => toggleExpanded(source.id)} 
-                    />
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleSync(source.id)}
+                      disabled={syncInfo[source.id]?.syncing}
+                    >
+                      {syncInfo[source.id]?.syncing ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <RefreshCw className="h-3 w-3" />
+                      )}
+                      <span className="ml-1.5">Sync</span>
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-destructive hover:bg-destructive/10 hover:text-destructive border-destructive/30"
+                      onClick={() => handleDisconnect(source.id)}
+                    >
+                      Clear
+                    </Button>
+                    <div className="flex items-center gap-2 pl-2 border-l border-border">
+                      <Label htmlFor={`${source.id}-active-inline`} className="text-sm text-muted-foreground">Active</Label>
+                      <Switch id={`${source.id}-active-inline`} defaultChecked />
+                    </div>
                   </>
                 ) : connectingSource === source.id ? (
                   <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-base px-4 py-2 font-medium">
@@ -1135,8 +1156,8 @@ const DataSourceSettings = () => {
               </div>
             </div>
 
-            {/* Expanded Content */}
-            {expandedSource === source.id && <div className="border-t border-gray-100 bg-gray-50">
+            {/* Expanded Content - Only show for non-connected sources */}
+            {expandedSource === source.id && !connectedSources[source.id] && <div className="border-t border-gray-100 bg-gray-50">
                 <div className="p-5">
                   {connectingSource === source.id ? <div className="space-y-4">
                       <div className="flex items-center gap-3">
@@ -1153,77 +1174,6 @@ const DataSourceSettings = () => {
                       <p className="text-sm text-gray-600">
                         Please wait while we establish a secure connection to your data source.
                       </p>
-                    </div> : connectedSources[source.id] ? <div className="space-y-4">
-                      {/* Active/Inactive Toggle */}
-                      <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
-                        <div>
-                          <h4 className="font-semibold text-green-700 text-sm mb-1">Connection Synced</h4>
-                          <p className="text-sm text-green-600">Data source is connected and synced</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Label htmlFor={`${source.id}-active`} className="text-sm font-medium">Active</Label>
-                          <Switch id={`${source.id}-active`} defaultChecked />
-                        </div>
-                      </div>
-
-                      {/* Sync Status */}
-                      <div className="space-y-3 p-4 bg-muted/50 rounded-lg border border-border">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <RefreshCw className="h-4 w-4 text-muted-foreground" />
-                            <span className="font-semibold text-foreground text-sm">Sync Status</span>
-                          </div>
-                          <Button 
-                            size="sm"
-                            onClick={() => handleSync(source.id)}
-                            disabled={syncInfo[source.id]?.syncing}
-                            variant="outline"
-                          >
-                            {syncInfo[source.id]?.syncing ? (
-                              <>
-                                <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                                Syncing...
-                              </>
-                            ) : (
-                              <>
-                                <RefreshCw className="h-3 w-3 mr-1" />
-                                Sync
-                              </>
-                            )}
-                          </Button>
-                        </div>
-                        
-                        {syncInfo[source.id]?.lastSyncTime ? (
-                          <div className="space-y-2 text-sm">
-                            <div className="flex items-start gap-2">
-                              <Clock className="h-4 w-4 text-muted-foreground mt-0.5" />
-                              <div>
-                                <p className="font-medium text-foreground">Last synced:</p>
-                                <p className="text-muted-foreground">{syncInfo[source.id].lastSyncTime}</p>
-                              </div>
-                            </div>
-                            
-                            {syncInfo[source.id]?.changes && (
-                              <div className="flex items-start gap-2">
-                                <FileText className="h-4 w-4 text-muted-foreground mt-0.5" />
-                                <div>
-                                  <p className="font-medium text-foreground">Changes:</p>
-                                  <p className="text-muted-foreground">{syncInfo[source.id].changes}</p>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <p className="text-sm text-muted-foreground">No sync history available</p>
-                        )}
-                      </div>
-
-                      {/* Clear Button */}
-                      <div>
-                        <Button variant="destructive" onClick={() => handleDisconnect(source.id)}>
-                          Clear
-                        </Button>
-                      </div>
                     </div> : <div className="bg-background rounded-lg border border-border p-5">
                       {source.requiresOAuth ? (
                         <div className="space-y-4">
