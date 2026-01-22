@@ -1,6 +1,7 @@
 import { useChat } from '@/hooks/useChat';
 import Sidebar from '@/components/Sidebar';
 import ChatMessage from '@/components/ChatMessage';
+import MultiLevelThinking from '@/components/MultiLevelThinking';
 import { Workspace } from '@/components/WorkspaceSection';
 import MessageInput from '@/components/MessageInput';
 import ResponsePreferences, { ResponsePreferences as ResponsePreferencesType } from '@/components/ResponsePreferences';
@@ -778,29 +779,7 @@ const Index = () => {
                       }}
                     />
                   )}
-                  {isLoading && <div className="flex mb-8">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center flex-shrink-0 mt-1 border border-gray-200">
-                        <span className="text-gray-700 font-bold text-sm font-comfortaa">e</span>
-                      </div>
-                      <div className="ml-3 flex-1">
-                        <div className="flex items-center gap-2">
-                          <div className="text-sm text-gray-600 font-medium">
-                            <span className="bg-gradient-to-r from-[#595fb7] to-[#4e50a8] bg-clip-text text-transparent">
-                              Thinking
-                            </span>
-                            <span className="inline-block ml-1 text-[#4e50a8]">
-                              <span className="animate-pulse">.</span>
-                              <span className="animate-pulse" style={{
-                          animationDelay: '0.2s'
-                        }}>.</span>
-                              <span className="animate-pulse" style={{
-                          animationDelay: '0.4s'
-                        }}>.</span>
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>}
+                  {isLoading && <MultiLevelThinking isActive={isLoading} />}
                 </div>
               </div> : <div className="h-full flex items-center justify-center">
                 <div className="max-w-2xl w-full px-6 flex flex-col items-center justify-center">
