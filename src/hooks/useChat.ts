@@ -1,6 +1,14 @@
 import { useState, useCallback } from 'react';
 import type { ResponsePreferences } from '@/components/ResponsePreferences';
 
+export interface ThinkingLayer {
+  id: string;
+  name: string;
+  status: 'completed';
+  details?: string;
+  subLayers?: { id: string; name: string; status: 'completed' }[];
+}
+
 interface Message {
   id: string;
   content: string;
@@ -11,6 +19,7 @@ interface Message {
   chartData?: any[];
   sqlQuery?: string;
   snowflakeQuery?: string;
+  thinkingLayers?: ThinkingLayer[];
   file?: {
     name: string;
     type: string;
@@ -68,7 +77,45 @@ export const useChat = () => {
 3. Expand professional services team to meet growing demand`,
           isUser: false,
           timestamp: new Date(Date.now() - 25000),
-          mode: 'encore'
+          mode: 'encore',
+          thinkingLayers: [
+            {
+              id: 'understanding',
+              name: 'Understanding Query',
+              status: 'completed',
+              details: 'Parsed user intent and extracted key concepts',
+              subLayers: [
+                { id: 'intent', name: 'Intent Classification', status: 'completed' },
+                { id: 'entities', name: 'Entity Extraction', status: 'completed' },
+              ]
+            },
+            {
+              id: 'retrieval',
+              name: 'Data Retrieval',
+              status: 'completed',
+              details: 'Searched enterprise knowledge base and connected sources',
+              subLayers: [
+                { id: 'vector', name: 'Vector Search', status: 'completed' },
+                { id: 'context', name: 'Context Assembly', status: 'completed' },
+              ]
+            },
+            {
+              id: 'reasoning',
+              name: 'Reasoning Engine',
+              status: 'completed',
+              details: 'Applied business logic and generated insights',
+              subLayers: [
+                { id: 'analysis', name: 'Pattern Analysis', status: 'completed' },
+                { id: 'synthesis', name: 'Response Synthesis', status: 'completed' },
+              ]
+            },
+            {
+              id: 'formatting',
+              name: 'Response Formatting',
+              status: 'completed',
+              details: 'Structured output for optimal presentation',
+            },
+          ]
         }
       ]
     },
@@ -442,6 +489,46 @@ Would you like me to provide more specific guidance on any aspect of this topic?
         }
       }
       
+      // Generate thinking layers for research visibility
+      const thinkingLayers: ThinkingLayer[] = [
+        {
+          id: 'understanding',
+          name: 'Understanding Query',
+          status: 'completed',
+          details: 'Parsed user intent and extracted key concepts',
+          subLayers: [
+            { id: 'intent', name: 'Intent Classification', status: 'completed' },
+            { id: 'entities', name: 'Entity Extraction', status: 'completed' },
+          ]
+        },
+        {
+          id: 'retrieval',
+          name: 'Data Retrieval',
+          status: 'completed',
+          details: 'Searched enterprise knowledge base and connected sources',
+          subLayers: [
+            { id: 'vector', name: 'Vector Search', status: 'completed' },
+            { id: 'context', name: 'Context Assembly', status: 'completed' },
+          ]
+        },
+        {
+          id: 'reasoning',
+          name: 'Reasoning Engine',
+          status: 'completed',
+          details: 'Applied business logic and generated insights',
+          subLayers: [
+            { id: 'analysis', name: 'Pattern Analysis', status: 'completed' },
+            { id: 'synthesis', name: 'Response Synthesis', status: 'completed' },
+          ]
+        },
+        {
+          id: 'formatting',
+          name: 'Response Formatting',
+          status: 'completed',
+          details: 'Structured output for optimal presentation',
+        },
+      ];
+
       switch(safeMode) {
         case 'endocs':
           aiMessage = {
@@ -450,6 +537,7 @@ Would you like me to provide more specific guidance on any aspect of this topic?
             isUser: false,
             timestamp: new Date(),
             mode: 'endocs',
+            thinkingLayers,
             tableData: preferences?.format === 'table' ? generateTableData() : undefined,
             sqlQuery: `SELECT 
   d.document_id,
@@ -483,6 +571,7 @@ LIMIT 25;`
             isUser: false,
             timestamp: new Date(),
             mode: 'ensights',
+            thinkingLayers,
             chartData: preferences?.format === 'graph' ? generateChartData() : undefined
           };
           break;
@@ -493,7 +582,8 @@ LIMIT 25;`
             content: responseContent,
             isUser: false,
             timestamp: new Date(),
-            mode: 'encore'
+            mode: 'encore',
+            thinkingLayers
           };
       }
 
