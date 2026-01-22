@@ -123,90 +123,53 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
     }
   };
 
-  // Render thinking layers section
+  // Render thinking layers section - minimal design
   const renderThinkingSection = () => {
     if (message.isUser || !message.thinkingLayers || message.thinkingLayers.length === 0) return null;
 
     return (
-      <div className="mb-4">
-        <div className="bg-muted/30 border border-border rounded-lg p-3">
-          {/* Header with toggle */}
-          <div 
-            className="flex items-center justify-between cursor-pointer"
-            onClick={() => setShowThinkingDetails(!showThinkingDetails)}
-          >
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500" />
-              <span className="text-sm font-medium text-foreground">
-                Thinking completed
-              </span>
-              <span className="text-xs text-muted-foreground">
-                ({message.thinkingLayers.length} layers)
-              </span>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 px-2 text-xs gap-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowThinkingDetails(!showThinkingDetails);
-              }}
-            >
-              {showThinkingDetails ? (
-                <>
-                  <EyeOff size={12} />
-                  Hide
-                </>
-              ) : (
-                <>
-                  <Eye size={12} />
-                  Show All
-                </>
-              )}
-            </Button>
+      <div className="mb-3">
+        {/* Compact collapsed view */}
+        <div 
+          className="inline-flex items-center gap-2 cursor-pointer group"
+          onClick={() => setShowThinkingDetails(!showThinkingDetails)}
+        >
+          <div className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
+            <ChevronDown 
+              size={14} 
+              className={`transition-transform duration-200 ${showThinkingDetails ? 'rotate-180' : ''}`}
+            />
+            <span className="text-xs">
+              Reasoned for {message.thinkingLayers.length} steps
+            </span>
           </div>
-
-          {/* Expanded thinking details */}
-          {showThinkingDetails && (
-            <div className="mt-3 pt-3 border-t border-border space-y-2">
-              {message.thinkingLayers.map((layer) => (
-                <div key={layer.id} className="space-y-1">
-                  <div className="flex items-center gap-2 py-1">
-                    <div className="w-2 h-2 rounded-full bg-green-500" />
-                    <span className="text-green-600">{getLayerIcon(layer.id)}</span>
-                    <span className="text-xs font-medium text-green-600">
-                      {layer.name}
-                    </span>
-                    <span className="text-xs text-muted-foreground">✓</span>
-                  </div>
-                  
-                  {/* Sub-layers */}
-                  {layer.subLayers && layer.subLayers.length > 0 && (
-                    <div className="ml-4 pl-2 border-l-2 border-muted space-y-1">
-                      {layer.subLayers.map((subLayer) => (
-                        <div key={subLayer.id} className="flex items-center gap-2 py-0.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                          <span className="text-green-600">{getLayerIcon(subLayer.id)}</span>
-                          <span className="text-xs text-green-600">
-                            {subLayer.name}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  
-                  {/* Details */}
-                  {layer.details && (
-                    <p className="text-[10px] text-muted-foreground ml-6 italic">
-                      {layer.details}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
         </div>
+
+        {/* Expanded thinking details */}
+        {showThinkingDetails && (
+          <div className="mt-2 ml-1 pl-3 border-l border-border/60 space-y-1.5">
+            {message.thinkingLayers.map((layer, index) => (
+              <div key={layer.id} className="space-y-0.5">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-muted-foreground">
+                    {layer.name}
+                  </span>
+                </div>
+                
+                {/* Sub-layers - inline */}
+                {layer.subLayers && layer.subLayers.length > 0 && (
+                  <div className="flex flex-wrap gap-x-3 gap-y-0.5 ml-0">
+                    {layer.subLayers.map((subLayer) => (
+                      <span key={subLayer.id} className="text-[11px] text-muted-foreground/70">
+                        • {subLayer.name}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   };
