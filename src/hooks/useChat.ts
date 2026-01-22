@@ -1,12 +1,10 @@
 import { useState, useCallback } from 'react';
 import type { ResponsePreferences } from '@/components/ResponsePreferences';
 
-export interface ThinkingLayer {
+export interface ThinkingAction {
   id: string;
-  name: string;
-  status: 'completed';
-  details?: string;
-  subLayers?: { id: string; name: string; status: 'completed' }[];
+  action: string; // e.g., "Searching in sales_data.xlsx", "Analyzing revenue trends"
+  type: 'search' | 'analyze' | 'retrieve' | 'synthesize' | 'format';
 }
 
 interface Message {
@@ -19,7 +17,7 @@ interface Message {
   chartData?: any[];
   sqlQuery?: string;
   snowflakeQuery?: string;
-  thinkingLayers?: ThinkingLayer[];
+  thinkingActions?: ThinkingAction[];
   file?: {
     name: string;
     type: string;
@@ -78,43 +76,13 @@ export const useChat = () => {
           isUser: false,
           timestamp: new Date(Date.now() - 25000),
           mode: 'encore',
-          thinkingLayers: [
-            {
-              id: 'understanding',
-              name: 'Understanding Query',
-              status: 'completed',
-              details: 'Parsed user intent and extracted key concepts',
-              subLayers: [
-                { id: 'intent', name: 'Intent Classification', status: 'completed' },
-                { id: 'entities', name: 'Entity Extraction', status: 'completed' },
-              ]
-            },
-            {
-              id: 'retrieval',
-              name: 'Data Retrieval',
-              status: 'completed',
-              details: 'Searched enterprise knowledge base and connected sources',
-              subLayers: [
-                { id: 'vector', name: 'Vector Search', status: 'completed' },
-                { id: 'context', name: 'Context Assembly', status: 'completed' },
-              ]
-            },
-            {
-              id: 'reasoning',
-              name: 'Reasoning Engine',
-              status: 'completed',
-              details: 'Applied business logic and generated insights',
-              subLayers: [
-                { id: 'analysis', name: 'Pattern Analysis', status: 'completed' },
-                { id: 'synthesis', name: 'Response Synthesis', status: 'completed' },
-              ]
-            },
-            {
-              id: 'formatting',
-              name: 'Response Formatting',
-              status: 'completed',
-              details: 'Structured output for optimal presentation',
-            },
+          thinkingActions: [
+            { id: '1', action: 'Searching in sales_data.xlsx', type: 'search' },
+            { id: '2', action: 'Retrieved Q4 revenue metrics', type: 'retrieve' },
+            { id: '3', action: 'Analyzing regional performance trends', type: 'analyze' },
+            { id: '4', action: 'Cross-referencing with Q3 baseline data', type: 'analyze' },
+            { id: '5', action: 'Identified growth patterns in North America', type: 'analyze' },
+            { id: '6', action: 'Generating strategic recommendations', type: 'synthesize' },
           ]
         }
       ]
@@ -489,45 +457,40 @@ Would you like me to provide more specific guidance on any aspect of this topic?
         }
       }
       
-      // Generate thinking layers for research visibility
-      const thinkingLayers: ThinkingLayer[] = [
-        {
-          id: 'understanding',
-          name: 'Understanding Query',
-          status: 'completed',
-          details: 'Parsed user intent and extracted key concepts',
-          subLayers: [
-            { id: 'intent', name: 'Intent Classification', status: 'completed' },
-            { id: 'entities', name: 'Entity Extraction', status: 'completed' },
-          ]
-        },
-        {
-          id: 'retrieval',
-          name: 'Data Retrieval',
-          status: 'completed',
-          details: 'Searched enterprise knowledge base and connected sources',
-          subLayers: [
-            { id: 'vector', name: 'Vector Search', status: 'completed' },
-            { id: 'context', name: 'Context Assembly', status: 'completed' },
-          ]
-        },
-        {
-          id: 'reasoning',
-          name: 'Reasoning Engine',
-          status: 'completed',
-          details: 'Applied business logic and generated insights',
-          subLayers: [
-            { id: 'analysis', name: 'Pattern Analysis', status: 'completed' },
-            { id: 'synthesis', name: 'Response Synthesis', status: 'completed' },
-          ]
-        },
-        {
-          id: 'formatting',
-          name: 'Response Formatting',
-          status: 'completed',
-          details: 'Structured output for optimal presentation',
-        },
-      ];
+      // Generate dynamic thinking actions based on mode and content
+      const generateThinkingActions = (query: string, mode: string): ThinkingAction[] => {
+        const baseActions: ThinkingAction[] = [];
+        
+        if (mode === 'endocs') {
+          baseActions.push(
+            { id: '1', action: `Searching document repository for "${query.slice(0, 30)}..."`, type: 'search' },
+            { id: '2', action: 'Scanning employee_handbook.pdf', type: 'retrieve' },
+            { id: '3', action: 'Found 3 relevant policy sections', type: 'retrieve' },
+            { id: '4', action: 'Cross-referencing compliance guidelines', type: 'analyze' },
+            { id: '5', action: 'Extracting key information', type: 'synthesize' },
+          );
+        } else if (mode === 'ensights') {
+          baseActions.push(
+            { id: '1', action: 'Connecting to analytics database', type: 'search' },
+            { id: '2', action: 'Querying revenue_metrics table', type: 'retrieve' },
+            { id: '3', action: 'Processing 12 months of data', type: 'analyze' },
+            { id: '4', action: 'Identifying seasonal patterns', type: 'analyze' },
+            { id: '5', action: 'Generating visualization data', type: 'synthesize' },
+          );
+        } else {
+          baseActions.push(
+            { id: '1', action: `Understanding: "${query.slice(0, 40)}..."`, type: 'analyze' },
+            { id: '2', action: 'Searching knowledge base', type: 'search' },
+            { id: '3', action: 'Retrieved relevant context', type: 'retrieve' },
+            { id: '4', action: 'Analyzing patterns and insights', type: 'analyze' },
+            { id: '5', action: 'Formulating response', type: 'synthesize' },
+          );
+        }
+        
+        return baseActions;
+      };
+
+      const thinkingActions = generateThinkingActions(content, safeMode);
 
       switch(safeMode) {
         case 'endocs':
@@ -537,7 +500,7 @@ Would you like me to provide more specific guidance on any aspect of this topic?
             isUser: false,
             timestamp: new Date(),
             mode: 'endocs',
-            thinkingLayers,
+            thinkingActions,
             tableData: preferences?.format === 'table' ? generateTableData() : undefined,
             sqlQuery: `SELECT 
   d.document_id,
@@ -571,7 +534,7 @@ LIMIT 25;`
             isUser: false,
             timestamp: new Date(),
             mode: 'ensights',
-            thinkingLayers,
+            thinkingActions,
             chartData: preferences?.format === 'graph' ? generateChartData() : undefined
           };
           break;
@@ -583,7 +546,7 @@ LIMIT 25;`
             isUser: false,
             timestamp: new Date(),
             mode: 'encore',
-            thinkingLayers
+            thinkingActions
           };
       }
 

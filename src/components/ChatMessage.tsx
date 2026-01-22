@@ -1,6 +1,6 @@
 
 import { useState, useRef, useEffect } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight, Table, Database, Globe, Server, X, Info, ChevronDown, ChevronUp, Brain, Cpu, Network, Lightbulb, FileSearch, Eye, EyeOff } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight, Table, Database, Globe, Server, X, Info, ChevronDown } from 'lucide-react';
 import sqlIcon from "@/assets/sql.svg";
 import snowflakeIcon from "@/assets/snowflake.svg";
 import { Button } from '@/components/ui/button';
@@ -55,12 +55,10 @@ import {
 } from "@/components/ui/tooltip";
 import * as XLSX from 'xlsx';
 
-interface ThinkingLayer {
+interface ThinkingAction {
   id: string;
-  name: string;
-  status: 'completed';
-  details?: string;
-  subLayers?: { id: string; name: string; status: 'completed' }[];
+  action: string;
+  type: 'search' | 'analyze' | 'retrieve' | 'synthesize' | 'format';
 }
 
 interface ChatMessageProps {
@@ -74,7 +72,7 @@ interface ChatMessageProps {
     chartData?: any[];
     sqlQuery?: string;
     snowflakeQuery?: string;
-    thinkingLayers?: ThinkingLayer[];
+    thinkingActions?: ThinkingAction[];
     file?: {
       name: string;
       type: string;
@@ -106,26 +104,9 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
   const itemsPerPage = 10;
   const chartRef = useRef<HTMLDivElement>(null);
 
-  // Get layer icon based on layer id
-  const getLayerIcon = (layerId: string) => {
-    switch (layerId) {
-      case 'understanding': return <Brain size={14} />;
-      case 'retrieval': return <Database size={14} />;
-      case 'reasoning': return <Cpu size={14} />;
-      case 'formatting': return <FileSearch size={14} />;
-      case 'intent': return <Lightbulb size={12} />;
-      case 'entities': return <FileSearch size={12} />;
-      case 'vector': return <Network size={12} />;
-      case 'context': return <FileSearch size={12} />;
-      case 'analysis': return <Lightbulb size={12} />;
-      case 'synthesis': return <Brain size={12} />;
-      default: return <Brain size={14} />;
-    }
-  };
-
-  // Render thinking layers section - minimal design
+  // Render thinking section - minimal design with dynamic actions
   const renderThinkingSection = () => {
-    if (message.isUser || !message.thinkingLayers || message.thinkingLayers.length === 0) return null;
+    if (message.isUser || !message.thinkingActions || message.thinkingActions.length === 0) return null;
 
     return (
       <div className="mb-3">
@@ -140,32 +121,19 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
               className={`transition-transform duration-200 ${showThinkingDetails ? 'rotate-180' : ''}`}
             />
             <span className="text-xs">
-              Reasoned for {message.thinkingLayers.length} steps
+              Reasoned through {message.thinkingActions.length} actions
             </span>
           </div>
         </div>
 
         {/* Expanded thinking details */}
         {showThinkingDetails && (
-          <div className="mt-2 ml-1 pl-3 border-l border-border/60 space-y-1.5">
-            {message.thinkingLayers.map((layer, index) => (
-              <div key={layer.id} className="space-y-0.5">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-muted-foreground">
-                    {layer.name}
-                  </span>
-                </div>
-                
-                {/* Sub-layers - inline */}
-                {layer.subLayers && layer.subLayers.length > 0 && (
-                  <div className="flex flex-wrap gap-x-3 gap-y-0.5 ml-0">
-                    {layer.subLayers.map((subLayer) => (
-                      <span key={subLayer.id} className="text-[11px] text-muted-foreground/70">
-                        • {subLayer.name}
-                      </span>
-                    ))}
-                  </div>
-                )}
+          <div className="mt-2 ml-1 pl-3 border-l border-border/60 space-y-1">
+            {message.thinkingActions.map((action) => (
+              <div key={action.id} className="flex items-start gap-2 py-0.5">
+                <span className="text-xs text-muted-foreground">
+                  {action.action}
+                </span>
               </div>
             ))}
           </div>
