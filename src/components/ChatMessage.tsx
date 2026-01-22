@@ -1,6 +1,6 @@
 
 import { useState, useRef, useEffect } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight, Table, Database, Globe, Server, X, Info } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight, Table, Database, Globe, Server, X, Info, ChevronDown, ChevronUp, Brain, Cpu, Network, Lightbulb, FileSearch, Eye, EyeOff } from 'lucide-react';
 import sqlIcon from "@/assets/sql.svg";
 import snowflakeIcon from "@/assets/snowflake.svg";
 import { Button } from '@/components/ui/button';
@@ -55,6 +55,14 @@ import {
 } from "@/components/ui/tooltip";
 import * as XLSX from 'xlsx';
 
+interface ThinkingLayer {
+  id: string;
+  name: string;
+  status: 'completed';
+  details?: string;
+  subLayers?: { id: string; name: string; status: 'completed' }[];
+}
+
 interface ChatMessageProps {
   message: {
     id: string;
@@ -66,6 +74,7 @@ interface ChatMessageProps {
     chartData?: any[];
     sqlQuery?: string;
     snowflakeQuery?: string;
+    thinkingLayers?: ThinkingLayer[];
     file?: {
       name: string;
       type: string;
@@ -93,8 +102,114 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
   const [isTableMaximized, setIsTableMaximized] = useState(false);
   const [isChartMaximized, setIsChartMaximized] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [showThinkingDetails, setShowThinkingDetails] = useState(false);
   const itemsPerPage = 10;
   const chartRef = useRef<HTMLDivElement>(null);
+
+  // Get layer icon based on layer id
+  const getLayerIcon = (layerId: string) => {
+    switch (layerId) {
+      case 'understanding': return <Brain size={14} />;
+      case 'retrieval': return <Database size={14} />;
+      case 'reasoning': return <Cpu size={14} />;
+      case 'formatting': return <FileSearch size={14} />;
+      case 'intent': return <Lightbulb size={12} />;
+      case 'entities': return <FileSearch size={12} />;
+      case 'vector': return <Network size={12} />;
+      case 'context': return <FileSearch size={12} />;
+      case 'analysis': return <Lightbulb size={12} />;
+      case 'synthesis': return <Brain size={12} />;
+      default: return <Brain size={14} />;
+    }
+  };
+
+  // Render thinking layers section
+  const renderThinkingSection = () => {
+    if (message.isUser || !message.thinkingLayers || message.thinkingLayers.length === 0) return null;
+
+    return (
+      <div className="mb-4">
+        <div className="bg-muted/30 border border-border rounded-lg p-3">
+          {/* Header with toggle */}
+          <div 
+            className="flex items-center justify-between cursor-pointer"
+            onClick={() => setShowThinkingDetails(!showThinkingDetails)}
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-green-500" />
+              <span className="text-sm font-medium text-foreground">
+                Thinking completed
+              </span>
+              <span className="text-xs text-muted-foreground">
+                ({message.thinkingLayers.length} layers)
+              </span>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 px-2 text-xs gap-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowThinkingDetails(!showThinkingDetails);
+              }}
+            >
+              {showThinkingDetails ? (
+                <>
+                  <EyeOff size={12} />
+                  Hide
+                </>
+              ) : (
+                <>
+                  <Eye size={12} />
+                  Show All
+                </>
+              )}
+            </Button>
+          </div>
+
+          {/* Expanded thinking details */}
+          {showThinkingDetails && (
+            <div className="mt-3 pt-3 border-t border-border space-y-2">
+              {message.thinkingLayers.map((layer) => (
+                <div key={layer.id} className="space-y-1">
+                  <div className="flex items-center gap-2 py-1">
+                    <div className="w-2 h-2 rounded-full bg-green-500" />
+                    <span className="text-green-600">{getLayerIcon(layer.id)}</span>
+                    <span className="text-xs font-medium text-green-600">
+                      {layer.name}
+                    </span>
+                    <span className="text-xs text-muted-foreground">✓</span>
+                  </div>
+                  
+                  {/* Sub-layers */}
+                  {layer.subLayers && layer.subLayers.length > 0 && (
+                    <div className="ml-4 pl-2 border-l-2 border-muted space-y-1">
+                      {layer.subLayers.map((subLayer) => (
+                        <div key={subLayer.id} className="flex items-center gap-2 py-0.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                          <span className="text-green-600">{getLayerIcon(subLayer.id)}</span>
+                          <span className="text-xs text-green-600">
+                            {subLayer.name}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {/* Details */}
+                  {layer.details && (
+                    <p className="text-[10px] text-muted-foreground ml-6 italic">
+                      {layer.details}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   // Update view mode when message mode changes
   useEffect(() => {
@@ -1322,6 +1437,9 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
           ) : (
             <>
               <div className="text-gray-800 w-full">
+                {/* Render thinking section above the response */}
+                {renderThinkingSection()}
+                
                 {/* Render context bar for endocs and ensights */}
                 {(message.mode === 'endocs' || message.mode === 'ensights') && renderContextBar()}
                 
