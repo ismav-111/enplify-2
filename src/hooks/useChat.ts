@@ -1,12 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { ResponsePreferences } from '@/components/ResponsePreferences';
 
-export interface ThinkingAction {
-  id: string;
-  action: string; // e.g., "Searching in sales_data.xlsx", "Analyzing revenue trends"
-  type: 'search' | 'analyze' | 'retrieve' | 'synthesize' | 'format';
-}
-
 interface Message {
   id: string;
   content: string;
@@ -17,7 +11,6 @@ interface Message {
   chartData?: any[];
   sqlQuery?: string;
   snowflakeQuery?: string;
-  thinkingActions?: ThinkingAction[];
   file?: {
     name: string;
     type: string;
@@ -75,15 +68,7 @@ export const useChat = () => {
 3. Expand professional services team to meet growing demand`,
           isUser: false,
           timestamp: new Date(Date.now() - 25000),
-          mode: 'encore',
-          thinkingActions: [
-            { id: '1', action: 'Searching in sales_data.xlsx', type: 'search' },
-            { id: '2', action: 'Retrieved Q4 revenue metrics', type: 'retrieve' },
-            { id: '3', action: 'Analyzing regional performance trends', type: 'analyze' },
-            { id: '4', action: 'Cross-referencing with Q3 baseline data', type: 'analyze' },
-            { id: '5', action: 'Identified growth patterns in North America', type: 'analyze' },
-            { id: '6', action: 'Generating strategic recommendations', type: 'synthesize' },
-          ]
+          mode: 'encore'
         }
       ]
     },
@@ -457,41 +442,6 @@ Would you like me to provide more specific guidance on any aspect of this topic?
         }
       }
       
-      // Generate dynamic thinking actions based on mode and content
-      const generateThinkingActions = (query: string, mode: string): ThinkingAction[] => {
-        const baseActions: ThinkingAction[] = [];
-        
-        if (mode === 'endocs') {
-          baseActions.push(
-            { id: '1', action: `Searching document repository for "${query.slice(0, 30)}..."`, type: 'search' },
-            { id: '2', action: 'Scanning employee_handbook.pdf', type: 'retrieve' },
-            { id: '3', action: 'Found 3 relevant policy sections', type: 'retrieve' },
-            { id: '4', action: 'Cross-referencing compliance guidelines', type: 'analyze' },
-            { id: '5', action: 'Extracting key information', type: 'synthesize' },
-          );
-        } else if (mode === 'ensights') {
-          baseActions.push(
-            { id: '1', action: 'Connecting to analytics database', type: 'search' },
-            { id: '2', action: 'Querying revenue_metrics table', type: 'retrieve' },
-            { id: '3', action: 'Processing 12 months of data', type: 'analyze' },
-            { id: '4', action: 'Identifying seasonal patterns', type: 'analyze' },
-            { id: '5', action: 'Generating visualization data', type: 'synthesize' },
-          );
-        } else {
-          baseActions.push(
-            { id: '1', action: `Understanding: "${query.slice(0, 40)}..."`, type: 'analyze' },
-            { id: '2', action: 'Searching knowledge base', type: 'search' },
-            { id: '3', action: 'Retrieved relevant context', type: 'retrieve' },
-            { id: '4', action: 'Analyzing patterns and insights', type: 'analyze' },
-            { id: '5', action: 'Formulating response', type: 'synthesize' },
-          );
-        }
-        
-        return baseActions;
-      };
-
-      const thinkingActions = generateThinkingActions(content, safeMode);
-
       switch(safeMode) {
         case 'endocs':
           aiMessage = {
@@ -500,7 +450,6 @@ Would you like me to provide more specific guidance on any aspect of this topic?
             isUser: false,
             timestamp: new Date(),
             mode: 'endocs',
-            thinkingActions,
             tableData: preferences?.format === 'table' ? generateTableData() : undefined,
             sqlQuery: `SELECT 
   d.document_id,
@@ -534,7 +483,6 @@ LIMIT 25;`
             isUser: false,
             timestamp: new Date(),
             mode: 'ensights',
-            thinkingActions,
             chartData: preferences?.format === 'graph' ? generateChartData() : undefined
           };
           break;
@@ -545,8 +493,7 @@ LIMIT 25;`
             content: responseContent,
             isUser: false,
             timestamp: new Date(),
-            mode: 'encore',
-            thinkingActions
+            mode: 'encore'
           };
       }
 

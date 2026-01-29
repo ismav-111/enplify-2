@@ -1,6 +1,6 @@
 
 import { useState, useRef, useEffect } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight, Table, Database, Globe, Server, X, Info, ChevronDown } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, RotateCcw, BarChart2, TrendingUp, PieChart, Download, FileText, Image, Activity, Edit2, Maximize, Minimize, ChevronLeft, ChevronRight, Table, Database, Globe, Server, X, Info } from 'lucide-react';
 import sqlIcon from "@/assets/sql.svg";
 import snowflakeIcon from "@/assets/snowflake.svg";
 import { Button } from '@/components/ui/button';
@@ -55,12 +55,6 @@ import {
 } from "@/components/ui/tooltip";
 import * as XLSX from 'xlsx';
 
-interface ThinkingAction {
-  id: string;
-  action: string;
-  type: 'search' | 'analyze' | 'retrieve' | 'synthesize' | 'format';
-}
-
 interface ChatMessageProps {
   message: {
     id: string;
@@ -72,7 +66,6 @@ interface ChatMessageProps {
     chartData?: any[];
     sqlQuery?: string;
     snowflakeQuery?: string;
-    thinkingActions?: ThinkingAction[];
     file?: {
       name: string;
       type: string;
@@ -100,47 +93,8 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
   const [isTableMaximized, setIsTableMaximized] = useState(false);
   const [isChartMaximized, setIsChartMaximized] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [showThinkingDetails, setShowThinkingDetails] = useState(false);
   const itemsPerPage = 10;
   const chartRef = useRef<HTMLDivElement>(null);
-
-  // Render thinking section - minimal design with dynamic actions
-  const renderThinkingSection = () => {
-    if (message.isUser || !message.thinkingActions || message.thinkingActions.length === 0) return null;
-
-    return (
-      <div className="mb-3">
-        {/* Compact collapsed view */}
-        <div 
-          className="inline-flex items-center gap-2 cursor-pointer group"
-          onClick={() => setShowThinkingDetails(!showThinkingDetails)}
-        >
-          <div className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
-            <ChevronDown 
-              size={14} 
-              className={`transition-transform duration-200 ${showThinkingDetails ? 'rotate-180' : ''}`}
-            />
-            <span className="text-xs">
-              Reasoned through {message.thinkingActions.length} actions
-            </span>
-          </div>
-        </div>
-
-        {/* Expanded thinking details */}
-        {showThinkingDetails && (
-          <div className="mt-2 ml-1 pl-3 border-l border-border/60 space-y-1">
-            {message.thinkingActions.map((action) => (
-              <div key={action.id} className="flex items-start gap-2 py-0.5">
-                <span className="text-xs text-muted-foreground">
-                  {action.action}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  };
 
   // Update view mode when message mode changes
   useEffect(() => {
@@ -1368,9 +1322,6 @@ const ChatMessage = ({ message, onShowSources }: ChatMessageProps) => {
           ) : (
             <>
               <div className="text-gray-800 w-full">
-                {/* Render thinking section above the response */}
-                {renderThinkingSection()}
-                
                 {/* Render context bar for endocs and ensights */}
                 {(message.mode === 'endocs' || message.mode === 'ensights') && renderContextBar()}
                 
