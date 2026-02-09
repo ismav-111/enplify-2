@@ -246,6 +246,10 @@ export default function Auth() {
                     >
                       {isLoading ? "Continue..." : "Continue"}
                     </Button>
+
+                    <p className="text-xs text-gray-600 text-center mt-4">
+                      By signing in, I agree to the <a href="#" className="text-indigo-600 hover:text-indigo-500 font-semibold">Terms & Conditions</a> and <a href="#" className="text-indigo-600 hover:text-indigo-500 font-semibold">Privacy Policy</a>.
+                    </p>
                   </div>
                 )}
 
