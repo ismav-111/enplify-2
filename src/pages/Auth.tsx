@@ -327,6 +327,10 @@ export default function Auth() {
                       {isLoading ? "Signing you in..." : "Sign In"}
                     </Button>
 
+                    <p className="text-xs text-gray-600 text-center mt-6">
+                      By signing in, I agree to the <a href="#" className="text-indigo-600 hover:text-indigo-500 font-semibold">Terms & Conditions</a> and <a href="#" className="text-indigo-600 hover:text-indigo-500 font-semibold">Privacy Policy</a>.
+                    </p>
+
                     <div className="text-center">
                       <button
                         type="button"
